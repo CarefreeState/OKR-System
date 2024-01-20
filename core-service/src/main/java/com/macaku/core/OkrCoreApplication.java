@@ -4,6 +4,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 /**
  * Created With Intellij IDEA
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @MapperScan({"com.macaku.core.mapper"})
 @ComponentScan(value = {"com.macaku"})
+@EnableSwagger2WebMvc
 public class OkrCoreApplication {
     public static void main(String[] args) {
         SpringApplication.run(OkrCoreApplication.class, args);

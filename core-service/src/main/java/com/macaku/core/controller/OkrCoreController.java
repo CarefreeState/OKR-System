@@ -2,6 +2,8 @@ package com.macaku.core.controller;
 
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.core.service.OkrCoreService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,12 +21,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/test")
+@Api("okr-core")
 public class OkrCoreController {
 
 
     private final OkrCoreService okrCoreService;
 
     @GetMapping("/exception")
+    @ApiOperation("test")
     public SystemJsonResponse test() {
         okrCoreService.test();
         return SystemJsonResponse.SYSTEM_SUCCESS();

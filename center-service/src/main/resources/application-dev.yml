@@ -6,7 +6,7 @@ okr:
     username: root
     password: mmsszsd666
 server:
-  port: 10086
+  port: 1703
 --- # 数据源配置
 spring:
   datasource:
@@ -22,3 +22,6 @@ spring.data:
     host: 127.0.0.1
     # 端口
     port: 6379
+media:
+  root: D:/
+  map: media/

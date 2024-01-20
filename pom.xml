@@ -29,13 +29,51 @@
         <spring-cloud.version>Hoxton.SR10</spring-cloud.version>
         <mysql.version>5.1.47</mysql.version>
         <mybatis.version>2.1.1</mybatis.version>
+        <mybatis-plus-boot-starter.version>3.5.3.1</mybatis-plus-boot-starter.version>
+        <guava.version>31.1-jre</guava.version>
+        <hutool-all.version>5.8.11</hutool-all.version>
+        <fastjson.version>1.2.31</fastjson.version>
+        <knife4j.version>4.1.0</knife4j.version>
+        <!--httpClient需要的依赖-->
+        <org.apache.httpcomponents-httpclient.version>4.5.2</org.apache.httpcomponents-httpclient.version>
+        <org.apache.httpcomponents-httpclient-cache.version>4.5</org.apache.httpcomponents-httpclient-cache.version>
+        <org.apache.httpcomponents-httpmime.version>4.3.2</org.apache.httpcomponents-httpmime.version>
+        <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
     </properties>
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <!--环境标识，需要与配置文件名称相对应-->
+                <profiles.active>dev</profiles.active>
+                <logging.level>debug</logging.level>
+            </properties>
+            <activation>
+                <!--默认环境-->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-        </dependency>
-    </dependencies>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profiles.active>prod</profiles.active>
+                <logging.level>warn</logging.level>
+            </properties>
+            <activation>
+                <!--                <activeByDefault>true</activeByDefault>-->
+            </activation>
+        </profile>
+    </profiles>
+    <dependencyManagement>
+
+        <dependencies>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
 
 </project>

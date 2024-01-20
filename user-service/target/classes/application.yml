@@ -6,7 +6,7 @@ spring:
 # 日志配置
 logging:
   level:
-    com.achobeta: debug
+    com.macaku: debug
     org.springframework: warn
     tech.powerjob.worker.background: warn
   config: classpath:logback-plus.xml
