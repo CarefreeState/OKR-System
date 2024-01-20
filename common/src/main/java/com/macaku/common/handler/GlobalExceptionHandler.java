@@ -23,4 +23,12 @@ public class GlobalExceptionHandler {
         return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(statusCode, message);
     }
 
+    @ExceptionHandler(Exception.class)
+    public SystemJsonResponse handleException(Exception e, HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        String message = e.getMessage();
+        log.error("请求地址'{}' \n  -> '{}'", requestURI, message);
+        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.SYSTEM_SERVICE_FAIL, message);
+    }
+
 }
