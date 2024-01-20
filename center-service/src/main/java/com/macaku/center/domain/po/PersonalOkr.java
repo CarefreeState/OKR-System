@@ -1,12 +1,10 @@
 package com.macaku.center.domain.po;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * @TableName personal_okr
@@ -14,6 +12,7 @@ import lombok.Data;
 @TableName(value ="personal_okr")
 @Data
 public class PersonalOkr implements Serializable {
+
     private Long id;
 
     private Long coreId;

@@ -74,16 +74,6 @@
             <artifactId>httpmime</artifactId>
             <version>${org.apache.httpcomponents-httpmime.version}</version>
         </dependency>
-        <!-- 自定义验证注解 -->
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>${jakarta.validation-api.version}</version>
-        </dependency>
 
     </dependencies>
 </project>
