@@ -14,7 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
  * Time: 20:55
  */
 @SpringBootApplication
-@MapperScan({"com.macaku.core.mapper"})
+@MapperScan({"com.macaku.*.mapper"})
 @ComponentScan(value = {"com.macaku"})
 @EnableSwagger2WebMvc
 public class OkrCoreApplication {

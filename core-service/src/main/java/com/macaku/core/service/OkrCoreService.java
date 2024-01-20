@@ -1,7 +1,10 @@
 package com.macaku.core.service;
 
-import com.macaku.core.domain.po.OkrCore;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.macaku.core.domain.po.OkrCore;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 /**
 * @author 马拉圈
@@ -10,4 +13,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface OkrCoreService extends IService<OkrCore> {
     void test();
+
+    @Transactional
+    Optional<Long> createOkrCore();
+
 }

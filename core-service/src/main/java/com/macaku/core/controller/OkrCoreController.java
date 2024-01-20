@@ -1,5 +1,6 @@
 package com.macaku.core.controller;
 
+import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.core.service.OkrCoreService;
 import io.swagger.annotations.Api;
@@ -20,8 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/test")
-@Api("okr-core")
+@RequestMapping("/core")
+@Api(tags = "OKR 内核")
 public class OkrCoreController {
 
 
@@ -32,6 +33,14 @@ public class OkrCoreController {
     public SystemJsonResponse test() {
         okrCoreService.test();
         return SystemJsonResponse.SYSTEM_SUCCESS();
+    }
+
+    @GetMapping("/create")
+    @ApiOperation("创建一个core")
+    public SystemJsonResponse createOkr() {
+        Long coreID = okrCoreService.createOkrCore()
+                .orElseThrow(() -> new GlobalServiceException("创建core失败"));
+        return SystemJsonResponse.SYSTEM_SUCCESS(coreID);
     }
 
 }

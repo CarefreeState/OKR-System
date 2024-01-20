@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
         String requestURI = request.getRequestURI();
         String message = e.getMessage();
         GlobalServiceStatusCode statusCode = e.getStatusCode();
-        log.error("请求地址'{}', {}: \n  -> '{}'", requestURI, statusCode, message);
+        log.error("请求地址'{}', {}: \n{}", requestURI, statusCode, message);
         return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(statusCode, message);
     }
 
@@ -27,7 +27,7 @@ public class GlobalExceptionHandler {
     public SystemJsonResponse handleException(Exception e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String message = e.getMessage();
-        log.error("请求地址'{}' \n  -> '{}'", requestURI, message);
+        log.error("请求地址'{}' \n{}", requestURI, message);
         return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.SYSTEM_SERVICE_FAIL, message);
     }
 
