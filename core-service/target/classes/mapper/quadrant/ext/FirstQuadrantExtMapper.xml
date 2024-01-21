@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.macaku.core.mapper.quadrant.FirstQuadrantMapper">
+    <resultMap extends="BaseResultMap" id="AllInfoResultMap" type="com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO">
+<!--        <association property="keyResults" resultMap="com.macaku.core.mapper.inner.KeyResultMapper.BaseResultMap" columnPrefix="k_" />-->
+        <collection property="keyResults" ofType="com.macaku.core.domain.po.inner.KeyResult"
+                    resultMap="com.macaku.core.mapper.inner.KeyResultMapper.BaseResultMap" columnPrefix="k_" />
+
+    </resultMap>
+
+    <select id="searchFirstQuadrant" resultMap="AllInfoResultMap">
+        select
+            f.*, k.id k_id, k.first_quadrant_id k_first_quadrant_id, k.content k_content,
+            k.probability k_probability, k.version k_version, k.is_deleted k_is_deleted,
+            k.create_time k_create_time, k.update_time k_update_time
+        from
+            first_quadrant f left join key_result k on f.id = k.first_quadrant_id
+        where
+            f.core_id = #{coreId,jdbcType=BIGINT}
+        order by k.probability desc, k.create_time asc
+    </select>
+
+</mapper>
