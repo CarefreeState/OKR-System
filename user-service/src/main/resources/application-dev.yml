@@ -26,3 +26,7 @@ spring.data:
 media:
   root: D:/
   map: media/
+
+wx:
+  appid: wx9efa37f247f01d10
+  secret: ef6c3f39e28f30d8916819541cb8bc00

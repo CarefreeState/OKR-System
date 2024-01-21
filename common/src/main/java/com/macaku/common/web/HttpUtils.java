@@ -114,7 +114,6 @@ public class HttpUtils {
         if (StringUtils.hasLength(formBody)) {
             formBody = formBody.substring(0, formBody.length() - 1);
         }
-        System.out.println("参数：" + formBody);
         return formBody;
     }
 

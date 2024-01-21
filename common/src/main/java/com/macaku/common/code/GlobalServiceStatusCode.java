@@ -12,6 +12,7 @@ public enum GlobalServiceStatusCode {
     SYSTEM_SERVICE_ERROR(-500, "系统异常"),
     SYSTEM_TIME_OUT(-1, "请求超时"),
 
+
     /* 参数错误：1001～2000 */
     PARAM_NOT_VALID(1001, "参数无效"),
     PARAM_IS_BLANK(1002, "参数为空"),
@@ -32,6 +33,8 @@ public enum GlobalServiceStatusCode {
 
     USER_NO_PERMISSION(2403, "用户无权限"),
     USER_NO_PHONE_CODE(2500, "验证码错误"),
+
+    DATA_NOT_SECURITY(3000, "数据不安全"),
 
     /* -------------- */;
 

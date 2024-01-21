@@ -39,6 +39,7 @@
         <org.apache.httpcomponents-httpclient-cache.version>4.5</org.apache.httpcomponents-httpclient-cache.version>
         <org.apache.httpcomponents-httpmime.version>4.3.2</org.apache.httpcomponents-httpmime.version>
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
+        <jjwt.version>0.9.0</jjwt.version>
     </properties>
     <profiles>
         <profile>

@@ -75,5 +75,19 @@
             <version>${org.apache.httpcomponents-httpmime.version}</version>
         </dependency>
 
+        <!-- 编码解码加密⼯具包-->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+
+        <!--jjwt-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+
+
     </dependencies>
 </project>

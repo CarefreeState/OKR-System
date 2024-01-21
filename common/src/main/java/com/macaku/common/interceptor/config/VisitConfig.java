@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
 
-@Configuration//不是Configurable！
+@Configuration
 public class VisitConfig implements WebMvcConfigurer {
 
     @Resource
@@ -16,10 +16,18 @@ public class VisitConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(userInterceptor)
-//                .addPathPatterns("/**")
-//
-//        ;
+        registry.addInterceptor(userInterceptor)
+                .addPathPatterns("/**")
+                //不拦截路由
+                .excludePathPatterns("/doc.html/**")
+                .excludePathPatterns("/v3/api-docs/**")
+                .excludePathPatterns("/webjars/**")
+                .excludePathPatterns("/error")
+                .excludePathPatterns("/favicon.ico")
+                .excludePathPatterns("/swagger-resources/**")
+
+
+        ;
     }
 
 
