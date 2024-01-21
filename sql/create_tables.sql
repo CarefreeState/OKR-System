@@ -274,7 +274,7 @@ create table `status_flag` (
     `id` bigint primary key auto_increment comment 'ID',
     `fourth_quadrant_id` bigint not null comment '第四象限 ID',
     `label` varchar(128) not null default '' comment '指标内容',
-    `color` char(7) not null default '#ffffff' comment '指标颜色',
+    `color` char(7) not null default '#00ff00' comment '指标颜色',
     -- common column
     `version` int not null default 0 comment '乐观锁',
     `is_deleted` bit not null default b'0' comment '伪删除标记',

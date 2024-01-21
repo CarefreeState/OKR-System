@@ -1,7 +1,10 @@
 package com.macaku.core.service.quadrant;
 
-import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.macaku.core.domain.po.quadrant.FirstQuadrant;
+import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
+
+import java.util.Optional;
 
 /**
 * @author 马拉圈
@@ -10,6 +13,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface FirstQuadrantService extends IService<FirstQuadrant> {
 
+    void initFirstQuadrant(FirstQuadrant firstQuadrant);
 
+    Optional<FirstQuadrantVO> searchFirstQuadrant(Long coreId);
 
 }

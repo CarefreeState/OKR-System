@@ -12,4 +12,6 @@ public interface KeyResultService extends IService<KeyResult> {
 
     void addResultService(KeyResult keyResult);
 
+    void updateProbability(KeyResult keyResult);
+
 }

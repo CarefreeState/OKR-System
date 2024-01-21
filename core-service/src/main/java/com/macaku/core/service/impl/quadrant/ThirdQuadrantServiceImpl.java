@@ -2,8 +2,8 @@ package com.macaku.core.service.impl.quadrant;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
-import com.macaku.core.service.quadrant.ThirdQuadrantService;
 import com.macaku.core.mapper.quadrant.ThirdQuadrantMapper;
+import com.macaku.core.service.quadrant.ThirdQuadrantService;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 */
 @Service
 public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, ThirdQuadrant>
-    implements ThirdQuadrantService{
+    implements ThirdQuadrantService {
 
 }
 

@@ -2,6 +2,8 @@ package com.macaku.core.mapper;
 
 import com.macaku.core.domain.po.OkrCore;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.macaku.core.domain.po.vo.OkrCoreVO;
+import org.apache.ibatis.annotations.Param;
 
 /**
 * @author 马拉圈
@@ -10,6 +12,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.macaku.core.domain.po.OkrCore
 */
 public interface OkrCoreMapper extends BaseMapper<OkrCore> {
+
+    OkrCoreVO searchOkrCore(@Param("id") Long id);
 
 }
 

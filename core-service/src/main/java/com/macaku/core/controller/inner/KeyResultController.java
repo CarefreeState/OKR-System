@@ -3,7 +3,8 @@ package com.macaku.core.controller.inner;
 import cn.hutool.core.bean.BeanUtil;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.core.domain.po.inner.KeyResult;
-import com.macaku.core.domain.po.inner.pto.KeyResultDTO;
+import com.macaku.core.domain.po.inner.dto.KeyResultDTO;
+import com.macaku.core.domain.po.inner.dto.KeyResultUpdateDTO;
 import com.macaku.core.service.inner.KeyResultService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -38,6 +39,19 @@ public class KeyResultController {
         KeyResult keyResult = BeanUtil.copyProperties(keyResultDTO, KeyResult.class);
         // 添加
         keyResultService.addResultService(keyResult);
+        return SystemJsonResponse.SYSTEM_SUCCESS();
+    }
+
+    @PostMapping("/update")
+    @ApiOperation("更新完成概率")
+    public SystemJsonResponse updateKeyResult(KeyResultUpdateDTO keyResultUpdateDTO) {
+        // 校验
+        keyResultUpdateDTO.validate();
+        // 构造
+        KeyResult keyResult = BeanUtil.copyProperties(keyResultUpdateDTO, KeyResult.class);
+        // 更新
+        keyResultService.updateProbability(keyResult);
+        log.info("提交更新：{}", keyResultUpdateDTO);
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 

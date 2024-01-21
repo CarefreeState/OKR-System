@@ -1,7 +1,9 @@
 package com.macaku.core.mapper.quadrant;
 
-import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.macaku.core.domain.po.quadrant.FirstQuadrant;
+import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
+import org.apache.ibatis.annotations.Param;
 
 /**
 * @author 马拉圈
@@ -10,6 +12,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.macaku.core.domain.po.quadrant.FirstQuadrant
 */
 public interface FirstQuadrantMapper extends BaseMapper<FirstQuadrant> {
+
+    FirstQuadrantVO searchFirstQuadrant(@Param("coreId") Long coreId);
 
 }
 

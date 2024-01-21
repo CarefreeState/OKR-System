@@ -33,8 +33,8 @@ public class UserController {
     @PostMapping("/login")
     public SystemJsonResponse login(LoginDTO loginDTO, @NonNull @RequestHeader("type") String type) {
         loginDTO.validate();
-        ServiceLoader<LoginService> services = ServiceLoader.load(LoginService.class);
-        Iterator<LoginService> serviceIterator = services.iterator();
+        ServiceLoader<LoginService> loginServices = ServiceLoader.load(LoginService.class);
+        Iterator<LoginService> serviceIterator = loginServices.iterator();
         Map<String, Object> data = null;
         while (serviceIterator.hasNext()) {
             LoginService loginService =  serviceIterator.next();

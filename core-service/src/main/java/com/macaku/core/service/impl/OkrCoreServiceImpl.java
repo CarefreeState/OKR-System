@@ -3,14 +3,13 @@ package com.macaku.core.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.core.domain.po.OkrCore;
-import com.macaku.core.domain.po.inner.PriorityNumberOne;
-import com.macaku.core.domain.po.inner.PriorityNumberTwo;
 import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.FourthQuadrant;
 import com.macaku.core.domain.po.quadrant.SecondQuadrant;
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
+import com.macaku.core.domain.po.vo.OkrCoreVO;
 import com.macaku.core.mapper.OkrCoreMapper;
-import com.macaku.core.service.*;
+import com.macaku.core.service.OkrCoreService;
 import com.macaku.core.service.inner.PriorityNumberOneService;
 import com.macaku.core.service.inner.PriorityNumberTwoService;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
@@ -47,6 +46,8 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
 
     private final PriorityNumberTwoService priorityNumberTwoService;
 
+    private final OkrCoreMapper okrCoreMapper;
+
     public void test() {
         throw  new GlobalServiceException();
     }
@@ -55,6 +56,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
     public Optional<Long> createOkrCore() {
         // 1. 创建一个内核
         OkrCore okrCore = new OkrCore();
+        okrCore.setIsOver(false);
         this.save(okrCore);
         Long coreID = okrCore.getId();
         log.info("新增 OKR 内核：  okr core id : {}", coreID);
@@ -67,13 +69,6 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         SecondQuadrant secondQuadrant = new SecondQuadrant();
         secondQuadrant.setCoreId(coreID);
         secondQuadrantService.save(secondQuadrant);
-        Long secondQuadrantID = secondQuadrant.getId();
-        PriorityNumberOne priorityNumberOne = new PriorityNumberOne();
-        priorityNumberOne.setSecondQuadrantId(secondQuadrantID);
-        priorityNumberOneService.save(priorityNumberOne);
-        PriorityNumberTwo priorityNumberTwo = new PriorityNumberTwo();
-        priorityNumberTwo.setSecondQuadrantId(secondQuadrantID);
-        priorityNumberTwoService.save(priorityNumberTwo);
         // 第三象限
         ThirdQuadrant thirdQuadrant = new ThirdQuadrant();
         thirdQuadrant.setCoreId(coreID);
@@ -84,6 +79,12 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         fourthQuadrantService.save(fourthQuadrant);
         // 3. 返回
         return Optional.ofNullable(coreID);
+    }
+
+    @Override
+    public Optional<OkrCoreVO> searchOkrCore(Long id) {
+        OkrCoreVO okrCoreVO = okrCoreMapper.searchOkrCore(id);
+        return Optional.ofNullable(okrCoreVO);
     }
 
 }

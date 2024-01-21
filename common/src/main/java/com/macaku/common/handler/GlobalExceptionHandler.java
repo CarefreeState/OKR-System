@@ -28,6 +28,7 @@ public class GlobalExceptionHandler {
         String requestURI = request.getRequestURI();
         String message = e.getMessage();
         log.error("请求地址'{}' \n{}", requestURI, message);
+        e.printStackTrace();
         return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.SYSTEM_SERVICE_FAIL, message);
     }
 

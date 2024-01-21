@@ -36,6 +36,17 @@ public enum GlobalServiceStatusCode {
 
     DATA_NOT_SECURITY(3000, "数据不安全"),
 
+
+    // -------- 象限相关：
+    FIRST_QUADRANT_UPDATE_ERROR(4001, "第一象限更新失败"),
+    FIRST_QUADRANT_NOT_EXISTS(4002, "第一象限不存在"),
+
+
+
+
+
+
+
     /* -------------- */;
 
     private final Integer code;

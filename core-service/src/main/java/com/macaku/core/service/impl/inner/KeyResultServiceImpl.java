@@ -2,8 +2,8 @@ package com.macaku.core.service.impl.inner;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.macaku.core.domain.po.inner.KeyResult;
-import com.macaku.core.service.inner.KeyResultService;
 import com.macaku.core.mapper.inner.KeyResultMapper;
+import com.macaku.core.service.inner.KeyResultService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +24,21 @@ public class KeyResultServiceImpl extends ServiceImpl<KeyResultMapper, KeyResult
         newKeyResult.setFirstQuadrantId(keyResult.getFirstQuadrantId());
         newKeyResult.setContent(keyResult.getContent());
         newKeyResult.setProbability(keyResult.getProbability());
-        // 插入
+        // 2. 插入
         this.save(newKeyResult);
         log.info("新增关键结果： key result id : {}", newKeyResult.getId());
     }
+
+    @Override
+    public void updateProbability(KeyResult keyResult) {
+        // 1. 提取需要更新的数据
+        KeyResult updateKeyResult = new KeyResult();
+        updateKeyResult.setId(keyResult.getId());
+        updateKeyResult.setProbability(keyResult.getProbability());
+        // 2. 更新
+        this.updateById(updateKeyResult);
+    }
+
 }
 
 

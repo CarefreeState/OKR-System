@@ -1,4 +1,4 @@
-package com.macaku.core.domain.po.inner.pto;
+package com.macaku.core.domain.po.inner.dto;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
@@ -13,38 +13,30 @@ import java.util.Objects;
  * Created With Intellij IDEA
  * Description:
  * User: 马拉圈
- * Date: 2024-01-21
- * Time: 2:25
+ * Date: 2024-01-22
+ * Time: 1:59
  */
 @Data
-@ApiModel(description = "关键结果")
-public class KeyResultDTO {
+@ApiModel("任务实体")
+public class TaskDTO {
 
-    @ApiModelProperty("第一象限 ID")
-    private Long firstQuadrantId;
+    @ApiModelProperty("quadrantId")
+    private Long quadrantId;
 
-    @ApiModelProperty("关键结果内容")
+    @ApiModelProperty("content")
     private String content;
-
-    @ApiModelProperty("完成概率")
-    private Integer probability;
 
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
-        if(Objects.isNull(firstQuadrantId)) {
-            messageBuilder.append("-> 第一象限 ID 为 null\n");
+        if(Objects.isNull(quadrantId)) {
+            messageBuilder.append("-> 象限 ID 为 null\n");
         }
         if(!StringUtils.hasText(content)) {
-            messageBuilder.append("-> 关键结果没有内容\n");
-        }
-        if(Objects.isNull(probability) ||
-                probability.compareTo(0) < 0 || probability.compareTo(100) > 0) {
-            messageBuilder.append("-> 完成概率非法\n");
+            messageBuilder.append("-> 没有内容\n");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {
             throw new GlobalServiceException(message, GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
     }
-
 }
