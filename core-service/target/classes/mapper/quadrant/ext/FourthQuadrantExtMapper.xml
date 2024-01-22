@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.macaku.core.mapper.quadrant.FourthQuadrantMapper">
+
+    <resultMap extends="BaseResultMap" id="AllInfoResultMap" type="com.macaku.core.domain.po.quadrant.vo.FourthQuadrantVO">
+        <collection property="statusFlags" ofType="com.macaku.core.domain.po.inner.StatusFlag"
+                    resultMap="com.macaku.core.mapper.inner.StatusFlagMapper.BaseResultMap" columnPrefix="sf_" />
+    </resultMap>
+
+    <select id="searchFourthQuadrant" resultMap="AllInfoResultMap">
+        select
+            fq.*,
+            sf.id sf_id, sf.fourth_quadrant_id sf_fourth_quadrant_id, sf.label sf_label
+        from
+            fourth_quadrant fq left join status_flag sf on fq.id = sf.fourth_quadrant_id
+        where
+            fq.core_id = #{coreId,jdbcType=BIGINT}
+        order by sf.create_time
+    </select>
+
+</mapper>
