@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @TableName okr_core
@@ -19,9 +18,9 @@ public class OkrCore implements Serializable {
 
     private Integer celebrateDay;
 
-    private Date secondQuadrantCycle;
+    private Integer secondQuadrantCycle;
 
-    private Date thirdQuadrantCycle;
+    private Integer thirdQuadrantCycle;
 
     private Boolean isOver;
 

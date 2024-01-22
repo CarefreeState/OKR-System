@@ -2,6 +2,10 @@ package com.macaku.core.mapper.quadrant;
 
 import com.macaku.core.domain.po.quadrant.FourthQuadrant;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.macaku.core.domain.po.quadrant.vo.FourthQuadrantVO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Optional;
 
 /**
 * @author 马拉圈
@@ -10,6 +14,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.macaku.core.domain.po.quadrant.FourthQuadrant
 */
 public interface FourthQuadrantMapper extends BaseMapper<FourthQuadrant> {
+
+    Optional<FourthQuadrantVO> searchFourthQuadrant(@Param("coreId") Long coreId);
 
 }
 

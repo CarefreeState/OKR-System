@@ -2,6 +2,7 @@ package com.macaku.core.service.quadrant;
 
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.macaku.core.domain.po.quadrant.vo.ThirdQuadrantVO;
 
 /**
 * @author 马拉圈
@@ -9,5 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2024-01-20 01:04:20
 */
 public interface ThirdQuadrantService extends IService<ThirdQuadrant> {
+
+    ThirdQuadrantVO searchThirdQuadrant(Long coreId);
 
 }

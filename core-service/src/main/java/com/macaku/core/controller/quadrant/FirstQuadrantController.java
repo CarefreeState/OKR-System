@@ -52,9 +52,7 @@ public class FirstQuadrantController {
     @PostMapping("/search/{coreId}")
     @ApiOperation("查看第一象限")
     public SystemJsonResponse searchFirstQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
-        FirstQuadrantVO firstQuadrantVO = firstQuadrantService.searchFirstQuadrant(coreId).orElseThrow(() ->
-                new GlobalServiceException("内核 ID: " + coreId, GlobalServiceStatusCode.FIRST_QUADRANT_NOT_EXISTS)
-        );
+        FirstQuadrantVO firstQuadrantVO = firstQuadrantService.searchFirstQuadrant(coreId);
         return SystemJsonResponse.SYSTEM_SUCCESS(firstQuadrantVO);
     }
 

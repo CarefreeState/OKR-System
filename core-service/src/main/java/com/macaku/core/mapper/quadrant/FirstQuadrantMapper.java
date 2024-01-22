@@ -5,6 +5,8 @@ import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Optional;
+
 /**
 * @author 马拉圈
 * @description 针对表【first_quadrant(第一象限表)】的数据库操作Mapper
@@ -13,7 +15,7 @@ import org.apache.ibatis.annotations.Param;
 */
 public interface FirstQuadrantMapper extends BaseMapper<FirstQuadrant> {
 
-    FirstQuadrantVO searchFirstQuadrant(@Param("coreId") Long coreId);
+    Optional<FirstQuadrantVO> searchFirstQuadrant(@Param("coreId") Long coreId);
 
 }
 

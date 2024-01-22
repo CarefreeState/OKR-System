@@ -10,7 +10,10 @@ import io.swagger.annotations.ApiParam;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created With Intellij IDEA
@@ -32,7 +35,6 @@ public class OkrCoreController {
     @GetMapping("/exception")
     @ApiOperation("test")
     public SystemJsonResponse test() {
-        okrCoreService.test();
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
@@ -47,8 +49,7 @@ public class OkrCoreController {
     @GetMapping("/search/{id}")
     @ApiOperation("查看一个OKR内核")
     public SystemJsonResponse searchOkrCore(@PathVariable("id") @NonNull @ApiParam("OKR 内核 ID") Long id) {
-        OkrCoreVO coreVO = okrCoreService.searchOkrCore(id)
-                .orElseThrow(() -> new GlobalServiceException("查询失败"));
+        OkrCoreVO coreVO = okrCoreService.searchOkrCore(id);
         return SystemJsonResponse.SYSTEM_SUCCESS(coreVO);
     }
 

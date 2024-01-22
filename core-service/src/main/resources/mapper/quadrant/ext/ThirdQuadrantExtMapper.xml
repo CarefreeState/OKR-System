@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.macaku.core.mapper.quadrant.ThirdQuadrantMapper">
+
+    <resultMap extends="BaseResultMap" id="AllInfoResultMap" type="com.macaku.core.domain.po.quadrant.vo.ThirdQuadrantVO">
+        <collection property="actions" ofType="com.macaku.core.domain.po.inner.Action"
+                    resultMap="com.macaku.core.mapper.inner.ActionMapper.BaseResultMap" columnPrefix="a_" />
+    </resultMap>
+    <select id="searchThirdQuadrant" resultMap="AllInfoResultMap">
+        select
+            t.*,
+            a.id a_id, a.third_quadrant_id a_third_quadrant_id, a.content a_content, a.is_completed a_is_completed
+        from
+            third_quadrant t left join action a on t.id = a.third_quadrant_id
+        where
+            t.core_id = #{coreId,jdbcType=BIGINT}
+        order by a.is_completed, a.create_time
+    </select>
+
+</mapper>

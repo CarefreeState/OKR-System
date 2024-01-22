@@ -40,6 +40,9 @@ public enum GlobalServiceStatusCode {
     // -------- 象限相关：
     FIRST_QUADRANT_UPDATE_ERROR(4001, "第一象限更新失败"),
     FIRST_QUADRANT_NOT_EXISTS(4002, "第一象限不存在"),
+    SECOND_QUADRANT_NOT_EXISTS(4003, "第二象限不存在"),
+    THIRD_QUADRANT_NOT_EXISTS(4004, "第三象限不存在"),
+    FOURTH_QUADRANT_NOT_EXISTS(4005, "第四象限不存在"),
 
 
 

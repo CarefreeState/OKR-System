@@ -5,7 +5,7 @@ spring:
     active: @profiles.active@
   jackson: # Spring 返回默认用 jackson 序列化的
     date-format: yyyy-MM-dd HH:mm:ss # ⽇期格式
-    default-property-inclusion: NON_NULL # 不为null序列化
+#    default-property-inclusion: NON_NULL # 不为null序列化
     time-zone: Asia/Shanghai
   servlet:
     multipart: # 上传文件不限大小

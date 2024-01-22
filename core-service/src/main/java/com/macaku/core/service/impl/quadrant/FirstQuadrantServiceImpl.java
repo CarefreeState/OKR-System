@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Objects;
-import java.util.Optional;
 
 /**
 * @author 马拉圈
@@ -48,9 +47,10 @@ public class FirstQuadrantServiceImpl extends ServiceImpl<FirstQuadrantMapper, F
     }
 
     @Override
-    public Optional<FirstQuadrantVO> searchFirstQuadrant(Long coreId) {
-        FirstQuadrantVO firstQuadrantVO = firstQuadrantMapper.searchFirstQuadrant(coreId);
-        return Optional.ofNullable(firstQuadrantVO);
+    public FirstQuadrantVO searchFirstQuadrant(Long coreId) {
+        return firstQuadrantMapper.searchFirstQuadrant(coreId).orElseThrow(() ->
+                new GlobalServiceException("内核 ID: " + coreId, GlobalServiceStatusCode.FIRST_QUADRANT_NOT_EXISTS)
+        );
     }
 }
 
