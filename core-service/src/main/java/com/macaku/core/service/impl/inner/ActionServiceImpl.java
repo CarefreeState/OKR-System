@@ -1,7 +1,7 @@
 package com.macaku.core.service.impl.inner;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.core.domain.po.inner.Action;
 import com.macaku.core.mapper.inner.ActionMapper;
 import com.macaku.core.service.TaskService;
@@ -21,6 +21,8 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
 
     private static final Integer TYPE = 0;
 
+    private ActionMapper actionMapper = SpringUtil.getBean(ActionMapper.class);
+
 
     @Override
     public boolean match(Integer type) {
@@ -34,8 +36,7 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
         action.setContent(content);
         action.setThirdQuadrantId(quadrantId);
         // 插入
-//        this.save(action);
-        Db.save(action);
+        actionMapper.insert(action);
         log.info("为第三象限 {} 插入一条行动 {} -- {}", quadrantId, action.getId(), content);
     }
 

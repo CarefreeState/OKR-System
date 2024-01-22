@@ -1,7 +1,7 @@
 package com.macaku.core.service.impl.inner;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.core.domain.po.inner.PriorityNumberOne;
 import com.macaku.core.mapper.inner.PriorityNumberOneMapper;
 import com.macaku.core.service.TaskService;
@@ -21,11 +21,12 @@ public class PriorityNumberOneServiceImpl extends ServiceImpl<PriorityNumberOneM
 
     private static final Integer TYPE = 1;
 
+    private PriorityNumberOneMapper priorityNumberOneMapper = SpringUtil.getBean(PriorityNumberOneMapper.class);
+
     @Override
     public boolean match(Integer type) {
         return TYPE.equals(type);
     }
-
 
     @Override
     public void addTask(Long quadrantId, String content) {
@@ -34,7 +35,7 @@ public class PriorityNumberOneServiceImpl extends ServiceImpl<PriorityNumberOneM
         priorityNumberOne.setContent(content);
         priorityNumberOne.setSecondQuadrantId(quadrantId);
         // 插入
-        Db.save(priorityNumberOne);
+        priorityNumberOneMapper.insert(priorityNumberOne);
         log.info("为第二象限 {} 插入一条 Priority1 任务 {} -- {}", quadrantId, priorityNumberOne.getId(), content);
     }
 

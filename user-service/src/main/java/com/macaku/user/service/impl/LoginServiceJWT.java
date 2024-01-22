@@ -1,5 +1,6 @@
 package com.macaku.user.service.impl;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
@@ -16,7 +17,6 @@ import com.macaku.user.token.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,16 +29,13 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-//@RequiredArgsConstructor
 public class LoginServiceJWT implements LoginService {
 
     private static final String TYPE = JwtUtil.TYPE;
 
-    @Resource
-    private UserService userService;
+    private UserService userService = SpringUtil.getBean(UserService.class);
 
-    @Resource
-    private RedisCache redisCache;
+    private RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
     @Override
     public boolean match(String type) {
