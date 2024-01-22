@@ -17,10 +17,10 @@
             p1.id p1_id, p1.second_quadrant_id p1_second_quadrant_id, p1.content p1_content, p1.is_completed p1_is_completed,
             p2.id p2_id, p2.second_quadrant_id p2_second_quadrant_id, p2.content p2_content, p2.is_completed p2_is_completed
         from
-            second_quadrant s left join priority_number_one p1 on s.id = p1.second_quadrant_id
-                              left join priority_number_two p2 on s.id = p2.second_quadrant_id
+            second_quadrant s left join priority_number_one p1 on s.id = p1.second_quadrant_id and p1.is_deleted = 0
+                              left join priority_number_two p2 on s.id = p2.second_quadrant_id and p2.is_deleted = 0
         where
-            s.core_id = #{coreId,jdbcType=BIGINT}
+            s.core_id = #{coreId,jdbcType=BIGINT} and s.is_deleted = 0
         order by p1.is_completed, p2.is_completed, p1.create_time, p2.create_time
     </select>
 </mapper>

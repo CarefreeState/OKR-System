@@ -2,6 +2,7 @@ package com.macaku.core.service.impl.inner;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.core.domain.po.inner.PriorityNumberOne;
 import com.macaku.core.mapper.inner.PriorityNumberOneMapper;
 import com.macaku.core.service.TaskService;
@@ -37,6 +38,27 @@ public class PriorityNumberOneServiceImpl extends ServiceImpl<PriorityNumberOneM
         // 插入
         priorityNumberOneMapper.insert(priorityNumberOne);
         log.info("为第二象限 {} 插入一条 Priority1 任务 {} -- {}", quadrantId, priorityNumberOne.getId(), content);
+    }
+
+    @Override
+    public void removeTask(Long id) {
+        // 删除
+        boolean ret = Db.lambdaUpdate(PriorityNumberOne.class)
+                .eq(PriorityNumberOne::getId, id)
+                .remove();
+        if(ret) {
+            log.info("成功为第二象限删除一条 P1 {}", id);
+        }
+    }
+
+    @Override
+    public void updateTask(Long id, String content, Boolean isCompleted) {
+        PriorityNumberOne updatePriorityNumberOne = new PriorityNumberOne();
+        updatePriorityNumberOne.setId(id);
+        updatePriorityNumberOne.setContent(content);
+        updatePriorityNumberOne.setIsCompleted(isCompleted);
+        priorityNumberOneMapper.updateById(updatePriorityNumberOne);
+        log.info("成功更新一条P1 {} {} {}", id, content, isCompleted);
     }
 
 }

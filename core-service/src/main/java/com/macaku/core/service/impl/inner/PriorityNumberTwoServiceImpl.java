@@ -2,7 +2,7 @@ package com.macaku.core.service.impl.inner;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.macaku.common.redis.RedisCache;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.core.domain.po.inner.PriorityNumberTwo;
 import com.macaku.core.mapper.inner.PriorityNumberTwoMapper;
 import com.macaku.core.service.TaskService;
@@ -38,6 +38,27 @@ public class PriorityNumberTwoServiceImpl extends ServiceImpl<PriorityNumberTwoM
 //         插入
         priorityNumberTwoMapper.insert(priorityNumberTwo);
         log.info("为第二象限 {} 插入一条 Priority2 任务 {} -- {}", quadrantId, priorityNumberTwo.getId(), content);
+    }
+
+    @Override
+    public void removeTask(Long id) {
+        // 删除
+        boolean ret = Db.lambdaUpdate(PriorityNumberTwo.class)
+                .eq(PriorityNumberTwo::getId, id)
+                .remove();
+        if(ret) {
+            log.info("成功为第二象限删除一条 P2 {}", id);
+        }
+    }
+
+    @Override
+    public void updateTask(Long id, String content, Boolean isCompleted) {
+        PriorityNumberTwo updatePriorityNumberTwo = new PriorityNumberTwo();
+        updatePriorityNumberTwo.setId(id);
+        updatePriorityNumberTwo.setContent(content);
+        updatePriorityNumberTwo.setIsCompleted(isCompleted);
+        priorityNumberTwoMapper.updateById(updatePriorityNumberTwo);
+        log.info("成功更新一条P2 {} {} {}", id, content, isCompleted);
     }
 }
 

@@ -1,12 +1,14 @@
-package com.macaku.core.domain.po.inner.dto;
+package com.macaku.core.domain.po.quadrant.dto;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -14,29 +16,37 @@ import java.util.Objects;
  * Description:
  * User: 马拉圈
  * Date: 2024-01-22
- * Time: 1:59
+ * Time: 20:07
  */
 @Data
-@ApiModel(description = "任务实体")
-public class TaskDTO {
+@ApiModel(description = "第二象限实体")
+public class InitQuadrantDTO {
 
-    @ApiModelProperty("象限 ID")
-    private Long quadrantId;
+    @ApiModelProperty("第二象限 ID")
+    private Long id;
 
-    @ApiModelProperty("任务内容")
-    private String content;
+    @ApiModelProperty("截止时间")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date deadline;
+
+    @ApiModelProperty("象限周期")
+    private Integer quadrantCycle;
 
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
-        if(Objects.isNull(quadrantId)) {
+        if(Objects.isNull(id)) {
             messageBuilder.append("-> 象限 ID 为 null\n");
         }
-        if(!StringUtils.hasText(content)) {
-            messageBuilder.append("-> 没有内容\n");
+        if(Objects.isNull(deadline) || deadline.getTime() < System.currentTimeMillis()) {
+            messageBuilder.append("-> 截止时间非法\n");
+        }
+        if(Objects.isNull(quadrantCycle)) {
+            messageBuilder.append("-> 周期为空\n");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {
             throw new GlobalServiceException(message, GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
     }
+
 }

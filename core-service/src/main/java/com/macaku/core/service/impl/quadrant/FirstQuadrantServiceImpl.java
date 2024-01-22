@@ -1,17 +1,24 @@
 package com.macaku.core.service.impl.quadrant;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.util.TimerUtil;
+import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
 import com.macaku.core.mapper.quadrant.FirstQuadrantMapper;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.Objects;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 /**
 * @author 马拉圈
@@ -20,6 +27,7 @@ import java.util.Objects;
 */
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FirstQuadrantServiceImpl extends ServiceImpl<FirstQuadrantMapper, FirstQuadrant>
     implements FirstQuadrantService {
 
@@ -28,6 +36,7 @@ public class FirstQuadrantServiceImpl extends ServiceImpl<FirstQuadrantMapper, F
     @Override
     public void initFirstQuadrant(FirstQuadrant firstQuadrant) {
         Long id = firstQuadrant.getId();
+        Date deadline = firstQuadrant.getDeadline();
         // 查询是否是第一次修改
         FirstQuadrant quadrant = this.lambdaQuery()
                 .eq(FirstQuadrant::getId, id)
@@ -44,6 +53,21 @@ public class FirstQuadrantServiceImpl extends ServiceImpl<FirstQuadrantMapper, F
         updateQuadrant.setObjective(firstQuadrant.getObjective());
         // 更新
         this.updateById(updateQuadrant);
+        Long coreId = this.lambdaQuery()
+                .eq(FirstQuadrant::getId, id)
+                .select(FirstQuadrant::getCoreId)
+                .one().getCoreId();
+        // 发起一个定时任务
+        TimerUtil.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                OkrCore updateOkrCore = new OkrCore();
+                updateOkrCore.setId(coreId);
+                updateOkrCore.setIsOver(true);
+                Db.lambdaUpdate(OkrCore.class).eq(OkrCore::getId, coreId).update(updateOkrCore);
+                log.info("OKR 结束！ {}", deadline);
+            }
+        }, deadline.getTime() - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
     }
 
     @Override

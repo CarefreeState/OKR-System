@@ -10,6 +10,8 @@
             <result property="unionid" column="unionid" jdbcType="VARCHAR"/>
             <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
             <result property="photo" column="photo" jdbcType="VARCHAR"/>
+            <result property="email" column="email" jdbcType="VARCHAR"/>
+            <result property="phone" column="phone" jdbcType="CHAR"/>
             <result property="version" column="version" jdbcType="INTEGER"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BIT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
@@ -18,7 +20,8 @@
 
     <sql id="Base_Column_List">
         id,openid,unionid,
-        nickname,photo,version,
-        is_deleted,create_time,update_time
+        nickname,photo,email,
+        phone,version,is_deleted,
+        create_time,update_time
     </sql>
 </mapper>

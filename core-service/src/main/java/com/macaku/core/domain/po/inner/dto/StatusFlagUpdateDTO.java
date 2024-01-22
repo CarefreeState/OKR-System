@@ -14,14 +14,15 @@ import java.util.Objects;
  * Description:
  * User: 马拉圈
  * Date: 2024-01-22
- * Time: 2:23
+ * Time: 17:33
  */
 @Data
-@ApiModel(description = "状态指标")
-public class StatusFlagDTO {
+@ApiModel(description = "指标更新实体")
+public class StatusFlagUpdateDTO {
 
-    @ApiModelProperty("第四象限 ID")
-    private Long fourthQuadrantId;
+
+    @ApiModelProperty("指标 ID")
+    private Long id;
 
     @ApiModelProperty("指标内容")
     private String label;
@@ -31,8 +32,8 @@ public class StatusFlagDTO {
 
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
-        if(Objects.isNull(fourthQuadrantId)) {
-            messageBuilder.append("-> 第四象限 ID 为 null\n");
+        if(Objects.isNull(id)) {
+            messageBuilder.append("-> 指标 ID 为 null\n");
         }
         if(!StringUtils.hasText(label)) {
             messageBuilder.append("-> 指标为空\n");
@@ -45,4 +46,5 @@ public class StatusFlagDTO {
             throw new GlobalServiceException(message, GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
     }
+
 }

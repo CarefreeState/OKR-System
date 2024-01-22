@@ -14,4 +14,8 @@ public interface TaskService {
 
     void addTask(Long quadrantId, String content);
 
+    void removeTask(Long id);
+
+    void updateTask(Long id, String content, Boolean isCompleted);
+
 }

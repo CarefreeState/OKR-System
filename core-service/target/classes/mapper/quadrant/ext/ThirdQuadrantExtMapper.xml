@@ -13,9 +13,9 @@
             t.*,
             a.id a_id, a.third_quadrant_id a_third_quadrant_id, a.content a_content, a.is_completed a_is_completed
         from
-            third_quadrant t left join action a on t.id = a.third_quadrant_id
+            third_quadrant t left join action a on t.id = a.third_quadrant_id and a.is_deleted = 0
         where
-            t.core_id = #{coreId,jdbcType=BIGINT}
+            t.core_id = #{coreId,jdbcType=BIGINT} and t.is_deleted = 0
         order by a.is_completed, a.create_time
     </select>
 

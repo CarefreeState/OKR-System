@@ -2,6 +2,7 @@ package com.macaku.core.service.impl.inner;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.core.domain.po.inner.Action;
 import com.macaku.core.mapper.inner.ActionMapper;
 import com.macaku.core.service.TaskService;
@@ -38,6 +39,27 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
         // 插入
         actionMapper.insert(action);
         log.info("为第三象限 {} 插入一条行动 {} -- {}", quadrantId, action.getId(), content);
+    }
+
+    @Override
+    public void removeTask(Long id) {
+        // 删除
+        boolean ret = Db.lambdaUpdate(Action.class)
+                .eq(Action::getId, id)
+                .remove();
+        if(ret) {
+            log.info("成功为第三象限删除一条行动 {}", id);
+        }
+    }
+
+    @Override
+    public void updateTask(Long id, String content, Boolean isCompleted) {
+        Action updateAction = new Action();
+        updateAction.setId(id);
+        updateAction.setContent(content);
+        updateAction.setIsCompleted(isCompleted);
+        actionMapper.updateById(updateAction);
+        log.info("成功更新一条行动 {} {} {}", id, content, isCompleted);
     }
 
 }

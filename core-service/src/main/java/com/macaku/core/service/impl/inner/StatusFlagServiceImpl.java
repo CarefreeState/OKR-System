@@ -29,6 +29,27 @@ public class StatusFlagServiceImpl extends ServiceImpl<StatusFlagMapper, StatusF
         this.save(newFlag);
         log.info("成功为第四象限 {} 新增一条指标 {} -- {}", fourthQuadrantId, label, color);
     }
+
+    @Override
+    public void removeStatusFlag(Long id) {
+        // 逻辑删除
+        boolean ret = this.lambdaUpdate().eq(StatusFlag::getId, id).remove();
+        if(ret) {
+            log.info("成功为第四象限删除一条指标 {}", id);
+        }
+    }
+
+    @Override
+    public void updateStatusFlag(StatusFlag statusFlag) {
+        // 提取数据
+        StatusFlag updateFlag = new StatusFlag();
+        updateFlag.setId(statusFlag.getId());
+        updateFlag.setColor(statusFlag.getColor());
+        updateFlag.setLabel(statusFlag.getLabel());
+        // 修改
+        this.updateById(updateFlag);
+        log.info("成功为第四象限修改一条指标为 -> {}", updateFlag);
+    }
 }
 
 

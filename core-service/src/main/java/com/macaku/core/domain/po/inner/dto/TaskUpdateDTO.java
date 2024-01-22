@@ -14,35 +14,36 @@ import java.util.Objects;
  * Description:
  * User: 马拉圈
  * Date: 2024-01-22
- * Time: 2:23
+ * Time: 18:57
  */
 @Data
-@ApiModel(description = "状态指标")
-public class StatusFlagDTO {
+@ApiModel(description = "任务更新实体")
+public class TaskUpdateDTO {
 
-    @ApiModelProperty("第四象限 ID")
-    private Long fourthQuadrantId;
+    @ApiModelProperty("任务 ID")
+    private Long id;
 
-    @ApiModelProperty("指标内容")
-    private String label;
+    @ApiModelProperty("任务内容")
+    private String content;
 
-    @ApiModelProperty("颜色")
-    private String color;
+    @ApiModelProperty("是否完成")
+    private Boolean isCompleted;
 
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
-        if(Objects.isNull(fourthQuadrantId)) {
-            messageBuilder.append("-> 第四象限 ID 为 null\n");
+        if(Objects.isNull(id)) {
+            messageBuilder.append("-> 任务 ID 为 null\n");
         }
-        if(!StringUtils.hasText(label)) {
-            messageBuilder.append("-> 指标为空\n");
+        if(!StringUtils.hasText(content)) {
+            messageBuilder.append("-> 没有内容\n");
         }
-        if(!StringUtils.hasText(color) || !color.matches("^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$")) {
-            messageBuilder.append("-> 颜色非法\n");
+        if(Objects.isNull(isCompleted)) {
+            messageBuilder.append("-> 任务状态未知\n");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {
             throw new GlobalServiceException(message, GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
     }
+
 }

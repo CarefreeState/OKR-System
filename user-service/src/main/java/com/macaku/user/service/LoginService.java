@@ -17,5 +17,5 @@ public interface LoginService {
 
 
     @Transactional
-    Map<String, Object> login(Map<?, ?> loginDTO);
+    Map<String, Object> login(Map<?, ?> data);
 }

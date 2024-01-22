@@ -17,4 +17,7 @@ public interface OkrCoreService extends IService<OkrCore> {
     Optional<Long> createOkrCore();
 
     OkrCoreVO searchOkrCore(Long id);
+
+    
+
 }

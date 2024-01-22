@@ -14,9 +14,9 @@
             k.probability k_probability, k.version k_version, k.is_deleted k_is_deleted,
             k.create_time k_create_time, k.update_time k_update_time
         from
-            first_quadrant f left join key_result k on f.id = k.first_quadrant_id
+            first_quadrant f left join key_result k on f.id = k.first_quadrant_id and k.is_deleted = 0
         where
-            f.core_id = #{coreId,jdbcType=BIGINT}
+            f.core_id = #{coreId,jdbcType=BIGINT} and f.is_deleted = 0
         order by k.probability desc, k.create_time
     </select>
 

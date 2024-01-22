@@ -11,4 +11,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 public interface StatusFlagService extends IService<StatusFlag> {
 
     void addStatusFlag(StatusFlag statusFlag);
+
+    void removeStatusFlag(Long id);
+
+    void updateStatusFlag(StatusFlag statusFlag);
 }

@@ -14,9 +14,9 @@
             fq.*,
             sf.id sf_id, sf.fourth_quadrant_id sf_fourth_quadrant_id, sf.label sf_label
         from
-            fourth_quadrant fq left join status_flag sf on fq.id = sf.fourth_quadrant_id
+            fourth_quadrant fq left join status_flag sf on fq.id = sf.fourth_quadrant_id and sf.is_deleted = 0
         where
-            fq.core_id = #{coreId,jdbcType=BIGINT}
+            fq.core_id = #{coreId,jdbcType=BIGINT} and fq.is_deleted = 0
         order by sf.create_time
     </select>
 

@@ -3,6 +3,7 @@ package com.macaku.core.service.quadrant;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
 * @author 马拉圈
@@ -11,6 +12,7 @@ import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
 */
 public interface FirstQuadrantService extends IService<FirstQuadrant> {
 
+    @Transactional
     void initFirstQuadrant(FirstQuadrant firstQuadrant);
 
     FirstQuadrantVO searchFirstQuadrant(Long coreId);
