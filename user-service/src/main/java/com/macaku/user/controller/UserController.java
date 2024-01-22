@@ -1,9 +1,9 @@
 package com.macaku.user.controller;
 
 import com.macaku.common.response.SystemJsonResponse;
-import com.macaku.user.domain.dto.LoginDTO;
 import com.macaku.user.service.LoginService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -31,19 +31,19 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public SystemJsonResponse login(LoginDTO loginDTO, @NonNull @RequestHeader("type") String type) {
-        loginDTO.validate();
+    @ApiOperation("这里传递的参数根据具体的登录方式传递对应的数据！")
+    public SystemJsonResponse login(@RequestParam Map<?, ?> data, @NonNull @RequestHeader("type") String type) {
         ServiceLoader<LoginService> loginServices = ServiceLoader.load(LoginService.class);
         Iterator<LoginService> serviceIterator = loginServices.iterator();
-        Map<String, Object> data = null;
+        Map<String, Object> result = null;
         while (serviceIterator.hasNext()) {
             LoginService loginService =  serviceIterator.next();
             if(loginService.match(type)) {
-                data = loginService.login(loginDTO);
+                result = loginService.login(data);
                 break;
             }
         }
-        return SystemJsonResponse.SYSTEM_SUCCESS(data);
+        return SystemJsonResponse.SYSTEM_SUCCESS(result);
     }
 
 }

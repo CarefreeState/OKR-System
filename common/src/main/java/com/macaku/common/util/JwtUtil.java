@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class JwtUtil {
 
-    public static final String TYPE = "JWT";
+    public static final String TYPE = "JWT"; // 码： Fz01u-
 
     public static final String JWT_HEADER = "token";
 

@@ -1,5 +1,7 @@
 package com.macaku.user.domain.dto;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.JsonUtil;
@@ -7,6 +9,7 @@ import com.macaku.user.domain.po.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
@@ -66,5 +69,17 @@ public class LoginDTO {
         user.setNickname((String) data.get("nickname"));
         user.setPhoto((String) data.get("avatarUrl"));
         return user;
+    }
+
+    public static void main(String[] args) {
+        ModelMap map = new ModelMap();
+        map.put("iv", "111");
+        map.put("signature", "666");
+        System.out.println(map);
+        System.out.println(create(map));
+    }
+
+    public static LoginDTO create(Map<?, ?> data) {
+        return BeanUtil.mapToBean(data, LoginDTO.class, false, new CopyOptions());
     }
 }

@@ -41,4 +41,8 @@ public class ShortCodeUtil {
     public static String getShortCode(String str) {
         return subCodeByString(md5(str));
     }
+
+    public static void main(String[] args) {
+        System.out.println(getShortCode("JWT"));
+    }
 }

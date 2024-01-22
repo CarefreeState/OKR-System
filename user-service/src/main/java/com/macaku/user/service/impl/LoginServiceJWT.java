@@ -44,7 +44,9 @@ public class LoginServiceJWT implements LoginService {
 
 
     @Override
-    public Map<String, Object> login(LoginDTO loginDTO) {
+    public Map<String, Object> login(Map<?, ?> data) {
+        LoginDTO loginDTO = LoginDTO.create(data);
+        loginDTO.validate();
         User user = loginDTO.transToUser();
         String code = loginDTO.getCode();
         String iv = loginDTO.getIv();
