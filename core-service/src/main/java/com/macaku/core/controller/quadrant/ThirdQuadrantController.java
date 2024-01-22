@@ -1,6 +1,7 @@
 package com.macaku.core.controller.quadrant;
 
 import com.macaku.common.response.SystemJsonResponse;
+import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
 import com.macaku.core.domain.po.quadrant.vo.ThirdQuadrantVO;
 import com.macaku.core.service.quadrant.ThirdQuadrantService;
 import io.swagger.annotations.Api;
@@ -33,11 +34,21 @@ public class ThirdQuadrantController {
 
     @PostMapping("/search/{coreId}")
     @ApiOperation("查看第三象限")
-    public SystemJsonResponse searchFirstQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
+    public SystemJsonResponse searchThirdQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
         ThirdQuadrantVO secondQuadrantVO = thirdQuadrantService.searchThirdQuadrant(coreId);
         return SystemJsonResponse.SYSTEM_SUCCESS(secondQuadrantVO);
     }
 
-
+    @PostMapping("/init")
+    @ApiOperation("初始化第三象限")
+    public SystemJsonResponse initThirdQuadrant(InitQuadrantDTO initQuadrantDTO) {
+        // 校验
+        initQuadrantDTO.validate();
+        // 初始化
+        thirdQuadrantService.initThirdQuadrant(initQuadrantDTO);
+        // 成功
+        log.info("第三象限初始化成功：{}", initQuadrantDTO);
+        return SystemJsonResponse.SYSTEM_SUCCESS();
+    }
 
 }

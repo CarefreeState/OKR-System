@@ -9,7 +9,7 @@ import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.JwtUtil;
 import com.macaku.common.util.ShortCodeUtil;
 import com.macaku.common.web.HttpUtils;
-import com.macaku.user.domain.dto.LoginDTO;
+import com.macaku.user.domain.dto.WxLoginDTO;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.service.LoginService;
 import com.macaku.user.service.UserService;
@@ -45,13 +45,13 @@ public class LoginServiceJWT implements LoginService {
 
     @Override
     public Map<String, Object> login(Map<?, ?> data) {
-        LoginDTO loginDTO = LoginDTO.create(data);
-        loginDTO.validate();
-        User user = loginDTO.transToUser();
-        String code = loginDTO.getCode();
-        String iv = loginDTO.getIv();
-        String signature = loginDTO.getSignature();
-        String rawData = loginDTO.getRawData();
+        WxLoginDTO wxLoginDTO = WxLoginDTO.create(data);
+        wxLoginDTO.validate();
+        User user = wxLoginDTO.transToUser();
+        String code = wxLoginDTO.getCode();
+        String iv = wxLoginDTO.getIv();
+        String signature = wxLoginDTO.getSignature();
+        String rawData = wxLoginDTO.getRawData();
         // 1. 构造请求
         String code2SessionUrl = "https://api.weixin.qq.com/sns/jscode2session";
         Map<String, Object> param = new HashMap<String, Object>(){{

@@ -27,9 +27,9 @@ create table `user` (
 drop table if exists `okr_core`;
 create table `okr_core` (
     `id` bigint primary key auto_increment comment 'ID',
-    `celebrate_day` tinyint not null default 0 comment '庆祝日（星期几）',
-    `second_quadrant_cycle` int not null default 604800 comment '第二象限周期',
-    `third_quadrant_cycle` int not null default 2592000 comment '第三象限周期',
+    `celebrate_day` tinyint null default null comment '庆祝日（星期几）',
+    `second_quadrant_cycle` int null default null comment '第二象限周期',
+    `third_quadrant_cycle` int null default null comment '第三象限周期',
     `is_over` bit not null default b'0' comment '是否结束',
     `summary` text default null comment '总结',
     -- common column

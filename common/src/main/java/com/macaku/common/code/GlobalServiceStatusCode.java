@@ -39,10 +39,18 @@ public enum GlobalServiceStatusCode {
 
     // -------- 象限相关：
     FIRST_QUADRANT_UPDATE_ERROR(4001, "第一象限更新失败"),
+    SECOND_QUADRANT_UPDATE_ERROR(4002, "第二象限更新失败"),
+    THIRD_QUADRANT_UPDATE_ERROR(4003, "第三象限更新失败"),
+    FOURTH_QUADRANT_UPDATE_ERROR(4004, "第四象限更新失败"),
     FIRST_QUADRANT_NOT_EXISTS(4002, "第一象限不存在"),
     SECOND_QUADRANT_NOT_EXISTS(4003, "第二象限不存在"),
     THIRD_QUADRANT_NOT_EXISTS(4004, "第三象限不存在"),
     FOURTH_QUADRANT_NOT_EXISTS(4005, "第四象限不存在"),
+
+    OKR_IS_OVER(4100, "OKR 已结束"),
+    OKR_IS_NOT_OVER(4101, "OKR 未结束"),
+
+    INVALID_CELEBRATE_DAY(4200, "庆祝日非法更新"),
 
 
 

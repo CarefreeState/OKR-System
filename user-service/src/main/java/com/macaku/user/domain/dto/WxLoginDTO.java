@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @Data
 @ApiModel(description = "登录消息")
-public class LoginDTO {
+public class WxLoginDTO {
 
     @ApiModelProperty("code")
     private String code;
@@ -79,7 +79,7 @@ public class LoginDTO {
         System.out.println(create(map));
     }
 
-    public static LoginDTO create(Map<?, ?> data) {
-        return BeanUtil.mapToBean(data, LoginDTO.class, false, new CopyOptions());
+    public static WxLoginDTO create(Map<?, ?> data) {
+        return BeanUtil.mapToBean(data, WxLoginDTO.class, false, new CopyOptions());
     }
 }

@@ -18,6 +18,10 @@ public interface OkrCoreService extends IService<OkrCore> {
 
     OkrCoreVO searchOkrCore(Long id);
 
-    
+    void confirmCelebrateDate(Long id, Integer celebrateDay);
+
+    void summaryOKR(Long id, String summary);
+
+    void complete(Long id);
 
 }

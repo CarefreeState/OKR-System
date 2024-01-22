@@ -2,6 +2,7 @@ package com.macaku.core.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.ThreadPool;
 import com.macaku.core.domain.po.OkrCore;
@@ -26,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -118,6 +120,60 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         }
         // 返回
         return okrCoreVO;
+    }
+
+    @Override
+    public void confirmCelebrateDate(Long id, Integer celebrateDay) {
+        OkrCore okrCore = this.lambdaQuery()
+                .eq(OkrCore::getId, id)
+                .select(OkrCore::getIsOver, OkrCore::getCelebrateDay)
+                .one();
+        if(okrCore.getIsOver()) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
+        }
+        if(Objects.nonNull(okrCore.getCelebrateDay())) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.INVALID_CELEBRATE_DAY);
+        }
+        // 构造更新对象
+        OkrCore updateOkrCore = new OkrCore();
+        updateOkrCore.setId(id);
+        updateOkrCore.setCelebrateDay(celebrateDay);
+        // 更新
+        this.lambdaUpdate().eq(OkrCore::getId, id).update(updateOkrCore);
+    }
+
+    @Override
+    public void summaryOKR(Long id, String summary) {
+        OkrCore okrCore = this.lambdaQuery()
+                .eq(OkrCore::getId, id)
+                .select(OkrCore::getIsOver)
+                .one();
+        if(!okrCore.getIsOver()) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_NOT_OVER);
+        }
+        // 构造更新对象
+        OkrCore updateOkrCore = new OkrCore();
+        updateOkrCore.setId(id);
+        updateOkrCore.setSummary(summary);
+        // 更新
+        this.lambdaUpdate().eq(OkrCore::getId, id).update(updateOkrCore);
+    }
+
+    @Override
+    public void complete(Long id) {
+        OkrCore okrCore = this.lambdaQuery()
+                .eq(OkrCore::getId, id)
+                .select(OkrCore::getIsOver)
+                .one();
+        if(okrCore.getIsOver()) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
+        }
+        // 构造更新对象
+        OkrCore updateOkrCore = new OkrCore();
+        updateOkrCore.setId(id);
+        updateOkrCore.setIsOver(true);
+        // 更新
+        this.lambdaUpdate().eq(OkrCore::getId, id).update(updateOkrCore);
     }
 
 

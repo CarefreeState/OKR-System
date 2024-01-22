@@ -2,7 +2,9 @@ package com.macaku.core.service.quadrant;
 
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
 import com.macaku.core.domain.po.quadrant.vo.ThirdQuadrantVO;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
 * @author 马拉圈
@@ -10,6 +12,9 @@ import com.macaku.core.domain.po.quadrant.vo.ThirdQuadrantVO;
 * @createDate 2024-01-20 01:04:20
 */
 public interface ThirdQuadrantService extends IService<ThirdQuadrant> {
+
+    @Transactional
+    void initThirdQuadrant(InitQuadrantDTO initQuadrantDTO);
 
     ThirdQuadrantVO searchThirdQuadrant(Long coreId);
 

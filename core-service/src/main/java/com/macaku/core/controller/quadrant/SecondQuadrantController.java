@@ -1,6 +1,7 @@
 package com.macaku.core.controller.quadrant;
 
 import com.macaku.common.response.SystemJsonResponse;
+import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
 import com.macaku.core.domain.po.quadrant.vo.SecondQuadrantVO;
 import com.macaku.core.service.quadrant.SecondQuadrantService;
 import io.swagger.annotations.Api;
@@ -32,9 +33,21 @@ public class SecondQuadrantController {
 
     @PostMapping("/search/{coreId}")
     @ApiOperation("查看第二象限")
-    public SystemJsonResponse searchFirstQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
+    public SystemJsonResponse searchSecondQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
         SecondQuadrantVO secondQuadrantVO = secondQuadrantService.searchSecondQuadrant(coreId);
         return SystemJsonResponse.SYSTEM_SUCCESS(secondQuadrantVO);
+    }
+
+    @PostMapping("/init")
+    @ApiOperation("初始化第二象限")
+    public SystemJsonResponse initSecondQuadrant(InitQuadrantDTO initQuadrantDTO) {
+        // 校验
+        initQuadrantDTO.validate();
+        // 初始化
+        secondQuadrantService.initSecondQuadrant(initQuadrantDTO);
+        // 成功
+        log.info("第二象限初始化成功：{}", initQuadrantDTO);
+        return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
 

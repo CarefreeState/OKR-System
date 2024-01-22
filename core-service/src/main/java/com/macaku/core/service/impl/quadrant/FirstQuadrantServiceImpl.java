@@ -67,7 +67,7 @@ public class FirstQuadrantServiceImpl extends ServiceImpl<FirstQuadrantMapper, F
                 Db.lambdaUpdate(OkrCore.class).eq(OkrCore::getId, coreId).update(updateOkrCore);
                 log.info("OKR 结束！ {}", deadline);
             }
-        }, deadline.getTime() - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+        }, TimeUnit.MILLISECONDS.toSeconds(deadline.getTime() - System.currentTimeMillis()), TimeUnit.SECONDS);
     }
 
     @Override

@@ -22,7 +22,7 @@ import java.util.Objects;
 @ApiModel(description = "第二象限实体")
 public class InitQuadrantDTO {
 
-    @ApiModelProperty("第二象限 ID")
+    @ApiModelProperty("象限 ID")
     private Long id;
 
     @ApiModelProperty("截止时间")
