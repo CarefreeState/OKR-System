@@ -9,7 +9,6 @@ import com.macaku.user.domain.po.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.ui.ModelMap;
 import org.springframework.util.StringUtils;
 
 import java.util.Map;
@@ -21,8 +20,8 @@ import java.util.Map;
  * Date: 2024-01-21
  * Time: 15:27
  */
+@ApiModel("微信小程序登录数据")
 @Data
-@ApiModel(description = "登录消息")
 public class WxLoginDTO {
 
     @ApiModelProperty("code")
@@ -69,14 +68,6 @@ public class WxLoginDTO {
         user.setNickname((String) data.get("nickname"));
         user.setPhoto((String) data.get("avatarUrl"));
         return user;
-    }
-
-    public static void main(String[] args) {
-        ModelMap map = new ModelMap();
-        map.put("iv", "111");
-        map.put("signature", "666");
-        System.out.println(map);
-        System.out.println(create(map));
     }
 
     public static WxLoginDTO create(Map<?, ?> data) {

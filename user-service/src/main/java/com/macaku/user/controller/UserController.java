@@ -27,7 +27,7 @@ public class UserController {
 
     @PostMapping("/login")
     @ApiOperation("这里传递的参数根据具体的登录方式传递对应的数据！")
-    public SystemJsonResponse login(@RequestParam Map<?, ?> data, @NonNull @RequestHeader("type") String type) {
+    public SystemJsonResponse<Map<String, Object>> login(@RequestParam Map<?, ?> data, @NonNull @RequestHeader("type") String type) {
         ServiceLoader<LoginService> loginServices = ServiceLoader.load(LoginService.class);
         Iterator<LoginService> serviceIterator = loginServices.iterator();
         Map<String, Object> result = null;

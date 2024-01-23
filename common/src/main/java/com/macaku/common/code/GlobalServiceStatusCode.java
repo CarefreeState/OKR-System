@@ -7,6 +7,9 @@ public enum GlobalServiceStatusCode {
     /* 成功, 默认200 */
     SYSTEM_SUCCESS(200, "操作成功"),
 
+    /* 需要重定向 */
+    NEED_REDIRECT(302, "需要重定向"),
+
     /* 系统错误 500 - 1000 */
     SYSTEM_SERVICE_FAIL(-4396, "操作失败"),
     SYSTEM_SERVICE_ERROR(-500, "系统异常"),

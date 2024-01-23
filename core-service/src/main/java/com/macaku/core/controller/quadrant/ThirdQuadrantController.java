@@ -34,7 +34,7 @@ public class ThirdQuadrantController {
 
     @PostMapping("/search/{coreId}")
     @ApiOperation("查看第三象限")
-    public SystemJsonResponse searchThirdQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
+    public SystemJsonResponse<ThirdQuadrantVO> searchThirdQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
         ThirdQuadrantVO secondQuadrantVO = thirdQuadrantService.searchThirdQuadrant(coreId);
         return SystemJsonResponse.SYSTEM_SUCCESS(secondQuadrantVO);
     }

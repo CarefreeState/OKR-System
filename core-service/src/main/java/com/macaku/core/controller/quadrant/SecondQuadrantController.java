@@ -33,7 +33,7 @@ public class SecondQuadrantController {
 
     @PostMapping("/search/{coreId}")
     @ApiOperation("查看第二象限")
-    public SystemJsonResponse searchSecondQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
+    public SystemJsonResponse<SecondQuadrantVO> searchSecondQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
         SecondQuadrantVO secondQuadrantVO = secondQuadrantService.searchSecondQuadrant(coreId);
         return SystemJsonResponse.SYSTEM_SUCCESS(secondQuadrantVO);
     }

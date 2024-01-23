@@ -28,12 +28,11 @@ import org.springframework.web.bind.annotation.*;
 @Api(tags = "OKR 内核")
 public class OkrCoreController {
 
-
     private final OkrCoreService okrCoreService;
 
     @GetMapping("/create")
     @ApiOperation("创建一个core")
-    public SystemJsonResponse createOkr() {
+    public SystemJsonResponse<Long> createOkr() {
         Long coreID = okrCoreService.createOkrCore()
                 .orElseThrow(() -> new GlobalServiceException("创建core失败"));
         return SystemJsonResponse.SYSTEM_SUCCESS(coreID);
@@ -41,7 +40,7 @@ public class OkrCoreController {
 
     @GetMapping("/search/{id}")
     @ApiOperation("查看一个OKR内核")
-    public SystemJsonResponse searchOkrCore(@PathVariable("id") @NonNull @ApiParam("OKR 内核 ID") Long id) {
+    public SystemJsonResponse<OkrCoreVO> searchOkrCore(@PathVariable("id") @NonNull @ApiParam("OKR 内核 ID") Long id) {
         OkrCoreVO coreVO = okrCoreService.searchOkrCore(id);
         return SystemJsonResponse.SYSTEM_SUCCESS(coreVO);
     }

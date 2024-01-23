@@ -1,30 +1,42 @@
 package com.macaku.common.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.macaku.common.code.GlobalServiceStatusCode;
-import lombok.NoArgsConstructor;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.Optional;
 
-@NoArgsConstructor
-public class SystemJsonResponse extends LinkedHashMap<String, Object> implements Serializable {
-    private static final long serialVersionUID = 1L;
-    private static final Object NULL = null;
-    private static final String RESPONSE_CODE = "code";
-    private static final String RESPONSE_MESSAGE = "message";
-    private static final String RESPONSE_DATA = "data";
 
-    private SystemJsonResponse(int code, String msg, Object data) {
-        this.put(RESPONSE_CODE, code);
-        Optional.ofNullable(msg).ifPresent(m -> this.put(RESPONSE_MESSAGE, m));
-        Optional.ofNullable(data).ifPresent(d -> this.put(RESPONSE_DATA, d));
+@ApiModel("统一响应")
+@Getter
+public class SystemJsonResponse<T> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @JsonInclude
+    @ApiModelProperty(value = "状态码")
+    private int code;
+
+    @JsonInclude
+    @ApiModelProperty(value = "描述语")
+    private String message;
+
+    @JsonInclude
+    @ApiModelProperty(value = "具体响应")
+    private T data;
+
+    private SystemJsonResponse(int code, String msg, T data) {
+        this.code = code;
+        Optional.ofNullable(msg).ifPresent(m -> this.message = m);
+        Optional.ofNullable(data).ifPresent(d -> this.data = d);
     }
 
     private SystemJsonResponse(int code, String msg) {
-        this(code, msg, NULL);
+        this(code, msg, null);
     }
-
 
     /**
      * 成功信息返回, 无数据
@@ -44,9 +56,26 @@ public class SystemJsonResponse extends LinkedHashMap<String, Object> implements
      * @param data 返回时带上的数据
      * @return 成功状态码以及数据
      */
-    public static SystemJsonResponse SYSTEM_SUCCESS(Object data) {
-        return new SystemJsonResponse(GlobalServiceStatusCode.SYSTEM_SUCCESS.getCode(),
+    public static <E> SystemJsonResponse<E> SYSTEM_SUCCESS(E data) {
+        return new SystemJsonResponse<>(GlobalServiceStatusCode.SYSTEM_SUCCESS.getCode(),
                 GlobalServiceStatusCode.SYSTEM_SUCCESS.getMessage(), data);
+    }
+
+    /**
+     * 重定向
+     * @return
+     */
+    public static SystemJsonResponse SYSTEM_REDIRECT() {
+        return new SystemJsonResponse(GlobalServiceStatusCode.NEED_REDIRECT.getCode(),
+                GlobalServiceStatusCode.NEED_REDIRECT.getMessage());
+    }
+
+    /**
+     * 重定向
+     */
+    public static <E> SystemJsonResponse SYSTEM_REDIRECT(E data) {
+        return new SystemJsonResponse(GlobalServiceStatusCode.NEED_REDIRECT.getCode(),
+                GlobalServiceStatusCode.NEED_REDIRECT.getMessage(), data);
     }
 
     /**
@@ -93,4 +122,5 @@ public class SystemJsonResponse extends LinkedHashMap<String, Object> implements
     public static SystemJsonResponse CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode code, String msg) {
         return new SystemJsonResponse(code.getCode(), Optional.ofNullable(msg).orElse(code.getMessage()));
     }
+
 }

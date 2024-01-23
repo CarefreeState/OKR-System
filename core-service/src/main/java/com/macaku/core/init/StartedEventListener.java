@@ -107,13 +107,13 @@ public class StartedEventListener implements ApplicationListener<ApplicationStar
 
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
-        log.info("应用重启成功，恢复定时任务");
+        log.info("--> --> --> 应用重启成功，开始恢复定时任务 --> --> -->");
         // 获取定时任务
         List<DeadlineEvent> deadlineEvents = okrCoreMapper.getDeadlineEvents();
         // 处理定时任务
         deadlineEvents.stream()
                 .parallel()
                 .forEach(this::handleEvent);
-        log.info("定时任务恢复成功");
+        log.info("<-- <-- <-- 定时任务恢复成功 <-- <-- <--");
     }
 }

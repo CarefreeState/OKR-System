@@ -16,8 +16,8 @@ import java.util.Objects;
  * Date: 2024-01-22
  * Time: 2:23
  */
+@ApiModel("状态指标数据")
 @Data
-@ApiModel(description = "状态指标")
 public class StatusFlagDTO {
 
     @ApiModelProperty("第四象限 ID")

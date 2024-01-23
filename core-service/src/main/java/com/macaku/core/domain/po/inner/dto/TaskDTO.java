@@ -16,8 +16,8 @@ import java.util.Objects;
  * Date: 2024-01-22
  * Time: 1:59
  */
+@ApiModel("任务数据")
 @Data
-@ApiModel(description = "任务实体")
 public class TaskDTO {
 
     @ApiModelProperty("象限 ID")

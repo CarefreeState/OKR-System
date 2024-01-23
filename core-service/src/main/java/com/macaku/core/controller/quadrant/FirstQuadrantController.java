@@ -1,8 +1,6 @@
 package com.macaku.core.controller.quadrant;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.macaku.common.code.GlobalServiceStatusCode;
-import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.dto.FirstQuadrantDTO;
@@ -51,7 +49,7 @@ public class FirstQuadrantController {
 
     @PostMapping("/search/{coreId}")
     @ApiOperation("查看第一象限")
-    public SystemJsonResponse searchFirstQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
+    public SystemJsonResponse<FirstQuadrantVO> searchFirstQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
         FirstQuadrantVO firstQuadrantVO = firstQuadrantService.searchFirstQuadrant(coreId);
         return SystemJsonResponse.SYSTEM_SUCCESS(firstQuadrantVO);
     }

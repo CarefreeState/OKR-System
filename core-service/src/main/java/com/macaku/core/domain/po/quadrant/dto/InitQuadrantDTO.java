@@ -18,8 +18,8 @@ import java.util.Objects;
  * Date: 2024-01-22
  * Time: 20:07
  */
+@ApiModel("初始化第二第三象限数据")
 @Data
-@ApiModel(description = "第二象限实体")
 public class InitQuadrantDTO {
 
     @ApiModelProperty("象限 ID")

@@ -16,8 +16,8 @@ import java.util.Objects;
  * Date: 2024-01-21
  * Time: 2:25
  */
+@ApiModel("关键结果数据")
 @Data
-@ApiModel(description = "关键结果")
 public class KeyResultDTO {
 
     @ApiModelProperty("第一象限 ID")

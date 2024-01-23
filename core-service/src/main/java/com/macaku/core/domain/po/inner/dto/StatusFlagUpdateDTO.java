@@ -16,8 +16,8 @@ import java.util.Objects;
  * Date: 2024-01-22
  * Time: 17:33
  */
+@ApiModel("状态指标更新数据")
 @Data
-@ApiModel(description = "指标更新实体")
 public class StatusFlagUpdateDTO {
 
 

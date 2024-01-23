@@ -18,8 +18,8 @@ import java.util.Objects;
  * Date: 2024-01-21
  * Time: 21:48
  */
-@Data //
-@ApiModel(description = "第一象限")
+@ApiModel("初始化第一象限数据")
+@Data
 public class FirstQuadrantDTO {
 
     @ApiModelProperty("第一象限 ID")

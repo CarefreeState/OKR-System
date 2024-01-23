@@ -57,10 +57,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "object",
-                  "additionalProperties": {
-                    "type": "object"
-                  }
+                  "$ref": "#/components/schemas/统一响应«Map«string,object»»"
                 }
               }
             }
@@ -81,5 +78,27 @@
       }
     }
   },
-  "components": {}
+  "components": {
+    "schemas": {
+      "统一响应«Map«string,object»»": {
+        "title": "统一响应«Map«string,object»»",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码",
+            "format": "int32"
+          },
+          "data": {
+            "type": "object",
+            "description": "具体响应"
+          },
+          "message": {
+            "type": "string",
+            "description": "描述语"
+          }
+        }
+      }
+    }
+  }
 }
