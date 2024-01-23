@@ -25,11 +25,6 @@ import java.util.ServiceLoader;
 @RequiredArgsConstructor
 public class UserController {
 
-    @GetMapping("/hello")
-    public String test() {
-        return "hello";
-    }
-
     @PostMapping("/login")
     @ApiOperation("这里传递的参数根据具体的登录方式传递对应的数据！")
     public SystemJsonResponse login(@RequestParam Map<?, ?> data, @NonNull @RequestHeader("type") String type) {

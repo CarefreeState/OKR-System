@@ -29,7 +29,6 @@ import java.util.ServiceLoader;
 @Api(tags = "任务管理")
 public class TaskController {
 
-
     @PostMapping("/{type}/add")
     @ApiOperation("增加一条任务")
     public SystemJsonResponse addTask(@PathVariable("type") @NonNull @ApiParam("类型") Integer type,

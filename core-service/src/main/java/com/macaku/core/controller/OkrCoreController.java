@@ -31,12 +31,6 @@ public class OkrCoreController {
 
     private final OkrCoreService okrCoreService;
 
-    @GetMapping("/exception")
-    @ApiOperation("test")
-    public SystemJsonResponse test() {
-        return SystemJsonResponse.SYSTEM_SUCCESS();
-    }
-
     @GetMapping("/create")
     @ApiOperation("创建一个core")
     public SystemJsonResponse createOkr() {
