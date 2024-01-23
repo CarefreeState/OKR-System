@@ -12,6 +12,13 @@ public class RedisBloomFilter {
 
     private final BloomFilterHelper bloomFilterHelper;
 
+    public void init(String bloomFilterName) {
+        int[] offset = bloomFilterHelper.getHashOffset();
+        for (int i : offset) {
+            redisTemplate.opsForValue().setBit(bloomFilterName, i, true);
+        }
+    }
+
     /**
      * 根据给定的布隆过滤器添加值
      */

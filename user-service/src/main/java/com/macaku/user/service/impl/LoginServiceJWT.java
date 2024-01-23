@@ -76,7 +76,7 @@ public class LoginServiceJWT implements LoginService {
         user.setOpenid(openid);
         // 6. 插入数据库
         userService.saveOrUpdate(user); // openid为唯一键，所以如果重复了，会进行更新
-        redisCache.setCacheObject(JwtUtil.JWT_LOGIN_USER + openid, user, JwtUtil.JWT_TTL);
+        redisCache.setCacheObject(JwtUtil.JWT_LOGIN_USER + openid, user, JwtUtil.JWT_TTL, JwtUtil.JWT_TTL_UNIT);
         // 7. 构造 token
         Map<String, Object> tokenData = new HashMap<String, Object>(){{
             this.put("openid", openid);

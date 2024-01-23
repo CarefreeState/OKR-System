@@ -9,6 +9,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * JWT工具类
@@ -20,7 +21,10 @@ public class JwtUtil {
     public static final String JWT_HEADER = "token";
 
     //有效期为
-    public static final Long JWT_TTL = 24 * 60 * 60 * 1000L;// 24 * 60 * 60 * 1000  一天
+    public static final Long JWT_TTL = 1L; // 一天
+
+    public static final TimeUnit JWT_TTL_UNIT = TimeUnit.DAYS;
+
     //设置秘钥明文
     public static final String JWT_KEY = "macaku";
 
@@ -58,7 +62,7 @@ public class JwtUtil {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
         if (ttlMillis == null) {
-            ttlMillis = JwtUtil.JWT_TTL;
+            ttlMillis = JWT_TTL_UNIT.toMillis(JwtUtil.JWT_TTL);
         }
         long expMillis = nowMillis + ttlMillis;
         Date expDate = new Date(expMillis);

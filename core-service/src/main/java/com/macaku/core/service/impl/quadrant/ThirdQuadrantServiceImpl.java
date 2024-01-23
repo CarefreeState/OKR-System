@@ -9,6 +9,7 @@ import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
 import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
 import com.macaku.core.domain.po.quadrant.vo.ThirdQuadrantVO;
+import com.macaku.core.init.util.QuadrantDeadlineUtil;
 import com.macaku.core.mapper.quadrant.ThirdQuadrantMapper;
 import com.macaku.core.service.quadrant.ThirdQuadrantService;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +34,9 @@ public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, T
 
     private final ThirdQuadrantMapper thirdQuadrantMapper;
 
-
     private void scheduledUpdate(Long coreId, Long id, Date deadline, Integer quadrantCycle) {
-        TimeUnit timeUnit = TimeUnit.SECONDS;
         final long deadTimestamp = deadline.getTime();
-        final long nextDeadTimestamp = deadTimestamp + timeUnit.toMillis(quadrantCycle);
+        final long nextDeadTimestamp = deadTimestamp + TimeUnit.SECONDS.toMillis(quadrantCycle);
         final long delay = TimeUnit.MILLISECONDS.toSeconds(deadTimestamp - System.currentTimeMillis());
         Date nextDeadline = new Date(nextDeadTimestamp);
         TimerUtil.schedule(new TimerTask() {
@@ -56,12 +55,12 @@ public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, T
                     ThirdQuadrant updateQuadrant = new ThirdQuadrant();
                     updateQuadrant.setId(id);
                     updateQuadrant.setDeadline(nextDeadline);
-                    Db.lambdaUpdate(ThirdQuadrant.class).eq(ThirdQuadrant::getId, id).update(updateQuadrant);
+                    Db.updateById(updateQuadrant);
                     // 发起下一个事件
                     scheduledUpdate(coreId, id, nextDeadline, quadrantCycle);
                 }
             }
-        }, delay, timeUnit);
+        }, delay, TimeUnit.SECONDS);
     }
 
     @Override
@@ -69,7 +68,6 @@ public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, T
         Long id = initQuadrantDTO.getId();
         Date deadline = this.lambdaQuery()
                 .eq(ThirdQuadrant::getId, id)
-                .select(ThirdQuadrant::getDeadline)
                 .one()
                 .getDeadline();
         if(Objects.nonNull(deadline)) {
@@ -103,7 +101,7 @@ public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, T
         updateQuadrant.setDeadline(deadline);
         this.lambdaUpdate().eq(ThirdQuadrant::getId, id).update(updateQuadrant);
         // 发起一个定时任务
-        scheduledUpdate(coreId, id, deadline, quadrantCycle);
+        QuadrantDeadlineUtil.scheduledUpdate(coreId, id, deadline, quadrantCycle, ThirdQuadrant.class);
     }
 
     @Override

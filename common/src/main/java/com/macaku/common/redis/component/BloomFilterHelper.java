@@ -40,6 +40,10 @@ public class BloomFilterHelper<T> {
         numHashFunctions = optimalNumOfHashFunctions(expectedInsertions, bitSize);
     }
 
+    public int[] getHashOffset() {
+        return new int[numHashFunctions];
+    }
+
     public int[] murmurHashOffset(T value) {
         int[] offset = new int[numHashFunctions];
 
