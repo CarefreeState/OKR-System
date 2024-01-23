@@ -22,6 +22,20 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class QuadrantDeadlineUtil {
 
+    public static void scheduledComplete(Long coreId, Date deadline) {
+        // 发起一个定时任务
+        TimerUtil.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                OkrCore updateOkrCore = new OkrCore();
+                updateOkrCore.setId(coreId);
+                updateOkrCore.setIsOver(true);
+                Db.lambdaUpdate(OkrCore.class).eq(OkrCore::getId, coreId).update(updateOkrCore);
+                log.info("OKR 结束！ {}", deadline);
+            }
+        }, TimeUnit.MILLISECONDS.toSeconds(deadline.getTime() - System.currentTimeMillis()), TimeUnit.SECONDS);
+    }
+
     public static <T> void scheduledUpdate(Long coreId, Long id, Date deadline, Integer quadrantCycle, Class<T> clazz) {
         final long deadTimestamp = deadline.getTime();
         final long nowTimestamp = System.currentTimeMillis();

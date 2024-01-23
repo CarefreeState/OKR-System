@@ -1,11 +1,10 @@
 package com.macaku.core.mapper;
 
-import com.macaku.core.domain.po.OkrCore;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.macaku.core.domain.po.vo.OkrCoreVO;
-import org.apache.ibatis.annotations.Param;
+import com.macaku.core.domain.po.OkrCore;
+import com.macaku.core.domain.po.event.DeadlineEvent;
 
-import java.util.Optional;
+import java.util.List;
 
 /**
  * @author 马拉圈
@@ -15,7 +14,7 @@ import java.util.Optional;
  */
 public interface OkrCoreMapper extends BaseMapper<OkrCore> {
 
-    Optional<OkrCoreVO> searchOkrCore(@Param("id") Long id);
+    List<DeadlineEvent> getDeadlineEvents();
 
 }
 

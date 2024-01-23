@@ -40,8 +40,8 @@ public class InitQuadrantDTO {
         if(Objects.isNull(deadline) || deadline.getTime() < System.currentTimeMillis()) {
             messageBuilder.append("-> 截止时间非法\n");
         }
-        if(Objects.isNull(quadrantCycle)) {
-            messageBuilder.append("-> 周期为空\n");
+        if(Objects.isNull(quadrantCycle) || quadrantCycle.compareTo(0) <= 0) {
+            messageBuilder.append("-> 周期非法\n");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {
