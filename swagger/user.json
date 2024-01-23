@@ -1,0 +1,85 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "OKR 系统API",
+    "description": "OKR 系统相关接口文档！",
+    "contact": {
+      "name": "发际线与我作对",
+      "url": "https://github.com/CarefreeState/OKR-System",
+      "email": "2040484356@qq.com"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:1701",
+      "description": "Inferred Url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "用户测试接口",
+      "description": "User Controller"
+    }
+  ],
+  "paths": {
+    "/user/login": {
+      "post": {
+        "tags": [
+          "用户测试接口"
+        ],
+        "summary": "这里传递的参数根据具体的登录方式传递对应的数据！",
+        "operationId": "loginUsingPOST",
+        "parameters": [
+          {
+            "name": "data",
+            "in": "query",
+            "description": "data",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "object"
+            }
+          },
+          {
+            "name": "type",
+            "in": "header",
+            "description": "type",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "components": {}
+}

@@ -49,12 +49,23 @@
             <version>${fastjson.version}</version>
         </dependency>
 
+        <!-- API⽂档⽣成，基于swagger2，注意：这个依赖引入后，需要对应的配置文件才能启动项目-->
         <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
-            <version>${knife4j.version}</version>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>${springfox-boot-starter.version}</version>
+        </dependency>
+        <!-- SpringBoot健康监控 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>com.github.xiaoymin</groupId>-->
+<!--            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>-->
+<!--            <version>${knife4j.version}</version>-->
+<!--        </dependency>-->
 
         <!--httpClient需要的依赖-->
         <dependency>
@@ -92,6 +103,13 @@
             <artifactId>bcprov-jdk15on</artifactId>
             <version>${bcprov-jdk15on.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+
 
 
     </dependencies>

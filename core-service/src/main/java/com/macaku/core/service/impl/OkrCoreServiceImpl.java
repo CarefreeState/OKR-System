@@ -119,6 +119,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         } catch (InterruptedException | ExecutionException e) {
             throw new GlobalServiceException(e.getMessage());
         }
+        System.out.println(okrCoreVO);
         // 返回
         return okrCoreVO;
     }

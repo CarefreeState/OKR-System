@@ -33,6 +33,7 @@
         <guava.version>31.1-jre</guava.version>
         <hutool-all.version>5.8.11</hutool-all.version>
         <fastjson.version>1.2.31</fastjson.version>
+        <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
         <knife4j.version>4.1.0</knife4j.version>
         <!--httpClient需要的依赖-->
         <org.apache.httpcomponents-httpclient.version>4.5.2</org.apache.httpcomponents-httpclient.version>
@@ -41,6 +42,7 @@
         <jakarta.validation-api.version>3.0.2</jakarta.validation-api.version>
         <jjwt.version>0.9.0</jjwt.version>
         <bcprov-jdk15on.version>1.64</bcprov-jdk15on.version>
+        <lombok.version>1.18.30</lombok.version>
     </properties>
     <profiles>
         <profile>
@@ -67,15 +69,6 @@
             </activation>
         </profile>
     </profiles>
-    <dependencyManagement>
-
-        <dependencies>
-            <dependency>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 
 </project>
