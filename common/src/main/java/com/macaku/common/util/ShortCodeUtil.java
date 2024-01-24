@@ -5,6 +5,8 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import org.apache.commons.codec.digest.DigestUtils;
 
+import java.util.UUID;
+
 public class ShortCodeUtil {
 
     private static final String CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
@@ -16,6 +18,10 @@ public class ShortCodeUtil {
     public static final int MODULES = CHARSET.length();
 
     public static final int FETCH_SIZE = 4;
+
+    public static String getSalt() {
+        return UUID.randomUUID().toString().replace("-", "");
+    }
 
     // md5加密
     public static String md5(String normal) {

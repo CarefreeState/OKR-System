@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created With Intellij IDEA
@@ -73,8 +74,17 @@ public class LoginServiceWxImpl implements LoginService {
         user.setUnionid(unionid);
         user.setOpenid(openid);
         // 6. 插入数据库
-        userService.saveOrUpdate(user); // openid为唯一键，所以如果重复了，会进行更新
-        redisCache.setCacheObject(JwtUtil.JWT_LOGIN_WX_USER + openid, user, JwtUtil.JWT_TTL, JwtUtil.JWT_TTL_UNIT);
+        User dbUser = userService.lambdaQuery().eq(User::getOpenid, openid).one();
+        if(Objects.isNull(dbUser)) {
+            userService.save(user);
+            log.info("新用户注册 -> {}", user);
+            dbUser = user;
+        }else {
+            user.setId(dbUser.getId());
+            // 更新一下数据
+            userService.lambdaUpdate().eq(User::getOpenid, openid).update(user);
+        }
+        redisCache.setCacheObject(JwtUtil.JWT_LOGIN_WX_USER + openid, dbUser, JwtUtil.JWT_TTL, JwtUtil.JWT_TTL_UNIT);
         // 7. 构造 token
         Map<String, Object> tokenData = new HashMap<String, Object>(){{
             this.put(ExtractUtil.OPENID, openid);
