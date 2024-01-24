@@ -1,7 +1,6 @@
 package com.macaku.common.interceptor.config;
 
-import com.macaku.common.interceptor.EmailUserInterceptor;
-import com.macaku.common.interceptor.WxUserInterceptor;
+import com.macaku.common.interceptor.UserLoginInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -11,24 +10,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class VisitConfig implements WebMvcConfigurer {
 
-    public static final String HEADER = "Type";
+    public static final String HEADER = "Login-Type";
 
-    private final WxUserInterceptor wxUserInterceptor;//自定义的登录拦截器
-
-    private final EmailUserInterceptor emailUserInterceptor;
+    private final UserLoginInterceptor userLoginInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(userInterceptor)
-//                .addPathPatterns("/**")
-//                //不拦截路由
-//                .excludePathPatterns("/doc.html/**")
-//                .excludePathPatterns("/v3/api-docs/**")
-//                .excludePathPatterns("/webjars/**")
-//                .excludePathPatterns("/error")
-//                .excludePathPatterns("/favicon.ico")
-//                .excludePathPatterns("/swagger-resources/**")
-            registry.addInterceptor(emailUserInterceptor)
+            registry.addInterceptor(userLoginInterceptor)
                     .addPathPatterns("/**")
                     // 不拦截的路径
                     .excludePathPatterns("/user/login")

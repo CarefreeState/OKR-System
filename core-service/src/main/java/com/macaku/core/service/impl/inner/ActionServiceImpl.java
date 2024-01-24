@@ -47,7 +47,7 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
         boolean ret = Db.lambdaUpdate(Action.class)
                 .eq(Action::getId, id)
                 .remove();
-        if(ret) {
+        if(Boolean.TRUE.equals(ret)) {
             log.info("成功为第三象限删除一条行动 {}", id);
         }
     }

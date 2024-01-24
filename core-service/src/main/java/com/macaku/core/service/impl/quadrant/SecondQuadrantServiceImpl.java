@@ -49,7 +49,7 @@ public class SecondQuadrantServiceImpl extends ServiceImpl<SecondQuadrantMapper,
                         .select(OkrCore::getIsOver)
                         .one()
                         .getIsOver();
-                if(isOver) {
+                if(Boolean.TRUE.equals(isOver)) {
                     log.info("OKR 已结束");
                 }else {
                     // 设置新的截止时间
@@ -89,7 +89,7 @@ public class SecondQuadrantServiceImpl extends ServiceImpl<SecondQuadrantMapper,
                 .select(OkrCore::getIsOver)
                 .one()
                 .getIsOver();
-        if(isOver) {
+        if(Boolean.TRUE.equals(isOver)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
         }
         // 为 core 设置周期

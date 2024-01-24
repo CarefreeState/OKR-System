@@ -129,7 +129,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
                 .eq(OkrCore::getId, id)
                 .select(OkrCore::getIsOver, OkrCore::getCelebrateDay)
                 .one();
-        if(okrCore.getIsOver()) {
+        if(Boolean.TRUE.equals(okrCore.getIsOver())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
         }
         if(Objects.nonNull(okrCore.getCelebrateDay())) {
@@ -149,7 +149,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
                 .eq(OkrCore::getId, id)
                 .select(OkrCore::getIsOver)
                 .one();
-        if(!okrCore.getIsOver()) {
+        if(Boolean.FALSE.equals(okrCore.getIsOver())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_NOT_OVER);
         }
         // 构造更新对象
@@ -166,7 +166,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
                 .eq(OkrCore::getId, id)
                 .select(OkrCore::getIsOver)
                 .one();
-        if(okrCore.getIsOver()) {
+        if(Boolean.TRUE.equals(okrCore.getIsOver())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
         }
         // 构造更新对象

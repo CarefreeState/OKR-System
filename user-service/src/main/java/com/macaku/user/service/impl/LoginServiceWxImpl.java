@@ -31,9 +31,9 @@ public class LoginServiceWxImpl implements LoginService {
 
     private static final String TYPE = JwtUtil.WX_LOGIN_TYPE;
 
-    private UserService userService = SpringUtil.getBean(UserService.class);
+    private final UserService userService = SpringUtil.getBean(UserService.class);
 
-    private RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
+    private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
     @Override
     public boolean match(String type) {

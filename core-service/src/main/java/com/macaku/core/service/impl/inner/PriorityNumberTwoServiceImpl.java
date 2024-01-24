@@ -46,7 +46,7 @@ public class PriorityNumberTwoServiceImpl extends ServiceImpl<PriorityNumberTwoM
         boolean ret = Db.lambdaUpdate(PriorityNumberTwo.class)
                 .eq(PriorityNumberTwo::getId, id)
                 .remove();
-        if(ret) {
+        if(Boolean.TRUE.equals(ret)) {
             log.info("成功为第二象限删除一条 P2 {}", id);
         }
     }

@@ -1,0 +1,2 @@
+com.macaku.common.interceptor.service.impl.EmailInterceptServiceImpl
+com.macaku.common.interceptor.service.impl.WxInterceptServiceImpl

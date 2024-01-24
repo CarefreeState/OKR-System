@@ -34,7 +34,7 @@ public class StatusFlagServiceImpl extends ServiceImpl<StatusFlagMapper, StatusF
     public void removeStatusFlag(Long id) {
         // 逻辑删除
         boolean ret = this.lambdaUpdate().eq(StatusFlag::getId, id).remove();
-        if(ret) {
+        if(Boolean.TRUE.equals(ret)) {
             log.info("成功为第四象限删除一条指标 {}", id);
         }
     }
