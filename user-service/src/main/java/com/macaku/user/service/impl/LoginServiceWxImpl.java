@@ -4,12 +4,10 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
-import com.macaku.common.util.EncryptUtil;
-import com.macaku.common.util.JsonUtil;
-import com.macaku.common.util.JwtUtil;
-import com.macaku.common.util.ShortCodeUtil;
+import com.macaku.common.util.*;
 import com.macaku.common.web.HttpUtils;
 import com.macaku.user.domain.dto.WxLoginDTO;
+import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.service.LoginService;
 import com.macaku.user.service.UserService;
@@ -29,9 +27,9 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-public class LoginServiceJWT implements LoginService {
+public class LoginServiceWxImpl implements LoginService {
 
-    private static final String TYPE = JwtUtil.TYPE;
+    private static final String TYPE = JwtUtil.WX_LOGIN_TYPE;
 
     private UserService userService = SpringUtil.getBean(UserService.class);
 
@@ -44,8 +42,8 @@ public class LoginServiceJWT implements LoginService {
 
 
     @Override
-    public Map<String, Object> login(Map<?, ?> data) {
-        WxLoginDTO wxLoginDTO = WxLoginDTO.create(data);
+    public Map<String, Object> login(LoginDTO loginDTO) {
+        WxLoginDTO wxLoginDTO = WxLoginDTO.create(loginDTO);
         wxLoginDTO.validate();
         User user = wxLoginDTO.transToUser();
         String code = wxLoginDTO.getCode();
@@ -76,11 +74,11 @@ public class LoginServiceJWT implements LoginService {
         user.setOpenid(openid);
         // 6. 插入数据库
         userService.saveOrUpdate(user); // openid为唯一键，所以如果重复了，会进行更新
-        redisCache.setCacheObject(JwtUtil.JWT_LOGIN_USER + openid, user, JwtUtil.JWT_TTL, JwtUtil.JWT_TTL_UNIT);
+        redisCache.setCacheObject(JwtUtil.JWT_LOGIN_WX_USER + openid, user, JwtUtil.JWT_TTL, JwtUtil.JWT_TTL_UNIT);
         // 7. 构造 token
         Map<String, Object> tokenData = new HashMap<String, Object>(){{
-            this.put("openid", openid);
-            this.put("session_key", sessionKey);
+            this.put(ExtractUtil.OPENID, openid);
+            this.put(ExtractUtil.SESSION_KEY, sessionKey);
         }};
         String token = JwtUtil.createJWT(JsonUtil.analyzeData(tokenData));
         return new HashMap<String, Object>(){{

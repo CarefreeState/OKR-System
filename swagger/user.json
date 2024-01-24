@@ -32,13 +32,73 @@
         "operationId": "loginUsingPOST",
         "parameters": [
           {
-            "name": "data",
+            "name": "emailLoginDTO.code",
             "in": "query",
-            "description": "data",
-            "required": true,
+            "description": "code",
+            "required": false,
             "style": "form",
             "schema": {
-              "type": "object"
+              "type": "string"
+            }
+          },
+          {
+            "name": "emailLoginDTO.email",
+            "in": "query",
+            "description": "email",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wxLoginDTO.code",
+            "in": "query",
+            "description": "code",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wxLoginDTO.encryptedData",
+            "in": "query",
+            "description": "encryptedData",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wxLoginDTO.iv",
+            "in": "query",
+            "description": "iv",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wxLoginDTO.rawData",
+            "in": "query",
+            "description": "rawData",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wxLoginDTO.signature",
+            "in": "query",
+            "description": "signature",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -91,7 +151,7 @@
           },
           "data": {
             "type": "object",
-            "description": "具体响应"
+            "description": "具体数据"
           },
           "message": {
             "type": "string",

@@ -2,6 +2,7 @@ package com.macaku.core.domain.po.inner.dto;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.core.domain.po.inner.StatusFlag;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -38,7 +39,7 @@ public class StatusFlagUpdateDTO {
         if(!StringUtils.hasText(label)) {
             messageBuilder.append("-> 指标为空\n");
         }
-        if(!StringUtils.hasText(color) || !color.matches("^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$")) {
+        if(!StringUtils.hasText(color) || !color.matches(StatusFlag.COLOR_PATTERN)) {
             messageBuilder.append("-> 颜色非法\n");
         }
         String message = messageBuilder.toString();

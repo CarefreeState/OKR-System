@@ -2,7 +2,9 @@ package com.macaku.common.interceptor;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.interceptor.config.VisitConfig;
 import com.macaku.common.redis.RedisCache;
+import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JwtUtil;
 import com.macaku.common.util.ShortCodeUtil;
 import lombok.RequiredArgsConstructor;
@@ -14,18 +16,25 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+/**
+ * Created With Intellij IDEA
+ * Description:
+ * User: 马拉圈
+ * Date: 2024-01-24
+ * Time: 12:13
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class UserInterceptor implements HandlerInterceptor {
-    private static final String TYPE = JwtUtil.TYPE;
+public class EmailUserInterceptor implements HandlerInterceptor {
+
+    private static final String TYPE = JwtUtil.EMAIL_LOGIN_TYPE;
 
     private final RedisCache redisCache;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        String type = request.getHeader("type");
+        String type = request.getHeader(VisitConfig.HEADER);
         if(!StringUtils.hasText(type)) {
             throw new GlobalServiceException("拦截路径：" + request.getRequestURI(), GlobalServiceStatusCode.PARAM_NOT_COMPLETE);
         }
@@ -33,9 +42,10 @@ public class UserInterceptor implements HandlerInterceptor {
             return true;
         }
         //业务逻辑（Redis或者Token过期了，都算登录失效）
-        String openid = JwtUtil.getOpenID(request);
-        redisCache.getCacheObject(JwtUtil.JWT_LOGIN_USER + openid)
+        String id = ExtractUtil.getUserIdFromJWT(request);
+        redisCache.getCacheObject(JwtUtil.EMAIL_LOGIN_TYPE + id)
                 .orElseThrow(() -> new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_LOGIN));
         return true;
     }
+
 }

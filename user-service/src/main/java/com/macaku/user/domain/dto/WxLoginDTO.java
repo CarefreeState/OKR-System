@@ -5,6 +5,7 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.JsonUtil;
+import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -72,5 +73,9 @@ public class WxLoginDTO {
 
     public static WxLoginDTO create(Map<?, ?> data) {
         return BeanUtil.mapToBean(data, WxLoginDTO.class, false, new CopyOptions());
+    }
+
+    public static WxLoginDTO create(LoginDTO loginDTO) {
+        return loginDTO.getWxLoginDTO();
     }
 }

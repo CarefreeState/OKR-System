@@ -25,7 +25,7 @@ public class SystemJsonResponse<T> implements Serializable {
     private String message;
 
     @JsonInclude
-    @ApiModelProperty(value = "具体响应")
+    @ApiModelProperty(value = "具体数据")
     private T data;
 
     private SystemJsonResponse(int code, String msg, T data) {

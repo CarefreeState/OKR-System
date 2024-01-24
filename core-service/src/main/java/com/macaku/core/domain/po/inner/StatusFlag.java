@@ -16,6 +16,8 @@ import java.util.Date;
 @Data
 public class StatusFlag implements Serializable {
 
+    public final static String COLOR_PATTERN = "^#([0-9a-fA-F]{6}|[0-9a-fA-F]{3})$";
+
     @ApiModelProperty("ID")
     private Long id;
 

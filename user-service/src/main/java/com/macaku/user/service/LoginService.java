@@ -1,5 +1,6 @@
 package com.macaku.user.service;
 
+import com.macaku.user.domain.dto.unify.LoginDTO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
@@ -17,5 +18,5 @@ public interface LoginService {
 
 
     @Transactional
-    Map<String, Object> login(Map<?, ?> data);
+    Map<String, Object> login(LoginDTO loginDTO);
 }

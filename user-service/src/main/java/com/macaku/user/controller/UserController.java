@@ -1,6 +1,8 @@
 package com.macaku.user.controller;
 
+import com.macaku.common.interceptor.config.VisitConfig;
 import com.macaku.common.response.SystemJsonResponse;
+import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.service.LoginService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,16 +27,35 @@ import java.util.ServiceLoader;
 @RequiredArgsConstructor
 public class UserController {
 
+//    @PostMapping("/login")
+//    @ApiOperation("这里传递的参数根据具体的登录方式传递对应的数据！")
+//    public SystemJsonResponse<Map<String, Object>> login(@RequestParam Map<?, ?> data, @NonNull @RequestHeader("type") String type) {
+//        ServiceLoader<LoginService> loginServices = ServiceLoader.load(LoginService.class);
+//        Iterator<LoginService> serviceIterator = loginServices.iterator();
+//        Map<String, Object> result = null;
+//        while (serviceIterator.hasNext()) {
+//            LoginService loginService =  serviceIterator.next();
+//            if(loginService.match(type)) {
+//                result = loginService.login(data);
+//                break;
+//            }
+//        }
+//        return SystemJsonResponse.SYSTEM_SUCCESS(result);
+//    }
+
     @PostMapping("/login")
     @ApiOperation("这里传递的参数根据具体的登录方式传递对应的数据！")
-    public SystemJsonResponse<Map<String, Object>> login(@RequestParam Map<?, ?> data, @NonNull @RequestHeader("type") String type) {
+    public SystemJsonResponse<Map<String, Object>> login(LoginDTO loginDTO, @NonNull @RequestHeader(VisitConfig.HEADER) String type) {
+        // 检查
+        loginDTO.validate();
+        // 选取服务
         ServiceLoader<LoginService> loginServices = ServiceLoader.load(LoginService.class);
         Iterator<LoginService> serviceIterator = loginServices.iterator();
         Map<String, Object> result = null;
         while (serviceIterator.hasNext()) {
             LoginService loginService =  serviceIterator.next();
             if(loginService.match(type)) {
-                result = loginService.login(data);
+                result = loginService.login(loginDTO);
                 break;
             }
         }

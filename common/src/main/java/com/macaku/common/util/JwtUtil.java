@@ -16,7 +16,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class JwtUtil {
 
-    public static final String TYPE = "JWT"; // 码： Fz01u-
+    public static final String WX_LOGIN_TYPE = "WX_JWT"; // valEFs
+
+    public static final String EMAIL_LOGIN_TYPE = "EMAIL_JWT"; // 2CxcDx
 
     public static final String JWT_HEADER = "token";
 
@@ -28,8 +30,11 @@ public class JwtUtil {
     //设置秘钥明文
     public static final String JWT_KEY = "macaku";
 
-    public static final String JWT_LOGIN_USER = "jwtLoginUser:";
- 
+    public static final String JWT_LOGIN_WX_USER = "jwtLoginWxUser:";
+
+    public static final String JWT_LOGIN_EMAIL_USER = "jwtLoginEmailUser:";
+
+
     public static String getUUID(){
         String token = UUID.randomUUID().toString().replaceAll("-", "");
         return token;
@@ -41,7 +46,7 @@ public class JwtUtil {
      * @return
      */
     public static String createJWT(String subject) {
-        JwtBuilder builder = getJwtBuilder(subject, null, getUUID());// 设置过期时间
+        JwtBuilder builder = getJwtBuilder(subject, null, getUUID(), null);// 设置过期时间
         return builder.compact();
     }
  
@@ -51,18 +56,20 @@ public class JwtUtil {
      * @param ttlMillis token超时时间
      * @return
      */
-    public static String createJWT(String subject, Long ttlMillis) {
-        JwtBuilder builder = getJwtBuilder(subject, ttlMillis, getUUID());// 设置过期时间
+    public static String createJWT(String subject, Long ttlMillis, TimeUnit timeUnit) {
+        JwtBuilder builder = getJwtBuilder(subject, ttlMillis, getUUID(), timeUnit);// 设置过期时间
         return builder.compact();
     }
  
-    private static JwtBuilder getJwtBuilder(String subject, Long ttlMillis, String uuid) {
+    private static JwtBuilder getJwtBuilder(String subject, Long ttlMillis, String uuid, TimeUnit timeUnit) {
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
         SecretKey secretKey = generalKey();
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
-        if (ttlMillis == null) {
+        if (ttlMillis == null || timeUnit == null) { // 只有其中一个也对于没有
             ttlMillis = JWT_TTL_UNIT.toMillis(JwtUtil.JWT_TTL);
+        } else {
+            ttlMillis = timeUnit.toMillis(ttlMillis);
         }
         long expMillis = nowMillis + ttlMillis;
         Date expDate = new Date(expMillis);
@@ -82,8 +89,8 @@ public class JwtUtil {
      * @param ttlMillis
      * @return
      */
-    public static String createJWT(String id, String subject, Long ttlMillis) {
-        JwtBuilder builder = getJwtBuilder(subject, ttlMillis, id);// 设置过期时间
+    public static String createJWT(String id, String subject, Long ttlMillis, TimeUnit timeUnit) {
+        JwtBuilder builder = getJwtBuilder(subject, ttlMillis, id, timeUnit);// 设置过期时间
         return builder.compact();
     }
  
@@ -134,15 +141,4 @@ public class JwtUtil {
         return JsonUtil.analyzeJson(parseJWTRawData(token), clazz);
     }
 
-    public static String getOpenID(HttpServletRequest request) {
-        return (String) getJWTRawDataOnRequest(request, Map.class).get("openid");
-    }
-
-    public static String getSessionKey(HttpServletRequest request) {
-        return (String) getJWTRawDataOnRequest(request, Map.class).get("session_key");
-    }
-
-
- 
- 
 }

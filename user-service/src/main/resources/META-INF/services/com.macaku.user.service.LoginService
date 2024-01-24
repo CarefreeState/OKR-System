@@ -1,2 +1,3 @@
-com.macaku.user.service.impl.LoginServiceJWT
+com.macaku.user.service.impl.LoginServiceWxImpl
+com.macaku.user.service.impl.LoginServiceEmailImpl
 
