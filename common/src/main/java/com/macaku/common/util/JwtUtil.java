@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -14,13 +15,14 @@ import java.util.concurrent.TimeUnit;
 /**
  * JWT工具类
  */
+@Slf4j
 public class JwtUtil {
 
     public static final String WX_LOGIN_TYPE = "WX_JWT"; // valEFs
 
-    public static final String EMAIL_LOGIN_TYPE = "EMAIL_JWT"; // 2CxcDx
+    public static final String EMAIL_LOGIN_TYPE = "EMAIL_JWT"; // 2CxcDX
 
-    public static final String JWT_HEADER = "token";
+    public static final String JWT_HEADER = "Token";
 
     //有效期为
     public static final Long JWT_TTL = 1L; // 一天
@@ -138,7 +140,8 @@ public class JwtUtil {
         if(Objects.isNull(token)) {
             return null;
         }
-        return JsonUtil.analyzeJson(parseJWTRawData(token), clazz);
+        String rawData = parseJWTRawData(token);
+        return JsonUtil.analyzeJson(rawData, clazz);
     }
 
 }

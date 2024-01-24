@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class VisitConfig implements WebMvcConfigurer {
 
-    public static final String HEADER = "type";
+    public static final String HEADER = "Type";
 
     private final WxUserInterceptor wxUserInterceptor;//自定义的登录拦截器
 
@@ -31,7 +31,7 @@ public class VisitConfig implements WebMvcConfigurer {
             registry.addInterceptor(emailUserInterceptor)
                     .addPathPatterns("/**")
                     // 不拦截的路径
-                    .excludePathPatterns("/login")
+                    .excludePathPatterns("/user/login")
                     .excludePathPatterns("/doc.html/**")
                     .excludePathPatterns("/v3/api-docs/**")
                     .excludePathPatterns("/webjars/**")

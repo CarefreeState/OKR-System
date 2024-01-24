@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created With Intellij IDEA
@@ -48,18 +49,23 @@ public class LoginServiceEmailImpl implements LoginService {
         String code = emailLoginDTO.getCode();
         User user = emailLoginDTO.transToUser();
         // 如果用户未不存在（邮箱未注册），则注册
-        User redisUser = userService.lambdaQuery().eq(User::getEmail, email).oneOpt().orElseGet(() -> {
+        User dbUser = userService.lambdaQuery().eq(User::getEmail, email).one();
+        if(Objects.isNull(dbUser)) {
             userService.save(user);
-            return user;
-        });
+            log.info("新用户注册 -> {}", user);
+            dbUser = user;
+        }else {
+            user.setId(dbUser.getId());
+        }
         // 记录一下
-        redisCache.setCacheObject(JwtUtil.JWT_LOGIN_EMAIL_USER + redisUser.getId(), redisUser,
+        redisCache.setCacheObject(JwtUtil.JWT_LOGIN_EMAIL_USER + user.getId(), dbUser,
                 JwtUtil.JWT_TTL, JwtUtil.JWT_TTL_UNIT);
         // 构造 token
         Map<String, Object> tokenData = new HashMap<String, Object>(){{
             this.put(ExtractUtil.ID, user.getId());
         }};
-        String token = JwtUtil.createJWT(JsonUtil.analyzeData(tokenData));
+        String jsonData = JsonUtil.analyzeData(tokenData);
+        String token = JwtUtil.createJWT(jsonData);
         return new HashMap<String, Object>(){{
             this.put(JwtUtil.JWT_HEADER, token);
         }};

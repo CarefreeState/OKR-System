@@ -42,8 +42,8 @@ public class EmailUserInterceptor implements HandlerInterceptor {
             return true;
         }
         //业务逻辑（Redis或者Token过期了，都算登录失效）
-        String id = ExtractUtil.getUserIdFromJWT(request);
-        redisCache.getCacheObject(JwtUtil.EMAIL_LOGIN_TYPE + id)
+        Long id = ExtractUtil.getUserIdFromJWT(request);
+        redisCache.getCacheObject(JwtUtil.JWT_LOGIN_EMAIL_USER + id)
                 .orElseThrow(() -> new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_LOGIN));
         return true;
     }

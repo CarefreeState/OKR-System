@@ -1,10 +1,6 @@
 package com.macaku.common.util;
 
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created With Intellij IDEA
@@ -19,22 +15,9 @@ public class JsonUtil {
         return JSONUtil.parse(data).toStringPretty();
     }
 
+
+    // 这个转化不知道之前是什么类型的，因为 1 和 1L 在json中就是 1，默认被认定为 integer 的 1！
     public static <T> T analyzeJson(String json, Class<T> clazz) {
         return JSONUtil.toBean(json, clazz);
     }
-
-    public static void main(String[] args) {
-        Map<String, String> map = new HashMap<>();
-        map.put("key1", "value1");
-        map.put("key2", "value2");
-        String json = analyzeData(map);
-        JSONObject map1 = analyzeJson(json, JSONObject.class);
-        System.out.println(map1);
-        System.out.println((String) map1.get("key1"));
-        json = analyzeData(map1);
-        System.out.println(json);
-
-    }
-
-
 }

@@ -1,5 +1,6 @@
 package com.macaku.user.controller;
 
+import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.interceptor.config.VisitConfig;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.user.domain.dto.unify.LoginDTO;
@@ -8,7 +9,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -51,15 +55,14 @@ public class UserController {
         // 选取服务
         ServiceLoader<LoginService> loginServices = ServiceLoader.load(LoginService.class);
         Iterator<LoginService> serviceIterator = loginServices.iterator();
-        Map<String, Object> result = null;
         while (serviceIterator.hasNext()) {
             LoginService loginService =  serviceIterator.next();
             if(loginService.match(type)) {
-                result = loginService.login(loginDTO);
-                break;
+                Map<String, Object> result = loginService.login(loginDTO);
+                return SystemJsonResponse.SYSTEM_SUCCESS(result);
             }
         }
-        return SystemJsonResponse.SYSTEM_SUCCESS(result);
+        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.HEAD_NOT_VALID, "登录类型错误");
     }
 
 }
