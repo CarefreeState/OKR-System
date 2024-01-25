@@ -1,7 +1,11 @@
 package com.macaku.center.service;
 
-import com.macaku.center.domain.po.PersonalOkr;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.macaku.center.domain.po.PersonalOkr;
+import com.macaku.center.domain.vo.PersonalOkrVO;
+import com.macaku.user.domain.po.User;
+
+import java.util.List;
 
 /**
 * @author 马拉圈
@@ -10,4 +14,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface PersonalOkrService extends IService<PersonalOkr> {
 
+    List<PersonalOkrVO> getPersonalOkrList(User user);
 }

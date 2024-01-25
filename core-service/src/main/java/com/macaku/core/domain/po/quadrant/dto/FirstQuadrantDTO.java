@@ -35,13 +35,13 @@ public class FirstQuadrantDTO {
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
         if(Objects.isNull(id)) {
-            messageBuilder.append("-> 第一象限 ID 为 null\n");
+            messageBuilder.append("\n-> 第一象限 ID 为 null");
         }
         if(!StringUtils.hasText(objective)) {
-            messageBuilder.append("-> 没有目标\n");
+            messageBuilder.append("\n-> 没有目标");
         }
         if(Objects.isNull(deadline) || deadline.getTime() < System.currentTimeMillis()) {
-            messageBuilder.append("-> 截止时间非法\n");
+            messageBuilder.append("\n-> 截止时间非法");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {

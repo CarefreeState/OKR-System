@@ -18,11 +18,11 @@ import java.util.ServiceLoader;
 @Component
 public class OkrServiceSelector {
 
-    public final static String PERSONAL_OKR_SCOPE = "scope-p";
+    public final static String PERSONAL_OKR_SCENE = "scene-p";
 
-    public final static String TEAM_OKR_SCOPE = "scope-t";
+    public final static String TEAM_OKR_SCENE = "scene-t";
 
-    public final static String TEAM_PERSONAL_OKR_SCOPE = "scope-tp";
+    public final static String TEAM_PERSONAL_OKR_SCENE = "scene-tp";
 
     public OkrOperateService select(String scope) {
         // 选取服务

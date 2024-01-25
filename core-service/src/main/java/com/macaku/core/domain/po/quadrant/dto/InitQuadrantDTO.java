@@ -35,13 +35,13 @@ public class InitQuadrantDTO {
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
         if(Objects.isNull(id)) {
-            messageBuilder.append("-> 象限 ID 为 null\n");
+            messageBuilder.append("\n-> 象限 ID 为 null");
         }
         if(Objects.isNull(deadline) || deadline.getTime() < System.currentTimeMillis()) {
-            messageBuilder.append("-> 截止时间非法\n");
+            messageBuilder.append("\n-> 截止时间非法");
         }
         if(Objects.isNull(quadrantCycle) || quadrantCycle.compareTo(0) <= 0) {
-            messageBuilder.append("-> 周期非法\n");
+            messageBuilder.append("\n-> 周期非法");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {

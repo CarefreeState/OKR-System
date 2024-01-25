@@ -1,11 +1,9 @@
 package com.macaku.core.service;
 
-import com.macaku.core.domain.po.OkrCore;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 /**
 * @author 马拉圈
@@ -13,14 +11,15 @@ import java.util.Optional;
 * @createDate 2024-01-22 13:42:11
 */
 public interface OkrCoreService extends IService<OkrCore> {
+
     @Transactional
-    Optional<Long> createOkrCore();
+    Long createOkrCore();
 
     OkrCoreVO searchOkrCore(Long id);
 
     void confirmCelebrateDate(Long id, Integer celebrateDay);
 
-    void summaryOKR(Long id, String summary);
+    void summaryOKR(Long id, String summary, Integer degree);
 
     void complete(Long id);
 

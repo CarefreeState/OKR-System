@@ -20,6 +20,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 
 /**
  * Created With Intellij IDEA
@@ -41,15 +42,14 @@ public class OkrCoreController {
 
     @GetMapping("/create")
     @ApiOperation("创建一个core")
-    public SystemJsonResponse<Long> createOkr(HttpServletRequest request, OkrOperateDTO okrOperateDTO) {
+    public SystemJsonResponse createOkr(HttpServletRequest request,
+                                              OkrOperateDTO okrOperateDTO) {
         // 检测
         okrOperateDTO.validate();
         User user = UserRecordUtil.getUserRecord(request);
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrOperateDTO.getScope());
+        OkrOperateService okrOperateService = okrServiceSelector.select(okrOperateDTO.getScene());
         okrOperateService.createOkrCore(user, okrOperateDTO);
-        Long coreID = okrCoreService.createOkrCore()
-                .orElseThrow(() -> new GlobalServiceException("创建core失败"));
-        return SystemJsonResponse.SYSTEM_SUCCESS(coreID);
+        return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
     @GetMapping("/search/{id}")
@@ -73,12 +73,16 @@ public class OkrCoreController {
     @PostMapping("/summary/{id}")
     @ApiOperation("总结 OKR")
     public SystemJsonResponse summaryOKR(@PathVariable("id") @NonNull @ApiParam("OKR 内核 ID") Long id,
-                                                  @RequestParam("summary") @NonNull @ApiParam("总结") String summary) {
+                                         @RequestParam("summary") @NonNull @ApiParam("总结") String summary,
+                                         @RequestParam("degree") @NonNull @ApiParam("完成度") Integer degree) {
         if(!StringUtils.hasText(summary)) {
             throw new GlobalServiceException("总结内容为空", GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
-        okrCoreService.summaryOKR(id, summary);
-        log.info("成功为 OKR {} 总结 {}", id, summary);
+        if(Objects.isNull(degree)) {
+            throw new GlobalServiceException("完成度缺失", GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
+        }
+        okrCoreService.summaryOKR(id, summary, degree);
+        log.info("成功为 OKR {} 总结 {} 完成度 {}%", id, summary, degree);
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
     @PostMapping("/complete/{id}")

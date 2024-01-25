@@ -33,10 +33,10 @@ public class EmailLoginDTO {
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
         if(!StringUtils.hasText(code)) {
-            messageBuilder.append("-> code 为 空\n");
+            messageBuilder.append("\n-> code 为 空");
         }
         if(!StringUtils.hasText(email) || !email.matches(User.EMAIL_PATTERN)) {
-            messageBuilder.append("-> email 非法\n");
+            messageBuilder.append("\n-> email 非法");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {

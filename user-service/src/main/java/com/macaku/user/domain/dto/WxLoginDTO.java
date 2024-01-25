@@ -43,19 +43,19 @@ public class WxLoginDTO {
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
         if(!StringUtils.hasText(code)) {
-            messageBuilder.append("-> code 为 空\n");
+            messageBuilder.append("\n-> code 为 空");
         }
         if(!StringUtils.hasText(code)) {
-            messageBuilder.append("-> encryptedData 为 空\n");
+            messageBuilder.append("\n-> encryptedData 为 空");
         }
         if(!StringUtils.hasText(code)) {
-            messageBuilder.append("-> iv 为 空\n");
+            messageBuilder.append("\n-> iv 为 空");
         }
         if(!StringUtils.hasText(code)) {
-            messageBuilder.append("-> rawData 为 空\n");
+            messageBuilder.append("\n-> rawData 为 空");
         }
         if(!StringUtils.hasText(code)) {
-            messageBuilder.append("-> signature 为 空\n");
+            messageBuilder.append("\n-> signature 为 空");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {

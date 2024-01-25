@@ -29,11 +29,11 @@ public class KeyResultUpdateDTO {
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
         if(Objects.isNull(id)) {
-            messageBuilder.append("-> 关键结果 ID 为 null\n");
+            messageBuilder.append("\n-> 关键结果 ID 为 null");
         }
         if(Objects.isNull(probability) ||
                 probability.compareTo(0) < 0 || probability.compareTo(100) > 0) {
-            messageBuilder.append("-> 完成概率非法\n");
+            messageBuilder.append("\n-> 完成概率非法");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {

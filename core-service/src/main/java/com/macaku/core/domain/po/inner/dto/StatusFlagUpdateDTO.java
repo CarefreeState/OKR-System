@@ -34,13 +34,13 @@ public class StatusFlagUpdateDTO {
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
         if(Objects.isNull(id)) {
-            messageBuilder.append("-> 指标 ID 为 null\n");
+            messageBuilder.append("\n-> 指标 ID 为 null");
         }
         if(!StringUtils.hasText(label)) {
-            messageBuilder.append("-> 指标为空\n");
+            messageBuilder.append("\n-> 指标为空");
         }
         if(!StringUtils.hasText(color) || !color.matches(StatusFlag.COLOR_PATTERN)) {
-            messageBuilder.append("-> 颜色非法\n");
+            messageBuilder.append("\n-> 颜色非法");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {

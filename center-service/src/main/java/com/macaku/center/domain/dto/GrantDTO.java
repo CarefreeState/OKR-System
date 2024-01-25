@@ -1,4 +1,4 @@
-package com.macaku.core.domain.po.inner.dto;
+package com.macaku.center.domain.dto;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
@@ -13,30 +13,31 @@ import java.util.Objects;
  * Created With Intellij IDEA
  * Description:
  * User: 马拉圈
- * Date: 2024-01-22
- * Time: 1:59
+ * Date: 2024-01-26
+ * Time: 1:43
  */
-@ApiModel("任务数据")
+@ApiModel("授权成员所需数据")
 @Data
-public class TaskDTO {
+public class GrantDTO {
 
-    @ApiModelProperty("象限 ID")
-    private Long quadrantId;
+    @ApiModelProperty("团队 OKR ID")
+    private Long teamId;
 
-    @ApiModelProperty("任务内容")
-    private String content;
+    @ApiModelProperty("用户 ID")
+    private Long userId;
 
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
-        if(Objects.isNull(quadrantId)) {
-            messageBuilder.append("\n-> 象限 ID 为 null");
+        if(Objects.isNull(teamId)) {
+            messageBuilder.append("\n-> 团队 OKR ID 为 null");
         }
-        if(!StringUtils.hasText(content)) {
-            messageBuilder.append("\n-> 没有内容");
+        if(Objects.isNull(userId)) {
+            messageBuilder.append("\n-> 用户 ID 为 null");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {
             throw new GlobalServiceException(message, GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
     }
+
 }

@@ -18,8 +18,8 @@ import org.springframework.util.StringUtils;
 @Data
 public class OkrOperateDTO {
 
-    @ApiModelProperty("作用领域")
-    private String scope;
+    @ApiModelProperty("场景")
+    private String scene;
 
     @ApiModelProperty("团队 OKR ID")
     private Long teamOkrId;
@@ -27,8 +27,9 @@ public class OkrOperateDTO {
     @ApiModelProperty("团队个人 OKR ID")
     private Long teamPersonalOkrId;
 
+
     public void validate() {
-        if(!StringUtils.hasText(scope)) {
+        if(!StringUtils.hasText(scene)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.PARAM_IS_BLANK);
         }
     }

@@ -32,6 +32,7 @@ create table `okr_core` (
     `third_quadrant_cycle` int null default null comment '第三象限周期',
     `is_over` bit not null default b'0' comment '是否结束',
     `summary` text null default null comment '总结',
+    `degree` int null default null comment '完成度',
     -- common column
     `version` int not null default 0 comment '乐观锁',
     `is_deleted` bit not null default b'0' comment '伪删除标记',
@@ -289,3 +290,116 @@ create table `status_flag` (
 
 -- 开启外键检查
 SET @@FOREIGN_KEY_CHECKS = 1;
+
+
+DELIMITER //
+
+SET @@max_sp_recursion_depth = 32;
+
+DROP PROCEDURE IF EXISTS GetTreeNodes;
+DROP PROCEDURE IF EXISTS GetSubtreeNodes;
+
+drop temporary table if exists temp_tree_nodes;
+CREATE TEMPORARY TABLE IF NOT EXISTS temp_tree_nodes (
+                                                         id bigint,
+                                                         parent_team_id bigint,
+                                                         team_name VARCHAR(32)
+);
+
+CREATE PROCEDURE GetTreeNodes(IN root_id bigint)
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE cur_id, parent_id bigint;
+    DECLARE cur_name VARCHAR(32);
+    DECLARE nodes_cursor CURSOR FOR
+        SELECT id, parent_team_id, team_name
+        FROM team_okr
+        WHERE (id = root_id OR parent_team_id = root_id) and is_deleted = 0;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    CREATE TEMPORARY TABLE IF NOT EXISTS temp_tree_nodes (
+                                                             id bigint,
+                                                             parent_team_id bigint,
+                                                             team_name VARCHAR(32)
+    );
+
+    OPEN nodes_cursor;
+    read_loop: LOOP
+        FETCH nodes_cursor INTO cur_id, parent_id, cur_name;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        INSERT INTO temp_tree_nodes (id, parent_team_id, team_name)
+        VALUES (cur_id, parent_id, cur_name);
+
+        CALL GetSubtreeNodes(cur_id);
+    END LOOP;
+
+    CLOSE nodes_cursor;
+
+    SELECT distinct * FROM temp_tree_nodes order by id;
+
+    DROP TEMPORARY TABLE IF EXISTS temp_tree_nodes;
+END//
+
+CREATE PROCEDURE GetSubtreeNodes(IN parent_id bigint)
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE cur_id, cur_parent_id bigint;
+    DECLARE cur_name VARCHAR(32);
+    DECLARE subtree_cursor CURSOR FOR
+        SELECT id, parent_team_id, team_name
+        FROM team_okr
+        WHERE parent_team_id = parent_id and is_deleted = 0;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN subtree_cursor;
+    read_loop: LOOP
+        FETCH subtree_cursor INTO cur_id, cur_parent_id, cur_name;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        INSERT INTO temp_tree_nodes (id, parent_team_id, team_name)
+        VALUES (cur_id, cur_parent_id, cur_name);
+
+        CALL GetSubtreeNodes(cur_id);
+    END LOOP;
+
+    CLOSE subtree_cursor;
+END//
+
+DELIMITER ;
+
+DELIMITER //
+
+SET @@max_sp_recursion_depth = 32;
+drop procedure if exists find_root_node;
+
+CREATE PROCEDURE find_root_node (IN start_id BIGINT)
+BEGIN
+    DECLARE current_id BIGINT;
+    DECLARE parent_id BIGINT;
+
+    SET current_id = start_id;
+    SET parent_id = NULL;
+
+    node_loop: LOOP
+        SELECT parent_team_id INTO parent_id
+        FROM team_okr
+        WHERE id = current_id and is_deleted = 0;
+
+        IF parent_id IS NOT NULL THEN
+            SET current_id = parent_id;
+        ELSE
+            SELECT id, parent_team_id, team_name
+            FROM team_okr
+            WHERE id = current_id and is_deleted = 0;
+            LEAVE node_loop;
+        END IF;
+    END LOOP;
+
+END //
+
+DELIMITER ;

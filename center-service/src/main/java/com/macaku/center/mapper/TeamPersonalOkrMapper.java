@@ -1,7 +1,11 @@
 package com.macaku.center.mapper;
 
-import com.macaku.center.domain.po.TeamPersonalOkr;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.macaku.center.domain.po.TeamPersonalOkr;
+import com.macaku.center.domain.vo.TeamPersonalOkrVO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author 马拉圈
@@ -10,6 +14,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.macaku.center.domain.po.TeamPersonalOkr
 */
 public interface TeamPersonalOkrMapper extends BaseMapper<TeamPersonalOkr> {
+
+    List<TeamPersonalOkrVO> getTeamPersonalOkrList(@Param("id") Long id);
 
 }
 

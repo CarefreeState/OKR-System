@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
@@ -64,7 +63,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
     }
 
     @Override
-    public Optional<Long> createOkrCore() {
+    public Long createOkrCore() {
         // 1. 创建一个内核
         OkrCore okrCore = new OkrCore();
         okrCore.setIsOver(false);
@@ -88,8 +87,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         FourthQuadrant fourthQuadrant = new FourthQuadrant();
         fourthQuadrant.setCoreId(coreID);
         fourthQuadrantService.save(fourthQuadrant);
-        // 3. 返回
-        return Optional.ofNullable(coreID);
+        return coreID;
     }
 
     @Override
@@ -144,7 +142,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
     }
 
     @Override
-    public void summaryOKR(Long id, String summary) {
+    public void summaryOKR(Long id, String summary, Integer degree) {
         OkrCore okrCore = this.lambdaQuery()
                 .eq(OkrCore::getId, id)
                 .select(OkrCore::getIsOver)
@@ -156,6 +154,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         OkrCore updateOkrCore = new OkrCore();
         updateOkrCore.setId(id);
         updateOkrCore.setSummary(summary);
+        updateOkrCore.setDegree(degree);
         // 更新
         this.lambdaUpdate().eq(OkrCore::getId, id).update(updateOkrCore);
     }

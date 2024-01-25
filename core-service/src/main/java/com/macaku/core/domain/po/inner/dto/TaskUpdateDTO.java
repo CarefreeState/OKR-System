@@ -32,13 +32,13 @@ public class TaskUpdateDTO {
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
         if(Objects.isNull(id)) {
-            messageBuilder.append("-> 任务 ID 为 null\n");
+            messageBuilder.append("\n-> 任务 ID 为 null");
         }
         if(!StringUtils.hasText(content)) {
-            messageBuilder.append("-> 没有内容\n");
+            messageBuilder.append("\n-> 没有内容");
         }
         if(Objects.isNull(isCompleted)) {
-            messageBuilder.append("-> 任务状态未知\n");
+            messageBuilder.append("\n-> 任务状态未知");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {

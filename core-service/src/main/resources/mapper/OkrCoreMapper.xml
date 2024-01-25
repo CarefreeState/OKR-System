@@ -11,6 +11,7 @@
             <result property="thirdQuadrantCycle" column="third_quadrant_cycle" jdbcType="TIMESTAMP"/>
             <result property="isOver" column="is_over" jdbcType="BIT"/>
             <result property="summary" column="summary" jdbcType="VARCHAR"/>
+            <result property="degree" column="degree" jdbcType="INTEGER"/>
             <result property="version" column="version" jdbcType="INTEGER"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BIT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
@@ -19,7 +20,7 @@
 
     <sql id="Base_Column_List">
         id,celebrate_day,second_quadrant_cycle,
-        third_quadrant_cycle,is_over,summary,
+        third_quadrant_cycle,is_over,summary,degree,
         version,is_deleted,create_time,
         update_time
     </sql>

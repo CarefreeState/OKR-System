@@ -12,4 +12,17 @@
         call find_root_node(#{id,jdbcType=BIGINT})
     </select>
 
+    <select id="getTeamOkrList" parameterType="java.lang.Long" resultType="com.macaku.center.domain.vo.TeamOkrVO">
+        select
+            t.id, o.id, t.team_name, o.is_over, t.create_time, t.update_time
+        from user u, team_okr t, okr_core o, team_personal_okr tp
+        where
+            u.id = #{id,jdbcType=BIGINT}
+          and u.is_deleted = 0 and t.is_deleted = 0 and o.is_deleted = 0 and tp.is_deleted = 0
+          and u.id = tp.user_id
+          and t.core_id = o.id
+          and tp.team_id = t.id
+        order by o.is_over, o.create_time desc
+    </select>
+
 </mapper>

@@ -2,6 +2,7 @@ package com.macaku.center.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.macaku.center.domain.po.TeamOkr;
+import com.macaku.center.domain.vo.TeamOkrVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -18,6 +19,8 @@ public interface TeamOkrMapper extends BaseMapper<TeamOkr> {
     List<TeamOkr> selectChildTeams(@Param("id") Long id);
 
     Optional<TeamOkr> findRootTeam(@Param("id") Long id);
+
+    List<TeamOkrVO> getTeamOkrList(@Param("id") Long id);
 
 }
 

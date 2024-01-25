@@ -57,6 +57,15 @@ public enum GlobalServiceStatusCode {
 
     INVALID_CELEBRATE_DAY(4200, "庆祝日非法更新"),
 
+    /* 团队相关 */
+    TEAM_NOT_EXISTS(5000, "团队不存在"),
+    TEAM_CREATE_TOO_FREQUENT(5001, "团队 OKR 创建太频繁了"),
+    REPEATED_JOIN_TEAM(5002, "重复加入团队"),
+    NON_TEAM_MEMBER(5003, "非团队人员"),
+    NON_TEAM_MANAGER(5004, "非团队管理者"),
+    REPEATED_GRANT(5005, "重复授权"),
+
+
 
 
 

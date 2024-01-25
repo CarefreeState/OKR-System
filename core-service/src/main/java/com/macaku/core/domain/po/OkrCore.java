@@ -34,6 +34,9 @@ public class OkrCore implements Serializable {
     @ApiModelProperty("总结")
     private String summary;
 
+    @ApiModelProperty("完成度")
+    private Integer degree;
+
     @ApiModelProperty("乐观锁")
     private Integer version;
 
