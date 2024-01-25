@@ -1,4 +1,4 @@
-package com.macaku.user.controller;
+package com.macaku.center.controller.user;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.interceptor.config.VisitConfig;

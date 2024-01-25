@@ -1,4 +1,4 @@
-package com.macaku.core.controller;
+package com.macaku.center.controller.core;
 
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.core.domain.po.inner.dto.TaskDTO;

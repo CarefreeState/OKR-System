@@ -1,4 +1,4 @@
-package com.macaku.core.controller.quadrant;
+package com.macaku.center.controller.core.quadrant;
 
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.core.domain.po.quadrant.vo.FourthQuadrantVO;

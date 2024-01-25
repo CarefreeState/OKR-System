@@ -1,4 +1,4 @@
-package com.macaku.core.controller.quadrant;
+package com.macaku.center.controller.core.quadrant;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.macaku.common.response.SystemJsonResponse;

@@ -41,12 +41,18 @@
             <version>3.5.3.1</version>
         </dependency>
 
-        <!--   公共通用代码     -->
+        <!--   其他服务     -->
         <dependency>
             <groupId>com.macaku</groupId>
-            <artifactId>common</artifactId>
+            <artifactId>user-service</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.macaku</groupId>
+            <artifactId>core-service</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
 
 </project>

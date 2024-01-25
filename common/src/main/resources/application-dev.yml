@@ -6,21 +6,6 @@ spring.data:
     # 端口
     port: 6379
 
-knife4j:
-  enable: true
-  openapi:
-    title: OKR 系统接口文档
-    description: "OKR 系统接口文档"
-    email: mamingsheng@yeah.net
-    concat: 马大帅
-    url: https://github.com/CarefreeState/OKR-System
-    version: v1.0.0
-    group:
-      default:
-        group-name: default
-        api-rule: package
-        api-rule-resources:
-          - com.macaku
 server:
   port: 1700
 

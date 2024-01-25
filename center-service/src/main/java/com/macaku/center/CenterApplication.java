@@ -14,7 +14,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
  * Time: 1:01
  */
 @SpringBootApplication
-@MapperScan({"com.macaku.center.mapper"})
+@MapperScan({"com.macaku.*.mapper"})
 @ComponentScan(value = {"com.macaku"})
 @EnableSwagger2WebMvc
 public class CenterApplication {

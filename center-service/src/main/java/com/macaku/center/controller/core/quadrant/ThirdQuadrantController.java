@@ -1,9 +1,9 @@
-package com.macaku.core.controller.quadrant;
+package com.macaku.center.controller.core.quadrant;
 
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
-import com.macaku.core.domain.po.quadrant.vo.SecondQuadrantVO;
-import com.macaku.core.service.quadrant.SecondQuadrantService;
+import com.macaku.core.domain.po.quadrant.vo.ThirdQuadrantVO;
+import com.macaku.core.service.quadrant.ThirdQuadrantService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,35 +20,35 @@ import org.springframework.web.bind.annotation.RestController;
  * Description:
  * User: 马拉圈
  * Date: 2024-01-22
- * Time: 12:57
+ * Time: 13:20
  */
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/secondquadrant")
-@Api(tags = "第二象限")
-public class SecondQuadrantController {
+@RequestMapping("/thirdquadrant")
+@Api(tags = "第三象限")
+public class ThirdQuadrantController {
 
-    private final SecondQuadrantService secondQuadrantService;
+
+    private final ThirdQuadrantService thirdQuadrantService;
 
     @PostMapping("/search/{coreId}")
-    @ApiOperation("查看第二象限")
-    public SystemJsonResponse<SecondQuadrantVO> searchSecondQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
-        SecondQuadrantVO secondQuadrantVO = secondQuadrantService.searchSecondQuadrant(coreId);
+    @ApiOperation("查看第三象限")
+    public SystemJsonResponse<ThirdQuadrantVO> searchThirdQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
+        ThirdQuadrantVO secondQuadrantVO = thirdQuadrantService.searchThirdQuadrant(coreId);
         return SystemJsonResponse.SYSTEM_SUCCESS(secondQuadrantVO);
     }
 
     @PostMapping("/init")
-    @ApiOperation("初始化第二象限")
-    public SystemJsonResponse initSecondQuadrant(InitQuadrantDTO initQuadrantDTO) {
+    @ApiOperation("初始化第三象限")
+    public SystemJsonResponse initThirdQuadrant(InitQuadrantDTO initQuadrantDTO) {
         // 校验
         initQuadrantDTO.validate();
         // 初始化
-        secondQuadrantService.initSecondQuadrant(initQuadrantDTO);
+        thirdQuadrantService.initThirdQuadrant(initQuadrantDTO);
         // 成功
-        log.info("第二象限初始化成功：{}", initQuadrantDTO);
+        log.info("第三象限初始化成功：{}", initQuadrantDTO);
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
-
 
 }

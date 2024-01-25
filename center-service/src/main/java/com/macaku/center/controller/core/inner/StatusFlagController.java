@@ -1,4 +1,4 @@
-package com.macaku.core.controller.inner;
+package com.macaku.center.controller.core.inner;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.macaku.common.response.SystemJsonResponse;
