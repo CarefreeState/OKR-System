@@ -1,16 +1,17 @@
-package com.macaku.common.interceptor.service.impl;
+package com.macaku.user.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.common.interceptor.service.LoginInterceptService;
 import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JwtUtil;
 import com.macaku.common.util.ShortCodeUtil;
+import com.macaku.user.domain.po.User;
+import com.macaku.user.service.UserRecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Created With Intellij IDEA
@@ -21,7 +22,7 @@ import java.util.Objects;
  */
 @Service
 @Slf4j
-public class WxInterceptServiceImpl implements LoginInterceptService {
+public class WxUserRecordServiceImpl implements UserRecordService {
     private static final String TYPE = JwtUtil.WX_LOGIN_TYPE;
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
@@ -32,14 +33,9 @@ public class WxInterceptServiceImpl implements LoginInterceptService {
     }
 
     @Override
-    public boolean intercept(HttpServletRequest request) {
+    public Optional<User> getRecord(HttpServletRequest request) {
         String openid = ExtractUtil.getOpenIDFromJWT(request);
-        Object object = redisCache.getCacheObject(JwtUtil.JWT_LOGIN_WX_USER + openid).orElse(null);
-        if(Objects.isNull(object)) {
-            log.warn("拦截路径：" + request.getRequestURI());
-            return false;
-        }else {
-            return true;
-        }
+        return Optional.ofNullable( (User) redisCache.getCacheObject(JwtUtil.JWT_LOGIN_WX_USER + openid)
+                .orElse(null));
     }
 }

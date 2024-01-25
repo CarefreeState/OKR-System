@@ -1,7 +1,9 @@
 package com.macaku.center.service;
 
-import com.macaku.center.domain.po.TeamOkr;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.macaku.center.domain.po.TeamOkr;
+
+import java.util.List;
 
 /**
 * @author 马拉圈
@@ -9,5 +11,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @createDate 2024-01-20 02:25:52
 */
 public interface TeamOkrService extends IService<TeamOkr> {
+    List<TeamOkr> selectChildTeams(Long id);
 
+    TeamOkr findRootTeam(Long id);
 }

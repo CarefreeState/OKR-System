@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class StartedEventListener implements ApplicationListener<ApplicationStartedEvent> {
+public class DeadlineEventInitializer implements ApplicationListener<ApplicationStartedEvent> {
 
     public final static String QUADRANT_ID = "id";
 

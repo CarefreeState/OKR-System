@@ -3,6 +3,7 @@ package com.macaku.core.service.impl.inner;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
+import com.macaku.core.component.TaskServiceSelector;
 import com.macaku.core.domain.po.inner.PriorityNumberOne;
 import com.macaku.core.mapper.inner.PriorityNumberOneMapper;
 import com.macaku.core.service.TaskService;
@@ -20,13 +21,13 @@ import org.springframework.stereotype.Service;
 public class PriorityNumberOneServiceImpl extends ServiceImpl<PriorityNumberOneMapper, PriorityNumberOne>
     implements PriorityNumberOneService, TaskService {
 
-    private static final Integer TYPE = 1;
+    private static final Integer OPTION = TaskServiceSelector.PRIORITY_ONE_OPTION;
 
-    private PriorityNumberOneMapper priorityNumberOneMapper = SpringUtil.getBean(PriorityNumberOneMapper.class);
+    private final PriorityNumberOneMapper priorityNumberOneMapper = SpringUtil.getBean(PriorityNumberOneMapper.class);
 
     @Override
-    public boolean match(Integer type) {
-        return TYPE.equals(type);
+    public boolean match(Integer option) {
+        return OPTION.equals(option);
     }
 
     @Override

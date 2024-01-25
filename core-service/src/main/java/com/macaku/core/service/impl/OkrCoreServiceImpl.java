@@ -14,7 +14,7 @@ import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
 import com.macaku.core.domain.po.quadrant.vo.FourthQuadrantVO;
 import com.macaku.core.domain.po.quadrant.vo.SecondQuadrantVO;
 import com.macaku.core.domain.po.quadrant.vo.ThirdQuadrantVO;
-import com.macaku.core.domain.po.vo.OkrCoreVO;
+import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.mapper.OkrCoreMapper;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.core.service.inner.PriorityNumberOneService;

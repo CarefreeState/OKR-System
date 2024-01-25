@@ -3,6 +3,7 @@ package com.macaku.core.service.impl.inner;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
+import com.macaku.core.component.TaskServiceSelector;
 import com.macaku.core.domain.po.inner.Action;
 import com.macaku.core.mapper.inner.ActionMapper;
 import com.macaku.core.service.TaskService;
@@ -20,14 +21,14 @@ import org.springframework.stereotype.Service;
 public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
     implements ActionService, TaskService {
 
-    private static final Integer TYPE = 0;
+    private static final Integer OPTION = TaskServiceSelector.ACTION_OPTION;
 
-    private ActionMapper actionMapper = SpringUtil.getBean(ActionMapper.class);
+    private final ActionMapper actionMapper = SpringUtil.getBean(ActionMapper.class);
 
 
     @Override
-    public boolean match(Integer type) {
-        return TYPE.equals(type);
+    public boolean match(Integer option) {
+        return OPTION.equals(option);
     }
 
     @Override

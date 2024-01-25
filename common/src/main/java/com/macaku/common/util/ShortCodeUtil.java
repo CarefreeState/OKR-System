@@ -3,7 +3,6 @@ package com.macaku.common.util;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.UUID;
 
@@ -23,11 +22,6 @@ public class ShortCodeUtil {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
-    // md5加密
-    public static String md5(String normal) {
-        return DigestUtils.md5Hex(normal);
-    }
-
     public static String subCodeByString(String str) {
         int strLength = str.length();
         int gap = strLength / LINK_LENGTH;//取值间隔
@@ -45,7 +39,7 @@ public class ShortCodeUtil {
     }
 
     public static String getShortCode(String str) {
-        return subCodeByString(md5(str));
+        return subCodeByString(EncryptUtil.md5(str));
     }
 
 }

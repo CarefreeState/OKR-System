@@ -2,7 +2,7 @@ package com.macaku.core.service;
 
 import com.macaku.core.domain.po.OkrCore;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.macaku.core.domain.po.vo.OkrCoreVO;
+import com.macaku.core.domain.vo.OkrCoreVO;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;

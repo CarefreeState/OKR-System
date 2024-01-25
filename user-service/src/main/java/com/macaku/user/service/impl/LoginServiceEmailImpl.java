@@ -66,6 +66,8 @@ public class LoginServiceEmailImpl implements LoginService {
         }};
         String jsonData = JsonUtil.analyzeData(tokenData);
         String token = JwtUtil.createJWT(jsonData);
+        // 缓存一下 jwt 与对应的 json
+        redisCache.setCacheObject(JwtUtil.JWT_RAW_DATA_MAP + token, jsonData, JwtUtil.JWT_MAP_TTL, JwtUtil.JWT_MAP_TTL_UNIT);
         return new HashMap<String, Object>(){{
             this.put(JwtUtil.JWT_HEADER, token);
         }};

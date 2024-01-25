@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.macaku.center.mapper.TeamOkrMapper">
+
+    <select id="selectChildTeams" resultMap="BaseResultMap" >
+        call GetTreeNodes(#{id,jdbcType=BIGINT})
+    </select>
+
+    <select id="findRootTeam" resultMap="BaseResultMap">
+        call find_root_node(#{id,jdbcType=BIGINT})
+    </select>
+
+</mapper>

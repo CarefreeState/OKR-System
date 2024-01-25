@@ -90,7 +90,9 @@ public class LoginServiceWxImpl implements LoginService {
             this.put(ExtractUtil.OPENID, openid);
             this.put(ExtractUtil.SESSION_KEY, sessionKey);
         }};
-        String token = JwtUtil.createJWT(JsonUtil.analyzeData(tokenData));
+        String jsonData = JsonUtil.analyzeData(tokenData);
+        String token = JwtUtil.createJWT(jsonData);
+        redisCache.setCacheObject(JwtUtil.JWT_RAW_DATA_MAP + token, jsonData, JwtUtil.JWT_MAP_TTL, JwtUtil.JWT_MAP_TTL_UNIT);
         return new HashMap<String, Object>(){{
             this.put(JwtUtil.JWT_HEADER, token);
         }};

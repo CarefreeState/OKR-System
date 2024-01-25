@@ -3,6 +3,7 @@ package com.macaku.common.util;
 import cn.hutool.core.codec.Base64;
 import com.alibaba.fastjson.JSONObject;
 import com.macaku.common.exception.GlobalServiceException;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import javax.crypto.Cipher;
@@ -23,6 +24,11 @@ import java.util.Arrays;
  * Time: 16:11
  */
 public class EncryptUtil {
+
+    // md5加密
+    public static String md5(String normal) {
+        return DigestUtils.md5Hex(normal);
+    }
 
     public static String sha1(String... strings) {
         StringBuilder builder = new StringBuilder();

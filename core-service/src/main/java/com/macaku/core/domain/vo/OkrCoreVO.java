@@ -1,4 +1,4 @@
-package com.macaku.core.domain.po.vo;
+package com.macaku.core.domain.vo;
 
 import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;

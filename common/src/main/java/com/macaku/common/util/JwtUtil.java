@@ -8,8 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -27,7 +28,11 @@ public class JwtUtil {
     //有效期为
     public static final Long JWT_TTL = 1L; // 一天
 
+    public static final Long JWT_MAP_TTL = 6L; // 六小时
+
     public static final TimeUnit JWT_TTL_UNIT = TimeUnit.DAYS;
+
+    public  static final TimeUnit JWT_MAP_TTL_UNIT = TimeUnit.HOURS;
 
     //设置秘钥明文
     public static final String JWT_KEY = "macaku";
@@ -35,6 +40,8 @@ public class JwtUtil {
     public static final String JWT_LOGIN_WX_USER = "jwtLoginWxUser:";
 
     public static final String JWT_LOGIN_EMAIL_USER = "jwtLoginEmailUser:";
+
+    public static final String JWT_RAW_DATA_MAP = "jwtRawDataMap:";
 
 
     public static String getUUID(){
@@ -133,15 +140,6 @@ public class JwtUtil {
                 .parseClaimsJws(jwt)
                 .getBody()
                 .getSubject();
-    }
-
-    public static <T> T getJWTRawDataOnRequest(HttpServletRequest request, Class<T> clazz) {
-        String token = request.getHeader(JWT_HEADER);
-        if(Objects.isNull(token)) {
-            return null;
-        }
-        String rawData = parseJWTRawData(token);
-        return JsonUtil.analyzeJson(rawData, clazz);
     }
 
 }

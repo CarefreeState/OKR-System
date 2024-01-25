@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.TimerUtil;
 import com.macaku.core.domain.po.OkrCore;
-import com.macaku.core.init.StartedEventListener;
+import com.macaku.core.init.DeadlineEventInitializer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -63,12 +63,12 @@ public class QuadrantDeadlineUtil {
                         // 设置新的截止时间
                             T updateQuadrant = clazz.newInstance();
                             // 设置字段 id
-                            Field idField = clazz.getDeclaredField(StartedEventListener.QUADRANT_ID);
+                            Field idField = clazz.getDeclaredField(DeadlineEventInitializer.QUADRANT_ID);
                             idField.setAccessible(true);
                             idField.set(updateQuadrant, id);
                             idField.setAccessible(false);
                             // 设置字段 deadline
-                            Field deadlineField = clazz.getDeclaredField(StartedEventListener.QUADRANT_DEADLINE);
+                            Field deadlineField = clazz.getDeclaredField(DeadlineEventInitializer.QUADRANT_DEADLINE);
                             deadlineField.setAccessible(true);
                             deadlineField.set(updateQuadrant, nextDeadline);
                             deadlineField.setAccessible(false);

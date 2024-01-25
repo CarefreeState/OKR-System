@@ -1,9 +1,12 @@
 package com.macaku.common.util;
 
+import cn.hutool.extra.spring.SpringUtil;
+import com.macaku.common.redis.RedisCache;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created With Intellij IDEA
@@ -21,9 +24,26 @@ public class ExtractUtil {
 
     public final static String ID = "id";
 
+    private static final RedisCache REDIS_CACHE = SpringUtil.getBean(RedisCache.class);
+
+
+    public static <T> T getJWTRawDataOnRequest(HttpServletRequest request, Class<T> clazz) {
+        final String token = request.getHeader(JwtUtil.JWT_HEADER);
+        if(Objects.isNull(token)) {
+            return null;
+        }
+        String redisKey = JwtUtil.JWT_RAW_DATA_MAP + token;
+        String rawData = (String) REDIS_CACHE.getCacheObject(redisKey)
+                .orElseGet(() -> {
+                    String raw = JwtUtil.parseJWTRawData(token);
+                    REDIS_CACHE.setCacheObject(redisKey, raw, JwtUtil.JWT_MAP_TTL, JwtUtil.JWT_TTL_UNIT);
+                    return raw;
+                });
+        return JsonUtil.analyzeJson(rawData, clazz);
+    }
 
     public static Map<String, Object> getMapFromJWT(HttpServletRequest request) {
-        return JwtUtil.getJWTRawDataOnRequest(request, Map.class);
+        return getJWTRawDataOnRequest(request, Map.class);
     }
 
     public static String getOpenIDFromJWT(HttpServletRequest request) {

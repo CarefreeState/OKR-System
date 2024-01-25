@@ -1,6 +1,6 @@
-package com.macaku.common.interceptor.config;
+package com.macaku.user.interceptor.config;
 
-import com.macaku.common.interceptor.UserLoginInterceptor;
+import com.macaku.user.interceptor.UserLoginInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

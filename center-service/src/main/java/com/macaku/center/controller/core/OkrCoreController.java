@@ -1,10 +1,15 @@
 package com.macaku.center.controller.core;
 
+import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.domain.dto.unify.OkrOperateDTO;
+import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
-import com.macaku.core.domain.po.vo.OkrCoreVO;
+import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
+import com.macaku.user.domain.po.User;
+import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -13,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created With Intellij IDEA
@@ -30,9 +37,16 @@ public class OkrCoreController {
 
     private final OkrCoreService okrCoreService;
 
+    private final OkrServiceSelector okrServiceSelector;
+
     @GetMapping("/create")
     @ApiOperation("创建一个core")
-    public SystemJsonResponse<Long> createOkr() {
+    public SystemJsonResponse<Long> createOkr(HttpServletRequest request, OkrOperateDTO okrOperateDTO) {
+        // 检测
+        okrOperateDTO.validate();
+        User user = UserRecordUtil.getUserRecord(request);
+        OkrOperateService okrOperateService = okrServiceSelector.select(okrOperateDTO.getScope());
+        okrOperateService.createOkrCore(user, okrOperateDTO);
         Long coreID = okrCoreService.createOkrCore()
                 .orElseThrow(() -> new GlobalServiceException("创建core失败"));
         return SystemJsonResponse.SYSTEM_SUCCESS(coreID);
