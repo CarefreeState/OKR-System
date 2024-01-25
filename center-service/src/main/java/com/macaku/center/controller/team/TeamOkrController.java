@@ -2,6 +2,7 @@ package com.macaku.center.controller.team;
 
 import com.macaku.center.domain.dto.GrantDTO;
 import com.macaku.center.domain.po.TeamOkr;
+import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.center.service.TeamOkrService;
 import com.macaku.center.service.TeamPersonalOkrService;
@@ -57,7 +58,7 @@ public class TeamOkrController {
 
     @PostMapping("/tree/{id}")
     @ApiOperation("获取一个团队所在的树")
-    public SystemJsonResponse<List<TeamOkr>> getCompleteTree(HttpServletRequest request,
+    public SystemJsonResponse<List<TeamOkrStatisticVO>> getCompleteTree(HttpServletRequest request,
                                                              @PathVariable("id") @NonNull @ApiParam("团队 OKR ID") Long id) {
         // 获取当前团队的祖先 ID
         Long rootId = TeamOkrUtil.getTeamRootId(id);
@@ -72,12 +73,14 @@ public class TeamOkrController {
         teamPersonalOkrService.findExistsInTeam(teamOkrs, user.getId()).orElseThrow(() ->
             new GlobalServiceException(GlobalServiceStatusCode.NON_TEAM_MEMBER)
         );
-        return SystemJsonResponse.SYSTEM_SUCCESS(teamOkrs);
+        // 计算完成度
+        List<TeamOkrStatisticVO> statisticVOS = teamOkrService.countCompletionRate(teamOkrs);
+        return SystemJsonResponse.SYSTEM_SUCCESS(statisticVOS);
     }
 
     @PostMapping("/tree/child/{id}")
     @ApiOperation("获取一个团队的子树")
-    public SystemJsonResponse<List<TeamOkr>> getChildTree(HttpServletRequest request,
+    public SystemJsonResponse<List<TeamOkrStatisticVO>> getChildTree(HttpServletRequest request,
                                                              @PathVariable("id") @NonNull @ApiParam("团队 OKR ID") Long id) {
         // 获取根团队的所有孩子节点
         List<TeamOkr> teamOkrs = teamOkrService.selectChildTeams(id);
@@ -90,7 +93,9 @@ public class TeamOkrController {
         teamPersonalOkrService.findExistsInTeam(teamOkrs, user.getId()).orElseThrow(() ->
                 new GlobalServiceException(GlobalServiceStatusCode.NON_TEAM_MEMBER)
         );
-        return SystemJsonResponse.SYSTEM_SUCCESS(teamOkrs);
+        // 计算完成度
+        List<TeamOkrStatisticVO> statisticVOS = teamOkrService.countCompletionRate(teamOkrs);
+        return SystemJsonResponse.SYSTEM_SUCCESS(statisticVOS);
     }
 
     @PostMapping("/grant")

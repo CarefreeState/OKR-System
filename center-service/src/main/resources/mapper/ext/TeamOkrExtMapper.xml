@@ -4,6 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.macaku.center.mapper.TeamOkrMapper">
 
+    <resultMap extends="BaseResultMap" id="KeyResultsMap" type="com.macaku.center.domain.vo.TeamOkrStatisticVO">
+        <collection property="keyResults" ofType="com.macaku.core.domain.po.inner.KeyResult"
+                    resultMap="com.macaku.core.mapper.inner.KeyResultMapper.BaseResultMap" columnPrefix="k_" />
+    </resultMap>
+
     <select id="selectChildTeams" resultMap="BaseResultMap" >
         call GetTreeNodes(#{id,jdbcType=BIGINT})
     </select>
@@ -24,5 +29,22 @@
           and tp.team_id = t.id
         order by o.is_over, o.create_time desc
     </select>
-
+    <select id="selectKeyResultsByTeamId" resultMap="KeyResultsMap">
+        select
+        t.id, t.core_id, t.team_name, t.parent_team_id, t.manager_id, t.create_time,
+        k.id k_id, k.first_quadrant_id k_first_quadrant_id,
+        k.content k_content, k.probability k_probability
+        from
+        team_okr t, okr_core o,
+        first_quadrant f left join key_result k on f.id = k.first_quadrant_id
+        where
+        t.is_deleted = 0 and t.is_deleted = 0 and o.is_deleted = 0 and k.is_deleted = 0
+        and t.id in
+        <foreach collection="ids" open="(" close=")" item="id" separator=",">
+            #{id,jdbcType=BIGINT}
+        </foreach>
+        and t.core_id = o.id
+        and f.core_id = o.id
+        order by t.id
+    </select>
 </mapper>

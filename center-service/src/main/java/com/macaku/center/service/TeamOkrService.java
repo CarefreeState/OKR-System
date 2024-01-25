@@ -2,6 +2,7 @@ package com.macaku.center.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.macaku.center.domain.po.TeamOkr;
+import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.user.domain.po.User;
 
@@ -20,4 +21,6 @@ public interface TeamOkrService extends IService<TeamOkr> {
     List<TeamOkrVO> getTeamOkrList(User user);
 
     void grantTeamForMember(Long teamId, Long managerId, Long userId);
+
+    List<TeamOkrStatisticVO> countCompletionRate(List<TeamOkr> teamOkrs);
 }

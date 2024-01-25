@@ -7,6 +7,7 @@ import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.domain.po.TeamPersonalOkr;
+import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.center.mapper.TeamOkrMapper;
 import com.macaku.center.mapper.TeamPersonalOkrMapper;
@@ -16,6 +17,8 @@ import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
+import com.macaku.core.domain.po.inner.KeyResult;
+import com.macaku.core.mapper.quadrant.FirstQuadrantMapper;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.user.domain.po.User;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
 * @author 马拉圈
@@ -43,6 +47,8 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
     private final OkrCoreService okrCoreService = SpringUtil.getBean(OkrCoreService.class);
+
+    private final FirstQuadrantMapper firstQuadrantMapper = SpringUtil.getBean(FirstQuadrantMapper.class);
 
     @Override
     public boolean match(String scene) {
@@ -103,6 +109,27 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         teamOkrMapper.insert(teamOkr);
         // 本来就有团队个人 OKR，无需再次生成
         log.info("管理员 {} 为成员 {} 授权创建团队原OKR {} 的子 OKR {} 内核 {}", managerId, userId, teamId, newTeamOkr.getId(), coreId);
+    }
+
+    @Override
+    public List<TeamOkrStatisticVO> countCompletionRate(List<TeamOkr> teamOkrs) {
+        // 获取 ids
+        List<Long> ids = teamOkrs.stream().parallel().map(TeamOkr::getId).collect(Collectors.toList());
+        // 通过 ids 换取第一象限列表，并统计数据
+        List<TeamOkrStatisticVO> statisticVOS = teamOkrMapper.selectKeyResultsByTeamId(ids);
+        statisticVOS.stream()
+                .parallel()
+                .forEach(teamOkrStatisticVO -> {
+            long sum = teamOkrStatisticVO.getKeyResults().stream()
+                    .parallel()
+                    .mapToLong(KeyResult::getProbability).reduce(Long::sum)
+                    .orElse(0);
+            int size = teamOkrStatisticVO.getKeyResults().size();
+            Double average = size == 0 ? Double.valueOf(0) : Double.valueOf(sum * 1.0 / size);
+            teamOkrStatisticVO.setAverage(average);
+            teamOkrStatisticVO.setKeyResults(null);
+        });
+        return statisticVOS;
     }
 
     @Override
