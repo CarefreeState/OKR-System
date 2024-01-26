@@ -4,6 +4,7 @@ import com.macaku.center.domain.dto.GrantDTO;
 import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
+import com.macaku.center.service.MemberService;
 import com.macaku.center.service.TeamOkrService;
 import com.macaku.center.service.TeamPersonalOkrService;
 import com.macaku.center.util.TeamOkrUtil;
@@ -44,6 +45,8 @@ public class TeamOkrController {
 
     private final TeamPersonalOkrService teamPersonalOkrService;
 
+    private final MemberService memberService;
+
     @GetMapping("/list")
     @ApiOperation("获取团队 OKR 列表")
     public SystemJsonResponse<List<TeamOkrVO>> getTeamOkrs(HttpServletRequest request) {
@@ -63,7 +66,7 @@ public class TeamOkrController {
         User user = UserRecordUtil.getUserRecord(request);
         Long userId = user.getId();
         // 判断是否是其中的成员
-        teamPersonalOkrService.checkExistsInTeam(rootId, userId);
+        memberService.checkExistsInTeam(rootId, userId);
         // 获取根团队的所有孩子节点
         List<TeamOkr> teamOkrs = teamOkrService.selectChildTeams(rootId);
         if(teamOkrs.isEmpty()) {
@@ -84,7 +87,7 @@ public class TeamOkrController {
         User user = UserRecordUtil.getUserRecord(request);
         Long userId = user.getId();
         // 判断是否是其中的成员
-        teamPersonalOkrService.checkExistsInTeam(id, userId);
+        memberService.checkExistsInTeam(id, userId);
         // 获取根团队的所有孩子节点
         List<TeamOkr> teamOkrs = teamOkrService.selectChildTeams(id);
         if(teamOkrs.isEmpty()) {

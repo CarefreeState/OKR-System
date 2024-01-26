@@ -2,16 +2,21 @@ package com.macaku.center.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.domain.po.PersonalOkr;
 import com.macaku.center.domain.vo.PersonalOkrVO;
 import com.macaku.center.mapper.PersonalOkrMapper;
+import com.macaku.center.redis.config.CoreUserMapConfig;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.center.service.PersonalOkrService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.redis.RedisCache;
+import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
+import com.macaku.core.service.quadrant.FirstQuadrantService;
 import com.macaku.user.domain.po.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +41,10 @@ public class PersonalOkrServiceImpl extends ServiceImpl<PersonalOkrMapper, Perso
 
     private final PersonalOkrMapper personalOkrMapper = SpringUtil.getBean(PersonalOkrMapper.class);
 
+    private final FirstQuadrantService firstQuadrantService = SpringUtil.getBean(FirstQuadrantService.class);
+
+    private final RedisCache redisCache =SpringUtil.getBean(RedisCache.class);
+
     @Override
     public boolean match(String scene) {
         return SCENE.equals(scene);
@@ -58,6 +67,34 @@ public class PersonalOkrServiceImpl extends ServiceImpl<PersonalOkrMapper, Perso
         log.info("用户 {} 个人团队 OKR {}  内核 {}", userId, personalOkr.getId(), coreId);
         personalOkrMapper.insert(personalOkr);
     }
+
+    @Override
+    public OkrCoreVO selectAllOfCore(User user, Long coreId) {
+        // 根据 coreId 获取 coreId 使用者（团队个人 OKR 只能由使用者观看）
+        Long userId = getCoreUser(coreId);
+        if(user.getId().equals(userId)) {
+            // 调用服务查询详细信息
+            return okrCoreService.searchOkrCore(coreId);
+        }else {
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
+        }
+    }
+
+    @Override
+    public Long getCoreUser(Long coreId) {
+        String redisKey = CoreUserMapConfig.USER_CORE_MAP + coreId;
+        return (Long) redisCache.getCacheObject(redisKey).orElseGet(() -> {
+            Long userId = Db.lambdaQuery(PersonalOkr.class)
+                    .eq(PersonalOkr::getCoreId, coreId)
+                    .select(PersonalOkr::getUserId)
+                    .oneOpt().orElseThrow(() ->
+                            new GlobalServiceException(GlobalServiceStatusCode.CORE_NOT_EXISTS)
+                    ).getUserId();
+            redisCache.setCacheObject(redisKey, userId, CoreUserMapConfig.USER_CORE_MAP_TTL, CoreUserMapConfig.USER_CORE_MAP_TTL_UNIT);
+            return userId;
+        });
+    }
+
 
     @Override
     public List<PersonalOkrVO> getPersonalOkrList(User user) {

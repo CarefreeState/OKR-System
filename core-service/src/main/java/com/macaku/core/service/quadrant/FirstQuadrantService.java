@@ -17,4 +17,6 @@ public interface FirstQuadrantService extends IService<FirstQuadrant> {
 
     FirstQuadrantVO searchFirstQuadrant(Long coreId);
 
+    Long getFirstQuadrantCoreId(Long id);
+
 }

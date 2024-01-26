@@ -1,6 +1,7 @@
 package com.macaku.center.domain.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -32,9 +33,11 @@ public class TeamOkr implements Serializable {
     private String teamName;
 
     @ApiModelProperty("乐观锁")
+    @JsonIgnore
     private Integer version;
 
     @ApiModelProperty("是否删除")
+    @JsonIgnore
     private Boolean isDeleted;
 
     @ApiModelProperty("创建时间")

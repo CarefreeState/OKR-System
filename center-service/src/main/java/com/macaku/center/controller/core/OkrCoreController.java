@@ -2,7 +2,9 @@ package com.macaku.center.controller.core;
 
 import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
+import com.macaku.center.domain.dto.unify.OkrSearchDTO;
 import com.macaku.center.service.OkrOperateService;
+import com.macaku.center.service.TeamPersonalOkrService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
@@ -40,6 +42,8 @@ public class OkrCoreController {
 
     private final OkrServiceSelector okrServiceSelector;
 
+    private final TeamPersonalOkrService teamPersonalOkrService;
+
     @GetMapping("/create")
     @ApiOperation("创建一个core")
     public SystemJsonResponse createOkr(HttpServletRequest request,
@@ -52,24 +56,39 @@ public class OkrCoreController {
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
-    @GetMapping("/search/{id}")
+    @GetMapping("/search")
     @ApiOperation("查看一个OKR内核")
-    public SystemJsonResponse<OkrCoreVO> searchOkrCore(@PathVariable("id") @NonNull @ApiParam("OKR 内核 ID") Long id) {
-        OkrCoreVO coreVO = okrCoreService.searchOkrCore(id);
-        return SystemJsonResponse.SYSTEM_SUCCESS(coreVO);
+    public SystemJsonResponse<OkrCoreVO> searchOkrCore(HttpServletRequest request,
+                                                       OkrSearchDTO okrSearchDTO) {
+        okrSearchDTO.validate();
+        User user = UserRecordUtil.getUserRecord(request);
+        OkrOperateService okrOperateService = okrServiceSelector.select(okrSearchDTO.getScene());
+        OkrCoreVO okrCoreVO = okrOperateService.selectAllOfCore(user, okrSearchDTO.getCoreId());
+        return SystemJsonResponse.SYSTEM_SUCCESS(okrCoreVO);
     }
 
-    @PostMapping("/celebrate/{id}")
+    @PostMapping("/celebrate")
     @ApiOperation("确定庆祝日")
-    public SystemJsonResponse confirmCelebrateDay(@PathVariable("id") @NonNull @ApiParam("OKR 内核 ID") Long id,
+    public SystemJsonResponse confirmCelebrateDay(HttpServletRequest request,
+                                                  OkrSearchDTO okrSearchDTO,
                                                   @RequestParam("celebrateDay") @NonNull @ApiParam("庆祝日（星期）") Integer celebrateDay) {
         if(celebrateDay.compareTo(1) < 0 || celebrateDay.compareTo(7) > 0) {
             throw new GlobalServiceException(GlobalServiceStatusCode.INVALID_CELEBRATE_DAY);
         }
-        okrCoreService.confirmCelebrateDate(id, celebrateDay);
-        log.info("成功为 OKR {} 确定庆祝日 星期{}", id, celebrateDay);
+        okrSearchDTO.validate();
+        User user = UserRecordUtil.getUserRecord(request);
+        Long coreId = okrSearchDTO.getCoreId();
+        OkrOperateService okrOperateService = okrServiceSelector.select(okrSearchDTO.getScene());
+        Long userId = okrOperateService.getCoreUser(coreId);
+        if(user.getId().equals(userId)){
+            okrCoreService.confirmCelebrateDate(coreId, celebrateDay);
+            log.info("成功为 OKR {} 确定庆祝日 星期{}", coreId, celebrateDay);
+        }else {
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
+        }
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
+
     @PostMapping("/summary/{id}")
     @ApiOperation("总结 OKR")
     public SystemJsonResponse summaryOKR(@PathVariable("id") @NonNull @ApiParam("OKR 内核 ID") Long id,

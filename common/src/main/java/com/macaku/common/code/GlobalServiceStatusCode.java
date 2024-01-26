@@ -56,6 +56,7 @@ public enum GlobalServiceStatusCode {
     OKR_IS_NOT_OVER(4101, "OKR 未结束"),
 
     INVALID_CELEBRATE_DAY(4200, "庆祝日非法更新"),
+    CELEBRATE_DAY_CANNOT_CHANGE(4201, "庆祝日不能修改"),
 
     /* 团队相关 */
     TEAM_NOT_EXISTS(5000, "团队不存在"),
@@ -64,6 +65,10 @@ public enum GlobalServiceStatusCode {
     NON_TEAM_MEMBER(5003, "非团队人员"),
     NON_TEAM_MANAGER(5004, "非团队管理者"),
     REPEATED_GRANT(5005, "重复授权"),
+
+    /*内核相关*/
+    CORE_NOT_EXISTS(6000, "OKR 内核不存在或者并没有被 OKR 当作内核"),
+    USER_NOT_CORE_MANAGER(6000, "用户并不是 OKR 的管理者"),
 
 
 

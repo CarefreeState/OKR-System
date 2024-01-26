@@ -18,4 +18,5 @@ public interface ThirdQuadrantService extends IService<ThirdQuadrant> {
 
     ThirdQuadrantVO searchThirdQuadrant(Long coreId);
 
+    Long getThirdQuadrantCoreId(Long id);
 }

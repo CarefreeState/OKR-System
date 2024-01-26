@@ -1,19 +1,24 @@
 package com.macaku.center.controller.core.quadrant;
 
+import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.domain.dto.unify.OkrInitQuadrantDTO;
+import com.macaku.center.service.OkrOperateService;
+import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
-import com.macaku.core.domain.po.quadrant.vo.SecondQuadrantVO;
 import com.macaku.core.service.quadrant.SecondQuadrantService;
+import com.macaku.user.domain.po.User;
+import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created With Intellij IDEA
@@ -31,22 +36,29 @@ public class SecondQuadrantController {
 
     private final SecondQuadrantService secondQuadrantService;
 
-    @PostMapping("/search/{coreId}")
-    @ApiOperation("查看第二象限")
-    public SystemJsonResponse<SecondQuadrantVO> searchSecondQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
-        SecondQuadrantVO secondQuadrantVO = secondQuadrantService.searchSecondQuadrant(coreId);
-        return SystemJsonResponse.SYSTEM_SUCCESS(secondQuadrantVO);
-    }
+    private final OkrServiceSelector okrServiceSelector;
 
     @PostMapping("/init")
     @ApiOperation("初始化第二象限")
-    public SystemJsonResponse initSecondQuadrant(InitQuadrantDTO initQuadrantDTO) {
+    public SystemJsonResponse initSecondQuadrant(HttpServletRequest request,
+                                                 OkrInitQuadrantDTO okrInitQuadrantDTO) {
         // 校验
-        initQuadrantDTO.validate();
+        okrInitQuadrantDTO.validate();
         // 初始化
-        secondQuadrantService.initSecondQuadrant(initQuadrantDTO);
+        User user = UserRecordUtil.getUserRecord(request);
+        InitQuadrantDTO initQuadrantDTO = okrInitQuadrantDTO.getInitQuadrantDTO();
+        Long quadrantId = initQuadrantDTO.getId();
+        OkrOperateService okrOperateService = okrServiceSelector.select(okrInitQuadrantDTO.getScene());
+        // 检测身份
+        Long coreId = secondQuadrantService.getSecondQuadrantCoreId(quadrantId);
+        Long userId = okrOperateService.getCoreUser(coreId);
+        if(user.getId().equals(userId)) {
+            secondQuadrantService.initSecondQuadrant(initQuadrantDTO);
+            log.info("第二象限初始化成功：{}", initQuadrantDTO);
+        }else {
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
+        }
         // 成功
-        log.info("第二象限初始化成功：{}", initQuadrantDTO);
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 

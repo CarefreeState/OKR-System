@@ -2,12 +2,15 @@ package com.macaku.center.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.domain.po.TeamPersonalOkr;
 import com.macaku.center.domain.vo.TeamPersonalOkrVO;
 import com.macaku.center.mapper.TeamPersonalOkrMapper;
+import com.macaku.center.redis.config.CoreUserMapConfig;
+import com.macaku.center.service.MemberService;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.center.service.TeamOkrService;
 import com.macaku.center.service.TeamPersonalOkrService;
@@ -15,17 +18,13 @@ import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
+import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.user.domain.po.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
 * @author 马拉圈
@@ -37,12 +36,6 @@ import java.util.stream.Collectors;
 public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMapper, TeamPersonalOkr>
     implements TeamPersonalOkrService, OkrOperateService {
 
-    private final static String USER_TEAM_MEMBER = "userTeamMember:";
-
-    private final static Long USER_TEAM_MEMBER_TTL = 30L;
-
-    private final static TimeUnit USER_TEAM_MEMBER_TTL_UNIT = TimeUnit.DAYS;
-
     private final static String SCENE = OkrServiceSelector.TEAM_PERSONAL_OKR_SCENE;
 
     private final TeamPersonalOkrMapper teamPersonalOkrMapper = SpringUtil.getBean(TeamPersonalOkrMapper.class);
@@ -50,6 +43,8 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
     private final TeamOkrService teamOkrService = SpringUtil.getBean(TeamOkrService.class);
 
     private final OkrCoreService okrCoreService = SpringUtil.getBean(OkrCoreService.class);
+
+    private final MemberService memberService = SpringUtil.getBean(MemberService.class);
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
@@ -69,7 +64,7 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
         // 获取整棵树
         List<TeamOkr> teamOkrs = teamOkrService.selectChildTeams(rootId);
         // 判断是否可以加入团队
-        findExistsInTeam(teamOkrs, userId).ifPresent(x -> {
+        memberService.findExistsInTeam(teamOkrs, userId).ifPresent(x -> {
             String message = String.format("用户 %d 已在团队树 %d 的一个团队 %d 中, 无法加入团队 %d", userId, rootId, x, teamId);
             throw new GlobalServiceException(message, GlobalServiceStatusCode.REPEATED_JOIN_TEAM);
         });
@@ -86,6 +81,33 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
     }
 
     @Override
+    public OkrCoreVO selectAllOfCore(User user, Long coreId) {
+        // 根据 coreId 获取 coreId 使用者（团队个人 OKR 只能由使用者观看）
+        Long userId = getCoreUser(coreId);
+        if(user.getId().equals(userId)) {
+            // 调用服务查询详细信息
+            return okrCoreService.searchOkrCore(coreId);
+        }else {
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
+        }
+    }
+
+    @Override
+    public Long getCoreUser(Long coreId) {
+        String redisKey = CoreUserMapConfig.USER_CORE_MAP + coreId;
+        return (Long) redisCache.getCacheObject(redisKey).orElseGet(() -> {
+                Long userId = Db.lambdaQuery(TeamPersonalOkr.class)
+                    .eq(TeamPersonalOkr::getCoreId, coreId)
+                    .select(TeamPersonalOkr::getUserId)
+                    .oneOpt().orElseThrow(() ->
+                            new GlobalServiceException(GlobalServiceStatusCode.CORE_NOT_EXISTS)
+                    ).getUserId();
+                redisCache.setCacheObject(redisKey, userId, CoreUserMapConfig.USER_CORE_MAP_TTL, CoreUserMapConfig.USER_CORE_MAP_TTL_UNIT);
+                return userId;
+        });
+    }
+
+    @Override
     public List<TeamPersonalOkrVO> getTeamPersonalOkrList(User user) {
         // 获取当前用户 id
         Long id = user.getId();
@@ -95,42 +117,7 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
         return teamPersonalOkrVOList;
     }
 
-    @Override
-    public Optional<Long> findExistsInTeam(List<TeamOkr> teamOkrs, Long userId) {
-        List<Long> ids = teamOkrs.stream()
-                .parallel()
-                .map(TeamOkr::getId)
-                .collect(Collectors.toList());
-        return teamPersonalOkrMapper.getTeamPersonalOkrList(userId).stream()
-                .parallel()
-                .map(TeamPersonalOkrVO::getTeamId)
-                .filter(ids::contains)
-                .findAny();
-    }
 
-    @Override
-    public void checkExistsInTeam(Long teamId, Long userId) {
-        Long rootId = TeamOkrUtil.getTeamRootId(teamId);
-        // 查看是否有缓存
-        String redisKey = USER_TEAM_MEMBER + rootId;
-        Boolean isExists = (Boolean) redisCache.getCacheMapValue(redisKey, userId).orElseGet(() -> {
-            List<TeamOkr> teamOkrs = teamOkrService.selectChildTeams(rootId);
-            findExistsInTeam(teamOkrs, userId).orElseThrow(() -> {
-                redisCache.getCacheObject(redisKey).orElseGet(() -> {
-                    Map<Long, Boolean> map = new HashMap<>();
-                    map.put(userId, false);
-                    redisCache.setCacheMap(redisKey, map, USER_TEAM_MEMBER_TTL, USER_TEAM_MEMBER_TTL_UNIT);
-                    return Boolean.FALSE;
-                });
-                return new GlobalServiceException(GlobalServiceStatusCode.NON_TEAM_MEMBER);
-            });
-            redisCache.setCacheMapValue(redisKey, userId, true);
-            return Boolean.TRUE;
-        });
-        if(Boolean.FALSE.equals(isExists)) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.NON_TEAM_MEMBER);
-        }
-    }
 }
 
 

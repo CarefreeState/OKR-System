@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.TimerUtil;
 import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
@@ -32,7 +33,15 @@ import java.util.concurrent.TimeUnit;
 public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, ThirdQuadrant>
     implements ThirdQuadrantService {
 
+    private final static String THIRD_QUADRANT_CORE_MAP = "thirdQuadrantCoreMap:";
+
+    private final static Long THIRD_CORE_MAP_TTL = 1L;
+
+    private final static TimeUnit THIRD_CORE_MAP_UNIT = TimeUnit.DAYS;
+
     private final ThirdQuadrantMapper thirdQuadrantMapper;
+
+    private final RedisCache redisCache;
 
     private void scheduledUpdate(Long coreId, Long id, Date deadline, Integer quadrantCycle) {
         final long deadTimestamp = deadline.getTime();
@@ -108,6 +117,22 @@ public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, T
     public ThirdQuadrantVO searchThirdQuadrant(Long coreId) {
         return thirdQuadrantMapper.searchThirdQuadrant(coreId).orElseThrow(() ->
                 new GlobalServiceException(GlobalServiceStatusCode.THIRD_QUADRANT_NOT_EXISTS));
+    }
+
+    @Override
+    public Long getThirdQuadrantCoreId(Long id) {
+        String redisKey = THIRD_QUADRANT_CORE_MAP + id;
+        return (Long) redisCache.getCacheObject(redisKey).orElseGet(() -> {
+            // 查询
+            Long coreId = this.lambdaQuery()
+                    .eq(ThirdQuadrant::getId, id)
+                    .select(ThirdQuadrant::getCoreId)
+                    .oneOpt().orElseThrow(() ->
+                            new GlobalServiceException(GlobalServiceStatusCode.SECOND_QUADRANT_NOT_EXISTS)
+                    ).getCoreId();
+            redisCache.setCacheObject(redisKey, coreId, THIRD_CORE_MAP_TTL, THIRD_CORE_MAP_UNIT);
+            return coreId;
+        });
     }
 }
 

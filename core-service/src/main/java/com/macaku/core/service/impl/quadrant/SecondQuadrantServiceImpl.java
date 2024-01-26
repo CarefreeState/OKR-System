@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.TimerUtil;
+import com.macaku.common.redis.RedisCache;
 import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.quadrant.SecondQuadrant;
 import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Objects;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,37 +31,16 @@ import java.util.concurrent.TimeUnit;
 public class SecondQuadrantServiceImpl extends ServiceImpl<SecondQuadrantMapper, SecondQuadrant>
     implements SecondQuadrantService{
 
+    private final static String SECOND_QUADRANT_CORE_MAP = "secondQuadrantCoreMap:";
+
+    private final static Long SECOND_CORE_MAP_TTL = 1L;
+
+    private final static TimeUnit SECOND_CORE_MAP_UNIT = TimeUnit.DAYS;
+
     private final SecondQuadrantMapper secondQuadrantMapper;
 
+    private final RedisCache redisCache;
 
-    private void scheduledUpdate(Long coreId, Long id, Date deadline, Integer quadrantCycle) {
-        final long deadTimestamp = deadline.getTime();
-        final long nextDeadTimestamp = deadTimestamp + TimeUnit.SECONDS.toMillis(quadrantCycle);
-        final long delay = TimeUnit.MILLISECONDS.toSeconds(deadTimestamp - System.currentTimeMillis());
-        Date nextDeadline = new Date(nextDeadTimestamp);
-        TimerUtil.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                // 如果 OKR 没有结束，更新截止时间，发起新的定时任务
-                Boolean isOver = Db.lambdaQuery(OkrCore.class)
-                        .eq(OkrCore::getId, coreId)
-                        .select(OkrCore::getIsOver)
-                        .one()
-                        .getIsOver();
-                if(Boolean.TRUE.equals(isOver)) {
-                    log.info("OKR 已结束");
-                }else {
-                    // 设置新的截止时间
-                    SecondQuadrant updateQuadrant = new SecondQuadrant();
-                    updateQuadrant.setId(id);
-                    updateQuadrant.setDeadline(nextDeadline);
-                    Db.updateById(updateQuadrant);
-                    // 发起下一个事件
-                    scheduledUpdate(coreId, id, nextDeadline, quadrantCycle);
-                }
-            }
-        }, delay, TimeUnit.SECONDS);
-    }
 
     @Override
     public void initSecondQuadrant(InitQuadrantDTO initQuadrantDTO) {
@@ -111,6 +89,22 @@ public class SecondQuadrantServiceImpl extends ServiceImpl<SecondQuadrantMapper,
         return secondQuadrantMapper.searchSecondQuadrant(coreId).orElseThrow(() ->
             new GlobalServiceException(GlobalServiceStatusCode.SECOND_QUADRANT_NOT_EXISTS)
         );
+    }
+
+    @Override
+    public Long getSecondQuadrantCoreId(Long id) {
+        String redisKey = SECOND_QUADRANT_CORE_MAP + id;
+        return (Long) redisCache.getCacheObject(redisKey).orElseGet(() -> {
+            // 查询
+            Long coreId = this.lambdaQuery()
+                    .eq(SecondQuadrant::getId, id)
+                    .select(SecondQuadrant::getCoreId)
+                    .oneOpt().orElseThrow(() ->
+                            new GlobalServiceException(GlobalServiceStatusCode.SECOND_QUADRANT_NOT_EXISTS)
+                    ).getCoreId();
+            redisCache.setCacheObject(redisKey, coreId, SECOND_CORE_MAP_TTL, SECOND_CORE_MAP_UNIT);
+            return coreId;
+        });
     }
 }
 

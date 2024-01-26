@@ -1,6 +1,7 @@
 package com.macaku.core.domain.po;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -38,9 +39,11 @@ public class OkrCore implements Serializable {
     private Integer degree;
 
     @ApiModelProperty("乐观锁")
+    @JsonIgnore
     private Integer version;
 
     @ApiModelProperty("是否删除")
+    @JsonIgnore
     private Boolean isDeleted;
 
     @ApiModelProperty("创建时间")

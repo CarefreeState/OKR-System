@@ -18,4 +18,6 @@ public interface SecondQuadrantService extends IService<SecondQuadrant> {
 
     SecondQuadrantVO searchSecondQuadrant(Long coreId);
 
+    Long getSecondQuadrantCoreId(Long id);
+
 }

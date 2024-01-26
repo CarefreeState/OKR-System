@@ -1,6 +1,7 @@
 package com.macaku.center.service;
 
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
+import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.user.domain.po.User;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,4 +17,9 @@ public interface OkrOperateService {
 
     @Transactional
     void createOkrCore(User user, OkrOperateDTO okrOperateDTO);
+
+    OkrCoreVO selectAllOfCore(User user, Long coreId);
+
+    Long getCoreUser(Long coreId);
+
 }

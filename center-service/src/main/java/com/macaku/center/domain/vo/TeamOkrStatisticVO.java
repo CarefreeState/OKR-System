@@ -24,4 +24,7 @@ public class TeamOkrStatisticVO extends TeamOkr {
 
     @ApiModelProperty("均值")
     private Double average;
+
+    @ApiModelProperty("是否完成")
+    private Boolean isOver;
 }

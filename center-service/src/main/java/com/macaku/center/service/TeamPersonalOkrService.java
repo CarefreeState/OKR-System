@@ -1,13 +1,11 @@
 package com.macaku.center.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.domain.po.TeamPersonalOkr;
 import com.macaku.center.domain.vo.TeamPersonalOkrVO;
 import com.macaku.user.domain.po.User;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
 * @author 马拉圈
@@ -18,7 +16,4 @@ public interface TeamPersonalOkrService extends IService<TeamPersonalOkr> {
 
     List<TeamPersonalOkrVO> getTeamPersonalOkrList(User user);
 
-    Optional<Long> findExistsInTeam(List<TeamOkr> teamOkrs, Long userId);
-
-    void checkExistsInTeam(Long teamId, Long userId);
 }

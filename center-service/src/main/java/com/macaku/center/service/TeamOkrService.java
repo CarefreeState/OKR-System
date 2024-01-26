@@ -5,6 +5,7 @@ import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.user.domain.po.User;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ public interface TeamOkrService extends IService<TeamOkr> {
 
     TeamOkr checkManager(Long teamId, Long managerId);
 
+    @Transactional
     void grantTeamForMember(Long teamId, Long managerId, Long userId);
 
     List<TeamOkrStatisticVO> countCompletionRate(List<TeamOkr> teamOkrs);

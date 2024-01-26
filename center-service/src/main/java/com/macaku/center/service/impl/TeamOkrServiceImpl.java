@@ -12,6 +12,8 @@ import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.center.mapper.TeamOkrMapper;
 import com.macaku.center.mapper.TeamPersonalOkrMapper;
+import com.macaku.center.redis.config.CoreUserMapConfig;
+import com.macaku.center.service.MemberService;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.center.service.TeamOkrService;
 import com.macaku.center.util.TeamOkrUtil;
@@ -21,6 +23,7 @@ import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.media.MediaUtils;
 import com.macaku.common.web.HttpUtils;
 import com.macaku.core.domain.po.inner.KeyResult;
+import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.mapper.quadrant.FirstQuadrantMapper;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.user.domain.po.User;
@@ -62,6 +65,8 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
     private final OkrCoreService okrCoreService = SpringUtil.getBean(OkrCoreService.class);
+
+    private final MemberService memberService = SpringUtil.getBean(MemberService.class);
 
     private final FirstQuadrantMapper firstQuadrantMapper = SpringUtil.getBean(FirstQuadrantMapper.class);
 
@@ -201,6 +206,35 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         teamPersonalOkr.setUserId(userId);
         teamPersonalOkrMapper.insert(teamPersonalOkr);
         log.info("用户 {} 新建团队 {} 的 团队个人 OKR {} 内核 {}", userId, teamId, teamPersonalOkr.getId(), coreId2);
+    }
+
+    @Override
+    public OkrCoreVO selectAllOfCore(User user, Long coreId) {
+        // 检测用户是否是 coreId 所属团队的成员
+        Long teamId = Db.lambdaQuery(TeamOkr.class)
+                .eq(TeamOkr::getCoreId, coreId)
+                .select(TeamOkr::getId)
+                .oneOpt().orElseThrow(() ->
+                        new GlobalServiceException(GlobalServiceStatusCode.CORE_NOT_EXISTS)
+                ).getId();
+        memberService.checkExistsInTeam(teamId, user.getId());
+        // 到这里就没问题了
+        return okrCoreService.searchOkrCore(coreId);
+    }
+
+    @Override
+    public Long getCoreUser(Long coreId) {
+        String redisKey = CoreUserMapConfig.USER_CORE_MAP + coreId;
+        return (Long) redisCache.getCacheObject(redisKey).orElseGet(() -> {
+            Long managerId = Db.lambdaQuery(TeamOkr.class)
+                    .eq(TeamOkr::getCoreId, coreId)
+                    .select(TeamOkr::getManagerId)
+                    .oneOpt().orElseThrow(() ->
+                            new GlobalServiceException(GlobalServiceStatusCode.CORE_NOT_EXISTS)
+                    ).getManagerId();
+            redisCache.setCacheObject(redisKey, managerId, CoreUserMapConfig.USER_CORE_MAP_TTL, CoreUserMapConfig.USER_CORE_MAP_TTL_UNIT);
+            return managerId;
+        });
     }
 
 }

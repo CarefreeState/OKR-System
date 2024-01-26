@@ -1,6 +1,7 @@
 package com.macaku.core.domain.po.quadrant;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -26,9 +27,11 @@ public class SecondQuadrant implements Serializable {
     private Date deadline;
 
     @ApiModelProperty("乐观锁")
+    @JsonIgnore
     private Integer version;
 
     @ApiModelProperty("是否删除")
+    @JsonIgnore
     private Boolean isDeleted;
 
     @ApiModelProperty("创建时间")

@@ -81,7 +81,7 @@ public class QuadrantDeadlineUtil {
                     throw new GlobalServiceException(e.getMessage());
                 }
             }
-        }, delay, TimeUnit.SECONDS);
+        }, TimeUnit.MILLISECONDS.toSeconds(delay), TimeUnit.SECONDS);
     }
 }
 

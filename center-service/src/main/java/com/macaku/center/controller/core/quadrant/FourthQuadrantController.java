@@ -31,12 +31,5 @@ public class FourthQuadrantController {
 
     private final FourthQuadrantService fourthQuadrantService;
 
-    @PostMapping("/search/{coreId}")
-    @ApiOperation("查看第四象限")
-    public SystemJsonResponse<FourthQuadrantVO> searchFourthQuadrant(@PathVariable("coreId") @NonNull @ApiParam("内核 ID") Long coreId) {
-        FourthQuadrantVO fourthQuadrantVO = fourthQuadrantService.searchFourthQuadrant(coreId);
-        return SystemJsonResponse.SYSTEM_SUCCESS(fourthQuadrantVO);
-    }
-
 
 }

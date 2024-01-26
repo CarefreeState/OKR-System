@@ -131,7 +131,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
         }
         if(Objects.nonNull(okrCore.getCelebrateDay())) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.INVALID_CELEBRATE_DAY);
+            throw new GlobalServiceException(GlobalServiceStatusCode.CELEBRATE_DAY_CANNOT_CHANGE);
         }
         // 构造更新对象
         OkrCore updateOkrCore = new OkrCore();

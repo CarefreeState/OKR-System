@@ -3,6 +3,7 @@ package com.macaku.core.service.impl.quadrant;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.redis.RedisCache;
 import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
 import com.macaku.core.init.util.QuadrantDeadlineUtil;
@@ -15,6 +16,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
 * @author 马拉圈
@@ -27,7 +29,15 @@ import java.util.Objects;
 public class FirstQuadrantServiceImpl extends ServiceImpl<FirstQuadrantMapper, FirstQuadrant>
     implements FirstQuadrantService {
 
+    private final static String FIRST_QUADRANT_CORE_MAP = "firstQuadrantCoreMap:";
+
+    private final static Long FIRST_CORE_MAP_TTL = 1L;
+
+    private final static TimeUnit FIRST_CORE_MAP_UNIT = TimeUnit.DAYS;
+
     private final FirstQuadrantMapper firstQuadrantMapper;
+
+    private final RedisCache redisCache;
 
     @Override
     public void initFirstQuadrant(FirstQuadrant firstQuadrant) {
@@ -62,6 +72,22 @@ public class FirstQuadrantServiceImpl extends ServiceImpl<FirstQuadrantMapper, F
         return firstQuadrantMapper.searchFirstQuadrant(coreId).orElseThrow(() ->
                 new GlobalServiceException("内核 ID: " + coreId, GlobalServiceStatusCode.FIRST_QUADRANT_NOT_EXISTS)
         );
+    }
+
+    @Override
+    public Long getFirstQuadrantCoreId(Long id) {
+        String redisKey = FIRST_QUADRANT_CORE_MAP + id;
+        return (Long) redisCache.getCacheObject(redisKey).orElseGet(() -> {
+            // 查询
+            Long coreId = this.lambdaQuery()
+                    .eq(FirstQuadrant::getId, id)
+                    .select(FirstQuadrant::getCoreId)
+                    .oneOpt().orElseThrow(() ->
+                            new GlobalServiceException(GlobalServiceStatusCode.FIRST_QUADRANT_NOT_EXISTS)
+                    ).getCoreId();
+            redisCache.setCacheObject(redisKey, coreId, FIRST_CORE_MAP_TTL, FIRST_CORE_MAP_UNIT);
+            return coreId;
+        });
     }
 }
 

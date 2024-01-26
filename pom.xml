@@ -50,7 +50,7 @@
             <properties>
                 <!--环境标识，需要与配置文件名称相对应-->
                 <profiles.active>dev</profiles.active>
-                <logging.level>debug</logging.level>
+                <logging.level>warn</logging.level>
             </properties>
             <activation>
                 <!--默认环境-->
