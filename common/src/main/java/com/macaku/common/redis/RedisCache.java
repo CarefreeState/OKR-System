@@ -265,7 +265,7 @@ public class RedisCache {
      * @param hashKey Hash键
      * @return Hash中的对象
      */
-    public <K, T> Optional<T> getCacheMapValue(final K key, final K hashKey) {
+    public <K, T> Optional<T> getCacheMapValue(final String key, final K hashKey) {
         T value = (T) redisTemplate.opsForHash().get(key, hashKey);
         log.info("获取 Redis 中的 Map 的键值\t[{}.{}]-[{}]", key, hashKey, value);
         return Optional.ofNullable(value);

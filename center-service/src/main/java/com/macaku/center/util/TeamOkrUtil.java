@@ -20,9 +20,9 @@ public class TeamOkrUtil {
 
     public final static  String TEAM_ROOT_MAP = "teamRootMap:";
 
-    public final static Long TEAM_ROOT_TTL = 12L;
+    public final static Long TEAM_ROOT_TTL = 30L;
 
-    public final static TimeUnit TEAM_ROOT_TTL_UNIT = TimeUnit.HOURS;
+    public final static TimeUnit TEAM_ROOT_TTL_UNIT = TimeUnit.DAYS;
 
     public final static String CREATE_CD_FLAG = "createCDFlag:";
 

@@ -19,4 +19,6 @@ public interface TeamPersonalOkrService extends IService<TeamPersonalOkr> {
     List<TeamPersonalOkrVO> getTeamPersonalOkrList(User user);
 
     Optional<Long> findExistsInTeam(List<TeamOkr> teamOkrs, Long userId);
+
+    void checkExistsInTeam(Long teamId, Long userId);
 }
