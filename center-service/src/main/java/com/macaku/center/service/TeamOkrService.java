@@ -20,7 +20,11 @@ public interface TeamOkrService extends IService<TeamOkr> {
 
     List<TeamOkrVO> getTeamOkrList(User user);
 
+    TeamOkr checkManager(Long teamId, Long managerId);
+
     void grantTeamForMember(Long teamId, Long managerId, Long userId);
 
     List<TeamOkrStatisticVO> countCompletionRate(List<TeamOkr> teamOkrs);
+
+    String getQRCode(Long teamId, String page);
 }

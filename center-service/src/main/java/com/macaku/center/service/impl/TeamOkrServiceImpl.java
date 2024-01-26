@@ -4,6 +4,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.domain.dto.QRCodeDTO;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.domain.po.TeamPersonalOkr;
@@ -17,15 +18,19 @@ import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
+import com.macaku.common.util.JsonUtil;
+import com.macaku.common.util.media.MediaUtils;
+import com.macaku.common.web.HttpUtils;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.mapper.quadrant.FirstQuadrantMapper;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.user.domain.po.User;
+import com.macaku.user.token.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +42,14 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     implements TeamOkrService, OkrOperateService {
+
+    private final static String TEAM_QR_CODE_MAP = "teamQRCodeMap:";
+
+    private final static String WX_QR_CORE_URL = "https://api.weixin.qq.com/wxa/getwxacodeunlimit";
+
+    private final static Long TEAM_QR_MAP_TTL = 30L;
+
+    private final static TimeUnit TEAM_QR_MAP_UNIT = TimeUnit.DAYS;
 
     private final static String SCENE = OkrServiceSelector.TEAM_OKR_SCENE;
 
@@ -77,8 +90,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     }
 
     @Override
-    public void grantTeamForMember(Long teamId, Long managerId, Long userId) {
-        // 判断团队的管理者是不是当前用户
+    public TeamOkr checkManager(Long teamId, Long managerId) {
         TeamOkr teamOkr = teamOkrMapper.selectById(teamId);
         if (Objects.isNull(teamOkr)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.TEAM_NOT_EXISTS);
@@ -86,6 +98,13 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         if (!teamOkr.getManagerId().equals(managerId)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.NON_TEAM_MANAGER);
         }
+        return teamOkr;
+    }
+
+    @Override
+    public void grantTeamForMember(Long teamId, Long managerId, Long userId) {
+        // 判断团队的管理者是不是当前用户
+        TeamOkr teamOkr = checkManager(teamId, managerId);
         // 判断授权对象是否有本团队为 teamId 的团队个人 OKR (这里用 Db 防止循环依赖)
         Db.lambdaQuery(TeamPersonalOkr.class)
                 .eq(TeamPersonalOkr::getTeamId, teamId)
@@ -119,7 +138,8 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         List<TeamOkrStatisticVO> statisticVOS = teamOkrMapper.selectKeyResultsByTeamId(ids);
         statisticVOS.stream()
                 .parallel()
-                .forEach(teamOkrStatisticVO -> {
+                .sorted(Comparator.comparing(TeamOkrStatisticVO::getId))
+                .forEachOrdered(teamOkrStatisticVO -> {
             long sum = teamOkrStatisticVO.getKeyResults().stream()
                     .parallel()
                     .mapToLong(KeyResult::getProbability).reduce(Long::sum)
@@ -130,6 +150,31 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
             teamOkrStatisticVO.setKeyResults(null);
         });
         return statisticVOS;
+    }
+
+    @Override
+    public String getQRCode(Long teamId, String page) {
+        String redisKey = TEAM_QR_CODE_MAP + teamId;
+        return (String)redisCache.getCacheObject(redisKey).orElseGet(() -> {
+            String scene = String.format("%s=%d", QRCodeDTO.TEAM_ID, teamId);
+            String accessToken = TokenUtil.getToken();
+            String url = WX_QR_CORE_URL + HttpUtils.getQueryString(new HashMap<String, Object>(){{
+                this.put("access_token", accessToken);
+            }});
+            Map<String, Object> params = new HashMap<>();
+            params.put("scene", scene);
+            if(Objects.nonNull(page)) {
+                params.put("page", page);
+            }
+            params.put("check_path", false);
+            params.put("env_version", "develop");
+            String json = JsonUtil.analyzeData(params);
+            byte[] data = HttpUtils.doPostJsonBytes(url, json);
+            log.info("二维码数据:\n{}", data);
+            String mapPath = MediaUtils.saveImage(data);
+            redisCache.setCacheObject(redisKey, mapPath, TEAM_QR_MAP_TTL, TEAM_QR_MAP_UNIT);
+            return mapPath;
+        });
     }
 
     @Override

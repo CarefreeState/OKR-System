@@ -1,6 +1,7 @@
 package com.macaku.center.controller.team;
 
 import com.macaku.center.domain.dto.GrantDTO;
+import com.macaku.center.domain.dto.QRCodeDTO;
 import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
@@ -108,6 +109,22 @@ public class TeamOkrController {
         Long teamId = grantDTO.getTeamId();
         teamOkrService.grantTeamForMember(teamId, managerId, userId);
         return SystemJsonResponse.SYSTEM_SUCCESS();
+    }
+
+    @PostMapping("/qrcode")
+    @ApiOperation("获取邀请码")
+    public SystemJsonResponse<String> getQRCode(HttpServletRequest request, QRCodeDTO qrCodeDTO) {
+        // 检测
+        qrCodeDTO.validate();
+        User user = UserRecordUtil.getUserRecord(request);
+        Long managerId = user.getId();
+        Long teamId = qrCodeDTO.getTeamId();
+        // 检测管理者身份
+        teamOkrService.checkManager(teamId, managerId);
+        String page = qrCodeDTO.getPage();
+        // 进行操作
+        String path = teamOkrService.getQRCode(teamId, page);
+        return SystemJsonResponse.SYSTEM_SUCCESS(path);
     }
 
 

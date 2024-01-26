@@ -1,4 +1,4 @@
-package com.macaku.common.media.config;
+package com.macaku.common.util.media.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -8,9 +8,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class StaticMapperConfig implements WebMvcConfigurer {
 
-    private static String MAP_ROOT;
+    public static String MAP_ROOT;
 
-    private static String ROOT;
+    public static String ROOT;
 
     /**
      * 配置静态访问资源
