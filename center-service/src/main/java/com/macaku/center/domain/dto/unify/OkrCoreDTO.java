@@ -16,9 +16,9 @@ import java.util.Objects;
  * Date: 2024-01-26
  * Time: 21:17
  */
-@ApiModel("OKR 查看详情所需数据")
+@ApiModel("OKR 内核带场景值的数据")
 @Data
-public class OkrSearchDTO {
+public class OkrCoreDTO {
 
     @ApiModelProperty("场景")
     private String scene;

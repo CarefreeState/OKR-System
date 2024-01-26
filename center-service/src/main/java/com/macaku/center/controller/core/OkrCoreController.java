@@ -1,8 +1,9 @@
 package com.macaku.center.controller.core;
 
 import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.domain.dto.unify.OkrCoreDTO;
+import com.macaku.center.domain.dto.unify.OkrCoreSummaryDTO;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
-import com.macaku.center.domain.dto.unify.OkrSearchDTO;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.center.service.TeamPersonalOkrService;
 import com.macaku.common.code.GlobalServiceStatusCode;
@@ -18,11 +19,9 @@ import io.swagger.annotations.ApiParam;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
 
 /**
  * Created With Intellij IDEA
@@ -42,8 +41,6 @@ public class OkrCoreController {
 
     private final OkrServiceSelector okrServiceSelector;
 
-    private final TeamPersonalOkrService teamPersonalOkrService;
-
     @GetMapping("/create")
     @ApiOperation("创建一个core")
     public SystemJsonResponse createOkr(HttpServletRequest request,
@@ -59,26 +56,26 @@ public class OkrCoreController {
     @GetMapping("/search")
     @ApiOperation("查看一个OKR内核")
     public SystemJsonResponse<OkrCoreVO> searchOkrCore(HttpServletRequest request,
-                                                       OkrSearchDTO okrSearchDTO) {
-        okrSearchDTO.validate();
+                                                       OkrCoreDTO okrCoreDTO) {
+        okrCoreDTO.validate();
         User user = UserRecordUtil.getUserRecord(request);
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrSearchDTO.getScene());
-        OkrCoreVO okrCoreVO = okrOperateService.selectAllOfCore(user, okrSearchDTO.getCoreId());
+        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
+        OkrCoreVO okrCoreVO = okrOperateService.selectAllOfCore(user, okrCoreDTO.getCoreId());
         return SystemJsonResponse.SYSTEM_SUCCESS(okrCoreVO);
     }
 
     @PostMapping("/celebrate")
     @ApiOperation("确定庆祝日")
     public SystemJsonResponse confirmCelebrateDay(HttpServletRequest request,
-                                                  OkrSearchDTO okrSearchDTO,
+                                                  OkrCoreDTO okrCoreDTO,
                                                   @RequestParam("celebrateDay") @NonNull @ApiParam("庆祝日（星期）") Integer celebrateDay) {
         if(celebrateDay.compareTo(1) < 0 || celebrateDay.compareTo(7) > 0) {
             throw new GlobalServiceException(GlobalServiceStatusCode.INVALID_CELEBRATE_DAY);
         }
-        okrSearchDTO.validate();
+        okrCoreDTO.validate();
         User user = UserRecordUtil.getUserRecord(request);
-        Long coreId = okrSearchDTO.getCoreId();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrSearchDTO.getScene());
+        Long coreId = okrCoreDTO.getCoreId();
+        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
         Long userId = okrOperateService.getCoreUser(coreId);
         if(user.getId().equals(userId)){
             okrCoreService.confirmCelebrateDate(coreId, celebrateDay);
@@ -91,24 +88,40 @@ public class OkrCoreController {
 
     @PostMapping("/summary/{id}")
     @ApiOperation("总结 OKR")
-    public SystemJsonResponse summaryOKR(@PathVariable("id") @NonNull @ApiParam("OKR 内核 ID") Long id,
-                                         @RequestParam("summary") @NonNull @ApiParam("总结") String summary,
-                                         @RequestParam("degree") @NonNull @ApiParam("完成度") Integer degree) {
-        if(!StringUtils.hasText(summary)) {
-            throw new GlobalServiceException("总结内容为空", GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
+    public SystemJsonResponse summaryOKR(HttpServletRequest request,
+                                         OkrCoreSummaryDTO okrCoreSummaryDTO) {
+        // 检测
+        okrCoreSummaryDTO.validate();
+        User user = UserRecordUtil.getUserRecord(request);
+        Long coreId = okrCoreSummaryDTO.getCoreId();
+        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreSummaryDTO.getScene());
+        Long userId = okrOperateService.getCoreUser(coreId);
+        if(user.getId().equals(userId)) {
+            String summary = okrCoreSummaryDTO.getSummary();
+            Integer degree = okrCoreSummaryDTO.getDegree();
+            okrCoreService.summaryOKR(coreId, summary, degree);
+            log.info("成功为 OKR {} 总结 {} 完成度 {}%", coreId, summary, degree);
+        }else {
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }
-        if(Objects.isNull(degree)) {
-            throw new GlobalServiceException("完成度缺失", GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
-        }
-        okrCoreService.summaryOKR(id, summary, degree);
-        log.info("成功为 OKR {} 总结 {} 完成度 {}%", id, summary, degree);
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
-    @PostMapping("/complete/{id}")
+    @PostMapping("/complete")
     @ApiOperation("结束 OKR")
-    public SystemJsonResponse complete(@PathVariable("id") @NonNull @ApiParam("OKR 内核 ID") Long id) {
-        okrCoreService.complete(id);
-        log.info("成功结束 OKR {}", id);
+    public SystemJsonResponse complete(HttpServletRequest request,
+                                       OkrCoreDTO okrCoreDTO) {
+        // 检测
+        okrCoreDTO.validate();
+        Long coreId = okrCoreDTO.getCoreId();
+        User user = UserRecordUtil.getUserRecord(request);
+        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
+        Long userId = okrOperateService.getCoreUser(coreId);
+        if(user.getId().equals(userId)) {
+            okrCoreService.complete(coreId);
+            log.info("成功结束 OKR {}", coreId);
+        }else {
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
+        }
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
