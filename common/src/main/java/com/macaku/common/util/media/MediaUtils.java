@@ -55,7 +55,7 @@ public class MediaUtils {
         try ( OutputStream outputStream = new FileOutputStream(filePath)) {
             outputStream.write(imageData);
             outputStream.flush();
-            log.info("图片保存成功！{}", savePath);
+            log.info("图片保存成功 {}", savePath);
             return mapPath;
         } catch (IOException e) {
             throw new GlobalServiceException(e.getMessage());

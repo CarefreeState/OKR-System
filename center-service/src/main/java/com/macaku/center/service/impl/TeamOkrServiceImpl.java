@@ -4,7 +4,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.center.component.OkrServiceSelector;
-import com.macaku.center.domain.dto.QRCodeDTO;
+import com.macaku.center.domain.dto.qrcode.QRCode;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.domain.po.TeamPersonalOkr;
@@ -18,7 +18,6 @@ import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
-import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.media.MediaUtils;
 import com.macaku.common.web.HttpUtils;
 import com.macaku.core.domain.po.inner.KeyResult;
@@ -29,7 +28,10 @@ import com.macaku.user.token.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -153,24 +155,19 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     }
 
     @Override
-    public String getQRCode(Long teamId, String page) {
+    public String getQRCode(Long teamId) {
         String redisKey = TEAM_QR_CODE_MAP + teamId;
         return (String)redisCache.getCacheObject(redisKey).orElseGet(() -> {
-            String scene = String.format("%s=%d", QRCodeDTO.TEAM_ID, teamId);
             String accessToken = TokenUtil.getToken();
             String url = WX_QR_CORE_URL + HttpUtils.getQueryString(new HashMap<String, Object>(){{
                 this.put("access_token", accessToken);
             }});
-            Map<String, Object> params = new HashMap<>();
-            params.put("scene", scene);
-            if(Objects.nonNull(page)) {
-                params.put("page", page);
-            }
-            params.put("check_path", false);
-            params.put("env_version", "develop");
-            String json = JsonUtil.analyzeData(params);
+            // 获取 QRCode
+            QRCode qrCode = SpringUtil.getBean(QRCode.class);
+            String json = qrCode.toJson(teamId);
+            log.info("请求微信（json） -> {}", json);
             byte[] data = HttpUtils.doPostJsonBytes(url, json);
-            log.info("二维码数据:\n{}", data);
+            // 保存一下
             String mapPath = MediaUtils.saveImage(data);
             redisCache.setCacheObject(redisKey, mapPath, TEAM_QR_MAP_TTL, TEAM_QR_MAP_UNIT);
             return mapPath;

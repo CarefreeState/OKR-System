@@ -26,5 +26,5 @@ public interface TeamOkrService extends IService<TeamOkr> {
 
     List<TeamOkrStatisticVO> countCompletionRate(List<TeamOkr> teamOkrs);
 
-    String getQRCode(Long teamId, String page);
+    String getQRCode(Long teamId);
 }

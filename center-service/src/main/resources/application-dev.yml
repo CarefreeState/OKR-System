@@ -30,3 +30,16 @@ media:
 wx:
   appid: wx9efa37f247f01d10
   secret: ef6c3f39e28f30d8916819541cb8bc00
+  invite:
+    sceneKey: teamId
+    page:
+    checkPath: false
+    envVersion: develop
+    width: 430
+    auto_color: false
+    lineColor:
+      r: 70
+      g: 53
+      b: 100
+    isHyaline: false
+
