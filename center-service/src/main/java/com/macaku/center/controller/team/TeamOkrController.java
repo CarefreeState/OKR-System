@@ -41,10 +41,6 @@ public class TeamOkrController {
 
     private final TeamOkrService teamOkrService;
 
-    private final RedisCache redisCache;
-
-    private final TeamPersonalOkrService teamPersonalOkrService;
-
     private final MemberService memberService;
 
     @GetMapping("/list")

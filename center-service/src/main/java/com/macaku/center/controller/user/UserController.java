@@ -30,22 +30,6 @@ import java.util.ServiceLoader;
 @RequiredArgsConstructor
 public class UserController {
 
-//    @PostMapping("/login")
-//    @ApiOperation("这里传递的参数根据具体的登录方式传递对应的数据！")
-//    public SystemJsonResponse<Map<String, Object>> login(@RequestParam Map<?, ?> data, @NonNull @RequestHeader("type") String type) {
-//        ServiceLoader<LoginService> loginServices = ServiceLoader.load(LoginService.class);
-//        Iterator<LoginService> serviceIterator = loginServices.iterator();
-//        Map<String, Object> result = null;
-//        while (serviceIterator.hasNext()) {
-//            LoginService loginService =  serviceIterator.next();
-//            if(loginService.match(type)) {
-//                result = loginService.login(data);
-//                break;
-//            }
-//        }
-//        return SystemJsonResponse.SYSTEM_SUCCESS(result);
-//    }
-
     @PostMapping("/login")
     @ApiOperation("这里传递的参数根据具体的登录方式传递对应的数据！")
     public SystemJsonResponse<Map<String, Object>> login(HttpServletRequest request, LoginDTO loginDTO) {
