@@ -1,21 +1,30 @@
 package com.macaku.center.controller.core.inner;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.domain.dto.unify.inner.OkrStatusFlagDTO;
+import com.macaku.center.domain.dto.unify.inner.OkrStatusFlagRemoveDTO;
+import com.macaku.center.domain.dto.unify.inner.OkrStatusFlagUpdateDTO;
+import com.macaku.center.service.OkrOperateService;
+import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.core.domain.po.inner.StatusFlag;
 import com.macaku.core.domain.po.inner.dto.StatusFlagDTO;
 import com.macaku.core.domain.po.inner.dto.StatusFlagUpdateDTO;
 import com.macaku.core.service.inner.StatusFlagService;
+import com.macaku.core.service.quadrant.FourthQuadrantService;
+import com.macaku.user.domain.po.User;
+import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created With Intellij IDEA
@@ -33,33 +42,76 @@ public class StatusFlagController {
 
     private final StatusFlagService statusFlagService;
 
+    private final OkrServiceSelector okrServiceSelector;
+
+    private final FourthQuadrantService fourthQuadrantService;
+
     @PostMapping("/add")
     @ApiOperation("增加一条状态指标")
-    public SystemJsonResponse addStatusFlag(StatusFlagDTO statusFlagDTO) {
+    public SystemJsonResponse addStatusFlag(HttpServletRequest request,
+                                            OkrStatusFlagDTO okrStatusFlagDTO) {
         // 检查
+        okrStatusFlagDTO.validate();
+        User user = UserRecordUtil.getUserRecord(request);
+        StatusFlagDTO statusFlagDTO = okrStatusFlagDTO.getStatusFlagDTO();
         statusFlagDTO.validate();
+        OkrOperateService okrOperateService = okrServiceSelector.select(okrStatusFlagDTO.getScene());
         StatusFlag statusFlag = BeanUtil.copyProperties(statusFlagDTO, StatusFlag.class);
-        // 插入
-        statusFlagService.addStatusFlag(statusFlag);
+        // 检测身份
+        Long fourthQuadrantId = statusFlagDTO.getFourthQuadrantId();
+        Long coreId = fourthQuadrantService.getFourthQuadrantCoreId(fourthQuadrantId);
+        Long userId = okrOperateService.getCoreUser(coreId);
+        if(user.getId().equals(userId)) {
+            // 插入
+            statusFlagService.addStatusFlag(statusFlag);
+        }else {
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
+        }
         // 成功
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
-    @PostMapping("/remove/{id}")
+    @PostMapping("/remove")
     @ApiOperation("删除一条指标")
-    public SystemJsonResponse remove(@PathVariable("id") @NonNull @ApiParam("指标id") Long id) {
-        statusFlagService.removeStatusFlag(id);
+    public SystemJsonResponse remove(HttpServletRequest request,
+                                     OkrStatusFlagRemoveDTO okrStatusFlagRemoveDTO) {
+        okrStatusFlagRemoveDTO.validate();
+        User user = UserRecordUtil.getUserRecord(request);
+        Long statusFlagId = okrStatusFlagRemoveDTO.getId();
+        OkrOperateService okrOperateService = okrServiceSelector.select(okrStatusFlagRemoveDTO.getScene());
+        // 检测身份
+        Long fourthQuadrantId = statusFlagService.getFlagFourthQuadrantId(statusFlagId);
+        Long coreId = fourthQuadrantService.getFourthQuadrantCoreId(fourthQuadrantId);
+        Long userId = okrOperateService.getCoreUser(coreId);
+        if(user.getId().equals(userId)) {
+            statusFlagService.removeStatusFlag(statusFlagId);
+        }else {
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
+        }
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
     @PostMapping("/update")
     @ApiOperation("更新一条指标")
-    public SystemJsonResponse update(StatusFlagUpdateDTO flagUpdateDTO) {
+    public SystemJsonResponse update(HttpServletRequest request,
+                                     OkrStatusFlagUpdateDTO okrStatusFlagUpdateDTO) {
         // 检查
-        flagUpdateDTO.validate();
-        // 包装
-        StatusFlag statusFlag = BeanUtil.copyProperties(flagUpdateDTO, StatusFlag.class);
-        statusFlagService.updateStatusFlag(statusFlag);
+        okrStatusFlagUpdateDTO.validate();
+        User user = UserRecordUtil.getUserRecord(request);
+        StatusFlagUpdateDTO statusFlagUpdateDTO = okrStatusFlagUpdateDTO.getStatusFlagUpdateDTO();
+        statusFlagUpdateDTO.validate();
+        OkrOperateService okrOperateService = okrServiceSelector.select(okrStatusFlagUpdateDTO.getScene());
+        StatusFlag statusFlag = BeanUtil.copyProperties(statusFlagUpdateDTO, StatusFlag.class);
+        Long statusFlagId = statusFlagUpdateDTO.getId();
+        // 检测身份
+        Long flagFourthQuadrantId = statusFlagService.getFlagFourthQuadrantId(statusFlagId);
+        Long coreId = fourthQuadrantService.getFourthQuadrantCoreId(flagFourthQuadrantId);
+        Long userId = okrOperateService.getCoreUser(coreId);
+        if(user.getId().equals(userId)) {
+            statusFlagService.updateStatusFlag(statusFlag);
+        }else {
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
+        }
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 

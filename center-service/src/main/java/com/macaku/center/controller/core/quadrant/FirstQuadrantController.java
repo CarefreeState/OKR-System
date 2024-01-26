@@ -2,7 +2,7 @@ package com.macaku.center.controller.core.quadrant;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.macaku.center.component.OkrServiceSelector;
-import com.macaku.center.domain.dto.unify.OkrFirstQuadrantDTO;
+import com.macaku.center.domain.dto.unify.quadrant.OkrFirstQuadrantDTO;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
@@ -48,8 +48,8 @@ public class FirstQuadrantController {
         okrFirstQuadrantDTO.validate();
         User user = UserRecordUtil.getUserRecord(request);
         FirstQuadrantDTO firstQuadrantDTO = okrFirstQuadrantDTO.getFirstQuadrantDTO();
+        firstQuadrantDTO.validate();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrFirstQuadrantDTO.getScene());
-        // 初始化
         FirstQuadrant firstQuadrant = BeanUtil.copyProperties(firstQuadrantDTO, FirstQuadrant.class);
         Long firstQuadrantId = firstQuadrant.getId();
         // 检测身份

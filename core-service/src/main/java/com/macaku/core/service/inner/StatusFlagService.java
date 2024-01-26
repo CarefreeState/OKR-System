@@ -15,4 +15,6 @@ public interface StatusFlagService extends IService<StatusFlag> {
     void removeStatusFlag(Long id);
 
     void updateStatusFlag(StatusFlag statusFlag);
+
+    Long getFlagFourthQuadrantId(Long id);
 }

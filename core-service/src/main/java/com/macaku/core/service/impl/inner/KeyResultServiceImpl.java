@@ -1,11 +1,17 @@
 package com.macaku.core.service.impl.inner;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.redis.RedisCache;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.mapper.inner.KeyResultMapper;
 import com.macaku.core.service.inner.KeyResultService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 /**
 * @author 马拉圈
@@ -14,8 +20,18 @@ import org.springframework.stereotype.Service;
 */
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class KeyResultServiceImpl extends ServiceImpl<KeyResultMapper, KeyResult>
     implements KeyResultService{
+
+    private final static String KR_FIRST_QUADRANT_MAP = "krFirstQuadrantMap:";
+
+    private final static Long KR_FIRST_QUADRANT_TTL = 6L;
+
+    private final static TimeUnit KR_FIRST_QUADRANT_UNIT = TimeUnit.HOURS;
+
+    private final RedisCache redisCache;
+
 
     @Override
     public void addResultService(KeyResult keyResult) {
@@ -37,6 +53,22 @@ public class KeyResultServiceImpl extends ServiceImpl<KeyResultMapper, KeyResult
         updateKeyResult.setProbability(keyResult.getProbability());
         // 2. 更新
         this.updateById(updateKeyResult);
+    }
+
+    @Override
+    public Long getFirstQuadrantId(Long id) {
+        String redisKey = KR_FIRST_QUADRANT_MAP + id;
+        return (Long) redisCache.getCacheObject(redisKey).orElseGet(() -> {
+            // 查询数据库
+            Long firstQuadrantId = this.lambdaQuery()
+                    .eq(KeyResult::getId, id)
+                    .select(KeyResult::getFirstQuadrantId)
+                    .oneOpt().orElseThrow(() ->
+                            new GlobalServiceException(GlobalServiceStatusCode.KEY_RESULT_NOT_EXISTS)
+                    ).getFirstQuadrantId();
+            redisCache.setCacheObject(redisKey, firstQuadrantId, KR_FIRST_QUADRANT_TTL, KR_FIRST_QUADRANT_UNIT);
+            return firstQuadrantId;
+        });
     }
 
 }

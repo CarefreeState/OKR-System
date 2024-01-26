@@ -1,7 +1,7 @@
 package com.macaku.center.controller.core.quadrant;
 
 import com.macaku.center.component.OkrServiceSelector;
-import com.macaku.center.domain.dto.unify.OkrInitQuadrantDTO;
+import com.macaku.center.domain.dto.unify.quadrant.OkrInitQuadrantDTO;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
@@ -47,6 +47,7 @@ public class SecondQuadrantController {
         // 初始化
         User user = UserRecordUtil.getUserRecord(request);
         InitQuadrantDTO initQuadrantDTO = okrInitQuadrantDTO.getInitQuadrantDTO();
+        initQuadrantDTO.validate();
         Long quadrantId = initQuadrantDTO.getId();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrInitQuadrantDTO.getScene());
         // 检测身份

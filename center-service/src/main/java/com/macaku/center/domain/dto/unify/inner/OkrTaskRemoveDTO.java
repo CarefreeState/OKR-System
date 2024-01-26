@@ -1,8 +1,7 @@
-package com.macaku.center.domain.dto.unify;
+package com.macaku.center.domain.dto.unify.inner;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.core.domain.po.quadrant.dto.FirstQuadrantDTO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -14,24 +13,23 @@ import java.util.Objects;
  * Created With Intellij IDEA
  * Description:
  * User: 马拉圈
- * Date: 2024-01-26
- * Time: 23:05
+ * Date: 2024-01-27
+ * Time: 1:30
  */
-@ApiModel("第一象限修改所需数据")
+@ApiModel("删除任务所需数据")
 @Data
-public class OkrFirstQuadrantDTO {
+public class OkrTaskRemoveDTO {
 
     @ApiModelProperty("场景")
     private String scene;
 
-    @ApiModelProperty("第一象限 数据")
-    private FirstQuadrantDTO firstQuadrantDTO;
-
+    @ApiModelProperty("任务 ID")
+    private Long id;
 
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
-        if(Objects.isNull(firstQuadrantDTO)) {
-            messageBuilder.append("\n-> 第一象限 为 null");
+        if(Objects.isNull(id)) {
+            messageBuilder.append("\n-> 任务 ID 为 null");
         }
         if(!StringUtils.hasText(scene)) {
             messageBuilder.append("\n-> 缺少场景值");

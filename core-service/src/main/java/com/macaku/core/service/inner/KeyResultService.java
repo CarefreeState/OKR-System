@@ -14,4 +14,6 @@ public interface KeyResultService extends IService<KeyResult> {
 
     void updateProbability(KeyResult keyResult);
 
+    Long getFirstQuadrantId(Long id);
+
 }

@@ -18,4 +18,8 @@ public interface TaskService {
 
     void updateTask(Long id, String content, Boolean isCompleted);
 
+    Long getTaskQuadrantId(Long id);
+
+    Long getTaskCoreId(Long quadrantId);
+
 }

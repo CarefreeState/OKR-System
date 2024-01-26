@@ -3,13 +3,19 @@ package com.macaku.core.service.impl.inner;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
+import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.redis.RedisCache;
 import com.macaku.core.component.TaskServiceSelector;
 import com.macaku.core.domain.po.inner.PriorityNumberOne;
 import com.macaku.core.mapper.inner.PriorityNumberOneMapper;
 import com.macaku.core.service.TaskService;
 import com.macaku.core.service.inner.PriorityNumberOneService;
+import com.macaku.core.service.quadrant.SecondQuadrantService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 /**
 * @author 马拉圈
@@ -23,7 +29,17 @@ public class PriorityNumberOneServiceImpl extends ServiceImpl<PriorityNumberOneM
 
     private static final Integer OPTION = TaskServiceSelector.PRIORITY_ONE_OPTION;
 
+    private final static String P1_QUADRANT_MAP = "p1QuadrantMap:";
+
+    private final static Long P1_QUADRANT_TTL = 6L;
+
+    private final static TimeUnit P1_QUADRANT_UNIT = TimeUnit.HOURS;
+
     private final PriorityNumberOneMapper priorityNumberOneMapper = SpringUtil.getBean(PriorityNumberOneMapper.class);
+
+    private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
+
+    private final SecondQuadrantService secondQuadrantService = SpringUtil.getBean(SecondQuadrantService.class);
 
     @Override
     public boolean match(Integer option) {
@@ -60,6 +76,27 @@ public class PriorityNumberOneServiceImpl extends ServiceImpl<PriorityNumberOneM
         updatePriorityNumberOne.setIsCompleted(isCompleted);
         priorityNumberOneMapper.updateById(updatePriorityNumberOne);
         log.info("成功更新一条P1 {} {} {}", id, content, isCompleted);
+    }
+
+    @Override
+    public Long getTaskQuadrantId(Long id) {
+        String redisKey = P1_QUADRANT_MAP + id;
+        return (Long) redisCache.getCacheObject(redisKey).orElseGet(() -> {
+            // 查询数据库
+            Long secondQuadrantId = this.lambdaQuery()
+                    .eq(PriorityNumberOne::getId, id)
+                    .select(PriorityNumberOne::getSecondQuadrantId)
+                    .oneOpt().orElseThrow(() ->
+                            new GlobalServiceException(GlobalServiceStatusCode.TASK_NOT_EXISTS)
+                    ).getSecondQuadrantId();
+            redisCache.setCacheObject(redisKey, secondQuadrantId, P1_QUADRANT_TTL, P1_QUADRANT_UNIT);
+            return secondQuadrantId;
+        });
+    }
+
+    @Override
+    public Long getTaskCoreId(Long quadrantId) {
+        return secondQuadrantService.getSecondQuadrantCoreId(quadrantId);
     }
 
 }
