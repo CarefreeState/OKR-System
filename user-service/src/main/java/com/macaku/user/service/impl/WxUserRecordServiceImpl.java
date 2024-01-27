@@ -5,6 +5,7 @@ import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JwtUtil;
 import com.macaku.common.util.ShortCodeUtil;
+import com.macaku.user.component.LoginServiceSelector;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.service.UserRecordService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class WxUserRecordServiceImpl implements UserRecordService {
-    private static final String TYPE = JwtUtil.WX_LOGIN_TYPE;
+    private static final String TYPE = LoginServiceSelector.WX_LOGIN_TYPE;
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 

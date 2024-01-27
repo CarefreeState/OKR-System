@@ -6,6 +6,7 @@ import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.JwtUtil;
 import com.macaku.common.util.ShortCodeUtil;
+import com.macaku.user.component.LoginServiceSelector;
 import com.macaku.user.domain.dto.EmailLoginDTO;
 import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
@@ -29,7 +30,7 @@ import java.util.Objects;
 @Slf4j
 public class LoginServiceEmailImpl implements LoginService {
 
-    private static final String TYPE = JwtUtil.EMAIL_LOGIN_TYPE;
+    private static final String TYPE = LoginServiceSelector.EMAIL_LOGIN_TYPE;
 
     private UserService userService = SpringUtil.getBean(UserService.class);
 

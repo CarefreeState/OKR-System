@@ -6,6 +6,7 @@ import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.*;
 import com.macaku.common.web.HttpUtils;
+import com.macaku.user.component.LoginServiceSelector;
 import com.macaku.user.domain.dto.WxLoginDTO;
 import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
@@ -30,7 +31,7 @@ import java.util.Objects;
 @Slf4j
 public class LoginServiceWxImpl implements LoginService {
 
-    private static final String TYPE = JwtUtil.WX_LOGIN_TYPE;
+    private static final String TYPE = LoginServiceSelector.WX_LOGIN_TYPE;
 
     private final UserService userService = SpringUtil.getBean(UserService.class);
 

@@ -1,0 +1,2321 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "OKR 系统API",
+    "description": "OKR 系统相关接口文档！",
+    "contact": {
+      "name": "发际线与我作对",
+      "url": "https://github.com/CarefreeState/OKR-System",
+      "email": "2040484356@qq.com"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:1701",
+      "description": "Inferred Url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "OKR 内核",
+      "description": "Okr Core Controller"
+    },
+    {
+      "name": "个人 OKR 测试接口",
+      "description": "Personal Okr Controller"
+    },
+    {
+      "name": "任务管理",
+      "description": "Task Controller"
+    },
+    {
+      "name": "关键结果",
+      "description": "Key Result Controller"
+    },
+    {
+      "name": "团队 OKR 测试接口",
+      "description": "Team Okr Controller"
+    },
+    {
+      "name": "团队个人 OKR 测试接口",
+      "description": "Team Personal Okr Controller"
+    },
+    {
+      "name": "状态指标",
+      "description": "Status Flag Controller"
+    },
+    {
+      "name": "用户测试接口",
+      "description": "User Controller"
+    },
+    {
+      "name": "第一象限",
+      "description": "First Quadrant Controller"
+    },
+    {
+      "name": "第三象限",
+      "description": "Third Quadrant Controller"
+    },
+    {
+      "name": "第二象限",
+      "description": "Second Quadrant Controller"
+    }
+  ],
+  "paths": {
+    "/firstquadrant/init": {
+      "post": {
+        "tags": [
+          "第一象限"
+        ],
+        "summary": "初始化第一项象限",
+        "operationId": "initFirstQuadrantUsingPOST",
+        "parameters": [
+          {
+            "name": "firstQuadrantDTO.deadline",
+            "in": "query",
+            "description": "截止时间",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "firstQuadrantDTO.id",
+            "in": "query",
+            "description": "第一象限 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "firstQuadrantDTO.objective",
+            "in": "query",
+            "description": "目标",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/keyresult/add": {
+      "post": {
+        "tags": [
+          "关键结果"
+        ],
+        "summary": "添加关键结果",
+        "operationId": "addKeyResultUsingPOST",
+        "parameters": [
+          {
+            "name": "keyResultDTO.content",
+            "in": "query",
+            "description": "关键结果内容",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "keyResultDTO.firstQuadrantId",
+            "in": "query",
+            "description": "第一象限 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "keyResultDTO.probability",
+            "in": "query",
+            "description": "完成概率",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/keyresult/update": {
+      "post": {
+        "tags": [
+          "关键结果"
+        ],
+        "summary": "更新完成概率",
+        "operationId": "updateKeyResultUsingPOST",
+        "parameters": [
+          {
+            "name": "keyResultUpdateDTO.id",
+            "in": "query",
+            "description": "关键结果 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "keyResultUpdateDTO.probability",
+            "in": "query",
+            "description": "完成概率",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/core/celebrate": {
+      "post": {
+        "tags": [
+          "OKR 内核"
+        ],
+        "summary": "确定庆祝日",
+        "operationId": "confirmCelebrateDayUsingPOST",
+        "parameters": [
+          {
+            "name": "coreId",
+            "in": "query",
+            "description": "OKR 内核 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "celebrateDay",
+            "in": "query",
+            "description": "庆祝日（星期）",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/core/complete": {
+      "post": {
+        "tags": [
+          "OKR 内核"
+        ],
+        "summary": "结束 OKR",
+        "operationId": "completeUsingPOST",
+        "parameters": [
+          {
+            "name": "coreId",
+            "in": "query",
+            "description": "OKR 内核 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/core/create": {
+      "get": {
+        "tags": [
+          "OKR 内核"
+        ],
+        "summary": "创建一个core",
+        "operationId": "createOkrUsingGET",
+        "parameters": [
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "teamOkrId",
+            "in": "query",
+            "description": "团队 OKR ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "teamPersonalOkrId",
+            "in": "query",
+            "description": "团队个人 OKR ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/core/search": {
+      "get": {
+        "tags": [
+          "OKR 内核"
+        ],
+        "summary": "查看一个OKR内核",
+        "operationId": "searchOkrCoreUsingGET",
+        "parameters": [
+          {
+            "name": "coreId",
+            "in": "query",
+            "description": "OKR 内核 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应«OKR 内核详细数据»"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/core/summary/{id}": {
+      "post": {
+        "tags": [
+          "OKR 内核"
+        ],
+        "summary": "总结 OKR",
+        "operationId": "summaryOKRUsingPOST",
+        "parameters": [
+          {
+            "name": "coreId",
+            "in": "query",
+            "description": "内核 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "degree",
+            "in": "query",
+            "description": "完成度",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "summary",
+            "in": "query",
+            "description": "总结的内容",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/personal/list": {
+      "get": {
+        "tags": [
+          "个人 OKR 测试接口"
+        ],
+        "summary": "获取个人 OKR 列表",
+        "operationId": "getPersonalOkrsUsingGET",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应«List«个人 OKR 部分数据»»"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/secondquadrant/init": {
+      "post": {
+        "tags": [
+          "第二象限"
+        ],
+        "summary": "初始化第二象限",
+        "operationId": "initSecondQuadrantUsingPOST",
+        "parameters": [
+          {
+            "name": "initQuadrantDTO.deadline",
+            "in": "query",
+            "description": "截止时间",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "initQuadrantDTO.id",
+            "in": "query",
+            "description": "象限 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "initQuadrantDTO.quadrantCycle",
+            "in": "query",
+            "description": "象限周期",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/flag/add": {
+      "post": {
+        "tags": [
+          "状态指标"
+        ],
+        "summary": "增加一条状态指标",
+        "operationId": "addStatusFlagUsingPOST",
+        "parameters": [
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "statusFlagDTO.color",
+            "in": "query",
+            "description": "颜色",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "statusFlagDTO.fourthQuadrantId",
+            "in": "query",
+            "description": "第四象限 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "statusFlagDTO.label",
+            "in": "query",
+            "description": "指标内容",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/flag/remove": {
+      "post": {
+        "tags": [
+          "状态指标"
+        ],
+        "summary": "删除一条指标",
+        "operationId": "removeUsingPOST",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "状态指标 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/flag/update": {
+      "post": {
+        "tags": [
+          "状态指标"
+        ],
+        "summary": "更新一条指标",
+        "operationId": "updateUsingPOST",
+        "parameters": [
+          {
+            "name": "scene",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "statusFlagUpdateDTO.color",
+            "in": "query",
+            "description": "颜色",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "statusFlagUpdateDTO.id",
+            "in": "query",
+            "description": "指标 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "statusFlagUpdateDTO.label",
+            "in": "query",
+            "description": "指标内容",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/task/{option}/add": {
+      "post": {
+        "tags": [
+          "任务管理"
+        ],
+        "summary": "增加一条任务",
+        "operationId": "addTaskUsingPOST",
+        "parameters": [
+          {
+            "name": "option",
+            "in": "path",
+            "description": "任务选项（0:action, 1:P1, 2:P2）",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "taskDTO.content",
+            "in": "query",
+            "description": "任务内容",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "taskDTO.quadrantId",
+            "in": "query",
+            "description": "象限 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/task/{option}/remove": {
+      "post": {
+        "tags": [
+          "任务管理"
+        ],
+        "summary": "删除一个任务",
+        "operationId": "removeTaskUsingPOST",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "任务 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "option",
+            "in": "path",
+            "description": "任务选项（0:action, 1:P1, 2:P2）",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/task/{option}/update": {
+      "post": {
+        "tags": [
+          "任务管理"
+        ],
+        "summary": "更新一条任务",
+        "operationId": "updateTaskUsingPOST",
+        "parameters": [
+          {
+            "name": "option",
+            "in": "path",
+            "description": "任务选项（0:Action, 1:P1, 2:P2）",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "taskUpdateDTO.content",
+            "in": "query",
+            "description": "任务内容",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "taskUpdateDTO.id",
+            "in": "query",
+            "description": "任务 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "taskUpdateDTO.isCompleted",
+            "in": "query",
+            "description": "是否完成",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/team/grant": {
+      "post": {
+        "tags": [
+          "团队 OKR 测试接口"
+        ],
+        "summary": "给成员授权，使其可以扩展一个子团队",
+        "operationId": "grantTeamForMemberUsingPOST",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "query",
+            "description": "团队 OKR ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "description": "用户 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/team/list": {
+      "get": {
+        "tags": [
+          "团队 OKR 测试接口"
+        ],
+        "summary": "获取团队 OKR 列表",
+        "operationId": "getTeamOkrsUsingGET",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应«List«团队 OKR 部分数据»»"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/team/qrcode/{teamId}": {
+      "post": {
+        "tags": [
+          "团队 OKR 测试接口"
+        ],
+        "summary": "获取邀请码",
+        "operationId": "getQRCodeUsingPOST",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "description": "团队 OKR ID",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应«string»"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/team/tree/child/{id}": {
+      "post": {
+        "tags": [
+          "团队 OKR 测试接口"
+        ],
+        "summary": "获取一个团队的子树",
+        "operationId": "getChildTreeUsingPOST",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "团队 OKR ID",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应«List«团队 OKR 统计数据»»"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/team/tree/{id}": {
+      "post": {
+        "tags": [
+          "团队 OKR 测试接口"
+        ],
+        "summary": "获取一个团队所在的树",
+        "operationId": "getCompleteTreeUsingPOST",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "团队 OKR ID",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应«List«团队 OKR 统计数据»»"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/teampersonal/list": {
+      "get": {
+        "tags": [
+          "团队个人 OKR 测试接口"
+        ],
+        "summary": "获取团队个人 OKR 列表",
+        "operationId": "getTeamOkrsUsingGET_1",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应«List«团队个人 OKR 部分数据»»"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/thirdquadrant/init": {
+      "post": {
+        "tags": [
+          "第三象限"
+        ],
+        "summary": "初始化第三象限",
+        "operationId": "initThirdQuadrantUsingPOST",
+        "parameters": [
+          {
+            "name": "initQuadrantDTO.deadline",
+            "in": "query",
+            "description": "截止时间",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "initQuadrantDTO.id",
+            "in": "query",
+            "description": "象限 ID",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "initQuadrantDTO.quadrantCycle",
+            "in": "query",
+            "description": "象限周期",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "scene",
+            "in": "query",
+            "description": "场景",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": [
+          "用户测试接口"
+        ],
+        "summary": "这里传递的参数根据具体的登录方式传递对应的数据！",
+        "operationId": "loginUsingPOST",
+        "parameters": [
+          {
+            "name": "emailLoginDTO.code",
+            "in": "query",
+            "description": "code",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "emailLoginDTO.email",
+            "in": "query",
+            "description": "email",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wxLoginDTO.code",
+            "in": "query",
+            "description": "code",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wxLoginDTO.encryptedData",
+            "in": "query",
+            "description": "encryptedData",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wxLoginDTO.iv",
+            "in": "query",
+            "description": "iv",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wxLoginDTO.rawData",
+            "in": "query",
+            "description": "rawData",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "wxLoginDTO.signature",
+            "in": "query",
+            "description": "signature",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应«Map«string,object»»"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "OKR 内核详细数据": {
+        "title": "OKR 内核详细数据",
+        "type": "object",
+        "properties": {
+          "celebrateDay": {
+            "type": "integer",
+            "description": "庆祝日（星期）",
+            "format": "int32"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "degree": {
+            "type": "integer",
+            "description": "完成度",
+            "format": "int32"
+          },
+          "firstQuadrantVO": {
+            "description": "第一象限详细信息",
+            "$ref": "#/components/schemas/第一象限详情信息"
+          },
+          "fourthQuadrantVO": {
+            "description": "第四象限详细信息",
+            "$ref": "#/components/schemas/第四象限详细信息"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int64"
+          },
+          "isOver": {
+            "type": "boolean",
+            "description": "是否结束",
+            "example": false
+          },
+          "secondQuadrantCycle": {
+            "type": "integer",
+            "description": "第二象限周期（秒）",
+            "format": "int32"
+          },
+          "secondQuadrantVO": {
+            "description": "第二象限详细信息",
+            "$ref": "#/components/schemas/第二象限详细信息"
+          },
+          "summary": {
+            "type": "string",
+            "description": "总结"
+          },
+          "thirdQuadrantCycle": {
+            "type": "integer",
+            "description": "第三象限周期（秒）",
+            "format": "int32"
+          },
+          "thirdQuadrantVO": {
+            "description": "第三象限详细信息",
+            "$ref": "#/components/schemas/第三象限详细信息"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "Priority 1": {
+        "title": "Priority 1",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "P1 内容"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int64"
+          },
+          "isCompleted": {
+            "type": "boolean",
+            "description": "是否完成",
+            "example": false
+          },
+          "secondQuadrantId": {
+            "type": "integer",
+            "description": "第二象限 ID",
+            "format": "int64"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "Priority 2": {
+        "title": "Priority 2",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "P2 内容"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int64"
+          },
+          "isCompleted": {
+            "type": "boolean",
+            "description": "是否完成",
+            "example": false
+          },
+          "secondQuadrantId": {
+            "type": "integer",
+            "description": "第二象限 ID",
+            "format": "int64"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "个人 OKR 部分数据": {
+        "title": "个人 OKR 部分数据",
+        "type": "object",
+        "properties": {
+          "coreId": {
+            "type": "integer",
+            "description": "内核 ID",
+            "format": "int64"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "个人 OKR ID",
+            "format": "int64"
+          },
+          "isOver": {
+            "type": "boolean",
+            "description": "是否结束",
+            "example": false
+          },
+          "objective": {
+            "type": "string",
+            "description": "目标"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "关键结果": {
+        "title": "关键结果",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "关键结果内容"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "firstQuadrantId": {
+            "type": "integer",
+            "description": "第一象限 ID",
+            "format": "int64"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int64"
+          },
+          "probability": {
+            "type": "integer",
+            "description": "完成概率",
+            "format": "int32"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "具体行动": {
+        "title": "具体行动",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "行动内容"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int64"
+          },
+          "isCompleted": {
+            "type": "boolean",
+            "description": "是否完成",
+            "example": false
+          },
+          "thirdQuadrantId": {
+            "type": "integer",
+            "description": "第三象限 ID",
+            "format": "int64"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "团队 OKR 统计数据": {
+        "title": "团队 OKR 统计数据",
+        "type": "object",
+        "properties": {
+          "average": {
+            "type": "number",
+            "description": "均值",
+            "format": "double"
+          },
+          "coreId": {
+            "type": "integer",
+            "description": "内核 ID",
+            "format": "int64"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int64"
+          },
+          "isOver": {
+            "type": "boolean",
+            "description": "是否完成",
+            "example": false
+          },
+          "keyResults": {
+            "type": "array",
+            "description": "关键结果列表",
+            "items": {
+              "$ref": "#/components/schemas/关键结果"
+            }
+          },
+          "managerId": {
+            "type": "integer",
+            "description": "管理者 ID",
+            "format": "int64"
+          },
+          "parentTeamId": {
+            "type": "integer",
+            "description": "父团队 ID",
+            "format": "int64"
+          },
+          "teamName": {
+            "type": "string",
+            "description": "团队名"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "团队 OKR 部分数据": {
+        "title": "团队 OKR 部分数据",
+        "type": "object",
+        "properties": {
+          "coreId": {
+            "type": "integer",
+            "description": "内核 ID",
+            "format": "int64"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "团队 OKR ID",
+            "format": "int64"
+          },
+          "isOver": {
+            "type": "boolean",
+            "description": "是否结束",
+            "example": false
+          },
+          "teamName": {
+            "type": "string",
+            "description": "团队名"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "团队个人 OKR 部分数据": {
+        "title": "团队个人 OKR 部分数据",
+        "type": "object",
+        "properties": {
+          "coreId": {
+            "type": "integer",
+            "description": "内核 ID",
+            "format": "int64"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "团队个人 OKR ID",
+            "format": "int64"
+          },
+          "isOver": {
+            "type": "boolean",
+            "description": "是否结束",
+            "example": false
+          },
+          "teamId": {
+            "type": "integer",
+            "description": "团队 OKR ID",
+            "format": "int64"
+          },
+          "teamName": {
+            "type": "string",
+            "description": "团队名"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "状态指标": {
+        "title": "状态指标",
+        "type": "object",
+        "properties": {
+          "color": {
+            "type": "string",
+            "description": "颜色"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "fourthQuadrantId": {
+            "type": "integer",
+            "description": "第四象限 ID",
+            "format": "int64"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int64"
+          },
+          "label": {
+            "type": "string",
+            "description": "指标内容"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "第一象限详情信息": {
+        "title": "第一象限详情信息",
+        "type": "object",
+        "properties": {
+          "coreId": {
+            "type": "integer",
+            "description": "内核 ID",
+            "format": "int64"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "deadline": {
+            "type": "string",
+            "description": "截止时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int64"
+          },
+          "keyResults": {
+            "type": "array",
+            "description": "关键结果列表",
+            "items": {
+              "$ref": "#/components/schemas/关键结果"
+            }
+          },
+          "objective": {
+            "type": "string",
+            "description": "目标"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "第三象限详细信息": {
+        "title": "第三象限详细信息",
+        "type": "object",
+        "properties": {
+          "actions": {
+            "type": "array",
+            "description": "行动列表",
+            "items": {
+              "$ref": "#/components/schemas/具体行动"
+            }
+          },
+          "coreId": {
+            "type": "integer",
+            "description": "内核 ID",
+            "format": "int64"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "deadline": {
+            "type": "string",
+            "description": "截止时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int64"
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "第二象限详细信息": {
+        "title": "第二象限详细信息",
+        "type": "object",
+        "properties": {
+          "coreId": {
+            "type": "integer",
+            "description": "内核 ID",
+            "format": "int64"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "deadline": {
+            "type": "string",
+            "description": "截止时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int64"
+          },
+          "priorityNumberOnes": {
+            "type": "array",
+            "description": "P1 列表",
+            "items": {
+              "$ref": "#/components/schemas/Priority 1"
+            }
+          },
+          "priorityNumberTwos": {
+            "type": "array",
+            "description": "P2 列表",
+            "items": {
+              "$ref": "#/components/schemas/Priority 2"
+            }
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "第四象限详细信息": {
+        "title": "第四象限详细信息",
+        "type": "object",
+        "properties": {
+          "coreId": {
+            "type": "integer",
+            "description": "内核 ID",
+            "format": "int64"
+          },
+          "createTime": {
+            "type": "string",
+            "description": "创建时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int64"
+          },
+          "statusFlags": {
+            "type": "array",
+            "description": "状态指标列表",
+            "items": {
+              "$ref": "#/components/schemas/状态指标"
+            }
+          },
+          "updateTime": {
+            "type": "string",
+            "description": "更新时间",
+            "format": "date-time"
+          }
+        }
+      },
+      "统一响应": {
+        "title": "统一响应",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码",
+            "format": "int32"
+          },
+          "data": {
+            "type": "object",
+            "description": "具体数据"
+          },
+          "message": {
+            "type": "string",
+            "description": "描述语"
+          }
+        }
+      },
+      "统一响应«List«个人 OKR 部分数据»»": {
+        "title": "统一响应«List«个人 OKR 部分数据»»",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "description": "具体数据",
+            "items": {
+              "$ref": "#/components/schemas/个人 OKR 部分数据"
+            }
+          },
+          "message": {
+            "type": "string",
+            "description": "描述语"
+          }
+        }
+      },
+      "统一响应«List«团队 OKR 统计数据»»": {
+        "title": "统一响应«List«团队 OKR 统计数据»»",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "description": "具体数据",
+            "items": {
+              "$ref": "#/components/schemas/团队 OKR 统计数据"
+            }
+          },
+          "message": {
+            "type": "string",
+            "description": "描述语"
+          }
+        }
+      },
+      "统一响应«List«团队 OKR 部分数据»»": {
+        "title": "统一响应«List«团队 OKR 部分数据»»",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "description": "具体数据",
+            "items": {
+              "$ref": "#/components/schemas/团队 OKR 部分数据"
+            }
+          },
+          "message": {
+            "type": "string",
+            "description": "描述语"
+          }
+        }
+      },
+      "统一响应«List«团队个人 OKR 部分数据»»": {
+        "title": "统一响应«List«团队个人 OKR 部分数据»»",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "description": "具体数据",
+            "items": {
+              "$ref": "#/components/schemas/团队个人 OKR 部分数据"
+            }
+          },
+          "message": {
+            "type": "string",
+            "description": "描述语"
+          }
+        }
+      },
+      "统一响应«Map«string,object»»": {
+        "title": "统一响应«Map«string,object»»",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码",
+            "format": "int32"
+          },
+          "data": {
+            "type": "object",
+            "description": "具体数据"
+          },
+          "message": {
+            "type": "string",
+            "description": "描述语"
+          }
+        }
+      },
+      "统一响应«OKR 内核详细数据»": {
+        "title": "统一响应«OKR 内核详细数据»",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码",
+            "format": "int32"
+          },
+          "data": {
+            "description": "具体数据",
+            "$ref": "#/components/schemas/OKR 内核详细数据"
+          },
+          "message": {
+            "type": "string",
+            "description": "描述语"
+          }
+        }
+      },
+      "统一响应«string»": {
+        "title": "统一响应«string»",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码",
+            "format": "int32"
+          },
+          "data": {
+            "type": "string",
+            "description": "具体数据"
+          },
+          "message": {
+            "type": "string",
+            "description": "描述语"
+          }
+        }
+      }
+    }
+  }
+}

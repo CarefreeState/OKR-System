@@ -34,7 +34,7 @@ public class TaskServiceSelector {
                 return taskService;
             }
         }
-        throw new GlobalServiceException(GlobalServiceStatusCode.HEAD_NOT_VALID);
+        throw new GlobalServiceException(GlobalServiceStatusCode.PARAM_TYPE_ERROR);
     }
 
 

@@ -18,15 +18,9 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class JwtUtil {
-
-    public static final String WX_LOGIN_TYPE = "WX_JWT"; // valEFs
-
-    public static final String EMAIL_LOGIN_TYPE = "EMAIL_JWT"; // 2CxcDX
-
     public static final String JWT_HEADER = "Token";
 
-    //有效期为
-    public static final Long JWT_TTL = 1L; // 一天
+    public static final Long JWT_TTL = 1L; // 一天有效期
 
     public static final Long JWT_MAP_TTL = 6L; // 六小时
 

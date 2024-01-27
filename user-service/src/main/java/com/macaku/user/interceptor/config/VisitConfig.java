@@ -20,6 +20,7 @@ public class VisitConfig implements WebMvcConfigurer {
                     .addPathPatterns("/**")
                     // 不拦截的路径
                     .excludePathPatterns("/user/login")
+                    // 接口文档
                     .excludePathPatterns("/doc.html/**")
                     .excludePathPatterns("/v3/api-docs/**")
                     .excludePathPatterns("/webjars/**")
@@ -27,7 +28,7 @@ public class VisitConfig implements WebMvcConfigurer {
                     .excludePathPatterns("/favicon.ico")
                     .excludePathPatterns("/swagger-resources/**")
                     .excludePathPatterns("/swagger-ui/**")
-//                    .addPathPatterns("")
+
             ;
 
 

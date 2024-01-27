@@ -5,6 +5,7 @@ import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JwtUtil;
 import com.macaku.common.util.ShortCodeUtil;
+import com.macaku.user.component.LoginServiceSelector;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.service.UserRecordService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ import java.util.Optional;
 @Slf4j
 public class EmailUserRecordServiceImpl implements UserRecordService {
 
-    private static final String TYPE = JwtUtil.EMAIL_LOGIN_TYPE;
+    private static final String TYPE = LoginServiceSelector.EMAIL_LOGIN_TYPE;
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
