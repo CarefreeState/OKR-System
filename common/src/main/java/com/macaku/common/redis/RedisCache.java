@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -219,13 +220,16 @@ public class RedisCache {
      */
     public <K, T> void setCacheMap(final String key, final Map<K, T> data, long timeout, final TimeUnit timeUnit) {
         if (Objects.nonNull(data)) {
-            log.info("尝试存入 Redis\t[{}]-[{}] 超时时间:[{}  {}]", key, data, timeout, timeUnit.name());
-            redisTemplate.opsForHash().putAll(key, data);
+            Map<String, T> map = new HashMap<>();
+            data.entrySet().stream().parallel().forEach(entry -> {
+                map.put(entry.getKey().toString(), entry.getValue());
+            });
+            log.info("尝试存入 Redis\t[{}]-[{}] 超时时间:[{}  {}]", key, map, timeout, timeUnit.name());
             redisTemplate.execute(new SessionCallback() {
                 @Override
                 public Object execute(RedisOperations redisOperations) throws DataAccessException {
                     redisOperations.multi();
-                    redisTemplate.opsForHash().putAll(key, data);
+                    redisTemplate.opsForHash().putAll(key, map);
                     expire(key, timeout, timeUnit);
                     return redisOperations.exec();
                 }

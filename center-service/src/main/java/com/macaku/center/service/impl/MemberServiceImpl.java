@@ -59,26 +59,39 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void checkExistsInTeam(Long teamId, Long userId) {
+        Boolean isExists = isExistsInTeam(teamId, userId);
+        if(Boolean.FALSE.equals(isExists)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.NON_TEAM_MEMBER);
+        }
+    }
+
+    @Override
+    public Boolean isExistsInTeam(Long teamId, Long userId) {
         Long rootId = TeamOkrUtil.getTeamRootId(teamId);
         // 查看是否有缓存
         String redisKey = USER_TEAM_MEMBER + rootId;
-        Boolean isExists = (Boolean) redisCache.getCacheMapValue(redisKey, userId).orElseGet(() -> {
+       return (Boolean) redisCache.getCacheMapValue(redisKey, userId).orElseGet(() -> {
             List<TeamOkr> teamOkrs = teamOkrMapper.selectChildTeams(rootId);
-            findExistsInTeam(teamOkrs, userId).orElseThrow(() -> {
-                redisCache.getCacheObject(redisKey).orElseGet(() -> {
-                    Map<Long, Boolean> map = new HashMap<>();
-                    map.put(userId, false);
-                    redisCache.setCacheMap(redisKey, map, USER_TEAM_MEMBER_TTL, USER_TEAM_MEMBER_TTL_UNIT);
-                    return Boolean.FALSE;
+            findExistsInTeam(teamOkrs, userId).orElseGet(() -> {
+                redisCache.getCacheMap(redisKey).orElseGet(() -> {
+                    Map<Long, Boolean> data = new HashMap<>();
+                    data.put(userId, false);
+                    redisCache.setCacheMap(redisKey, data, USER_TEAM_MEMBER_TTL, USER_TEAM_MEMBER_TTL_UNIT);
+                    return null;
                 });
-                return new GlobalServiceException(GlobalServiceStatusCode.NON_TEAM_MEMBER);
+                return null;
             });
             redisCache.setCacheMapValue(redisKey, userId, true);
             return Boolean.TRUE;
         });
-        if(Boolean.FALSE.equals(isExists)) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.NON_TEAM_MEMBER);
-        }
+    }
+
+    @Override
+    public void setExistsInTeam(Long teamId, Long userId) {
+        Long rootId = TeamOkrUtil.getTeamRootId(teamId);
+        // 查看是否有缓存
+        String redisKey = USER_TEAM_MEMBER + rootId;
+        redisCache.setCacheMapValue(redisKey, userId, true);
     }
 
 }

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
-import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.domain.po.TeamPersonalOkr;
 import com.macaku.center.domain.vo.TeamPersonalOkrVO;
 import com.macaku.center.mapper.TeamPersonalOkrMapper;
@@ -14,7 +13,6 @@ import com.macaku.center.service.MemberService;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.center.service.TeamOkrService;
 import com.macaku.center.service.TeamPersonalOkrService;
-import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
@@ -58,16 +56,11 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
         // 获取用户 ID（受邀者）
         Long userId = user.getId();
         Long teamId = okrOperateDTO.getTeamOkrId();
-        // 判断用户是否是这棵树的成员
-        // 获取根节点
-        Long rootId = TeamOkrUtil.getTeamRootId(teamId);
-        // 获取整棵树
-        List<TeamOkr> teamOkrs = teamOkrService.selectChildTeams(rootId);
         // 判断是否可以加入团队
-        memberService.findExistsInTeam(teamOkrs, userId).ifPresent(x -> {
-            String message = String.format("用户 %d 已在团队树 %d 的一个团队 %d 中, 无法加入团队 %d", userId, rootId, x, teamId);
+        if(Boolean.TRUE.equals(memberService.isExistsInTeam(teamId, userId))) {
+            String message = String.format("用户 %d 无法再次加入团队 %d", userId, teamId);
             throw new GlobalServiceException(message, GlobalServiceStatusCode.REPEATED_JOIN_TEAM);
-        });
+        }
         // 可以加入团队了
         // 创建一个 OKR 内核
         Long coreId = okrCoreService.createOkrCore();
@@ -78,6 +71,8 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
         teamPersonalOkr.setUserId(userId);
         teamPersonalOkrMapper.insert(teamPersonalOkr);
         log.info("用户 {} 新建团队 {} 的 团队个人 OKR {} 内核 {}", userId, teamId, teamPersonalOkr.getId(), coreId);
+        // 更新一下缓存
+        memberService.setExistsInTeam(teamId, userId);
     }
 
     @Override

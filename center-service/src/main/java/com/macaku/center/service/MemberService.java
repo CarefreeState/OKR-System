@@ -18,4 +18,8 @@ public interface MemberService {
 
     void checkExistsInTeam(Long teamId, Long userId);
 
+    Boolean isExistsInTeam(Long teamId, Long userId);
+
+    void setExistsInTeam(Long teamId, Long userId);
+
 }

@@ -111,7 +111,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     @Override
     public void grantTeamForMember(Long teamId, Long managerId, Long userId) {
         // 判断团队的管理者是不是当前用户
-        TeamOkr teamOkr = checkManager(teamId, managerId);
+        checkManager(teamId, managerId);
         // 判断授权对象是否有本团队为 teamId 的团队个人 OKR (这里用 Db 防止循环依赖)
         Db.lambdaQuery(TeamPersonalOkr.class)
                 .eq(TeamPersonalOkr::getTeamId, teamId)
@@ -122,8 +122,9 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         Db.lambdaQuery(TeamOkr.class)
                 .eq(TeamOkr::getParentTeamId, teamId)
                 .eq(TeamOkr::getManagerId, userId)
-                .oneOpt().orElseThrow(() ->
-                        new GlobalServiceException(GlobalServiceStatusCode.REPEATED_GRANT));
+                .oneOpt().ifPresent(t -> {
+                    throw new GlobalServiceException(GlobalServiceStatusCode.REPEATED_GRANT);
+                });
         // 授权成功，构造团队 OKR
         // 构造 OKR 内核
         Long coreId = okrCoreService.createOkrCore();
@@ -132,7 +133,8 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         newTeamOkr.setCoreId(coreId);
         newTeamOkr.setParentTeamId(teamId);
         newTeamOkr.setManagerId(userId);
-        teamOkrMapper.insert(teamOkr);
+        teamOkrMapper.insert(newTeamOkr);
+
         // 本来就有团队个人 OKR，无需再次生成
         log.info("管理员 {} 为成员 {} 授权创建团队原OKR {} 的子 OKR {} 内核 {}", managerId, userId, teamId, newTeamOkr.getId(), coreId);
     }

@@ -69,7 +69,7 @@ public enum GlobalServiceStatusCode {
     REPEATED_GRANT(5005, "重复授权"),
 
     /*内核相关*/
-    CORE_NOT_EXISTS(6000, "OKR 内核不存在或者并没有被 OKR 当作内核"),
+    CORE_NOT_EXISTS(6000, "OKR 内核不存在或者并将其当作内核的 p/t/tp OKR "),
     USER_NOT_CORE_MANAGER(6001, "用户并不是 OKR 的管理者"),
 
     KEY_RESULT_NOT_EXISTS(6100, "关键结果不存在"),
