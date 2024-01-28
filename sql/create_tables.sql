@@ -19,7 +19,7 @@ create table `user` (
     `update_time` datetime not null default current_timestamp on update current_timestamp comment '更新时间',
     -- 索引
     unique index `uni_id`(`id` asc) using btree,
-    unique index `uni_openid`(`openid` asc) using btree,
+    index `idx_openid`(`openid` asc) using btree,
     index `idx_unionid`(`unionid` asc) using btree
 ) comment '用户表';
 

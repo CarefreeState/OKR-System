@@ -149,7 +149,10 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
                 .forEachOrdered(teamOkrStatisticVO -> {
             long sum = teamOkrStatisticVO.getKeyResults().stream()
                     .parallel()
-                    .mapToLong(KeyResult::getProbability).reduce(Long::sum)
+                    .filter(Objects::nonNull)
+                    .mapToLong(KeyResult::getProbability)
+                    .filter(Objects::nonNull)
+                    .reduce(Long::sum)
                     .orElse(0);
             int size = teamOkrStatisticVO.getKeyResults().size();
             Double average = size == 0 ? Double.valueOf(0) : Double.valueOf(sum * 1.0 / size);
@@ -198,7 +201,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         Long teamId = teamOkr.getId();
         log.info("用户 {} 新建团队 OKR {}  内核 {}", userId, teamId, coreId1);
         // 设置冷却时间
-        redisCache.setCacheObject(TeamOkrUtil.CREATE_CD_FLAG, false, TeamOkrUtil.CREATE_CD, TeamOkrUtil.CD_UNIT);// CD 没好的意思
+        redisCache.setCacheObject(redisKey, false, TeamOkrUtil.CREATE_CD, TeamOkrUtil.CD_UNIT);// CD 没好的意思
         // 团队的“始祖”有团队个人 OKR
         TeamPersonalOkr teamPersonalOkr = new TeamPersonalOkr();
         teamPersonalOkr.setCoreId(coreId2);
@@ -213,7 +216,6 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         // 检测用户是否是 coreId 所属团队的成员
         Long teamId = Db.lambdaQuery(TeamOkr.class)
                 .eq(TeamOkr::getCoreId, coreId)
-                .select(TeamOkr::getId)
                 .oneOpt().orElseThrow(() ->
                         new GlobalServiceException(GlobalServiceStatusCode.CORE_NOT_EXISTS)
                 ).getId();
@@ -228,7 +230,6 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         return (Long) redisCache.getCacheObject(redisKey).orElseGet(() -> {
             Long managerId = Db.lambdaQuery(TeamOkr.class)
                     .eq(TeamOkr::getCoreId, coreId)
-                    .select(TeamOkr::getManagerId)
                     .oneOpt().orElseThrow(() ->
                             new GlobalServiceException(GlobalServiceStatusCode.CORE_NOT_EXISTS)
                     ).getManagerId();

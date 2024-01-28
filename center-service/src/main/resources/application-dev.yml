@@ -43,3 +43,8 @@ wx:
       b: 100
     isHyaline: false
 
+limit:
+  time:
+    second: 86400
+    multiple: 2
+

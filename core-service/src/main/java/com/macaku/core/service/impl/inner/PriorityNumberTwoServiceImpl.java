@@ -85,7 +85,6 @@ public class PriorityNumberTwoServiceImpl extends ServiceImpl<PriorityNumberTwoM
             // 查询数据库
             Long secondQuadrantId = this.lambdaQuery()
                     .eq(PriorityNumberTwo::getId, id)
-                    .select(PriorityNumberTwo::getSecondQuadrantId)
                     .oneOpt().orElseThrow(() ->
                             new GlobalServiceException(GlobalServiceStatusCode.TASK_NOT_EXISTS)
                     ).getSecondQuadrantId();

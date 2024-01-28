@@ -59,12 +59,10 @@ public class SecondQuadrantServiceImpl extends ServiceImpl<SecondQuadrantMapper,
         // 查询内核 ID
         Long coreId = this.lambdaQuery()
                 .eq(SecondQuadrant::getId, id)
-                .select(SecondQuadrant::getCoreId)
                 .one()
                 .getCoreId();
         Boolean isOver = Db.lambdaQuery(OkrCore.class)
                 .eq(OkrCore::getId, coreId)
-                .select(OkrCore::getIsOver)
                 .one()
                 .getIsOver();
         if(Boolean.TRUE.equals(isOver)) {
@@ -98,7 +96,6 @@ public class SecondQuadrantServiceImpl extends ServiceImpl<SecondQuadrantMapper,
             // 查询
             Long coreId = this.lambdaQuery()
                     .eq(SecondQuadrant::getId, id)
-                    .select(SecondQuadrant::getCoreId)
                     .oneOpt().orElseThrow(() ->
                             new GlobalServiceException(GlobalServiceStatusCode.SECOND_QUADRANT_NOT_EXISTS)
                     ).getCoreId();

@@ -7,6 +7,7 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
+import com.macaku.core.service.OkrCoreService;
 import com.macaku.core.service.quadrant.ThirdQuadrantService;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
@@ -34,10 +35,11 @@ import javax.servlet.http.HttpServletRequest;
 @Api(tags = "第三象限")
 public class ThirdQuadrantController {
 
-
     private final ThirdQuadrantService thirdQuadrantService;
 
     private final OkrServiceSelector okrServiceSelector;
+
+    private final OkrCoreService okrCoreService;
 
     @PostMapping("/init")
     @ApiOperation("初始化第三象限")
@@ -46,15 +48,18 @@ public class ThirdQuadrantController {
         // 校验
         okrInitQuadrantDTO.validate();
         // 初始化
-        User user = UserRecordUtil.getUserRecord(request);
         InitQuadrantDTO initQuadrantDTO = okrInitQuadrantDTO.getInitQuadrantDTO();
         initQuadrantDTO.validate();
+        Integer quadrantCycle = initQuadrantDTO.getQuadrantCycle();
         Long quadrantId = initQuadrantDTO.getId();
+        Long coreId = thirdQuadrantService.getThirdQuadrantCoreId(quadrantId);
+        User user = UserRecordUtil.getUserRecord(request);
         OkrOperateService okrOperateService = okrServiceSelector.select(okrInitQuadrantDTO.getScene());
         // 检测身份
-        Long coreId = thirdQuadrantService.getThirdQuadrantCoreId(quadrantId);
         Long userId = okrOperateService.getCoreUser(coreId);
         if(user.getId().equals(userId)) {
+            // 判断时长是否合理
+            okrCoreService.checkThirdCycle(coreId, quadrantCycle);
             thirdQuadrantService.initThirdQuadrant(initQuadrantDTO);
             log.info("第三象限初始化成功：{}", initQuadrantDTO);
         }else {

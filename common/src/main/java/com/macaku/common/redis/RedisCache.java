@@ -255,7 +255,7 @@ public class RedisCache {
      */
     public <K, T> void setCacheMapValue(final String key, final K hashKey, final T value) {
         log.info("存入 Redis 的某个 Map\t[{}.{}]-[{}]", key, hashKey, value);
-        redisTemplate.opsForHash().put(key, hashKey, value);
+        redisTemplate.opsForHash().put(key, hashKey.toString(), value);
     }
 
     /**
@@ -266,7 +266,7 @@ public class RedisCache {
      * @return Hash中的对象
      */
     public <K, T> Optional<T> getCacheMapValue(final String key, final K hashKey) {
-        T value = (T) redisTemplate.opsForHash().get(key, hashKey);
+        T value = (T) redisTemplate.opsForHash().get(key, hashKey.toString());
         log.info("获取 Redis 中的 Map 的键值\t[{}.{}]-[{}]", key, hashKey, value);
         return Optional.ofNullable(value);
     }
@@ -279,7 +279,7 @@ public class RedisCache {
      */
     public <K> void delCacheMapValue(final String key, final K hashKey) {
         log.info("删除 Redis 中的 Map 的键值\tkey[{}.{}]", key, hashKey);
-        redisTemplate.opsForHash().delete(key, hashKey);
+        redisTemplate.opsForHash().delete(key, hashKey.toString());
     }
 
     /**
@@ -289,7 +289,7 @@ public class RedisCache {
      * @return 自减后的值
      */
     public <K> long decrementCacheMapNumber(final String key, final K hashKey) {
-        long number = redisTemplate.opsForHash().increment(key, hashKey, -1);
+        long number = redisTemplate.opsForHash().increment(key, hashKey.toString(), -1);
         log.info("Redis key[{}.{}] 自减后：{}", key, hashKey, number);
         return number;
     }
@@ -301,7 +301,7 @@ public class RedisCache {
      * @return 自增后的值
      */
     public <K> long incrementCacheMapNumber(final String key, final K hashKey) {
-        long number = redisTemplate.opsForHash().increment(key, hashKey, +1);
+        long number = redisTemplate.opsForHash().increment(key, hashKey.toString(), +1);
         log.info("Redis key[{}.{}] 自增后：{}", key, hashKey, number);
         return number;
     }

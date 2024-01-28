@@ -39,7 +39,7 @@
         team_okr t, okr_core o,
         first_quadrant f left join key_result k on f.id = k.first_quadrant_id
         where
-        t.is_deleted = 0 and t.is_deleted = 0 and o.is_deleted = 0 and k.is_deleted = 0
+        t.is_deleted = 0 and f.is_deleted = 0 and o.is_deleted = 0 and (k.is_deleted = 0 or k.is_deleted is null)
         and t.id in
         <foreach collection="ids" open="(" close=")" item="id" separator=",">
             #{id,jdbcType=BIGINT}

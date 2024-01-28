@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
         String message = e.getMessage();
         GlobalServiceStatusCode statusCode = e.getStatusCode();
         log.error("请求地址'{}', {}: {}", requestURI, statusCode, message);
-        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(statusCode, message);
+        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(statusCode, statusCode.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

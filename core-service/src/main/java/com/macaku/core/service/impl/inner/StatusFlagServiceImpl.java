@@ -73,7 +73,6 @@ public class StatusFlagServiceImpl extends ServiceImpl<StatusFlagMapper, StatusF
             // 查询数据库
             Long fourthQuadrant = this.lambdaQuery()
                     .eq(StatusFlag::getId, id)
-                    .select(StatusFlag::getFourthQuadrantId)
                     .oneOpt().orElseThrow(() ->
                             new GlobalServiceException(GlobalServiceStatusCode.STATUS_FLAG_NOT_EXISTS)
                     ).getFourthQuadrantId();

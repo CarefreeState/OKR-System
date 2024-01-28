@@ -52,6 +52,8 @@ public enum GlobalServiceStatusCode {
     THIRD_QUADRANT_NOT_EXISTS(4004, "第三象限不存在"),
     FOURTH_QUADRANT_NOT_EXISTS(4005, "第四象限不存在"),
 
+    SECOND_FIRST_QUADRANT_NOT_INIT(4100, "第二象限未初始化"),
+
     OKR_IS_OVER(4100, "OKR 已结束"),
     OKR_IS_NOT_OVER(4101, "OKR 未结束"),
 
@@ -73,6 +75,9 @@ public enum GlobalServiceStatusCode {
     KEY_RESULT_NOT_EXISTS(6100, "关键结果不存在"),
     STATUS_FLAG_NOT_EXISTS(6101, "状态指标不存在"),
     TASK_NOT_EXISTS(6102, "任务不存在"),
+
+    SECOND_CYCLE_TOO_SHORT(6200, "第二象限周期太短了"),
+    THIRD_CYCLE_TOO_SHORT(6201, "第三象限周期太短了"),
 
 
 

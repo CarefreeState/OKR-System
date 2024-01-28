@@ -62,7 +62,6 @@ public class KeyResultServiceImpl extends ServiceImpl<KeyResultMapper, KeyResult
             // 查询数据库
             Long firstQuadrantId = this.lambdaQuery()
                     .eq(KeyResult::getId, id)
-                    .select(KeyResult::getFirstQuadrantId)
                     .oneOpt().orElseThrow(() ->
                             new GlobalServiceException(GlobalServiceStatusCode.KEY_RESULT_NOT_EXISTS)
                     ).getFirstQuadrantId();

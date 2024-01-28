@@ -25,6 +25,7 @@ import com.macaku.core.service.quadrant.SecondQuadrantService;
 import com.macaku.core.service.quadrant.ThirdQuadrantService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -43,6 +44,8 @@ import java.util.concurrent.FutureTask;
 public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
     implements OkrCoreService {
 
+    @Value("${limit.time.multiple}")
+    private Integer multiple;
 
     private final FirstQuadrantService firstQuadrantService;
 
@@ -125,7 +128,6 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
     public void confirmCelebrateDate(Long id, Integer celebrateDay) {
         OkrCore okrCore = this.lambdaQuery()
                 .eq(OkrCore::getId, id)
-                .select(OkrCore::getIsOver, OkrCore::getCelebrateDay)
                 .one();
         if(Boolean.TRUE.equals(okrCore.getIsOver())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
@@ -145,7 +147,6 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
     public void summaryOKR(Long id, String summary, Integer degree) {
         OkrCore okrCore = this.lambdaQuery()
                 .eq(OkrCore::getId, id)
-                .select(OkrCore::getIsOver)
                 .one();
         if(Boolean.FALSE.equals(okrCore.getIsOver())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_NOT_OVER);
@@ -163,7 +164,6 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
     public void complete(Long id) {
         OkrCore okrCore = this.lambdaQuery()
                 .eq(OkrCore::getId, id)
-                .select(OkrCore::getIsOver)
                 .one();
         if(Boolean.TRUE.equals(okrCore.getIsOver())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
@@ -175,6 +175,21 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         // 更新
         this.lambdaUpdate().eq(OkrCore::getId, id).update(updateOkrCore);
         log.info("OKR 结束！ {}", new Date());
+    }
+
+    @Override
+    public void checkThirdCycle(Long id, Integer quadrantCycle) {
+        Integer secondQuadrantCycle = this.lambdaQuery()
+                .eq(OkrCore::getId, id)
+                .oneOpt().orElseThrow(() ->
+                        new GlobalServiceException(GlobalServiceStatusCode.CORE_NOT_EXISTS)
+                ).getSecondQuadrantCycle();
+        if(Objects.isNull(secondQuadrantCycle)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.SECOND_FIRST_QUADRANT_NOT_INIT);
+        }
+        if(quadrantCycle.compareTo(multiple * secondQuadrantCycle) < 0) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.THIRD_CYCLE_TOO_SHORT);
+        }
     }
 }
 

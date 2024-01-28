@@ -22,7 +22,7 @@ public class TaskServiceSelector {
 
     public final static Integer PRIORITY_TWO_OPTION = 2;
 
-    public final static Integer ACTION_OPTION = 3;
+    public final static Integer ACTION_OPTION = 0;
 
     public TaskService select(Integer option) {
         // 选取服务

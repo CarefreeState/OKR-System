@@ -85,7 +85,6 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
             // 查询数据库
             Long thirdQuadrantId = this.lambdaQuery()
                     .eq(Action::getId, id)
-                    .select(Action::getThirdQuadrantId)
                     .oneOpt().orElseThrow(() ->
                             new GlobalServiceException(GlobalServiceStatusCode.TASK_NOT_EXISTS)
                     ).getThirdQuadrantId();

@@ -5,7 +5,6 @@ import com.macaku.center.domain.dto.unify.OkrCoreDTO;
 import com.macaku.center.domain.dto.unify.OkrCoreSummaryDTO;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.service.OkrOperateService;
-import com.macaku.center.service.TeamPersonalOkrService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
@@ -42,7 +41,7 @@ public class OkrCoreController {
     private final OkrServiceSelector okrServiceSelector;
 
     @GetMapping("/create")
-    @ApiOperation("创建一个core")
+    @ApiOperation("创建一个OKR")
     public SystemJsonResponse createOkr(HttpServletRequest request,
                                               OkrOperateDTO okrOperateDTO) {
         // 检测
@@ -86,7 +85,7 @@ public class OkrCoreController {
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
-    @PostMapping("/summary/{id}")
+    @PostMapping("/summary")
     @ApiOperation("总结 OKR")
     public SystemJsonResponse summaryOKR(HttpServletRequest request,
                                          OkrCoreSummaryDTO okrCoreSummaryDTO) {

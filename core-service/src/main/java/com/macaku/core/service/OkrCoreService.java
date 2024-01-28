@@ -23,4 +23,6 @@ public interface OkrCoreService extends IService<OkrCore> {
 
     void complete(Long id);
 
+    void checkThirdCycle(Long id, Integer quadrantCycle);
+
 }

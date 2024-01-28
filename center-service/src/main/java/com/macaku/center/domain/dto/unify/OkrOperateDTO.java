@@ -24,10 +24,6 @@ public class OkrOperateDTO {
     @ApiModelProperty("团队 OKR ID")
     private Long teamOkrId;
 
-    @ApiModelProperty("团队个人 OKR ID")
-    private Long teamPersonalOkrId;
-
-
     public void validate() {
         if(!StringUtils.hasText(scene)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.PARAM_IS_BLANK);

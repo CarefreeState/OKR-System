@@ -14,6 +14,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,9 @@ import javax.servlet.http.HttpServletRequest;
 @Api(tags = "第二象限")
 public class SecondQuadrantController {
 
+    @Value("${limit.time.second}")
+    private Integer secondQuadrantCycle;
+
     private final SecondQuadrantService secondQuadrantService;
 
     private final OkrServiceSelector okrServiceSelector;
@@ -45,9 +49,14 @@ public class SecondQuadrantController {
         // 校验
         okrInitQuadrantDTO.validate();
         // 初始化
-        User user = UserRecordUtil.getUserRecord(request);
         InitQuadrantDTO initQuadrantDTO = okrInitQuadrantDTO.getInitQuadrantDTO();
         initQuadrantDTO.validate();
+        Integer quadrantCycle = initQuadrantDTO.getQuadrantCycle();
+        // 判断周期长度合理性
+        if(secondQuadrantCycle.compareTo(quadrantCycle) > 0) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.SECOND_CYCLE_TOO_SHORT);
+        }
+        User user = UserRecordUtil.getUserRecord(request);
         Long quadrantId = initQuadrantDTO.getId();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrInitQuadrantDTO.getScene());
         // 检测身份

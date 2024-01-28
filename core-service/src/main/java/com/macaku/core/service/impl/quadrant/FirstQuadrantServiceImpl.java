@@ -46,7 +46,6 @@ public class FirstQuadrantServiceImpl extends ServiceImpl<FirstQuadrantMapper, F
         // 查询是否是第一次修改
         FirstQuadrant quadrant = this.lambdaQuery()
                 .eq(FirstQuadrant::getId, id)
-                .select(FirstQuadrant::getDeadline, FirstQuadrant::getObjective)
                 .one();
         if(StringUtils.hasText(quadrant.getObjective()) || Objects.nonNull(quadrant.getDeadline())) {
             throw new GlobalServiceException("第一象限无法再次初始化！",
@@ -61,7 +60,6 @@ public class FirstQuadrantServiceImpl extends ServiceImpl<FirstQuadrantMapper, F
         this.updateById(updateQuadrant);
         Long coreId = this.lambdaQuery()
                 .eq(FirstQuadrant::getId, id)
-                .select(FirstQuadrant::getCoreId)
                 .one().getCoreId();
         // 发起一个定时任务
         QuadrantDeadlineUtil.scheduledComplete(coreId, deadline);
@@ -81,7 +79,6 @@ public class FirstQuadrantServiceImpl extends ServiceImpl<FirstQuadrantMapper, F
             // 查询
             Long coreId = this.lambdaQuery()
                     .eq(FirstQuadrant::getId, id)
-                    .select(FirstQuadrant::getCoreId)
                     .oneOpt().orElseThrow(() ->
                             new GlobalServiceException(GlobalServiceStatusCode.FIRST_QUADRANT_NOT_EXISTS)
                     ).getCoreId();

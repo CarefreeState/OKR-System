@@ -6,11 +6,9 @@ import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.center.service.MemberService;
 import com.macaku.center.service.TeamOkrService;
-import com.macaku.center.service.TeamPersonalOkrService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.redis.RedisCache;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
@@ -68,10 +66,9 @@ public class TeamOkrController {
         if(teamOkrs.isEmpty()) {
             throw new GlobalServiceException(GlobalServiceStatusCode.TEAM_NOT_EXISTS);
         }
-        // 判断是否是其中的成员
-        log.info("查询团队 {} 在 根团队 {} 中， 树的总节点数为 {}", id, rootId, teamOkrs.size());
         // 计算完成度
         List<TeamOkrStatisticVO> statisticVOS = teamOkrService.countCompletionRate(teamOkrs);
+        log.info("查询团队 {} 在 根团队 {} 中， 树的总节点数为 {}", id, rootId, statisticVOS.size());
         return SystemJsonResponse.SYSTEM_SUCCESS(statisticVOS);
     }
 

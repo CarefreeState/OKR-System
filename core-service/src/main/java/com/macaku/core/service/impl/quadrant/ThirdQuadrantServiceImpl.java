@@ -54,7 +54,6 @@ public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, T
                 // 如果 OKR 没有结束，更新截止时间，发起新的定时任务
                 Boolean isOver = Db.lambdaQuery(OkrCore.class)
                         .eq(OkrCore::getId, coreId)
-                        .select(OkrCore::getIsOver)
                         .one()
                         .getIsOver();
                 if(Boolean.TRUE.equals(isOver)) {
@@ -88,12 +87,10 @@ public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, T
         // 查询内核 ID
         Long coreId = this.lambdaQuery()
                 .eq(ThirdQuadrant::getId, id)
-                .select(ThirdQuadrant::getCoreId)
                 .one()
                 .getCoreId();
         Boolean isOver = Db.lambdaQuery(OkrCore.class)
                 .eq(OkrCore::getId, coreId)
-                .select(OkrCore::getIsOver)
                 .one()
                 .getIsOver();
         if(Boolean.TRUE.equals(isOver)) {
@@ -126,7 +123,6 @@ public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, T
             // 查询
             Long coreId = this.lambdaQuery()
                     .eq(ThirdQuadrant::getId, id)
-                    .select(ThirdQuadrant::getCoreId)
                     .oneOpt().orElseThrow(() ->
                             new GlobalServiceException(GlobalServiceStatusCode.SECOND_QUADRANT_NOT_EXISTS)
                     ).getCoreId();

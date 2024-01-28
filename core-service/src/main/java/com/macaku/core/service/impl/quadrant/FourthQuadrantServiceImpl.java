@@ -48,7 +48,6 @@ public class FourthQuadrantServiceImpl extends ServiceImpl<FourthQuadrantMapper,
             // 查询
             Long coreId = this.lambdaQuery()
                     .eq(FourthQuadrant::getId, id)
-                    .select(FourthQuadrant::getCoreId)
                     .oneOpt().orElseThrow(() ->
                             new GlobalServiceException(GlobalServiceStatusCode.FOURTH_QUADRANT_NOT_EXISTS)
                     ).getCoreId();
