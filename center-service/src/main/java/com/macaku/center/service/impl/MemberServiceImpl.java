@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -45,7 +44,7 @@ public class MemberServiceImpl implements MemberService {
     private final RedisCache redisCache;
 
     @Override
-    public Optional<Long> findExistsInTeam(List<TeamOkr> teamOkrs, Long userId) {
+    public Boolean findExistsInTeam(List<TeamOkr> teamOkrs, Long userId) {
         List<Long> ids = teamOkrs.stream()
                 .parallel()
                 .map(TeamOkr::getId)
@@ -53,8 +52,7 @@ public class MemberServiceImpl implements MemberService {
         return teamPersonalOkrMapper.getTeamPersonalOkrList(userId).stream()
                 .parallel()
                 .map(TeamPersonalOkrVO::getTeamId)
-                .filter(ids::contains)
-                .findAny();
+                .anyMatch(ids::contains);
     }
 
     @Override
@@ -72,17 +70,18 @@ public class MemberServiceImpl implements MemberService {
         String redisKey = USER_TEAM_MEMBER + rootId;
        return (Boolean) redisCache.getCacheMapValue(redisKey, userId).orElseGet(() -> {
             List<TeamOkr> teamOkrs = teamOkrMapper.selectChildTeams(rootId);
-            findExistsInTeam(teamOkrs, userId).orElseGet(() -> {
+            Boolean isExists = findExistsInTeam(teamOkrs, userId);
+            if(Boolean.FALSE.equals(isExists)) {
                 redisCache.getCacheMap(redisKey).orElseGet(() -> {
                     Map<Long, Boolean> data = new HashMap<>();
                     data.put(userId, false);
                     redisCache.setCacheMap(redisKey, data, USER_TEAM_MEMBER_TTL, USER_TEAM_MEMBER_TTL_UNIT);
                     return null;
                 });
-                return null;
-            });
-            redisCache.setCacheMapValue(redisKey, userId, true);
-            return Boolean.TRUE;
+            }else {
+                redisCache.setCacheMapValue(redisKey, userId, true);
+            }
+            return isExists;
         });
     }
 

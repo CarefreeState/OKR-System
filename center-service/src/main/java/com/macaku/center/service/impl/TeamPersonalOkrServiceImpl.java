@@ -9,10 +9,7 @@ import com.macaku.center.domain.po.TeamPersonalOkr;
 import com.macaku.center.domain.vo.TeamPersonalOkrVO;
 import com.macaku.center.mapper.TeamPersonalOkrMapper;
 import com.macaku.center.redis.config.CoreUserMapConfig;
-import com.macaku.center.service.MemberService;
-import com.macaku.center.service.OkrOperateService;
-import com.macaku.center.service.TeamOkrService;
-import com.macaku.center.service.TeamPersonalOkrService;
+import com.macaku.center.service.*;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
@@ -46,6 +43,8 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
+    private final WxQRCodeService wxQRCodeService = SpringUtil.getBean(WxQRCodeService.class);
+
     @Override
     public boolean match(String scene) {
         return SCENE.equals(scene);
@@ -53,9 +52,12 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
 
     @Override
     public void createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
+        // 检测密钥
+        Long teamId = okrOperateDTO.getTeamOkrId();
+        String secret = okrOperateDTO.getSecret();
+        wxQRCodeService.checkParams(teamId, secret);
         // 获取用户 ID（受邀者）
         Long userId = user.getId();
-        Long teamId = okrOperateDTO.getTeamOkrId();
         // 判断是否可以加入团队
         if(Boolean.TRUE.equals(memberService.isExistsInTeam(teamId, userId))) {
             String message = String.format("用户 %d 无法再次加入团队 %d", userId, teamId);

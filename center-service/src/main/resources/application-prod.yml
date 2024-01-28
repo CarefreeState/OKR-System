@@ -24,7 +24,7 @@ spring.data:
     port: 6379
 
 media:
-  root: D:/
+  root: root/
   map: media/
 
 wx:

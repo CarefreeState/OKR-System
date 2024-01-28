@@ -39,7 +39,10 @@ public enum GlobalServiceStatusCode {
     USER_NO_PERMISSION(2403, "用户无权限"),
     USER_NO_PHONE_CODE(2500, "验证码错误"),
 
+    USER_CANNOT_JOIN_TEAM(2600, "用户可能并非受邀，无法加入团队"),
+
     DATA_NOT_SECURITY(3000, "数据不安全"),
+
 
 
     // -------- 象限相关：
