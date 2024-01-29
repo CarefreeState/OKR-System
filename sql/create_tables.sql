@@ -301,9 +301,9 @@ DROP PROCEDURE IF EXISTS GetSubtreeNodes;
 
 drop temporary table if exists temp_tree_nodes;
 CREATE TEMPORARY TABLE IF NOT EXISTS temp_tree_nodes (
-                                                         id bigint,
-                                                         parent_team_id bigint,
-                                                         team_name VARCHAR(32)
+     id bigint,
+     parent_team_id bigint,
+     team_name VARCHAR(32)
 );
 
 CREATE PROCEDURE GetTreeNodes(IN root_id bigint)
@@ -318,9 +318,9 @@ BEGIN
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
     CREATE TEMPORARY TABLE IF NOT EXISTS temp_tree_nodes (
-                                                             id bigint,
-                                                             parent_team_id bigint,
-                                                             team_name VARCHAR(32)
+        id bigint,
+        parent_team_id bigint,
+        team_name VARCHAR(32)
     );
 
     OPEN nodes_cursor;
