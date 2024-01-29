@@ -85,19 +85,6 @@ create table `team_okr` (
     index `idx_manager_id`(`manager_id` asc) using btree
 ) comment '团队 OKR 表';
 
-delimiter //
-
-CREATE TRIGGER before_insert_team_okr
-    BEFORE INSERT ON team_okr
-    FOR EACH ROW
-    BEGIN
-    DECLARE next_id BIGINT;
-    SET next_id = (SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='team_okr');
-    SET NEW.team_name = CONCAT('团队 #', next_id);
-END//
-
-delimiter ;
-
 -- 创建团队个人 OKR 表
 drop table if exists `team_personal_okr`;
 create table `team_personal_okr` (
@@ -291,6 +278,19 @@ create table `status_flag` (
 -- 开启外键检查
 SET @@FOREIGN_KEY_CHECKS = 1;
 
+
+delimiter //
+
+CREATE TRIGGER before_insert_team_okr
+    BEFORE INSERT ON team_okr
+    FOR EACH ROW
+BEGIN
+    DECLARE next_id BIGINT;
+    SET next_id = (SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='team_okr');
+    SET NEW.team_name = CONCAT('团队 #', next_id);
+END//
+
+delimiter ;
 
 DELIMITER //
 

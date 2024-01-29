@@ -19,7 +19,7 @@
       <module name="center-service" options="-parameters" />
       <module name="common" options="-parameters" />
       <module name="core-service" options="-parameters" />
-      <module name="okr-system" options="" />
+      <module name="okr-system" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
   </component>
