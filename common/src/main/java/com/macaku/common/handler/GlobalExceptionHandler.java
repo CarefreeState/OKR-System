@@ -3,6 +3,8 @@ package com.macaku.common.handler;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -21,6 +23,24 @@ public class GlobalExceptionHandler {
         GlobalServiceStatusCode statusCode = e.getStatusCode();
         log.error("请求地址'{}', {}: {}", requestURI, statusCode, message);
         return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(statusCode, statusCode.getMessage());
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public SystemJsonResponse handleExpiredJwtException(ExpiredJwtException e, HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        String message = e.getMessage();
+        log.error("请求地址'{}' {}", requestURI, message);
+        e.printStackTrace();
+        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.USER_TOKEN_EXPIRED, GlobalServiceStatusCode.USER_TOKEN_EXPIRED.getMessage());
+    }
+
+    @ExceptionHandler(SignatureException.class)
+    public SystemJsonResponse handleSignatureException(SignatureException e, HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        String message = e.getMessage();
+        log.error("请求地址'{}' {}", requestURI, message);
+        e.printStackTrace();
+        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.USER_TOKEN_NOT_VALID, GlobalServiceStatusCode.USER_TOKEN_NOT_VALID.getMessage());
     }
 
     @ExceptionHandler(Exception.class)
