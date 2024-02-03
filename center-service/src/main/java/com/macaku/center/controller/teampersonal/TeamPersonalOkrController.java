@@ -1,16 +1,18 @@
 package com.macaku.center.controller.teampersonal;
 
+import com.macaku.center.domain.vo.TeamMemberVO;
 import com.macaku.center.domain.vo.TeamPersonalOkrVO;
+import com.macaku.center.service.MemberService;
 import com.macaku.center.service.TeamPersonalOkrService;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -28,6 +30,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TeamPersonalOkrController {
 
+    private final MemberService memberService;
+
     private final TeamPersonalOkrService teamPersonalOkrService;
 
     @GetMapping("/list")
@@ -38,6 +42,19 @@ public class TeamPersonalOkrController {
         // 调用方法
         List<TeamPersonalOkrVO> teamPersonalOkrVOS = teamPersonalOkrService.getTeamPersonalOkrList(user);
         return SystemJsonResponse.SYSTEM_SUCCESS(teamPersonalOkrVOS);
+    }
+
+    @PostMapping("/members/{teamId}")
+    @ApiOperation("获取团队成员列表")
+    public SystemJsonResponse<List<TeamMemberVO>> getTeamMember(HttpServletRequest request,
+                                                                @PathVariable("teamId") @NonNull @ApiParam("团队 OKR ID") Long teamId) {
+        // 获取当前登录用户
+        User user = UserRecordUtil.getUserRecord(request);
+        // 判断是不是团队成员
+        memberService.checkExistsInTeam(teamId, user.getId());
+        // 查询
+        List<TeamMemberVO> teamMembers = teamPersonalOkrService.getTeamMembers(teamId);
+        return SystemJsonResponse.SYSTEM_SUCCESS(teamMembers);
     }
 
 }

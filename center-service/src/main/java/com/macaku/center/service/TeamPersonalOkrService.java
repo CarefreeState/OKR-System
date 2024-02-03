@@ -2,6 +2,7 @@ package com.macaku.center.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.macaku.center.domain.po.TeamPersonalOkr;
+import com.macaku.center.domain.vo.TeamMemberVO;
 import com.macaku.center.domain.vo.TeamPersonalOkrVO;
 import com.macaku.user.domain.po.User;
 
@@ -15,5 +16,7 @@ import java.util.List;
 public interface TeamPersonalOkrService extends IService<TeamPersonalOkr> {
 
     List<TeamPersonalOkrVO> getTeamPersonalOkrList(User user);
+
+    List<TeamMemberVO> getTeamMembers(Long id);
 
 }

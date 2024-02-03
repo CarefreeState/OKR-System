@@ -32,7 +32,7 @@ order by a.is_completed, a.create_time
 
 select
     fq.*,
-    sf.id sf_id, sf.fourth_quadrant_id sf_fourth_quadrant_id, sf.label sf_label
+    sf.id sf_id, sf.fourth_quadrant_id sf_fourth_quadrant_id, sf.label sf_label, sf.color sf_color
 from
     fourth_quadrant fq left join status_flag sf on fq.id = sf.fourth_quadrant_id and sf.is_deleted = 0
 where
@@ -79,3 +79,140 @@ from
     okr_core o, first_quadrant f, second_quadrant s, third_quadrant t
 where
     o.is_over = 0 and o.id = f.core_id and o.id = s.core_id and o.id = t.core_id;
+
+SET global max_sp_recursion_depth = 255;
+
+DELIMITER //
+
+DROP PROCEDURE IF EXISTS GetTreeNodes;
+DROP PROCEDURE IF EXISTS GetSubtreeNodes;
+
+drop temporary table if exists temp_tree_nodes;
+CREATE TEMPORARY TABLE IF NOT EXISTS temp_tree_nodes (
+    id bigint,
+    parent_team_id bigint,
+    team_name VARCHAR(32)
+);
+
+CREATE PROCEDURE GetTreeNodes(IN root_id bigint)
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE cur_id, parent_id bigint;
+    DECLARE cur_name VARCHAR(32);
+    DECLARE nodes_cursor CURSOR FOR
+SELECT id, parent_team_id, team_name
+FROM team_okr
+WHERE (id = root_id OR parent_team_id = root_id) and is_deleted = 0;
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    CREATE TEMPORARY TABLE IF NOT EXISTS temp_tree_nodes (
+        id bigint,
+        parent_team_id bigint,
+        team_name VARCHAR(32)
+    );
+
+OPEN nodes_cursor;
+read_loop: LOOP
+        FETCH nodes_cursor INTO cur_id, parent_id, cur_name;
+        IF done THEN
+            LEAVE read_loop;
+END IF;
+
+INSERT INTO temp_tree_nodes (id, parent_team_id, team_name)
+VALUES (cur_id, parent_id, cur_name);
+
+CALL GetSubtreeNodes(cur_id);
+END LOOP;
+
+CLOSE nodes_cursor;
+
+SELECT distinct * FROM temp_tree_nodes order by id;
+
+DROP TEMPORARY TABLE IF EXISTS temp_tree_nodes;
+END//
+
+CREATE PROCEDURE GetSubtreeNodes(IN parent_id bigint)
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE cur_id, cur_parent_id bigint;
+    DECLARE cur_name VARCHAR(32);
+    DECLARE subtree_cursor CURSOR FOR
+SELECT id, parent_team_id, team_name
+FROM team_okr
+WHERE parent_team_id = parent_id and is_deleted = 0;
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+OPEN subtree_cursor;
+read_loop: LOOP
+        FETCH subtree_cursor INTO cur_id, cur_parent_id, cur_name;
+        IF done THEN
+            LEAVE read_loop;
+END IF;
+
+INSERT INTO temp_tree_nodes (id, parent_team_id, team_name)
+VALUES (cur_id, cur_parent_id, cur_name);
+
+CALL GetSubtreeNodes(cur_id);
+END LOOP;
+
+CLOSE subtree_cursor;
+END//
+
+DELIMITER ;
+
+DELIMITER //
+
+drop procedure if exists find_root_node;
+
+CREATE PROCEDURE find_root_node (IN start_id BIGINT)
+BEGIN
+    DECLARE current_id BIGINT;
+    DECLARE parent_id BIGINT;
+
+    SET current_id = start_id;
+    SET parent_id = NULL;
+
+    node_loop: LOOP
+SELECT parent_team_id INTO parent_id
+FROM team_okr
+WHERE id = current_id and is_deleted = 0;
+
+IF parent_id IS NOT NULL THEN
+            SET current_id = parent_id;
+ELSE
+SELECT id, parent_team_id, team_name
+FROM team_okr
+WHERE id = current_id and is_deleted = 0;
+LEAVE node_loop;
+END IF;
+END LOOP;
+
+END //
+
+DELIMITER ;
+
+
+CALL find_root_node(5);
+
+call GetTreeNodes(3);
+
+
+select t.id, t.core_id, t.team_name, t.parent_team_id, t.manager_id, t.create_time, o.is_over, k.id k_id, k.first_quadrant_id k_first_quadrant_id, k.content k_content, k.probability k_probability
+from team_okr t, okr_core o,first_quadrant f
+                                left join key_result k on f.id = k.first_quadrant_id
+where t.is_deleted = 0 and f.is_deleted = 0 and o.is_deleted = 0
+  and (k.is_deleted = 0 or k.is_deleted is null) and t.id in ( 1 )
+  and t.core_id = o.id and f.core_id = o.id order by t.id;
+
+
+select
+    tp.user_id, tp.create_time, u.nickname, u.email, u.phone, u.photo
+from
+    team_okr t, team_personal_okr tp, user u
+where
+    t.id = 3
+  and t.is_deleted = 0 and tp.is_deleted = 0 and u.is_deleted = 0
+  and t.id = tp.team_id
+  and tp.user_id = u.id
+  and u.id != t.manager_id
+order by tp.create_time desc

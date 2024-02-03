@@ -45,7 +45,7 @@ order by o.is_over, o.create_time desc
 ;
 
 select
-    t.id, t.core_id, t.team_name, t.parent_team_id, t.manager_id, t.create_time,
+    t.id, t.core_id, t.team_name, t.parent_team_id, t.manager_id, t.create_time, o.is_over, o.degree,
     k.id k_id, k.first_quadrant_id k_first_quadrant_id,
     k.content k_content, k.probability k_probability
 from

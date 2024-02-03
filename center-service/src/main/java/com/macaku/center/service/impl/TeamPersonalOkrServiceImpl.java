@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.domain.po.TeamPersonalOkr;
+import com.macaku.center.domain.vo.TeamMemberVO;
 import com.macaku.center.domain.vo.TeamPersonalOkrVO;
 import com.macaku.center.mapper.TeamPersonalOkrMapper;
 import com.macaku.center.redis.config.CoreUserMapConfig;
@@ -111,6 +112,14 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
         List<TeamPersonalOkrVO> teamPersonalOkrVOList = teamPersonalOkrMapper.getTeamPersonalOkrList(id);
         log.info("查询用户 {} 的团队个人 OKR 列表 : {} 行", id, teamPersonalOkrVOList.size());
         return teamPersonalOkrVOList;
+    }
+
+    @Override
+    public List<TeamMemberVO> getTeamMembers(Long id) {
+        // 查询团队成员列表
+        List<TeamMemberVO> teamMembers = teamPersonalOkrMapper.getTeamMembers(id);
+        log.info("查询团队 {} 的成员列表 : {} 行", id, teamMembers.size());
+        return teamMembers;
     }
 
 

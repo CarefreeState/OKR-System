@@ -278,7 +278,6 @@ create table `status_flag` (
 -- 开启外键检查
 SET @@FOREIGN_KEY_CHECKS = 1;
 
-
 SET global max_sp_recursion_depth = 255;
 
 DELIMITER //

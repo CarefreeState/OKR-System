@@ -16,4 +16,18 @@
           and tp.team_id = t.id
         order by o.is_over, o.create_time desc
     </select>
+
+    <select id="getTeamMembers" parameterType="java.lang.Long" resultType="com.macaku.center.domain.vo.TeamMemberVO">
+        select
+            tp.user_id, tp.create_time, u.nickname, u.email, u.phone, u.photo
+        from
+            team_okr t, team_personal_okr tp, user u
+        where
+            t.id = #{id,jdbcType=BIGINT}
+          and t.is_deleted = 0 and tp.is_deleted = 0 and u.is_deleted = 0
+          and t.id = tp.team_id
+          and tp.user_id = u.id
+          and u.id != t.manager_id
+        order by tp.create_time desc
+    </select>
 </mapper>

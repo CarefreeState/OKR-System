@@ -24,7 +24,6 @@ import com.macaku.common.util.media.MediaUtils;
 import com.macaku.common.web.HttpUtils;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.vo.OkrCoreVO;
-import com.macaku.core.mapper.quadrant.FirstQuadrantMapper;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.token.TokenUtil;
@@ -66,8 +65,6 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     private final OkrCoreService okrCoreService = SpringUtil.getBean(OkrCoreService.class);
 
     private final MemberService memberService = SpringUtil.getBean(MemberService.class);
-
-    private final FirstQuadrantMapper firstQuadrantMapper = SpringUtil.getBean(FirstQuadrantMapper.class);
 
     private final WxQRCodeService wxQRCodeService = SpringUtil.getBean(WxQRCodeService.class);
 
@@ -111,6 +108,9 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
 
     @Override
     public void grantTeamForMember(Long teamId, Long managerId, Long userId) {
+        if(managerId.equals(userId)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
+        }
         // 判断团队的管理者是不是当前用户
         checkManager(teamId, managerId);
         // 判断授权对象是否有本团队为 teamId 的团队个人 OKR (这里用 Db 防止循环依赖)
@@ -126,7 +126,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
                 .oneOpt().ifPresent(t -> {
                     throw new GlobalServiceException(GlobalServiceStatusCode.REPEATED_GRANT);
                 });
-        // 授权成功，构造团队 OKR
+        // 鉴权成功，构造团队 OKR
         // 构造 OKR 内核
         Long coreId = okrCoreService.createOkrCore();
         // 创建一个团队 OKR
@@ -135,7 +135,6 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         newTeamOkr.setParentTeamId(teamId);
         newTeamOkr.setManagerId(userId);
         teamOkrMapper.insert(newTeamOkr);
-
         // 本来就有团队个人 OKR，无需再次生成
         log.info("管理员 {} 为成员 {} 授权创建团队原OKR {} 的子 OKR {} 内核 {}", managerId, userId, teamId, newTeamOkr.getId(), coreId);
     }
