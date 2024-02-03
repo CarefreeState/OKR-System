@@ -22,9 +22,12 @@ public class TeamOkrStatisticVO extends TeamOkr {
     @ApiModelProperty("关键结果列表")
     private List<KeyResult> keyResults;
 
-    @ApiModelProperty("均值")
+    @ApiModelProperty("（关键结果完成概率）均值")
     private Double average;
 
     @ApiModelProperty("是否完成")
     private Boolean isOver;
+
+    @ApiModelProperty("完成度")
+    private Integer degree;
 }

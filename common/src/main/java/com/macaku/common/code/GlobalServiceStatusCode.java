@@ -36,8 +36,7 @@ public enum GlobalServiceStatusCode {
     USER_ACCOUNT_ALREADY_EXIST(2008, "账号已存在"),
     USER_ACCOUNT_USE_BY_OTHERS(2009, "账号下线"),
 
-    USER_TOKEN_EXPIRED(2010, "用户登录凭据过期"),
-    USER_TOKEN_NOT_VALID(2011, "用户登录凭据无效"),
+    USER_TOKEN_NOT_VALID(2010, "用户登录凭据无效"),
 
     USER_NO_PERMISSION(2403, "用户无权限"),
     USER_NO_PHONE_CODE(2500, "验证码错误"),

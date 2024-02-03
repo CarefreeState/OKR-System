@@ -31,7 +31,6 @@ import com.macaku.user.token.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -149,20 +148,25 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         List<TeamOkrStatisticVO> statisticVOS = teamOkrMapper.selectKeyResultsByTeamId(ids);
         statisticVOS.stream()
                 .parallel()
-                .sorted(Comparator.comparing(TeamOkrStatisticVO::getId))
-                .forEachOrdered(teamOkrStatisticVO -> {
-            long sum = teamOkrStatisticVO.getKeyResults().stream()
-                    .parallel()
-                    .filter(Objects::nonNull)
-                    .mapToLong(KeyResult::getProbability)
-                    .filter(Objects::nonNull)
-                    .reduce(Long::sum)
-                    .orElse(0);
-            int size = teamOkrStatisticVO.getKeyResults().size();
-            Double average = size == 0 ? Double.valueOf(0) : Double.valueOf(sum * 1.0 / size);
-            teamOkrStatisticVO.setAverage(average);
-            teamOkrStatisticVO.setKeyResults(null);
-        });
+//                .sorted(Comparator.comparing(TeamOkrStatisticVO::getId))
+//                .forEachOrdered(teamOkrStatisticVO -> {
+                .forEach(teamOkrStatisticVO -> {
+                    if(Objects.nonNull(teamOkrStatisticVO.getDegree())) {
+                        teamOkrStatisticVO.setKeyResults(null);
+                        return;
+                    }
+                    long sum = teamOkrStatisticVO.getKeyResults().stream()
+                            .parallel()
+                            .filter(Objects::nonNull)
+                            .mapToLong(KeyResult::getProbability)
+                            .filter(Objects::nonNull)
+                            .reduce(Long::sum)
+                            .orElse(0);
+                    int size = teamOkrStatisticVO.getKeyResults().size();
+                    Double average = size == 0 ? Double.valueOf(0) : Double.valueOf(sum * 1.0 / size);
+                    teamOkrStatisticVO.setAverage(average);
+                    teamOkrStatisticVO.setKeyResults(null);
+                });
         return statisticVOS;
     }
 

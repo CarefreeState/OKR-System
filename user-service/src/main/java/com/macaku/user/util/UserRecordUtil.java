@@ -29,14 +29,10 @@ public class UserRecordUtil {
     public static User getUserRecord(HttpServletRequest request) {
         String type = request.getHeader(VisitConfig.HEADER);
         if(!StringUtils.hasText(type)) {
-            throw new GlobalServiceException("拦截路径：" + request.getRequestURI(),
-                    GlobalServiceStatusCode.HEAD_NOT_VALID);
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_TOKEN_NOT_VALID);
         }
         UserRecordService userRecordService = USER_RECORD_SERVICE_SELECTOR.select(type);
-        return userRecordService.getRecord(request).orElseThrow(() ->
-                new GlobalServiceException("拦截路径：" + request.getRequestURI(),
-                        GlobalServiceStatusCode.HEAD_NOT_VALID)
-        );
+        return userRecordService.getRecord(request).orElse(null);
     }
 
 }

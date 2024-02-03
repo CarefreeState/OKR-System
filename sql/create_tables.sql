@@ -279,22 +279,9 @@ create table `status_flag` (
 SET @@FOREIGN_KEY_CHECKS = 1;
 
 
-delimiter //
-
-CREATE TRIGGER before_insert_team_okr
-    BEFORE INSERT ON team_okr
-    FOR EACH ROW
-BEGIN
-    DECLARE next_id BIGINT;
-    SET next_id = (SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='team_okr');
-    SET NEW.team_name = CONCAT('团队 #', next_id);
-END//
-
-delimiter ;
+SET global max_sp_recursion_depth = 255;
 
 DELIMITER //
-
-SET @@max_sp_recursion_depth = 32;
 
 DROP PROCEDURE IF EXISTS GetTreeNodes;
 DROP PROCEDURE IF EXISTS GetSubtreeNodes;
@@ -318,9 +305,9 @@ BEGIN
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
 
     CREATE TEMPORARY TABLE IF NOT EXISTS temp_tree_nodes (
-        id bigint,
-        parent_team_id bigint,
-        team_name VARCHAR(32)
+         id bigint,
+         parent_team_id bigint,
+         team_name VARCHAR(32)
     );
 
     OPEN nodes_cursor;
@@ -374,7 +361,6 @@ DELIMITER ;
 
 DELIMITER //
 
-SET @@max_sp_recursion_depth = 32;
 drop procedure if exists find_root_node;
 
 CREATE PROCEDURE find_root_node (IN start_id BIGINT)
@@ -403,3 +389,4 @@ BEGIN
 END //
 
 DELIMITER ;
+

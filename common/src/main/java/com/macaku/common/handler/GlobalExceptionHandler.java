@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
         String message = e.getMessage();
         log.error("请求地址'{}' {}", requestURI, message);
         e.printStackTrace();
-        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.USER_TOKEN_EXPIRED, GlobalServiceStatusCode.USER_TOKEN_EXPIRED.getMessage());
+        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.USER_TOKEN_NOT_VALID, GlobalServiceStatusCode.USER_TOKEN_NOT_VALID.getMessage());
     }
 
     @ExceptionHandler(SignatureException.class)

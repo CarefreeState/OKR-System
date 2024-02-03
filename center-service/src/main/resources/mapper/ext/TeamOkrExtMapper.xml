@@ -6,6 +6,7 @@
 
     <resultMap extends="BaseResultMap" id="KeyResultsMap" type="com.macaku.center.domain.vo.TeamOkrStatisticVO">
         <result property="isOver" column="is_over" jdbcType="BIT"/>
+        <result property="degree" column="degree" jdbcType="INTEGER"/>
         <collection property="keyResults" ofType="com.macaku.core.domain.po.inner.KeyResult"
                     resultMap="com.macaku.core.mapper.inner.KeyResultMapper.BaseResultMap" columnPrefix="k_" />
     </resultMap>
@@ -32,7 +33,7 @@
     </select>
     <select id="selectKeyResultsByTeamId" resultMap="KeyResultsMap">
         select
-        t.id, t.core_id, t.team_name, t.parent_team_id, t.manager_id, t.create_time, o.is_over,
+        t.id, t.core_id, t.team_name, t.parent_team_id, t.manager_id, t.create_time, o.is_over, o.degree,
         k.id k_id, k.first_quadrant_id k_first_quadrant_id,
         k.content k_content, k.probability k_probability
         from
