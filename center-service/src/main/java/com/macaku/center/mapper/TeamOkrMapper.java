@@ -23,7 +23,7 @@ public interface TeamOkrMapper extends BaseMapper<TeamOkr> {
 
     List<TeamOkrVO> getTeamOkrList(@Param("id") Long id);
 
-    List<TeamOkrStatisticVO> selectKeyResultsByTeamId(List<Long> ids);
+    List<TeamOkrStatisticVO> selectKeyResultsByTeamId(@Param("ids") List<Long> ids);
 
 }
 

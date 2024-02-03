@@ -18,7 +18,7 @@
 
     <select id="getPersonalOkrList" resultType="com.macaku.center.domain.vo.PersonalOkrVO" parameterType="java.lang.Long">
         select
-            p.id, p.core_id, f.objective, o.is_over, p.create_time, p.update_time
+            p.id, p.core_id, f.objective, o.is_over, p.create_time, p.update_time, p.core_id
         from user u, personal_okr p, okr_core o, first_quadrant f
         where
             u.id = #{id, jdbcType=BIGINT}

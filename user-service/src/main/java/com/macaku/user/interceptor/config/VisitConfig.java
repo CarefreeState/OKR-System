@@ -20,8 +20,9 @@ public class VisitConfig implements WebMvcConfigurer {
                     .addPathPatterns("/**")
                     // 不拦截的路径
                     .excludePathPatterns("/user/login")
-                    // 接口文档
+                    // 静态资源
                     .excludePathPatterns("/media/**")
+                    // 接口文档
                     .excludePathPatterns("/doc.html/**")
                     .excludePathPatterns("/v3/api-docs/**")
                     .excludePathPatterns("/webjars/**")

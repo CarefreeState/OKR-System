@@ -6,7 +6,7 @@
 
     <select id="getTeamPersonalOkrList" parameterType="java.lang.Long" resultType="com.macaku.center.domain.vo.TeamPersonalOkrVO">
         select
-            tp.id, o.id, tp.team_id, t.team_name, o.is_over, tp.create_time, tp.update_time
+            tp.id, o.id, tp.team_id, t.team_name, o.is_over, tp.create_time, tp.update_time, tp.core_id
         from user u, team_okr t, okr_core o, team_personal_okr tp
         where
             u.id = #{id,jdbcType=BIGINT}
