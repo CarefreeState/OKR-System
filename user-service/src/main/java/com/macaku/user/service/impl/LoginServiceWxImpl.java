@@ -66,7 +66,7 @@ public class LoginServiceWxImpl implements LoginService {
         Map<String, Object> response = JsonUtil.analyzeJson(resultJson, Map.class);
         String sessionKey = (String) response.get("session_key");
         // 4. 检查
-        if(!signature.equals(EncryptUtil.sha1(rawData + sessionKey))) {
+        if(!signature.equals(EncryptUtil.sha1(rawData, sessionKey))) {
             throw new GlobalServiceException(GlobalServiceStatusCode.DATA_NOT_SECURITY);
         }
         // 5. 构造用户对象
