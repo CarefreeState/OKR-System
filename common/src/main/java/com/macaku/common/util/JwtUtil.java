@@ -69,7 +69,7 @@ public class JwtUtil {
         SecretKey secretKey = generalKey();
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
-        if (ttlMillis == null || timeUnit == null) { // 只有其中一个也对于没有
+        if (ttlMillis == null || timeUnit == null) { // 只有其中一个也等于没有
             ttlMillis = JWT_TTL_UNIT.toMillis(JwtUtil.JWT_TTL);
         } else {
             ttlMillis = timeUnit.toMillis(ttlMillis);
