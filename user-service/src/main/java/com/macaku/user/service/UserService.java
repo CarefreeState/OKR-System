@@ -1,5 +1,6 @@
 package com.macaku.user.service;
 
+import com.macaku.user.domain.dto.UserinfoDTO;
 import com.macaku.user.domain.po.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,4 +11,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface UserService extends IService<User> {
 
+    String getUserFlag(String code);
+
+    void improveUserinfo(UserinfoDTO userinfoDTO, Long userId);
 }
