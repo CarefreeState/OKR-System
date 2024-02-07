@@ -43,13 +43,13 @@ public class TeamOkrController {
     private final MemberService memberService;
 
     @GetMapping("/list")
-    @ApiOperation("获取团队 OKR 列表")
+    @ApiOperation("获取管理的团队 OKR 列表")
     public SystemJsonResponse<List<TeamOkrVO>> getTeamOkrs(HttpServletRequest request) {
         // 获取当前登录的用户
         User user = UserRecordUtil.getUserRecord(request);
         // 调用方法
-        List<TeamOkrVO> personalOkrVOS = teamOkrService.getTeamOkrList(user);
-        return SystemJsonResponse.SYSTEM_SUCCESS(personalOkrVOS);
+        List<TeamOkrVO> teamOkrVOS = teamOkrService.getTeamOkrList(user);
+        return SystemJsonResponse.SYSTEM_SUCCESS(teamOkrVOS);
     }
 
     @PostMapping("/tree/{id}")

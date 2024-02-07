@@ -214,17 +214,16 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         Long teamId = teamOkr.getId();
         log.info("用户 {} 新建团队 OKR {}  内核 {}", userId, teamId, coreId1);
         // 设置冷却时间
-        redisCache.setCacheObject(redisKey, false, TeamOkrUtil.CREATE_CD, TeamOkrUtil.CD_UNIT);// CD 没好的意思
+        redisCache.setCacheObject(redisKey, 0, TeamOkrUtil.CREATE_CD, TeamOkrUtil.CD_UNIT);// CD 没好的意思
         // 团队的“始祖”有团队个人 OKR
         TeamPersonalOkr teamPersonalOkr = new TeamPersonalOkr();
         teamPersonalOkr.setCoreId(coreId2);
         teamPersonalOkr.setTeamId(teamId);
         teamPersonalOkr.setUserId(userId);
         teamPersonalOkrMapper.insert(teamPersonalOkr);
-        Long id = teamPersonalOkr.getId();
         log.info("用户 {} 新建团队 {} 的 团队个人 OKR {} 内核 {}", userId, teamId, teamPersonalOkr.getId(), coreId2);
         return new HashMap<String, Object>() {{
-            this.put("id", id);
+            this.put("id", teamId);
             this.put("coreId", coreId1);
         }};
     }

@@ -30,6 +30,7 @@
           and t.core_id = o.id
         order by o.is_over, o.create_time desc
     </select>
+
     <select id="selectKeyResultsByTeamId" resultMap="KeyResultsMap">
         select
         t.id, t.core_id, t.team_name, t.parent_team_id, t.manager_id, t.create_time, o.is_over, o.degree,

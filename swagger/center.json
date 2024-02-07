@@ -308,7 +308,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/统一响应«long»"
+                  "$ref": "#/components/schemas/统一响应«Map«string,object»»"
                 }
               }
             }
@@ -838,7 +838,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/统一响应"
+                  "$ref": "#/components/schemas/统一响应«Map«string,object»»"
                 }
               }
             }

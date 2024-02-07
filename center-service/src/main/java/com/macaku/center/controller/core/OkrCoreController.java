@@ -42,7 +42,7 @@ public class OkrCoreController {
     private final OkrServiceSelector okrServiceSelector;
 
     @GetMapping("/create")
-    @ApiOperation("创建一个OKR")
+    @ApiOperation("创建一个 OKR")
     public SystemJsonResponse<Map<String, Object>> createOkr(HttpServletRequest request,
                                                              @RequestBody OkrOperateDTO okrOperateDTO) {
         // 检测
@@ -54,7 +54,7 @@ public class OkrCoreController {
     }
 
     @GetMapping("/search")
-    @ApiOperation("查看一个OKR内核")
+    @ApiOperation("查看一个 OKR")
     public SystemJsonResponse<OkrCoreVO> searchOkrCore(HttpServletRequest request,
                                                        @RequestBody OkrCoreDTO okrCoreDTO) {
         okrCoreDTO.validate();
@@ -106,6 +106,7 @@ public class OkrCoreController {
         }
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
+
     @PostMapping("/complete")
     @ApiOperation("结束 OKR")
     public SystemJsonResponse complete(HttpServletRequest request,
