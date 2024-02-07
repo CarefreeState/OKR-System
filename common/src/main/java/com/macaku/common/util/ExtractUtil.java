@@ -20,6 +20,8 @@ public class ExtractUtil {
 
     public final static String OPENID = "openid";
 
+    public final static String UNIONID = "unionid";
+
     public final static String SESSION_KEY = "session_key";
 
     public final static String ID = "id";
@@ -48,6 +50,10 @@ public class ExtractUtil {
 
     public static String getOpenIDFromJWT(HttpServletRequest request) {
         return (String) getMapFromJWT(request).get(OPENID);
+    }
+
+    public static String getUnionIDFromJWT(HttpServletRequest request) {
+        return (String) getMapFromJWT(request).get(UNIONID);
     }
 
     public static String getSessionKeyFromJWT(HttpServletRequest request) {

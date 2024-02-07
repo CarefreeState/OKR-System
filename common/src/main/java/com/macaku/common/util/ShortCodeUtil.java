@@ -1,6 +1,7 @@
 package com.macaku.common.util;
 
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 
@@ -9,6 +10,8 @@ import java.util.UUID;
 public class ShortCodeUtil {
 
     private static final String CHARSET = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
+
+    private static final String SHORT_LINK_KEY = SpringUtil.getProperty("key.shortlink");
 
     private static final int LINK_LENGTH = 6;
 
@@ -39,7 +42,7 @@ public class ShortCodeUtil {
     }
 
     public static String getShortCode(String str) {
-        return subCodeByString(EncryptUtil.md5(str));
+        return subCodeByString(EncryptUtil.md5(str + SHORT_LINK_KEY));
     }
 
 }

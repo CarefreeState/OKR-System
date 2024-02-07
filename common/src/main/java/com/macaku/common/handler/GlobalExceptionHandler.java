@@ -22,7 +22,8 @@ public class GlobalExceptionHandler {
         String message = e.getMessage();
         GlobalServiceStatusCode statusCode = e.getStatusCode();
         log.error("请求地址'{}', {}: {}", requestURI, statusCode, message);
-        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(statusCode, statusCode.getMessage());
+        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(statusCode, message);
+//        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(statusCode, statusCode.getMessage());
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
@@ -49,7 +50,8 @@ public class GlobalExceptionHandler {
         String message = e.getMessage();
         log.error("请求地址'{}' {}", requestURI, message);
         e.printStackTrace();
-        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.SYSTEM_SERVICE_FAIL, GlobalServiceStatusCode.SYSTEM_SERVICE_FAIL.getMessage());
+        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.SYSTEM_SERVICE_FAIL, message);
+//        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.SYSTEM_SERVICE_FAIL, GlobalServiceStatusCode.SYSTEM_SERVICE_FAIL.getMessage());
     }
 
 }

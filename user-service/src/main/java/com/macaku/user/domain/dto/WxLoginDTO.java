@@ -4,8 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.JsonUtil;
-import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -28,34 +26,10 @@ public class WxLoginDTO {
     @ApiModelProperty("code")
     private String code;
 
-    @ApiModelProperty("encryptedData")
-    private String encryptedData;
-
-    @ApiModelProperty("iv")
-    private String iv;
-
-    @ApiModelProperty("rawData")
-    private String rawData;
-
-    @ApiModelProperty("signature")
-    private String signature;
-
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
         if(!StringUtils.hasText(code)) {
             messageBuilder.append("\n-> code 为 空");
-        }
-        if(!StringUtils.hasText(code)) {
-            messageBuilder.append("\n-> encryptedData 为 空");
-        }
-        if(!StringUtils.hasText(code)) {
-            messageBuilder.append("\n-> iv 为 空");
-        }
-        if(!StringUtils.hasText(code)) {
-            messageBuilder.append("\n-> rawData 为 空");
-        }
-        if(!StringUtils.hasText(code)) {
-            messageBuilder.append("\n-> signature 为 空");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {
@@ -65,9 +39,6 @@ public class WxLoginDTO {
 
     public User transToUser() {
         User user = new User();
-        Map<String, Object> data = JsonUtil.analyzeJson(this.rawData, Map.class);
-        user.setNickname((String) data.get("nickname"));
-        user.setPhoto((String) data.get("avatarUrl"));
         return user;
     }
 
@@ -75,7 +46,4 @@ public class WxLoginDTO {
         return BeanUtil.mapToBean(data, WxLoginDTO.class, false, new CopyOptions());
     }
 
-    public static WxLoginDTO create(LoginDTO loginDTO) {
-        return loginDTO.getWxLoginDTO();
-    }
 }

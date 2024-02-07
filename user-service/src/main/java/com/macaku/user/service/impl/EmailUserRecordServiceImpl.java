@@ -31,6 +31,7 @@ public class EmailUserRecordServiceImpl implements UserRecordService {
 
     @Override
     public boolean match(String type) {
+//        return false;
         return ShortCodeUtil.getShortCode(TYPE).equals(type);
     }
 

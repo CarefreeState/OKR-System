@@ -34,7 +34,7 @@ public class KeyResultServiceImpl extends ServiceImpl<KeyResultMapper, KeyResult
 
 
     @Override
-    public void addResultService(KeyResult keyResult) {
+    public Long addResultService(KeyResult keyResult) {
         // 1. 提取需要的数据
         KeyResult newKeyResult = new KeyResult();
         newKeyResult.setFirstQuadrantId(keyResult.getFirstQuadrantId());
@@ -42,7 +42,9 @@ public class KeyResultServiceImpl extends ServiceImpl<KeyResultMapper, KeyResult
         newKeyResult.setProbability(keyResult.getProbability());
         // 2. 插入
         this.save(newKeyResult);
-        log.info("新增关键结果： key result id : {}", newKeyResult.getId());
+        Long id = newKeyResult.getId();
+        log.info("新增关键结果： key result id : {}", id);
+        return id;
     }
 
     @Override

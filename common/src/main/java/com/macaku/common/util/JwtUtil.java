@@ -1,5 +1,6 @@
 package com.macaku.common.util;
 
+import cn.hutool.extra.spring.SpringUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -20,6 +21,9 @@ import java.util.concurrent.TimeUnit;
 public class JwtUtil {
     public static final String JWT_HEADER = "Token";
 
+    //设置秘钥明文
+    public static final String JWT_KEY = SpringUtil.getProperty("key.jwt");
+
     public static final Long JWT_TTL = 1L; // 一天有效期
 
     public static final Long JWT_MAP_TTL = 6L; // 六小时
@@ -27,9 +31,6 @@ public class JwtUtil {
     public static final TimeUnit JWT_TTL_UNIT = TimeUnit.DAYS;
 
     public  static final TimeUnit JWT_MAP_TTL_UNIT = TimeUnit.HOURS;
-
-    //设置秘钥明文
-    public static final String JWT_KEY = "macaku";
 
     public static final String JWT_LOGIN_WX_USER = "jwtLoginWxUser:";
 

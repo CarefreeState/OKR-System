@@ -18,9 +18,9 @@ import java.util.ServiceLoader;
 @Component
 public class LoginServiceSelector {
 
-    public static final String WX_LOGIN_TYPE = "WX_JWT"; // valEFs
+    public static final String WX_LOGIN_TYPE = "WX_JWT"; // r6Vsr0
 
-    public static final String EMAIL_LOGIN_TYPE = "EMAIL_JWT"; // 2CxcDX
+    public static final String EMAIL_LOGIN_TYPE = "EMAIL_JWT"; // Rl0p0r
 
     public LoginService select(String type) {
         // 选取服务

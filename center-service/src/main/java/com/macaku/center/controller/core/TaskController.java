@@ -20,10 +20,7 @@ import io.swagger.annotations.ApiParam;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,7 +46,7 @@ public class TaskController {
     @ApiOperation("增加一条任务")
     public SystemJsonResponse addTask(HttpServletRequest request,
                                       @PathVariable("option") @NonNull @ApiParam("任务选项（0:action, 1:P1, 2:P2）") Integer option,
-                                      OkrTaskDTO okrTaskDTO) {
+                                      @RequestBody OkrTaskDTO okrTaskDTO) {
         // 检查
         okrTaskDTO.validate();
         User user = UserRecordUtil.getUserRecord(request);
@@ -61,9 +58,10 @@ public class TaskController {
         Long quadrantId = taskDTO.getQuadrantId();
         Long coreId = taskService.getTaskCoreId(quadrantId);
         Long userId = okrOperateService.getCoreUser(coreId);
+        Long id = null;
         if(user.getId().equals(userId)) {
             String content = taskDTO.getContent();
-            taskService.addTask(quadrantId, content);
+            id = taskService.addTask(quadrantId, content);
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }
@@ -74,7 +72,7 @@ public class TaskController {
     @ApiOperation(("删除一个任务"))
     public SystemJsonResponse removeTask(HttpServletRequest request,
                                          @PathVariable("option") @NonNull @ApiParam("任务选项（0:action, 1:P1, 2:P2）") Integer option,
-                                         OkrTaskRemoveDTO okrTaskRemoveDTO) {
+                                         @RequestBody OkrTaskRemoveDTO okrTaskRemoveDTO) {
         // 检查
         okrTaskRemoveDTO.validate();
         User user = UserRecordUtil.getUserRecord(request);
@@ -98,7 +96,7 @@ public class TaskController {
     @ApiOperation("更新一条任务")
     public SystemJsonResponse updateTask(HttpServletRequest request,
                                          @PathVariable("option") @NonNull @ApiParam("任务选项（0:Action, 1:P1, 2:P2）") Integer option,
-                                         OkrTaskUpdateDTO okrTaskUpdateDTO) {
+                                         @RequestBody OkrTaskUpdateDTO okrTaskUpdateDTO) {
         // 检查
         okrTaskUpdateDTO.validate();
         TaskUpdateDTO taskUpdateDTO = okrTaskUpdateDTO.getTaskUpdateDTO();

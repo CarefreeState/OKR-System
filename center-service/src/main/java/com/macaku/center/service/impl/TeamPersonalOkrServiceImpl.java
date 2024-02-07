@@ -52,7 +52,7 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
     }
 
     @Override
-    public void createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
+    public Long createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
         // 检测密钥
         Long teamId = okrOperateDTO.getTeamOkrId();
         String secret = okrOperateDTO.getSecret();
@@ -76,6 +76,7 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
         log.info("用户 {} 新建团队 {} 的 团队个人 OKR {} 内核 {}", userId, teamId, teamPersonalOkr.getId(), coreId);
         // 更新一下缓存
         memberService.setExistsInTeam(teamId, userId);
+        return coreId;
     }
 
     @Override

@@ -47,14 +47,16 @@ public class PriorityNumberOneServiceImpl extends ServiceImpl<PriorityNumberOneM
     }
 
     @Override
-    public void addTask(Long quadrantId, String content) {
+    public Long addTask(Long quadrantId, String content) {
         // 构造对象
         PriorityNumberOne priorityNumberOne = new PriorityNumberOne();
         priorityNumberOne.setContent(content);
         priorityNumberOne.setSecondQuadrantId(quadrantId);
         // 插入
         priorityNumberOneMapper.insert(priorityNumberOne);
-        log.info("为第二象限 {} 插入一条 Priority1 任务 {} -- {}", quadrantId, priorityNumberOne.getId(), content);
+        Long id = priorityNumberOne.getId();
+        log.info("为第二象限 {} 插入一条 Priority1 任务 {} -- {}", quadrantId, id, content);
+        return id;
     }
 
     @Override

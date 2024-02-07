@@ -45,4 +45,12 @@ public class LoginDTO {
         }
     }
 
+    public EmailLoginDTO createEmailLoginDTO() {
+        return this.emailLoginDTO;
+    }
+
+    public WxLoginDTO createWxLoginDTO() {
+        return this.wxLoginDTO;
+    }
+
 }

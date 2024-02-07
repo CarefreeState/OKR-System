@@ -94,7 +94,8 @@ public class TeamOkrController {
 
     @PostMapping("/grant")
     @ApiOperation("给成员授权，使其可以扩展一个子团队")
-    public SystemJsonResponse grantTeamForMember(HttpServletRequest request, GrantDTO grantDTO) {
+    public SystemJsonResponse grantTeamForMember(HttpServletRequest request,
+                                                 @RequestBody GrantDTO grantDTO) {
         // 检测
         grantDTO.validate();
         // 获取当前管理员 ID

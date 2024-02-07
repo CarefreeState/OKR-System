@@ -20,6 +20,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -47,8 +48,8 @@ public class KeyResultController {
 
     @PostMapping("/add")
     @ApiOperation("添加关键结果")
-    public SystemJsonResponse addKeyResult(HttpServletRequest request,
-                                           OkrKeyResultDTO okrKeyResultDTO) {
+    public SystemJsonResponse<Long> addKeyResult(HttpServletRequest request,
+                                           @RequestBody OkrKeyResultDTO okrKeyResultDTO) {
         // 校验
         okrKeyResultDTO.validate();
         User user = UserRecordUtil.getUserRecord(request);
@@ -60,19 +61,20 @@ public class KeyResultController {
         Long firstQuadrantId = keyResultDTO.getFirstQuadrantId();
         Long coreId = firstQuadrantService.getFirstQuadrantCoreId(firstQuadrantId);
         Long userId = okrOperateService.getCoreUser(coreId);
+        Long id = null;
         if(user.getId().equals(userId)) {
             // 添加
-            keyResultService.addResultService(keyResult);
+            id = keyResultService.addResultService(keyResult);
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }
-        return SystemJsonResponse.SYSTEM_SUCCESS();
+        return SystemJsonResponse.SYSTEM_SUCCESS(id);
     }
 
     @PostMapping("/update")
     @ApiOperation("更新完成概率")
     public SystemJsonResponse updateKeyResult(HttpServletRequest request,
-                                              OkrKeyResultUpdateDTO okrKeyResultUpdateDTO) {
+                                              @RequestBody OkrKeyResultUpdateDTO okrKeyResultUpdateDTO) {
         // 校验
         okrKeyResultUpdateDTO.validate();
         User user = UserRecordUtil.getUserRecord(request);

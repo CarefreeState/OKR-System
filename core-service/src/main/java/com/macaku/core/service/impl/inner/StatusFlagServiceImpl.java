@@ -33,7 +33,7 @@ public class StatusFlagServiceImpl extends ServiceImpl<StatusFlagMapper, StatusF
     private final RedisCache redisCache;
 
     @Override
-    public void addStatusFlag(StatusFlag statusFlag) {
+    public Long addStatusFlag(StatusFlag statusFlag) {
         StatusFlag newFlag = new StatusFlag();
         String color = statusFlag.getColor();
         newFlag.setColor(color);
@@ -42,7 +42,9 @@ public class StatusFlagServiceImpl extends ServiceImpl<StatusFlagMapper, StatusF
         Long fourthQuadrantId = statusFlag.getFourthQuadrantId();
         newFlag.setFourthQuadrantId(fourthQuadrantId);
         this.save(newFlag);
-        log.info("成功为第四象限 {} 新增一条指标 {} -- {}", fourthQuadrantId, label, color);
+        Long id = newFlag.getId();
+        log.info("成功为第四象限 {} 新增一条指标 {} {} -- {}", fourthQuadrantId, id, label, color);
+        return id;
     }
 
     @Override

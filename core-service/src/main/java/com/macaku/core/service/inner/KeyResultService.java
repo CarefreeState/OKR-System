@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface KeyResultService extends IService<KeyResult> {
 
-    void addResultService(KeyResult keyResult);
+    Long addResultService(KeyResult keyResult);
 
     void updateProbability(KeyResult keyResult);
 

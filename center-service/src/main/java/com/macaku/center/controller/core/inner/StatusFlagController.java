@@ -21,6 +21,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,7 +50,7 @@ public class StatusFlagController {
     @PostMapping("/add")
     @ApiOperation("增加一条状态指标")
     public SystemJsonResponse addStatusFlag(HttpServletRequest request,
-                                            OkrStatusFlagDTO okrStatusFlagDTO) {
+                                            @RequestBody OkrStatusFlagDTO okrStatusFlagDTO) {
         // 检查
         okrStatusFlagDTO.validate();
         User user = UserRecordUtil.getUserRecord(request);
@@ -61,14 +62,15 @@ public class StatusFlagController {
         Long fourthQuadrantId = statusFlagDTO.getFourthQuadrantId();
         Long coreId = fourthQuadrantService.getFourthQuadrantCoreId(fourthQuadrantId);
         Long userId = okrOperateService.getCoreUser(coreId);
+        Long id = null;
         if(user.getId().equals(userId)) {
             // 插入
-            statusFlagService.addStatusFlag(statusFlag);
+            id = statusFlagService.addStatusFlag(statusFlag);
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }
         // 成功
-        return SystemJsonResponse.SYSTEM_SUCCESS();
+        return SystemJsonResponse.SYSTEM_SUCCESS(id);
     }
 
     @PostMapping("/remove")

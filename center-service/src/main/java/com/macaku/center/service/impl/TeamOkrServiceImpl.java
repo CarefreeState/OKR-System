@@ -189,7 +189,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     }
 
     @Override
-    public void createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
+    public Long createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
         Long userId = user.getId();
         String redisKey = TeamOkrUtil.CREATE_CD_FLAG + userId;
         // 判断是否处于冷却状态
@@ -215,6 +215,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         teamPersonalOkr.setUserId(userId);
         teamPersonalOkrMapper.insert(teamPersonalOkr);
         log.info("用户 {} 新建团队 {} 的 团队个人 OKR {} 内核 {}", userId, teamId, teamPersonalOkr.getId(), coreId2);
+        return coreId1;
     }
 
     @Override

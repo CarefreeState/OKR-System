@@ -4,7 +4,6 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -54,7 +53,4 @@ public class EmailLoginDTO {
         return BeanUtil.mapToBean(data, EmailLoginDTO.class, false, new CopyOptions());
     }
 
-    public static EmailLoginDTO create(LoginDTO loginDTO) {
-        return loginDTO.getEmailLoginDTO();
-    }
 }

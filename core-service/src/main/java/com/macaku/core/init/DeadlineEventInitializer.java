@@ -107,13 +107,13 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
 
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
-        log.warn("--> --> --> 应用重启成功，开始恢复定时任务 --> --> -->");
+        log.warn("--> --> --> 应用启动成功 --> 开始恢复定时任务 --> --> -->");
         // 获取定时任务
         List<DeadlineEvent> deadlineEvents = okrCoreMapper.getDeadlineEvents();
         // 处理定时任务
         deadlineEvents.stream()
                 .parallel()
                 .forEach(this::handleEvent);
-        log.warn("<-- <-- <-- 定时任务恢复成功 <-- <-- <--");
+        log.warn("<-- <-- <-- <-- <-- 定时任务恢复成功 <-- <-- <-- <-- <--");
     }
 }

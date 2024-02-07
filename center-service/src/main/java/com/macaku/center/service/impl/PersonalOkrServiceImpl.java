@@ -51,7 +51,7 @@ public class PersonalOkrServiceImpl extends ServiceImpl<PersonalOkrMapper, Perso
     }
 
     @Override
-    public void createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
+    public Long createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
         Long userId = user.getId();
         // 查看当前用户是否有未完成的 OKR
         Long count = personalOkrMapper.getNotCompletedCount(userId);
@@ -66,6 +66,7 @@ public class PersonalOkrServiceImpl extends ServiceImpl<PersonalOkrMapper, Perso
         personalOkr.setUserId(userId);
         log.info("用户 {} 个人团队 OKR {}  内核 {}", userId, personalOkr.getId(), coreId);
         personalOkrMapper.insert(personalOkr);
+        return coreId;
     }
 
     @Override

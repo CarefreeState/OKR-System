@@ -47,14 +47,16 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
     }
 
     @Override
-    public void addTask(Long quadrantId, String content) {
+    public Long addTask(Long quadrantId, String content) {
         // 构造对象
         Action action = new Action();
         action.setContent(content);
         action.setThirdQuadrantId(quadrantId);
         // 插入
         actionMapper.insert(action);
-        log.info("为第三象限 {} 插入一条行动 {} -- {}", quadrantId, action.getId(), content);
+        Long id = action.getId();
+        log.info("为第三象限 {} 插入一条行动 {} -- {}", quadrantId, id, content);
+        return id;
     }
 
     @Override

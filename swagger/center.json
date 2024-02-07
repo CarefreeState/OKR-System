@@ -8,7 +8,7 @@
       "url": "https://github.com/CarefreeState/OKR-System",
       "email": "2040484356@qq.com"
     },
-    "version": "1.0"
+    "version": "3.0"
   },
   "servers": [
     {
@@ -70,50 +70,15 @@
         ],
         "summary": "初始化第一项象限",
         "operationId": "initFirstQuadrantUsingPOST",
-        "parameters": [
-          {
-            "name": "firstQuadrantDTO.deadline",
-            "in": "query",
-            "description": "截止时间",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "firstQuadrantDTO.id",
-            "in": "query",
-            "description": "第一象限 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "firstQuadrantDTO.objective",
-            "in": "query",
-            "description": "目标",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/第一象限修改所需数据"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -147,50 +112,15 @@
         ],
         "summary": "添加关键结果",
         "operationId": "addKeyResultUsingPOST",
-        "parameters": [
-          {
-            "name": "keyResultDTO.content",
-            "in": "query",
-            "description": "关键结果内容",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "keyResultDTO.firstQuadrantId",
-            "in": "query",
-            "description": "第一象限 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "keyResultDTO.probability",
-            "in": "query",
-            "description": "完成概率",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/添加关键结果所需数据"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -224,40 +154,15 @@
         ],
         "summary": "更新完成概率",
         "operationId": "updateKeyResultUsingPOST",
-        "parameters": [
-          {
-            "name": "keyResultUpdateDTO.id",
-            "in": "query",
-            "description": "关键结果 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "keyResultUpdateDTO.probability",
-            "in": "query",
-            "description": "完成概率",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/更新关键结果所需数据"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -284,7 +189,7 @@
         }
       }
     },
-    "/core/celebrate": {
+    "/core/celebrate/{day}": {
       "post": {
         "tags": [
           "OKR 内核"
@@ -293,38 +198,26 @@
         "operationId": "confirmCelebrateDayUsingPOST",
         "parameters": [
           {
-            "name": "coreId",
-            "in": "query",
-            "description": "OKR 内核 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "celebrateDay",
-            "in": "query",
+            "name": "day",
+            "in": "path",
             "description": "庆祝日（星期）",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "integer",
               "format": "int32"
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OKR 内核带场景值的数据"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -358,29 +251,15 @@
         ],
         "summary": "结束 OKR",
         "operationId": "completeUsingPOST",
-        "parameters": [
-          {
-            "name": "coreId",
-            "in": "query",
-            "description": "OKR 内核 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OKR 内核带场景值的数据"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -414,39 +293,15 @@
         ],
         "summary": "创建一个OKR",
         "operationId": "createOkrUsingGET",
-        "parameters": [
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "secret",
-            "in": "query",
-            "description": "邀请密钥",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "teamOkrId",
-            "in": "query",
-            "description": "团队 OKR ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OKR 操作数据"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -477,29 +332,15 @@
         ],
         "summary": "查看一个OKR内核",
         "operationId": "searchOkrCoreUsingGET",
-        "parameters": [
-          {
-            "name": "coreId",
-            "in": "query",
-            "description": "OKR 内核 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OKR 内核带场景值的数据"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -530,50 +371,15 @@
         ],
         "summary": "总结 OKR",
         "operationId": "summaryOKRUsingPOST",
-        "parameters": [
-          {
-            "name": "coreId",
-            "in": "query",
-            "description": "内核 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "degree",
-            "in": "query",
-            "description": "完成度",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "summary",
-            "in": "query",
-            "description": "总结的内容",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/总结 OKR 所需数据"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -637,51 +443,15 @@
         ],
         "summary": "初始化第二象限",
         "operationId": "initSecondQuadrantUsingPOST",
-        "parameters": [
-          {
-            "name": "initQuadrantDTO.deadline",
-            "in": "query",
-            "description": "截止时间",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "initQuadrantDTO.id",
-            "in": "query",
-            "description": "象限 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "initQuadrantDTO.quadrantCycle",
-            "in": "query",
-            "description": "象限周期",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/初始化二三象限所需数据"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -715,49 +485,15 @@
         ],
         "summary": "增加一条状态指标",
         "operationId": "addStatusFlagUsingPOST",
-        "parameters": [
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "statusFlagDTO.color",
-            "in": "query",
-            "description": "颜色",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "statusFlagDTO.fourthQuadrantId",
-            "in": "query",
-            "description": "第四象限 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "statusFlagDTO.label",
-            "in": "query",
-            "description": "指标内容",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/添加状态指标所需数据"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -933,39 +669,17 @@
               "type": "integer",
               "format": "int32"
             }
-          },
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "taskDTO.content",
-            "in": "query",
-            "description": "任务内容",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "taskDTO.quadrantId",
-            "in": "query",
-            "description": "象限 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/增加任务所需数据"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -1001,17 +715,6 @@
         "operationId": "removeTaskUsingPOST",
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
-            "description": "任务 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
             "name": "option",
             "in": "path",
             "description": "任务选项（0:action, 1:P1, 2:P2）",
@@ -1021,18 +724,17 @@
               "type": "integer",
               "format": "int32"
             }
-          },
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/删除任务所需数据"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -1077,48 +779,17 @@
               "type": "integer",
               "format": "int32"
             }
-          },
-          {
-            "name": "scene",
-            "in": "query",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "taskUpdateDTO.content",
-            "in": "query",
-            "description": "任务内容",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "taskUpdateDTO.id",
-            "in": "query",
-            "description": "任务 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "taskUpdateDTO.isCompleted",
-            "in": "query",
-            "description": "是否完成",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "boolean"
-            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/更新任务所需数据"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -1152,30 +823,15 @@
         ],
         "summary": "给成员授权，使其可以扩展一个子团队",
         "operationId": "grantTeamForMemberUsingPOST",
-        "parameters": [
-          {
-            "name": "teamId",
-            "in": "query",
-            "description": "团队 OKR ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "userId",
-            "in": "query",
-            "description": "用户 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/授权成员所需数据"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -1453,51 +1109,57 @@
         ],
         "summary": "初始化第三象限",
         "operationId": "initThirdQuadrantUsingPOST",
-        "parameters": [
-          {
-            "name": "initQuadrantDTO.deadline",
-            "in": "query",
-            "description": "截止时间",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
-          },
-          {
-            "name": "initQuadrantDTO.id",
-            "in": "query",
-            "description": "象限 ID",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          },
-          {
-            "name": "initQuadrantDTO.quadrantCycle",
-            "in": "query",
-            "description": "象限周期",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "scene",
-            "in": "query",
-            "description": "场景",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/初始化二三象限所需数据"
+              }
             }
           }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/user/improve": {
+      "post": {
+        "tags": [
+          "用户测试接口"
         ],
+        "summary": "完善用户信息",
+        "operationId": "improveUserinfoUsingPOST",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/用户完善信息"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -1531,78 +1193,15 @@
         ],
         "summary": "这里传递的参数根据具体的登录方式传递对应的数据！",
         "operationId": "loginUsingPOST",
-        "parameters": [
-          {
-            "name": "emailLoginDTO.code",
-            "in": "query",
-            "description": "code",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "emailLoginDTO.email",
-            "in": "query",
-            "description": "email",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "wxLoginDTO.code",
-            "in": "query",
-            "description": "code",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "wxLoginDTO.encryptedData",
-            "in": "query",
-            "description": "encryptedData",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "wxLoginDTO.iv",
-            "in": "query",
-            "description": "iv",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "wxLoginDTO.rawData",
-            "in": "query",
-            "description": "rawData",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "wxLoginDTO.signature",
-            "in": "query",
-            "description": "signature",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/登录数据"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -1628,10 +1227,55 @@
           }
         }
       }
+    },
+    "/user/userinfo": {
+      "get": {
+        "tags": [
+          "用户测试接口"
+        ],
+        "summary": "获取用户信息",
+        "operationId": "getUserInfoUsingGET",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应«用户信息»"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
+      "OKR 内核带场景值的数据": {
+        "title": "OKR 内核带场景值的数据",
+        "type": "object",
+        "properties": {
+          "coreId": {
+            "type": "integer",
+            "description": "OKR 内核 ID",
+            "format": "int64"
+          },
+          "scene": {
+            "type": "string",
+            "description": "场景"
+          }
+        }
+      },
       "OKR 内核详细数据": {
         "title": "OKR 内核详细数据",
         "type": "object",
@@ -1695,6 +1339,25 @@
             "type": "string",
             "description": "更新时间",
             "format": "date-time"
+          }
+        }
+      },
+      "OKR 操作数据": {
+        "title": "OKR 操作数据",
+        "type": "object",
+        "properties": {
+          "scene": {
+            "type": "string",
+            "description": "场景"
+          },
+          "secret": {
+            "type": "string",
+            "description": "邀请密钥"
+          },
+          "teamOkrId": {
+            "type": "integer",
+            "description": "团队 OKR ID",
+            "format": "int64"
           }
         }
       },
@@ -1803,6 +1466,41 @@
           }
         }
       },
+      "任务数据": {
+        "title": "任务数据",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "任务内容"
+          },
+          "quadrantId": {
+            "type": "integer",
+            "description": "象限 ID",
+            "format": "int64"
+          }
+        }
+      },
+      "任务更新数据": {
+        "title": "任务更新数据",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "任务内容"
+          },
+          "id": {
+            "type": "integer",
+            "description": "任务 ID",
+            "format": "int64"
+          },
+          "isCompleted": {
+            "type": "boolean",
+            "description": "是否完成",
+            "example": false
+          }
+        }
+      },
       "关键结果": {
         "title": "关键结果",
         "type": "object",
@@ -1838,6 +1536,42 @@
           }
         }
       },
+      "关键结果数据": {
+        "title": "关键结果数据",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "关键结果内容"
+          },
+          "firstQuadrantId": {
+            "type": "integer",
+            "description": "第一象限 ID",
+            "format": "int64"
+          },
+          "probability": {
+            "type": "integer",
+            "description": "完成概率",
+            "format": "int32"
+          }
+        }
+      },
+      "关键结果更新数据": {
+        "title": "关键结果更新数据",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "关键结果 ID",
+            "format": "int64"
+          },
+          "probability": {
+            "type": "integer",
+            "description": "完成概率",
+            "format": "int32"
+          }
+        }
+      },
       "具体行动": {
         "title": "具体行动",
         "type": "object",
@@ -1870,6 +1604,76 @@
             "type": "string",
             "description": "更新时间",
             "format": "date-time"
+          }
+        }
+      },
+      "初始化二三象限所需数据": {
+        "title": "初始化二三象限所需数据",
+        "type": "object",
+        "properties": {
+          "initQuadrantDTO": {
+            "description": "初始化象限数据",
+            "$ref": "#/components/schemas/初始化第二第三象限数据"
+          },
+          "scene": {
+            "type": "string",
+            "description": "场景"
+          }
+        }
+      },
+      "初始化第一象限数据": {
+        "title": "初始化第一象限数据",
+        "type": "object",
+        "properties": {
+          "deadline": {
+            "type": "string",
+            "description": "截止时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "第一象限 ID",
+            "format": "int64"
+          },
+          "objective": {
+            "type": "string",
+            "description": "目标"
+          }
+        }
+      },
+      "初始化第二第三象限数据": {
+        "title": "初始化第二第三象限数据",
+        "type": "object",
+        "properties": {
+          "deadline": {
+            "type": "string",
+            "description": "截止时间",
+            "format": "date-time"
+          },
+          "id": {
+            "type": "integer",
+            "description": "象限 ID",
+            "format": "int64"
+          },
+          "quadrantCycle": {
+            "type": "integer",
+            "description": "象限周期",
+            "format": "int32"
+          }
+        }
+      },
+      "删除任务所需数据": {
+        "title": "删除任务所需数据",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "任务 ID",
+            "format": "int64"
+          },
+          "scene": {
+            "type": "string",
+            "description": "场景"
           }
         }
       },
@@ -2042,6 +1846,125 @@
           }
         }
       },
+      "增加任务所需数据": {
+        "title": "增加任务所需数据",
+        "type": "object",
+        "properties": {
+          "scene": {
+            "type": "string",
+            "description": "场景"
+          },
+          "taskDTO": {
+            "description": "任务数据",
+            "$ref": "#/components/schemas/任务数据"
+          }
+        }
+      },
+      "微信小程序登录数据": {
+        "title": "微信小程序登录数据",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "code"
+          }
+        }
+      },
+      "总结 OKR 所需数据": {
+        "title": "总结 OKR 所需数据",
+        "type": "object",
+        "properties": {
+          "coreId": {
+            "type": "integer",
+            "description": "内核 ID",
+            "format": "int64"
+          },
+          "degree": {
+            "type": "integer",
+            "description": "完成度",
+            "format": "int32"
+          },
+          "scene": {
+            "type": "string",
+            "description": "场景"
+          },
+          "summary": {
+            "type": "string",
+            "description": "总结的内容"
+          }
+        }
+      },
+      "授权成员所需数据": {
+        "title": "授权成员所需数据",
+        "type": "object",
+        "properties": {
+          "teamId": {
+            "type": "integer",
+            "description": "团队 OKR ID",
+            "format": "int64"
+          },
+          "userId": {
+            "type": "integer",
+            "description": "用户 ID",
+            "format": "int64"
+          }
+        }
+      },
+      "更新任务所需数据": {
+        "title": "更新任务所需数据",
+        "type": "object",
+        "properties": {
+          "scene": {
+            "type": "string"
+          },
+          "taskUpdateDTO": {
+            "description": "更新任务的数据",
+            "$ref": "#/components/schemas/任务更新数据"
+          }
+        }
+      },
+      "更新关键结果所需数据": {
+        "title": "更新关键结果所需数据",
+        "type": "object",
+        "properties": {
+          "keyResultUpdateDTO": {
+            "description": "更新关键结果的数据",
+            "$ref": "#/components/schemas/关键结果更新数据"
+          },
+          "scene": {
+            "type": "string",
+            "description": "场景"
+          }
+        }
+      },
+      "添加关键结果所需数据": {
+        "title": "添加关键结果所需数据",
+        "type": "object",
+        "properties": {
+          "keyResultDTO": {
+            "description": "关键结果数据",
+            "$ref": "#/components/schemas/关键结果数据"
+          },
+          "scene": {
+            "type": "string",
+            "description": "场景"
+          }
+        }
+      },
+      "添加状态指标所需数据": {
+        "title": "添加状态指标所需数据",
+        "type": "object",
+        "properties": {
+          "scene": {
+            "type": "string",
+            "description": "场景"
+          },
+          "statusFlagDTO": {
+            "description": "状态指标数据",
+            "$ref": "#/components/schemas/状态指标数据"
+          }
+        }
+      },
       "状态指标": {
         "title": "状态指标",
         "type": "object",
@@ -2073,6 +1996,102 @@
             "type": "string",
             "description": "更新时间",
             "format": "date-time"
+          }
+        }
+      },
+      "状态指标数据": {
+        "title": "状态指标数据",
+        "type": "object",
+        "properties": {
+          "color": {
+            "type": "string",
+            "description": "颜色"
+          },
+          "fourthQuadrantId": {
+            "type": "integer",
+            "description": "第四象限 ID",
+            "format": "int64"
+          },
+          "label": {
+            "type": "string",
+            "description": "指标内容"
+          }
+        }
+      },
+      "用户信息": {
+        "title": "用户信息",
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "邮箱"
+          },
+          "id": {
+            "type": "integer",
+            "description": "ID",
+            "format": "int64"
+          },
+          "nickname": {
+            "type": "string",
+            "description": "昵称"
+          },
+          "openid": {
+            "type": "string",
+            "description": "openid"
+          },
+          "phone": {
+            "type": "string",
+            "description": "手机号"
+          },
+          "photo": {
+            "type": "string",
+            "description": "头像"
+          },
+          "unionid": {
+            "type": "string",
+            "description": "unionid"
+          }
+        }
+      },
+      "用户完善信息": {
+        "title": "用户完善信息",
+        "type": "object",
+        "properties": {
+          "nickname": {
+            "type": "string",
+            "description": "昵称"
+          },
+          "photo": {
+            "type": "string",
+            "description": "头像"
+          }
+        }
+      },
+      "登录数据": {
+        "title": "登录数据",
+        "type": "object",
+        "properties": {
+          "emailLoginDTO": {
+            "description": "邮箱登录数据",
+            "$ref": "#/components/schemas/邮箱登录数据"
+          },
+          "wxLoginDTO": {
+            "description": "微信小程序登录数据",
+            "$ref": "#/components/schemas/微信小程序登录数据"
+          }
+        }
+      },
+      "第一象限修改所需数据": {
+        "title": "第一象限修改所需数据",
+        "type": "object",
+        "properties": {
+          "firstQuadrantDTO": {
+            "description": "第一象限 数据",
+            "$ref": "#/components/schemas/初始化第一象限数据"
+          },
+          "scene": {
+            "type": "string",
+            "description": "场景"
           }
         }
       },
@@ -2417,6 +2436,39 @@
           "message": {
             "type": "string",
             "description": "描述语"
+          }
+        }
+      },
+      "统一响应«用户信息»": {
+        "title": "统一响应«用户信息»",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码",
+            "format": "int32"
+          },
+          "data": {
+            "description": "具体数据",
+            "$ref": "#/components/schemas/用户信息"
+          },
+          "message": {
+            "type": "string",
+            "description": "描述语"
+          }
+        }
+      },
+      "邮箱登录数据": {
+        "title": "邮箱登录数据",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "code"
+          },
+          "email": {
+            "type": "string",
+            "description": "email"
           }
         }
       }

@@ -38,12 +38,13 @@ public class LoginServiceEmailImpl implements LoginService {
 
     @Override
     public boolean match(String type) {
+//        return false;
         return ShortCodeUtil.getShortCode(TYPE).equals(type);
     }
 
     @Override
     public Map<String, Object> login(LoginDTO loginDTO) {
-        EmailLoginDTO emailLoginDTO = EmailLoginDTO.create(loginDTO);
+        EmailLoginDTO emailLoginDTO = loginDTO.createEmailLoginDTO();
         emailLoginDTO.validate();
         // todo: （这里邮箱登录只是方便测试，所以原本的验证码验证的工作在这里省略了）
         String email = emailLoginDTO.getEmail();

@@ -16,7 +16,7 @@ public interface OkrOperateService {
     boolean match(String scope);
 
     @Transactional
-    void createOkrCore(User user, OkrOperateDTO okrOperateDTO);
+    Long createOkrCore(User user, OkrOperateDTO okrOperateDTO);
 
     OkrCoreVO selectAllOfCore(User user, Long coreId);
 

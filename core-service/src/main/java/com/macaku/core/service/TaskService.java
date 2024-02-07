@@ -12,7 +12,7 @@ public interface TaskService {
 
     boolean match(Integer type);
 
-    void addTask(Long quadrantId, String content);
+    Long addTask(Long quadrantId, String content);
 
     void removeTask(Long id);
 

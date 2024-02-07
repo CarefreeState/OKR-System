@@ -1,10 +1,11 @@
 package com.macaku.user.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.common.code.GlobalServiceStatusCode;
-import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
-import com.macaku.common.util.*;
+import com.macaku.common.util.ExtractUtil;
+import com.macaku.common.util.JsonUtil;
+import com.macaku.common.util.JwtUtil;
+import com.macaku.common.util.ShortCodeUtil;
 import com.macaku.user.component.LoginServiceSelector;
 import com.macaku.user.domain.dto.WxLoginDTO;
 import com.macaku.user.domain.dto.unify.LoginDTO;
@@ -43,30 +44,26 @@ public class LoginServiceWxImpl implements LoginService {
 
     @Override
     public Map<String, Object> login(LoginDTO loginDTO) {
-        WxLoginDTO wxLoginDTO = WxLoginDTO.create(loginDTO);
+        WxLoginDTO wxLoginDTO = loginDTO.createWxLoginDTO();
         wxLoginDTO.validate();
-        String iv = wxLoginDTO.getIv();
-        // 1. 构造请求 + 2. 发起请求 -> code2Session
+        // 1. 构造请求 + 发起请求 -> code2Session
         String code = wxLoginDTO.getCode();
         String resultJson = userService.getUserFlag(code);
-        // 3.  解析
+        // 2.  解析
         Map<String, Object> response = JsonUtil.analyzeJson(resultJson, Map.class);
-        String sessionKey = (String) response.get("session_key");
-        // 4. 检查
-        String signature = wxLoginDTO.getSignature();
-        String rawData = wxLoginDTO.getRawData();
-        if(!signature.equals(EncryptUtil.sha1(rawData, sessionKey))) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.DATA_NOT_SECURITY);
-        }
-        // 5. 构造用户对象
-        User user = wxLoginDTO.transToUser();
-        String unionid = (String) response.get("unionid");
         String openid = (String) response.get("openid");
-        user.setUnionid(unionid);
+        String unionid = (String) response.get("unionid");
+        String sessionKey = (String) response.get("session_key");
+        // 3. 构造用户对象
+        User user = wxLoginDTO.transToUser();
         user.setOpenid(openid);
-        // 6. 插入数据库
+        user.setUnionid(unionid);
+        // 4. 尝试插入数据库
+        // todo: 多个 openid 用 unionid 去判断是否是同一个用户（需要的时候再去写）
         User dbUser = userService.lambdaQuery().eq(User::getOpenid, openid).one();
         if(Objects.isNull(dbUser)) {
+            user.setNickname("微信用户");
+            user.setPhoto("https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0");
             userService.save(user);
             log.info("新用户注册 -> {}", user);
             dbUser = user;
@@ -76,9 +73,10 @@ public class LoginServiceWxImpl implements LoginService {
             userService.lambdaUpdate().eq(User::getOpenid, openid).update(user);
         }
         redisCache.setCacheObject(JwtUtil.JWT_LOGIN_WX_USER + openid, dbUser, JwtUtil.JWT_TTL, JwtUtil.JWT_TTL_UNIT);
-        // 7. 构造 token
+        // 5. 构造 token
         Map<String, Object> tokenData = new HashMap<String, Object>(){{
             this.put(ExtractUtil.OPENID, openid);
+            this.put(ExtractUtil.UNIONID, unionid);
             this.put(ExtractUtil.SESSION_KEY, sessionKey);
         }};
         String jsonData = JsonUtil.analyzeData(tokenData);
