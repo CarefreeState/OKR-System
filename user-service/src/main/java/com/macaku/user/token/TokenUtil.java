@@ -2,7 +2,7 @@ package com.macaku.user.token;
 
 
 import com.macaku.common.util.JsonUtil;
-import com.macaku.common.web.HttpUtils;
+import com.macaku.common.web.HttpUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +37,7 @@ public class TokenUtil {
             this.put("secret", APP_SECRET);
         }};
         // 发起get请求
-        String response = HttpUtils.doGet(URL, param);
+        String response = HttpUtil.doGet(URL, param);
         // 解析json
         Map<String, Object> result = JsonUtil.analyzeJson(response, Map.class);
         return result;

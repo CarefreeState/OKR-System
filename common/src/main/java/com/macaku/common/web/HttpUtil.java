@@ -2,6 +2,7 @@ package com.macaku.common.web;
 
 
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.util.media.MediaUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
@@ -21,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
-public class HttpUtils {
+public class HttpUtil {
 
     public static String getBody(HttpServletRequest request) {
         ServletInputStream inputStream = null;
@@ -46,7 +47,7 @@ public class HttpUtils {
 
     public static String doGet(String httpUrl, Map<String, Object> map) {
         // 有queryString的就加
-        httpUrl += HttpUtils.getQueryString(map);
+        httpUrl += HttpUtil.getQueryString(map);
         HttpURLConnection connection = null;
         InputStream inputStream = null;
         BufferedReader bufferedReader = null;
@@ -219,34 +220,39 @@ public class HttpUtils {
         //添加头信息
         httpPost.addHeader("Content-type",  "application/json; charset=utf-8");
         String result = "";
+        InputStream content = null;
         try {
             //发送请求
             httpResponse = httpClient.execute(httpPost);
             //从相应对象中获取返回内容
             HttpEntity entity = httpResponse.getEntity();
-            InputStream content = entity.getContent();
-            return InputStreamToByte(content);
+            content = entity.getContent();
+            return MediaUtil.inputStreamToByte(content);
         } catch (IOException e) {
             throw new GlobalServiceException(e.getMessage());
+        } finally {
+            try {
+                content.close();
+            } catch (IOException e) {
+                throw new GlobalServiceException(e.getMessage());
+            }
         }
     }
 
     public static String doPostJsonBase64(String url, String json) {
         return Base64.encodeBase64String(doPostJsonBytes(url, json));
     }
-    /**
-     * 输入流转字节流
-     * */
-    private static byte[] InputStreamToByte(InputStream in) throws IOException {
-        ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
-        byte[] buffer=new byte[1024];
-        int ch;
-        while ((ch = in.read(buffer)) != -1) {
-            bytestream.write(buffer,0,ch);
-        }
-        byte data[] = bytestream.toByteArray();
-        bytestream.close();
-        return data;
+
+
+    public static InputStream getFileInputStream(String fileUrl) throws IOException {
+        URL url = new URL(fileUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setConnectTimeout(15000);
+        connection.setReadTimeout(60000);
+        connection.connect();
+        return connection.getResponseCode() == 200 ? connection.getInputStream() : null;
     }
+
 }
 

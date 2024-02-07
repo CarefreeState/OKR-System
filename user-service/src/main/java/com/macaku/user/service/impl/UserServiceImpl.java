@@ -2,7 +2,7 @@ package com.macaku.user.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.macaku.common.web.HttpUtils;
+import com.macaku.common.web.HttpUtil;
 import com.macaku.user.domain.dto.UserinfoDTO;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.service.UserService;
@@ -31,7 +31,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             this.put("js_code", code);
             this.put("grant_type", "authorization_code");
         }};
-        return HttpUtils.doGet(code2SessionUrl, param);
+        return HttpUtil.doGet(code2SessionUrl, param);
     }
 
     @Override

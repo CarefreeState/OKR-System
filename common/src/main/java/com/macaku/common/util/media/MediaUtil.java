@@ -2,14 +2,14 @@ package com.macaku.common.util.media;
 
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.media.config.StaticMapperConfig;
+import com.macaku.common.web.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -38,6 +38,25 @@ public class MediaUtil {
         return String.format("%s.%s", getUUID_32(), SUFFIX);
     }
 
+    public static String getFilePath(String mapPath) {
+        return StaticMapperConfig.ROOT + mapPath;
+    }
+
+    /**
+     * 输入流转字节流
+     * */
+    public static byte[] inputStreamToByte(InputStream in) throws IOException {
+        ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int ch;
+        while ((ch = in.read(buffer)) != -1) {
+            bytestream.write(buffer, 0, ch);
+        }
+        byte data[] = bytestream.toByteArray();
+        bytestream.close();
+        return data;
+    }
+
     public static String saveImage(byte[] imageData) {
         String savePath = StaticMapperConfig.ROOT + StaticMapperConfig.MAP_ROOT;
         String fileName = getUniqueFileName();
@@ -55,48 +74,43 @@ public class MediaUtil {
                 throw new GlobalServiceException(e.getMessage());
             }
         }
-        try ( OutputStream outputStream = new FileOutputStream(filePath)) {
+        try ( OutputStream outputStream = Files.newOutputStream(Paths.get(filePath))) {
             outputStream.write(imageData);
             outputStream.flush();
-            log.info("图片保存成功 {}", savePath);
+            log.info("图片保存成功 {}", filePath);
             return mapPath;
         } catch (IOException e) {
             throw new GlobalServiceException(e.getMessage());
         }
     }
 
-    private static boolean isUrlAccessible(String urlString) {
-        try {
-            URL url = new URL(urlString);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-            int responseCode = connection.getResponseCode();
-            return responseCode == 200; // 如果状态码为 200，则返回 true，表示可以访问
-        } catch (IOException e) {
-            return false; // 发生异常时，返回 false，表示不可访问
+    public static void deleteFile(String mapPath) {
+        String filePath = getFilePath(mapPath);
+        File file = new File(filePath);
+        if (!file.exists()){
+            file.delete();
         }
-    }
-
-    public static InputStream getFileInputStream(String fileUrl) throws IOException {
-        URL url = new URL(fileUrl);
-        URLConnection connection = url.openConnection();
-        return connection.getInputStream();
     }
 
     public static boolean isImage(String url) {
-        if(!isUrlAccessible(url)) {
-            return false;
-        }
-        try {
-            InputStream inputStream = getFileInputStream(url);
+        InputStream in = null;
+        try (InputStream inputStream = HttpUtil.getFileInputStream(url)) {
             if (Objects.isNull(inputStream)) {
                 return false;
             }
-            Image img = ImageIO.read(inputStream);
+            String mapPath = saveImage(inputStreamToByte(inputStream));
+            in = Files.newInputStream(Paths.get(getFilePath(mapPath)));
+            Image img = ImageIO.read(in);
+            deleteFile(mapPath);
             return !(img == null || img.getWidth(null) <= 0 || img.getHeight(null) <= 0);
         } catch (Exception e) {
             return false;
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                throw new GlobalServiceException(e.getMessage());
+            }
         }
     }
 
