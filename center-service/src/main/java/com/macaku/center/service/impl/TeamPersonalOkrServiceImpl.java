@@ -20,7 +20,9 @@ import com.macaku.user.domain.po.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author 马拉圈
@@ -52,7 +54,7 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
     }
 
     @Override
-    public Long createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
+    public Map<String, Object> createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
         // 检测密钥
         Long teamId = okrOperateDTO.getTeamOkrId();
         String secret = okrOperateDTO.getSecret();
@@ -73,10 +75,14 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
         teamPersonalOkr.setTeamId(teamId);
         teamPersonalOkr.setUserId(userId);
         teamPersonalOkrMapper.insert(teamPersonalOkr);
-        log.info("用户 {} 新建团队 {} 的 团队个人 OKR {} 内核 {}", userId, teamId, teamPersonalOkr.getId(), coreId);
+        Long id = teamPersonalOkr.getId();
+        log.info("用户 {} 新建团队 {} 的 团队个人 OKR {} 内核 {}", userId, teamId, id, coreId);
         // 更新一下缓存
         memberService.setExistsInTeam(teamId, userId);
-        return coreId;
+        return new HashMap<String, Object>() {{
+            this.put("id", id);
+            this.put("coreId", coreId);
+        }};
     }
 
     @Override

@@ -21,7 +21,9 @@ import com.macaku.user.domain.po.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author 马拉圈
@@ -51,7 +53,7 @@ public class PersonalOkrServiceImpl extends ServiceImpl<PersonalOkrMapper, Perso
     }
 
     @Override
-    public Long createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
+    public Map<String, Object> createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
         Long userId = user.getId();
         // 查看当前用户是否有未完成的 OKR
         Long count = personalOkrMapper.getNotCompletedCount(userId);
@@ -64,9 +66,13 @@ public class PersonalOkrServiceImpl extends ServiceImpl<PersonalOkrMapper, Perso
         PersonalOkr personalOkr = new PersonalOkr();
         personalOkr.setCoreId(coreId);
         personalOkr.setUserId(userId);
-        log.info("用户 {} 个人团队 OKR {}  内核 {}", userId, personalOkr.getId(), coreId);
         personalOkrMapper.insert(personalOkr);
-        return coreId;
+        Long id = personalOkr.getId();
+        log.info("用户 {} 个人团队 OKR {}  内核 {}", userId, id, coreId);
+        return new HashMap<String, Object>() {{
+            this.put("id", id);
+            this.put("coreId", coreId);
+        }};
     }
 
     @Override

@@ -127,7 +127,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/统一响应"
+                  "$ref": "#/components/schemas/统一响应«long»"
                 }
               }
             }
@@ -308,7 +308,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/统一响应"
+                  "$ref": "#/components/schemas/统一响应«long»"
                 }
               }
             }
@@ -1191,7 +1191,7 @@
         "tags": [
           "用户测试接口"
         ],
-        "summary": "这里传递的参数根据具体的登录方式传递对应的数据！",
+        "summary": "用户登录",
         "operationId": "loginUsingPOST",
         "requestBody": {
           "content": {
@@ -2413,6 +2413,26 @@
           "data": {
             "description": "具体数据",
             "$ref": "#/components/schemas/OKR 内核详细数据"
+          },
+          "message": {
+            "type": "string",
+            "description": "描述语"
+          }
+        }
+      },
+      "统一响应«long»": {
+        "title": "统一响应«long»",
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "description": "状态码",
+            "format": "int32"
+          },
+          "data": {
+            "type": "integer",
+            "description": "具体数据",
+            "format": "int64"
           },
           "message": {
             "type": "string",

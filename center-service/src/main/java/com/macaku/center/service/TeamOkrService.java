@@ -8,6 +8,7 @@ import com.macaku.user.domain.po.User;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author 马拉圈
@@ -24,7 +25,7 @@ public interface TeamOkrService extends IService<TeamOkr> {
     TeamOkr checkManager(Long teamId, Long managerId);
 
     @Transactional
-    void grantTeamForMember(Long teamId, Long managerId, Long userId);
+    Map<String, Object> grantTeamForMember(Long teamId, Long managerId, Long userId);
 
     List<TeamOkrStatisticVO> countCompletionRate(List<TeamOkr> teamOkrs);
 

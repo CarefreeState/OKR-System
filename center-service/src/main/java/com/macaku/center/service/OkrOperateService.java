@@ -5,6 +5,8 @@ import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.user.domain.po.User;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 /**
  * Created With Intellij IDEA
  * Description:
@@ -16,7 +18,7 @@ public interface OkrOperateService {
     boolean match(String scope);
 
     @Transactional
-    Long createOkrCore(User user, OkrOperateDTO okrOperateDTO);
+    Map<String, Object> createOkrCore(User user, OkrOperateDTO okrOperateDTO);
 
     OkrCoreVO selectAllOfCore(User user, Long coreId);
 

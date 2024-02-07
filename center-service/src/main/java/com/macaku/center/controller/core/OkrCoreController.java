@@ -21,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * Created With Intellij IDEA
@@ -42,14 +43,14 @@ public class OkrCoreController {
 
     @GetMapping("/create")
     @ApiOperation("创建一个OKR")
-    public SystemJsonResponse<Long> createOkr(HttpServletRequest request,
-                                        @RequestBody OkrOperateDTO okrOperateDTO) {
+    public SystemJsonResponse<Map<String, Object>> createOkr(HttpServletRequest request,
+                                                             @RequestBody OkrOperateDTO okrOperateDTO) {
         // 检测
         okrOperateDTO.validate();
         User user = UserRecordUtil.getUserRecord(request);
         OkrOperateService okrOperateService = okrServiceSelector.select(okrOperateDTO.getScene());
-        Long coreId = okrOperateService.createOkrCore(user, okrOperateDTO);
-        return SystemJsonResponse.SYSTEM_SUCCESS(coreId);
+        Map<String, Object> ret = okrOperateService.createOkrCore(user, okrOperateDTO);
+        return SystemJsonResponse.SYSTEM_SUCCESS(ret);
     }
 
     @GetMapping("/search")

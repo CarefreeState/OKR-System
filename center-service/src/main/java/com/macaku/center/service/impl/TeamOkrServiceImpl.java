@@ -32,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -107,7 +108,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     }
 
     @Override
-    public void grantTeamForMember(Long teamId, Long managerId, Long userId) {
+    public Map<String, Object> grantTeamForMember(Long teamId, Long managerId, Long userId) {
         if(managerId.equals(userId)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
@@ -135,8 +136,14 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         newTeamOkr.setParentTeamId(teamId);
         newTeamOkr.setManagerId(userId);
         teamOkrMapper.insert(newTeamOkr);
+        Long id = newTeamOkr.getId();
         // 本来就有团队个人 OKR，无需再次生成
-        log.info("管理员 {} 为成员 {} 授权创建团队原OKR {} 的子 OKR {} 内核 {}", managerId, userId, teamId, newTeamOkr.getId(), coreId);
+        log.info("管理员 {} 为成员 {} 授权创建团队原OKR {} 的子 OKR {} 内核 {}",
+                managerId, userId, teamId, id, coreId);
+        return new HashMap<String, Object>() {{
+            this.put("id", id);
+            this.put("coreId", coreId);
+        }};
     }
 
     @Override
@@ -189,7 +196,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     }
 
     @Override
-    public Long createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
+    public Map<String, Object> createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
         Long userId = user.getId();
         String redisKey = TeamOkrUtil.CREATE_CD_FLAG + userId;
         // 判断是否处于冷却状态
@@ -214,8 +221,12 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         teamPersonalOkr.setTeamId(teamId);
         teamPersonalOkr.setUserId(userId);
         teamPersonalOkrMapper.insert(teamPersonalOkr);
+        Long id = teamPersonalOkr.getId();
         log.info("用户 {} 新建团队 {} 的 团队个人 OKR {} 内核 {}", userId, teamId, teamPersonalOkr.getId(), coreId2);
-        return coreId1;
+        return new HashMap<String, Object>() {{
+            this.put("id", id);
+            this.put("coreId", coreId1);
+        }};
     }
 
     @Override

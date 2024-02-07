@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created With Intellij IDEA
@@ -94,7 +95,7 @@ public class TeamOkrController {
 
     @PostMapping("/grant")
     @ApiOperation("给成员授权，使其可以扩展一个子团队")
-    public SystemJsonResponse grantTeamForMember(HttpServletRequest request,
+    public SystemJsonResponse<Map<String, Object>> grantTeamForMember(HttpServletRequest request,
                                                  @RequestBody GrantDTO grantDTO) {
         // 检测
         grantDTO.validate();
@@ -103,8 +104,8 @@ public class TeamOkrController {
         Long managerId = user.getId();
         Long userId = grantDTO.getUserId();
         Long teamId = grantDTO.getTeamId();
-        teamOkrService.grantTeamForMember(teamId, managerId, userId);
-        return SystemJsonResponse.SYSTEM_SUCCESS();
+        Map<String, Object> ret = teamOkrService.grantTeamForMember(teamId, managerId, userId);
+        return SystemJsonResponse.SYSTEM_SUCCESS(ret);
     }
 
     @PostMapping("/qrcode/{teamId}")
