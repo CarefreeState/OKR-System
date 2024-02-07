@@ -2,12 +2,11 @@ package com.macaku.user.domain.dto;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.util.media.MediaUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.util.StringUtils;
-
-import java.util.Objects;
 
 /**
  * Created With Intellij IDEA
@@ -33,6 +32,9 @@ public class UserinfoDTO {
         }
         if(!StringUtils.hasText(photo)) {
             messageBuilder.append("\n-> 头像 为 空");
+        }
+        if(!MediaUtil.isImage(photo)) {
+            messageBuilder.append("\n-> 图片 非法");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {

@@ -20,7 +20,7 @@ import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
-import com.macaku.common.util.media.MediaUtils;
+import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.web.HttpUtils;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.vo.OkrCoreVO;
@@ -189,7 +189,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
             log.info("请求微信（json） -> {}", json);
             byte[] data = HttpUtils.doPostJsonBytes(url, json);
             // 保存一下
-            String mapPath = MediaUtils.saveImage(data);
+            String mapPath = MediaUtil.saveImage(data);
             redisCache.setCacheObject(redisKey, mapPath, TEAM_QR_MAP_TTL, TEAM_QR_MAP_UNIT);
             return mapPath;
         });
