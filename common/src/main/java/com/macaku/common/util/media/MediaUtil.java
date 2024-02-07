@@ -94,7 +94,9 @@ public class MediaUtil {
 
     public static boolean isImage(String url) {
         InputStream in = null;
-        try (InputStream inputStream = HttpUtil.getFileInputStream(url)) {
+        InputStream inputStream = null;
+        try {
+            inputStream = HttpUtil.getFileInputStream(url);
             if (Objects.isNull(inputStream)) {
                 return false;
             }
@@ -107,6 +109,7 @@ public class MediaUtil {
             return false;
         } finally {
             try {
+                inputStream.close();
                 in.close();
             } catch (IOException e) {
                 throw new GlobalServiceException(e.getMessage());
