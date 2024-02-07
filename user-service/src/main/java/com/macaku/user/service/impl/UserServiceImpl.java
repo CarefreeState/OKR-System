@@ -36,6 +36,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public void improveUserinfo(UserinfoDTO userinfoDTO, Long userId) {
+        userinfoDTO.validate();
         User user = BeanUtil.copyProperties(userinfoDTO, User.class);
         user.setId(userId);
         // 修改

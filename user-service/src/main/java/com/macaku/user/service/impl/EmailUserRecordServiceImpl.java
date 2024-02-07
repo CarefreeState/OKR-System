@@ -25,7 +25,7 @@ import java.util.Optional;
 @Slf4j
 public class EmailUserRecordServiceImpl implements UserRecordService {
 
-    private static final String TYPE = LoginServiceSelector.EMAIL_LOGIN_TYPE;
+    private final static String TYPE = LoginServiceSelector.EMAIL_LOGIN_TYPE;
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 

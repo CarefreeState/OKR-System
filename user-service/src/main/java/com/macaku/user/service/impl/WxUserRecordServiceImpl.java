@@ -24,7 +24,7 @@ import java.util.Optional;
 @Service
 @Slf4j
 public class WxUserRecordServiceImpl implements UserRecordService {
-    private static final String TYPE = LoginServiceSelector.WX_LOGIN_TYPE;
+    private final static String TYPE = LoginServiceSelector.WX_LOGIN_TYPE;
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 

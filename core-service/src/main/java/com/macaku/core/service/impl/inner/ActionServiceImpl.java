@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
     implements ActionService, TaskService {
 
-    private static final Integer OPTION = TaskServiceSelector.ACTION_OPTION;
+    private final static Integer OPTION = TaskServiceSelector.ACTION_OPTION;
 
     private final static String ACTION_QUADRANT_MAP = "actionQuadrantMap:";
 

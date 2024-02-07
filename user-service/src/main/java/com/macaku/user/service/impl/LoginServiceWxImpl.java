@@ -30,7 +30,11 @@ import java.util.Objects;
 @Slf4j
 public class LoginServiceWxImpl implements LoginService {
 
-    private static final String TYPE = LoginServiceSelector.WX_LOGIN_TYPE;
+    private final static String TYPE = LoginServiceSelector.WX_LOGIN_TYPE;
+
+    private final static String DEFAULT_NICKNAME = "微信用户";
+
+    private final static String DEFAULT_PHOTO = "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";
 
     private final UserService userService = SpringUtil.getBean(UserService.class);
 
@@ -62,8 +66,8 @@ public class LoginServiceWxImpl implements LoginService {
         // todo: 多个 openid 用 unionid 去判断是否是同一个用户（需要的时候再去写）
         User dbUser = userService.lambdaQuery().eq(User::getOpenid, openid).one();
         if(Objects.isNull(dbUser)) {
-            user.setNickname("微信用户");
-            user.setPhoto("https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0");
+            user.setNickname(DEFAULT_NICKNAME);
+            user.setPhoto(DEFAULT_PHOTO);
             userService.save(user);
             log.info("新用户注册 -> {}", user);
             dbUser = user;

@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class PriorityNumberOneServiceImpl extends ServiceImpl<PriorityNumberOneMapper, PriorityNumberOne>
     implements PriorityNumberOneService, TaskService {
 
-    private static final Integer OPTION = TaskServiceSelector.PRIORITY_ONE_OPTION;
+    private final static Integer OPTION = TaskServiceSelector.PRIORITY_ONE_OPTION;
 
     private final static String P1_QUADRANT_MAP = "p1QuadrantMap:";
 

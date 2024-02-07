@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class PriorityNumberTwoServiceImpl extends ServiceImpl<PriorityNumberTwoMapper, PriorityNumberTwo>
     implements PriorityNumberTwoService, TaskService {
 
-    private static final Integer OPTION = TaskServiceSelector.PRIORITY_TWO_OPTION;
+    private final static Integer OPTION = TaskServiceSelector.PRIORITY_TWO_OPTION;
 
     private final static String P2_QUADRANT_MAP = "p2QuadrantMap:";
 

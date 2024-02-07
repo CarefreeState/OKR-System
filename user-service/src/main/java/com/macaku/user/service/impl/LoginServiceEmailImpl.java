@@ -30,7 +30,7 @@ import java.util.Objects;
 @Slf4j
 public class LoginServiceEmailImpl implements LoginService {
 
-    private static final String TYPE = LoginServiceSelector.EMAIL_LOGIN_TYPE;
+    private final static String TYPE = LoginServiceSelector.EMAIL_LOGIN_TYPE;
 
     private UserService userService = SpringUtil.getBean(UserService.class);
 
