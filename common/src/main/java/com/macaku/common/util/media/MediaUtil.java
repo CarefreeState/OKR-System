@@ -44,7 +44,7 @@ public class MediaUtil {
 
     /**
      * 输入流转字节流
-     * */
+     */
     public static byte[] inputStreamToByte(InputStream in) throws IOException {
         ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
@@ -67,14 +67,14 @@ public class MediaUtil {
             directory.mkdirs();
         }
         File file = new File(filePath);
-        if (!file.exists()){
+        if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
                 throw new GlobalServiceException(e.getMessage());
             }
         }
-        try ( OutputStream outputStream = Files.newOutputStream(Paths.get(filePath))) {
+        try (OutputStream outputStream = Files.newOutputStream(Paths.get(filePath))) {
             outputStream.write(imageData);
             outputStream.flush();
             log.info("图片保存成功 {}", filePath);
@@ -87,13 +87,13 @@ public class MediaUtil {
     public static void deleteFile(String mapPath) {
         String filePath = getFilePath(mapPath);
         File file = new File(filePath);
-        if (!file.exists()){
+        if (!file.exists()) {
             file.delete();
         }
     }
 
     public static boolean isImage(String url) {
-        try (InputStream inputStream = HttpUtil.getFileInputStream(url)){
+        try (InputStream inputStream = HttpUtil.getFileInputStream(url)) {
             if (Objects.isNull(inputStream)) {
                 return false;
             }
