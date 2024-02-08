@@ -2,7 +2,6 @@ package com.macaku.user.domain.dto;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.media.MediaUtil;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -33,9 +32,9 @@ public class UserinfoDTO {
         if(!StringUtils.hasText(photo)) {
             messageBuilder.append("\n-> 头像 为 空");
         }
-        if(!MediaUtil.isImage(photo)) {
-            messageBuilder.append("\n-> 图片 非法");
-        }
+//        if(!MediaUtil.isImage(photo)) {
+//            messageBuilder.append("\n-> 图片 非法");
+//        }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {
             throw new GlobalServiceException(message, GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
