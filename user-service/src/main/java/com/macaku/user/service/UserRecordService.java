@@ -18,4 +18,5 @@ public interface UserRecordService {
 
     Optional<User> getRecord(HttpServletRequest request);
 
+    void deleteRecord(HttpServletRequest request);
 }

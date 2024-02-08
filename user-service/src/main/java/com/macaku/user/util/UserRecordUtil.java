@@ -26,13 +26,19 @@ public class UserRecordUtil {
 
     private final static UserRecordServiceSelector USER_RECORD_SERVICE_SELECTOR = SpringUtil.getBean(UserRecordServiceSelector.class);
 
-    public static User getUserRecord(HttpServletRequest request) {
+    public static UserRecordService selectService(HttpServletRequest request) {
         String type = request.getHeader(VisitConfig.HEADER);
         if(!StringUtils.hasText(type)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_TOKEN_NOT_VALID);
         }
-        UserRecordService userRecordService = USER_RECORD_SERVICE_SELECTOR.select(type);
-        return userRecordService.getRecord(request).orElse(null);
+        return USER_RECORD_SERVICE_SELECTOR.select(type);
     }
 
+    public static User getUserRecord(HttpServletRequest request) {
+        return selectService(request).getRecord(request).orElse(null);
+    }
+
+    public static void deleteUserRecord(HttpServletRequest request) {
+        selectService(request).deleteRecord(request);
+    }
 }

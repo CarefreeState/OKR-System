@@ -57,6 +57,8 @@ public class UserController {
         Long userId = UserRecordUtil.getUserRecord(request).getId();
         // 完善信息
         userService.improveUserinfo(userinfoDTO, userId);
+        // 删除记录
+        UserRecordUtil.deleteUserRecord(request);
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 

@@ -1,6 +1,7 @@
 package com.macaku.user.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JwtUtil;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -36,7 +38,22 @@ public class WxUserRecordServiceImpl implements UserRecordService {
     @Override
     public Optional<User> getRecord(HttpServletRequest request) {
         String openid = ExtractUtil.getOpenIDFromJWT(request);
-        return Optional.ofNullable( (User) redisCache.getCacheObject(JwtUtil.JWT_LOGIN_WX_USER + openid)
-                .orElse(null));
+        String redisKey = JwtUtil.JWT_LOGIN_WX_USER + openid;
+        return Optional.ofNullable((User) redisCache.getCacheObject(redisKey)
+                .orElseGet(() -> {
+                    User dbUser = Db.lambdaQuery(User.class).eq(User::getOpenid, openid).one();
+                    if(Objects.isNull(dbUser)) {
+                        return null;
+                    }else {
+                        redisCache.setCacheObject(redisKey, dbUser, JwtUtil.JWT_TTL, JwtUtil.JWT_TTL_UNIT);
+                        return dbUser;
+                    }
+                }));
+    }
+
+    @Override
+    public void deleteRecord(HttpServletRequest request) {
+        String openid = ExtractUtil.getOpenIDFromJWT(request);
+        redisCache.deleteObject(JwtUtil.JWT_LOGIN_WX_USER + openid);
     }
 }
