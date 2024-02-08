@@ -76,7 +76,7 @@ public class StatusFlagController {
     @PostMapping("/remove")
     @ApiOperation("删除一条指标")
     public SystemJsonResponse remove(HttpServletRequest request,
-                                     OkrStatusFlagRemoveDTO okrStatusFlagRemoveDTO) {
+                                     @RequestBody OkrStatusFlagRemoveDTO okrStatusFlagRemoveDTO) {
         okrStatusFlagRemoveDTO.validate();
         User user = UserRecordUtil.getUserRecord(request);
         Long statusFlagId = okrStatusFlagRemoveDTO.getId();
@@ -96,7 +96,7 @@ public class StatusFlagController {
     @PostMapping("/update")
     @ApiOperation("更新一条指标")
     public SystemJsonResponse update(HttpServletRequest request,
-                                     OkrStatusFlagUpdateDTO okrStatusFlagUpdateDTO) {
+                                     @RequestBody OkrStatusFlagUpdateDTO okrStatusFlagUpdateDTO) {
         // 检查
         okrStatusFlagUpdateDTO.validate();
         User user = UserRecordUtil.getUserRecord(request);

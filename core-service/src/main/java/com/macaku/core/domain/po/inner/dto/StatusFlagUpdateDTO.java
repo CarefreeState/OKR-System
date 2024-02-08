@@ -28,7 +28,7 @@ public class StatusFlagUpdateDTO {
     @ApiModelProperty("指标内容")
     private String label;
 
-    @ApiModelProperty("颜色")
+    @ApiModelProperty("颜色（#十六进制）")
     private String color;
 
     public void validate() {
