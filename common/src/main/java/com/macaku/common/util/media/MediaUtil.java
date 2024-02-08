@@ -93,27 +93,14 @@ public class MediaUtil {
     }
 
     public static boolean isImage(String url) {
-        InputStream in = null;
-        InputStream inputStream = null;
-        try {
-            inputStream = HttpUtil.getFileInputStream(url);
+        try (InputStream inputStream = HttpUtil.getFileInputStream(url)){
             if (Objects.isNull(inputStream)) {
                 return false;
             }
-            String mapPath = saveImage(inputStreamToByte(inputStream));
-            in = Files.newInputStream(Paths.get(getFilePath(mapPath)));
-            Image img = ImageIO.read(in);
-            deleteFile(mapPath);
+            Image img = ImageIO.read(inputStream);
             return !(img == null || img.getWidth(null) <= 0 || img.getHeight(null) <= 0);
         } catch (Exception e) {
             return false;
-        } finally {
-            try {
-                inputStream.close();
-                in.close();
-            } catch (IOException e) {
-                throw new GlobalServiceException(e.getMessage());
-            }
         }
     }
 
