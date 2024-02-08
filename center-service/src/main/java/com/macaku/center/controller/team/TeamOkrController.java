@@ -1,6 +1,6 @@
 package com.macaku.center.controller.team;
 
-import com.macaku.center.domain.dto.GrantDTO;
+import com.macaku.center.domain.dto.unify.GrantDTO;
 import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;

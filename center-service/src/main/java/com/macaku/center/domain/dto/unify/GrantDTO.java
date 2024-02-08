@@ -1,4 +1,4 @@
-package com.macaku.center.domain.dto;
+package com.macaku.center.domain.dto.unify;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;

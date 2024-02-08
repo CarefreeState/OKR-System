@@ -1,7 +1,7 @@
 package com.macaku.center.controller.user;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.macaku.center.domain.vo.UserVO;
+import com.macaku.user.domain.vo.UserVO;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.user.component.LoginServiceSelector;
 import com.macaku.user.domain.dto.UserinfoDTO;
