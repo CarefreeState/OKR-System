@@ -7,6 +7,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
+import java.util.Objects;
+
 /**
  * Created With Intellij IDEA
  * Description:
@@ -28,8 +30,13 @@ public class OkrOperateDTO {
     private String secret;
 
     public void validate() {
+        StringBuilder messageBuilder = new StringBuilder();
         if(!StringUtils.hasText(scene)) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.PARAM_IS_BLANK);
+            messageBuilder.append("\n-> 缺少场景值");
+        }
+        String message = messageBuilder.toString();
+        if(StringUtils.hasLength(message)) {
+            throw new GlobalServiceException(message, GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
     }
 

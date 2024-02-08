@@ -21,6 +21,7 @@ import java.util.Objects;
 @Data
 public class OkrStatusFlagUpdateDTO {
 
+    @ApiModelProperty("场景")
     private String scene;
 
     @ApiModelProperty("更新状态指标的数据")

@@ -21,6 +21,7 @@ import java.util.Objects;
 @Data
 public class OkrTaskUpdateDTO {
 
+    @ApiModelProperty("场景")
     private String scene;
 
     @ApiModelProperty("更新任务的数据")
