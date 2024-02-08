@@ -32,6 +32,10 @@ public class LoginServiceEmailImpl implements LoginService {
 
     private final static String TYPE = LoginServiceSelector.EMAIL_LOGIN_TYPE;
 
+    private final static String DEFAULT_NICKNAME = "邮箱用户";
+
+    private final static String DEFAULT_PHOTO = "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";
+
     private UserService userService = SpringUtil.getBean(UserService.class);
 
     private RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
@@ -53,6 +57,8 @@ public class LoginServiceEmailImpl implements LoginService {
         // 如果用户未不存在（邮箱未注册），则注册
         User dbUser = userService.lambdaQuery().eq(User::getEmail, email).one();
         if(Objects.isNull(dbUser)) {
+            user.setNickname(DEFAULT_NICKNAME);
+            user.setPhoto(DEFAULT_PHOTO);
             userService.save(user);
             log.info("新用户注册 -> {}", user);
             dbUser = user;
