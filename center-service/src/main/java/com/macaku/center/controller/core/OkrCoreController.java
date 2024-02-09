@@ -41,7 +41,7 @@ public class OkrCoreController {
 
     private final OkrServiceSelector okrServiceSelector;
 
-    @GetMapping("/create")
+    @PostMapping("/create")
     @ApiOperation("创建一个 OKR")
     public SystemJsonResponse<Map<String, Object>> createOkr(HttpServletRequest request,
                                                              @RequestBody OkrOperateDTO okrOperateDTO) {
@@ -53,7 +53,7 @@ public class OkrCoreController {
         return SystemJsonResponse.SYSTEM_SUCCESS(ret);
     }
 
-    @GetMapping("/search")
+    @PostMapping("/search")
     @ApiOperation("查看一个 OKR")
     public SystemJsonResponse<OkrCoreVO> searchOkrCore(HttpServletRequest request,
                                                        @RequestBody OkrCoreDTO okrCoreDTO) {
