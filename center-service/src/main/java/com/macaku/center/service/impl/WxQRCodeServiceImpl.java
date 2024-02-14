@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created With Intellij IDEA
@@ -47,11 +48,10 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
 
     @Override
     public void checkParams(Long teamId, String secret) {
-        StringBuilder sceneBuilder = new StringBuilder();
-        sceneBuilder.append(sceneKey)
-                .append("=")
-                .append(teamId);
-        String raw = sceneBuilder.toString();
+        if(Objects.isNull(teamId)) {
+            throw new GlobalServiceException("团队 OKR ID 为 null", GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
+        }
+        String raw = sceneKey + "=" + teamId;
         String inviteSecret = ShortCodeUtil.getShortCode(raw);
         boolean isInvited = inviteSecret.equals(secret);
         log.info("用户想要加入团队 {}, 校验：{} -> {} 与 {} 比较 -> {}", teamId, raw, inviteSecret, secret, isInvited);
