@@ -74,7 +74,7 @@ public enum GlobalServiceStatusCode {
     REPEATED_GRANT(5005, "重复授权"),
 
     MEMBER_NOT_EXISTS(5100, "团队成员不存在"),
-    MEMBER_CANNOT_REMOVE(5101, "此成员无法删除"),
+    MEMBER_CANNOT_REMOVE(5101, "此成员无法移除"),
 
     /*内核相关*/
     CORE_NOT_EXISTS(6000, "OKR 内核不存在或者并将其当作内核的 p/t/tp OKR "),

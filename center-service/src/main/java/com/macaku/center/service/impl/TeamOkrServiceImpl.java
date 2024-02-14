@@ -29,8 +29,12 @@ import com.macaku.user.domain.po.User;
 import com.macaku.user.token.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -201,8 +205,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         // 创建两个 OKR 内核
         Long coreId1 = okrCoreService.createOkrCore();
         Long coreId2 = okrCoreService.createOkrCore();
-        String teamName = Optional.ofNullable(okrOperateDTO.getTeamName()).orElseThrow(() ->
-                new GlobalServiceException(GlobalServiceStatusCode.PARAM_IS_BLANK));
+        String teamName = okrOperateDTO.getTeamName();
         // 创建一个团队 OKR
         TeamOkr teamOkr = new TeamOkr();
         teamOkr.setCoreId(coreId1);
@@ -210,6 +213,13 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         teamOkr.setTeamName(teamName);
         teamOkrMapper.insert(teamOkr);
         Long teamId = teamOkr.getId();
+        // 更新一下团队名（如果需要的话）
+        if(StringUtils.hasText(teamName)) {
+            TeamOkr updateTeam = new TeamOkr();
+            updateTeam.setId(teamId);
+            updateTeam.setTeamName(teamName);
+            Db.lambdaUpdate(TeamOkr.class).eq(TeamOkr::getId, teamId).update(updateTeam);
+        }
         log.info("用户 {} 新建团队 OKR {}  内核 {}", userId, teamId, coreId1);
         // 设置冷却时间
         redisCache.setCacheObject(redisKey, 0, TeamOkrUtil.CREATE_CD, TeamOkrUtil.CD_UNIT);// CD 没好的意思

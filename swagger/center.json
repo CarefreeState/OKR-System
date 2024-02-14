@@ -287,12 +287,12 @@
       }
     },
     "/core/create": {
-      "get": {
+      "post": {
         "tags": [
           "OKR 内核"
         ],
         "summary": "创建一个 OKR",
-        "operationId": "createOkrUsingGET",
+        "operationId": "createOkrUsingPOST",
         "requestBody": {
           "content": {
             "application/json": {
@@ -313,6 +313,9 @@
               }
             }
           },
+          "201": {
+            "description": "Created"
+          },
           "401": {
             "description": "Unauthorized"
           },
@@ -326,12 +329,12 @@
       }
     },
     "/core/search": {
-      "get": {
+      "post": {
         "tags": [
           "OKR 内核"
         ],
         "summary": "查看一个 OKR",
-        "operationId": "searchOkrCoreUsingGET",
+        "operationId": "searchOkrCoreUsingPOST",
         "requestBody": {
           "content": {
             "application/json": {
@@ -351,6 +354,9 @@
                 }
               }
             }
+          },
+          "201": {
+            "description": "Created"
           },
           "401": {
             "description": "Unauthorized"
@@ -887,6 +893,48 @@
         }
       }
     },
+    "/team/rename": {
+      "post": {
+        "tags": [
+          "团队 OKR 测试接口"
+        ],
+        "summary": "修改团队的名字",
+        "operationId": "updateNameUsingPOST",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Team OKR 更新数据"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/team/tree/child/{id}": {
       "post": {
         "tags": [
@@ -1042,6 +1090,49 @@
           },
           "201": {
             "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/teampersonal/remove/{id}": {
+      "get": {
+        "tags": [
+          "团队个人 OKR 测试接口"
+        ],
+        "summary": "移除成员",
+        "operationId": "removeMemberUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "团队个人 OKR ID",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/统一响应"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -1307,6 +1398,10 @@
             "type": "string",
             "description": "邀请密钥"
           },
+          "teamName": {
+            "type": "string",
+            "description": "团队名"
+          },
           "teamOkrId": {
             "type": "integer",
             "description": "团队 OKR ID",
@@ -1381,6 +1476,21 @@
             "type": "string",
             "description": "更新时间",
             "format": "date-time"
+          }
+        }
+      },
+      "Team OKR 更新数据": {
+        "title": "Team OKR 更新数据",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "团队 OKR ID",
+            "format": "int64"
+          },
+          "teamName": {
+            "type": "string",
+            "description": "团队名"
           }
         }
       },
@@ -1795,6 +1905,16 @@
             "type": "string",
             "description": "邮箱"
           },
+          "id": {
+            "type": "integer",
+            "description": "团队个人 OKR ID",
+            "format": "int64"
+          },
+          "isExtend": {
+            "type": "boolean",
+            "description": "是否有子团队",
+            "example": false
+          },
           "nickname": {
             "type": "string",
             "description": "昵称"
@@ -1883,7 +2003,8 @@
         "type": "object",
         "properties": {
           "scene": {
-            "type": "string"
+            "type": "string",
+            "description": "场景"
           },
           "taskUpdateDTO": {
             "description": "更新任务的数据",
@@ -1910,7 +2031,8 @@
         "type": "object",
         "properties": {
           "scene": {
-            "type": "string"
+            "type": "string",
+            "description": "场景"
           },
           "statusFlagUpdateDTO": {
             "description": "更新状态指标的数据",

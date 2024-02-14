@@ -18,6 +18,10 @@ import java.util.Date;
 @Data
 public class TeamMemberVO {
 
+    @TableField("id")
+    @ApiModelProperty("团队个人 OKR ID")
+    private Long id;
+
     @TableField("user_id")
     @ApiModelProperty("用户 ID")
     private Long userId;

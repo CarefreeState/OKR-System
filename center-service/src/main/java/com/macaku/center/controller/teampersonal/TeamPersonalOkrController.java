@@ -61,7 +61,7 @@ public class TeamPersonalOkrController {
         return SystemJsonResponse.SYSTEM_SUCCESS(teamMembers);
     }
 
-    @PostMapping("/remove/{id}")
+    @GetMapping("/remove/{id}")
     @ApiOperation("移除成员")
     public SystemJsonResponse removeMember(HttpServletRequest request,
                                            @PathVariable("id") @NonNull @ApiParam("团队个人 OKR ID") Long id) {

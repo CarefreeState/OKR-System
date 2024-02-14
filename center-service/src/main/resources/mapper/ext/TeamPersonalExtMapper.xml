@@ -19,7 +19,7 @@
 
     <select id="getTeamMembers" parameterType="java.lang.Long" resultType="com.macaku.center.domain.vo.TeamMemberVO">
         select
-            tp.user_id, tp.create_time, u.nickname, u.email, u.phone, u.photo
+            tp.id, tp.user_id, tp.create_time, u.nickname, u.email, u.phone, u.photo
         from
             team_okr t, team_personal_okr tp, user u
         where
