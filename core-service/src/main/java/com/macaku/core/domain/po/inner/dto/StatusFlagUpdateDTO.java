@@ -21,7 +21,6 @@ import java.util.Objects;
 @Data
 public class StatusFlagUpdateDTO {
 
-
     @ApiModelProperty("指标 ID")
     private Long id;
 
