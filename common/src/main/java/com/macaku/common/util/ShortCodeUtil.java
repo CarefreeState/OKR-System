@@ -45,4 +45,8 @@ public class ShortCodeUtil {
         return subCodeByString(EncryptUtil.md5(str + SHORT_LINK_KEY));
     }
 
+    public static void main(String[] args) {
+        System.out.println(subCodeByString(EncryptUtil.md5("teamId=5" + "macaku")));
+    }
+
 }

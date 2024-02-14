@@ -1,9 +1,13 @@
 package com.macaku.center.controller.teampersonal;
 
+import com.baomidou.mybatisplus.extension.toolkit.Db;
+import com.macaku.center.domain.po.TeamPersonalOkr;
 import com.macaku.center.domain.vo.TeamMemberVO;
 import com.macaku.center.domain.vo.TeamPersonalOkrVO;
 import com.macaku.center.service.MemberService;
 import com.macaku.center.service.TeamPersonalOkrService;
+import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
@@ -55,6 +59,28 @@ public class TeamPersonalOkrController {
         // 查询
         List<TeamMemberVO> teamMembers = teamPersonalOkrService.getTeamMembers(teamId);
         return SystemJsonResponse.SYSTEM_SUCCESS(teamMembers);
+    }
+
+    @PostMapping("/remove/{id}")
+    @ApiOperation("移除成员")
+    public SystemJsonResponse removeMember(HttpServletRequest request,
+                                           @PathVariable("id") @NonNull @ApiParam("团队个人 OKR ID") Long id) {
+        // 查询团队个人 Okr
+        TeamPersonalOkr teamPersonalOkr = Db.lambdaQuery(TeamPersonalOkr.class)
+                .eq(TeamPersonalOkr::getId, id)
+                .oneOpt()
+                .orElseThrow(() ->
+                        new GlobalServiceException(GlobalServiceStatusCode.MEMBER_NOT_EXISTS)
+                );
+        Long teamId = teamPersonalOkr.getTeamId();
+        Long useId = teamPersonalOkr.getUserId();
+        // 获取当前登录用户
+        User user = UserRecordUtil.getUserRecord(request);
+        // 判断是不是团队成员
+        memberService.checkExistsInTeam(teamId, user.getId());
+        // 尝试删除
+        memberService.removeMember(teamId, id, useId);
+        return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
 }

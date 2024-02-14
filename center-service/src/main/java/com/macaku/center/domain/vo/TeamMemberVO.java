@@ -42,4 +42,7 @@ public class TeamMemberVO {
     @ApiModelProperty("加入时间")
     private Date createTime;
 
+    @ApiModelProperty("是否有子团队")
+    private Boolean isExtend;
+
 }

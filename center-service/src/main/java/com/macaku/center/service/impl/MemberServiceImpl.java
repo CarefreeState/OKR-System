@@ -1,6 +1,8 @@
 package com.macaku.center.service.impl;
 
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.center.domain.po.TeamOkr;
+import com.macaku.center.domain.po.TeamPersonalOkr;
 import com.macaku.center.domain.vo.TeamPersonalOkrVO;
 import com.macaku.center.mapper.TeamOkrMapper;
 import com.macaku.center.mapper.TeamPersonalOkrMapper;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -71,18 +74,23 @@ public class MemberServiceImpl implements MemberService {
        return (Boolean) redisCache.getCacheMapValue(redisKey, userId).orElseGet(() -> {
             List<TeamOkr> teamOkrs = teamOkrMapper.selectChildTeams(rootId);
             Boolean isExists = findExistsInTeam(teamOkrs, userId);
-            if(Boolean.FALSE.equals(isExists)) {
-                redisCache.getCacheMap(redisKey).orElseGet(() -> {
-                    Map<Long, Boolean> data = new HashMap<>();
-                    data.put(userId, false);
-                    redisCache.setCacheMap(redisKey, data, USER_TEAM_MEMBER_TTL, USER_TEAM_MEMBER_TTL_UNIT);
-                    return null;
-                });
-            }else {
-                redisCache.setCacheMapValue(redisKey, userId, true);
-            }
+            redisCache.getCacheMap(redisKey).orElseGet(() -> {
+                Map<Long, Boolean> data = new HashMap<>();
+                redisCache.setCacheMap(redisKey, data, USER_TEAM_MEMBER_TTL, USER_TEAM_MEMBER_TTL_UNIT);
+                return null;
+            });
+           redisCache.setCacheMapValue(redisKey, userId, isExists);
             return isExists;
         });
+    }
+
+    @Override
+    public Boolean haveExtendTeam(Long teamId, Long userId) {
+        TeamOkr teamOkr = Db.lambdaQuery(TeamOkr.class)
+                .eq(TeamOkr::getParentTeamId, teamId)
+                .eq(TeamOkr::getManagerId, userId)
+                .one();
+        return Objects.nonNull(teamOkr);
     }
 
     @Override
@@ -91,6 +99,20 @@ public class MemberServiceImpl implements MemberService {
         // 查看是否有缓存
         String redisKey = USER_TEAM_MEMBER + rootId;
         redisCache.setCacheMapValue(redisKey, userId, true);
+    }
+
+    @Override
+    public void removeMember(Long teamId, Long memberOkrId, Long userId) {
+        // 判断是否扩展了
+        Boolean isExtend = haveExtendTeam(teamId, userId);
+        if(Boolean.TRUE.equals(isExtend)) {
+            // 无法删除
+            throw new GlobalServiceException(GlobalServiceStatusCode.MEMBER_CANNOT_REMOVE);
+        }
+        // 删除
+        Db.lambdaUpdate(TeamPersonalOkr.class)
+                .eq(TeamPersonalOkr::getId, memberOkrId)
+                .remove();
     }
 
 }

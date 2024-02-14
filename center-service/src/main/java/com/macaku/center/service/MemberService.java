@@ -19,6 +19,10 @@ public interface MemberService {
 
     Boolean isExistsInTeam(Long teamId, Long userId);
 
+    Boolean haveExtendTeam(Long teamId, Long userId);
+
     void setExistsInTeam(Long teamId, Long userId);
+
+    void removeMember(Long teamId, Long memberOkrId, Long userId);
 
 }

@@ -30,10 +30,7 @@ import com.macaku.user.token.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -121,12 +118,10 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
                 .oneOpt().orElseThrow(() ->
                         new GlobalServiceException(GlobalServiceStatusCode.NON_TEAM_MEMBER));
         // 判断用户是否管理着父亲节点为 teamId 的团队 OKR
-        Db.lambdaQuery(TeamOkr.class)
-                .eq(TeamOkr::getParentTeamId, teamId)
-                .eq(TeamOkr::getManagerId, userId)
-                .oneOpt().ifPresent(t -> {
-                    throw new GlobalServiceException(GlobalServiceStatusCode.REPEATED_GRANT);
-                });
+        Boolean isExtend = memberService.haveExtendTeam(teamId, userId);
+        if(Boolean.TRUE.equals(isExtend)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.REPEATED_GRANT);
+        }
         // 鉴权成功，构造团队 OKR
         // 构造 OKR 内核
         Long coreId = okrCoreService.createOkrCore();
@@ -206,10 +201,13 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         // 创建两个 OKR 内核
         Long coreId1 = okrCoreService.createOkrCore();
         Long coreId2 = okrCoreService.createOkrCore();
+        String teamName = Optional.ofNullable(okrOperateDTO.getTeamName()).orElseThrow(() ->
+                new GlobalServiceException(GlobalServiceStatusCode.PARAM_IS_BLANK));
         // 创建一个团队 OKR
         TeamOkr teamOkr = new TeamOkr();
         teamOkr.setCoreId(coreId1);
         teamOkr.setManagerId(userId);
+        teamOkr.setTeamName(teamName);
         teamOkrMapper.insert(teamOkr);
         Long teamId = teamOkr.getId();
         log.info("用户 {} 新建团队 OKR {}  内核 {}", userId, teamId, coreId1);

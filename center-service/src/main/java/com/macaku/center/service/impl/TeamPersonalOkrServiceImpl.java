@@ -125,6 +125,10 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
     public List<TeamMemberVO> getTeamMembers(Long id) {
         // 查询团队成员列表
         List<TeamMemberVO> teamMembers = teamPersonalOkrMapper.getTeamMembers(id);
+        teamMembers.stream().parallel().forEach(teamMemberVO -> {
+            Long userId = teamMemberVO.getUserId();
+            teamMemberVO.setIsExtend(memberService.haveExtendTeam(id, userId));
+        });
         log.info("查询团队 {} 的成员列表 : {} 行", id, teamMembers.size());
         return teamMembers;
     }

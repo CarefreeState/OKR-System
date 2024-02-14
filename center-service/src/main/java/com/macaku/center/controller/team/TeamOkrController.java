@@ -1,6 +1,7 @@
 package com.macaku.center.controller.team;
 
-import com.macaku.center.domain.dto.unify.GrantDTO;
+import com.macaku.center.domain.dto.team.GrantDTO;
+import com.macaku.center.domain.dto.team.TeamUpdateDTO;
 import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
@@ -50,6 +51,27 @@ public class TeamOkrController {
         // 调用方法
         List<TeamOkrVO> teamOkrVOS = teamOkrService.getTeamOkrList(user);
         return SystemJsonResponse.SYSTEM_SUCCESS(teamOkrVOS);
+    }
+
+    @PostMapping("/rename")
+    @ApiOperation("修改团队的名字")
+    public SystemJsonResponse updateName(HttpServletRequest request,
+                                         @RequestBody TeamUpdateDTO teamUpdateDTO) {
+        // 获取当前登录用户
+        User user = UserRecordUtil.getUserRecord(request);
+        // 判断是不是管理员
+        Long managerId = user.getId();
+        teamUpdateDTO.validate();
+        Long teamId = teamUpdateDTO.getId();
+        String teamName = teamUpdateDTO.getTeamName();
+        // 检测管理者身份
+        teamOkrService.checkManager(teamId, managerId);
+        // 更新
+        TeamOkr updateTeam = new TeamOkr();
+        updateTeam.setId(teamId);
+        updateTeam.setTeamName(teamName);
+        teamOkrService.lambdaUpdate().eq(TeamOkr::getId, teamId).update(updateTeam);
+        return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
     @PostMapping("/tree/{id}")

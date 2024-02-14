@@ -23,6 +23,7 @@ public class VisitConfig implements WebMvcConfigurer {
                     // 静态资源
                     .excludePathPatterns("/media/**")
                     // 接口文档
+                    // todo: 正式上线关闭接口文档
                     .excludePathPatterns("/doc.html/**")
                     .excludePathPatterns("/v3/api-docs/**")
                     .excludePathPatterns("/webjars/**")

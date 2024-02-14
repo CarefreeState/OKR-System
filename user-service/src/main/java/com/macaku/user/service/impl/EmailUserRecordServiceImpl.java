@@ -34,6 +34,7 @@ public class EmailUserRecordServiceImpl implements UserRecordService {
     @Override
     public boolean match(String type) {
 //        return false;
+        // todo: 删除 email 登录方式
         return ShortCodeUtil.getShortCode(TYPE).equals(type);
     }
 
