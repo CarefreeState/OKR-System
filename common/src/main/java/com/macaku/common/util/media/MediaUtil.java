@@ -46,14 +46,14 @@ public class MediaUtil {
      * 输入流转字节流
      */
     public static byte[] inputStreamToByte(InputStream in) throws IOException {
-        ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int ch;
         while ((ch = in.read(buffer)) != -1) {
-            bytestream.write(buffer, 0, ch);
+            byteArrayOutputStream.write(buffer, 0, ch);
         }
-        byte data[] = bytestream.toByteArray();
-        bytestream.close();
+        byte data[] = byteArrayOutputStream.toByteArray();
+        byteArrayOutputStream.close();
         return data;
     }
 
@@ -97,6 +97,30 @@ public class MediaUtil {
             if (Objects.isNull(inputStream)) {
                 return false;
             }
+            Image img = ImageIO.read(inputStream);
+            return !(img == null || img.getWidth(null) <= 0 || img.getHeight(null) <= 0);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isImage(InputStream inputStream) {
+        try {
+            if (Objects.isNull(inputStream)) {
+                return false;
+            }
+            Image img = ImageIO.read(inputStream);
+            return !(img == null || img.getWidth(null) <= 0 || img.getHeight(null) <= 0);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isImage(byte[] bytes) {
+        if (Objects.isNull(bytes)) {
+            return false;
+        }
+        try (InputStream inputStream = new ByteArrayInputStream(bytes)) {
             Image img = ImageIO.read(inputStream);
             return !(img == null || img.getWidth(null) <= 0 || img.getHeight(null) <= 0);
         } catch (Exception e) {

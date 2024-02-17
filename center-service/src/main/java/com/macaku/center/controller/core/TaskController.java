@@ -65,7 +65,7 @@ public class TaskController {
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }
-        return SystemJsonResponse.SYSTEM_SUCCESS();
+        return SystemJsonResponse.SYSTEM_SUCCESS(id);
     }
 
     @PostMapping("/{option}/remove")
