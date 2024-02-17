@@ -23,8 +23,12 @@ import java.util.Objects;
 public class UserLoginInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if(Objects.isNull(UserRecordUtil.getUserRecord(request))) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.USER_TOKEN_NOT_VALID);
+        try {
+            if(Objects.isNull(UserRecordUtil.getUserRecord(request))) {
+                throw new GlobalServiceException(GlobalServiceStatusCode.USER_TOKEN_NOT_VALID);
+            }
+        } catch (Exception e) {
+            throw new GlobalServiceException(e.getMessage(), GlobalServiceStatusCode.USER_NOT_LOGIN);
         }
         return true;
     }
