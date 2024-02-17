@@ -22,6 +22,6 @@ public class ForceInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        throw new GlobalServiceException(request.getRequestURI() + "访问失败！", GlobalServiceStatusCode.SYSTEM_API_VISIT_FAIL);
+        throw new GlobalServiceException(GlobalServiceStatusCode.SYSTEM_API_VISIT_FAIL);
     }
 }
