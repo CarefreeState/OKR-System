@@ -1,10 +1,10 @@
 package com.macaku.user.interceptor.config;
 
+import com.macaku.user.interceptor.ForceInterceptor;
 import com.macaku.user.interceptor.UserLoginInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -15,6 +15,8 @@ public class VisitConfig implements WebMvcConfigurer {
     public static final String HEADER = "Login-Type";
 
     private final UserLoginInterceptor userLoginInterceptor;
+
+    private final ForceInterceptor forceInterceptor;
 
     @Value("${visit.swagger}")
     private Boolean swaggerCanBeVisited;
@@ -31,15 +33,15 @@ public class VisitConfig implements WebMvcConfigurer {
                 "/swagger-resources/**",
                 "/swagger-ui/**"
         };
-        InterceptorRegistration registration =
-                registry.addInterceptor(userLoginInterceptor)
-                        .addPathPatterns("/**")
-                        // 不拦截的路径
-                        .excludePathPatterns("/user/login")
-                        // 静态资源
-                        .excludePathPatterns("/media/**");
+        registry.addInterceptor(userLoginInterceptor)
+                    .addPathPatterns("/**")
+                    // 不拦截的路径
+                    .excludePathPatterns("/user/login")
+                    // 静态资源
+                    .excludePathPatterns("/media/**");
         if(Boolean.TRUE.equals(swaggerCanBeVisited)) {
-            registration.excludePathPatterns(swaggers);
+            registry.addInterceptor(forceInterceptor)
+                            .addPathPatterns(swaggers);
         }
     }
 

@@ -15,6 +15,8 @@ public enum GlobalServiceStatusCode {
     SYSTEM_SERVICE_ERROR(-500, "系统异常"),
     SYSTEM_TIME_OUT(-1, "请求超时"),
 
+    SYSTEM_API_VISIT_FAIL(-1000, "路径访问失败"),
+
 
     /* 参数错误：1001～2000 */
     PARAM_NOT_VALID(1001, "参数无效"),
