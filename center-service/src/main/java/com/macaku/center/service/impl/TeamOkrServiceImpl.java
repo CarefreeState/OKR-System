@@ -188,11 +188,11 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
             log.info("请求微信（json） -> {}", json);
             byte[] data = HttpUtil.doPostJsonBytes(url, json);
             if(!MediaUtil.isImage(data)) {
-                throw new GlobalServiceException(GlobalServiceStatusCode.QR_CODE_GENERATE_FAIL);
+                throw new GlobalServiceException(new String(data), GlobalServiceStatusCode.QR_CODE_GENERATE_FAIL);
             }
             // 保存一下
             String mapPath = MediaUtil.saveImage(data);
-            redisCache.setCacheObject(redisKey, mapPath, TEAM_QR_MAP_TTL, TEAM_QR_MAP_UNIT);
+//            redisCache.setCacheObject(redisKey, mapPath, TEAM_QR_MAP_TTL, TEAM_QR_MAP_UNIT);
             return mapPath;
         });
     }
