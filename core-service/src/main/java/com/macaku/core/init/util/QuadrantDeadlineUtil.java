@@ -31,7 +31,7 @@ public class QuadrantDeadlineUtil {
                 updateOkrCore.setId(coreId);
                 updateOkrCore.setIsOver(true);
                 Db.lambdaUpdate(OkrCore.class).eq(OkrCore::getId, coreId).update(updateOkrCore);
-                log.info("OKR 结束！ {}", deadline);
+                log.warn("OKR 结束！ {}", deadline);
             }
         }, TimeUnit.MILLISECONDS.toSeconds(deadline.getTime() - System.currentTimeMillis()), TimeUnit.SECONDS);
     }
@@ -57,25 +57,25 @@ public class QuadrantDeadlineUtil {
                             .select(OkrCore::getIsOver)
                             .one()
                             .getIsOver();
-                    if(isOver) {
-                        log.info("OKR 已结束");
+                    if(Boolean.TRUE.equals(isOver)) {
+                        log.warn("OKR 已结束");
                     }else {
                         // 设置新的截止时间
-                            T updateQuadrant = clazz.newInstance();
-                            // 设置字段 id
-                            Field idField = clazz.getDeclaredField(DeadlineEventInitializer.QUADRANT_ID);
-                            idField.setAccessible(true);
-                            idField.set(updateQuadrant, id);
-                            idField.setAccessible(false);
-                            // 设置字段 deadline
-                            Field deadlineField = clazz.getDeclaredField(DeadlineEventInitializer.QUADRANT_DEADLINE);
-                            deadlineField.setAccessible(true);
-                            deadlineField.set(updateQuadrant, nextDeadline);
-                            deadlineField.setAccessible(false);
-                            // 更新
-                            Db.updateById(updateQuadrant);
-                            // 发起下一个定时事件
-                            scheduledUpdate(coreId, id, nextDeadline, quadrantCycle, clazz);
+                        T updateQuadrant = clazz.newInstance();
+                        // 设置字段 id
+                        Field idField = clazz.getDeclaredField(DeadlineEventInitializer.QUADRANT_ID);
+                        idField.setAccessible(true);
+                        idField.set(updateQuadrant, id);
+                        idField.setAccessible(false);
+                        // 设置字段 deadline
+                        Field deadlineField = clazz.getDeclaredField(DeadlineEventInitializer.QUADRANT_DEADLINE);
+                        deadlineField.setAccessible(true);
+                        deadlineField.set(updateQuadrant, nextDeadline);
+                        deadlineField.setAccessible(false);
+                        // 更新
+                        Db.updateById(updateQuadrant);
+                        // 发起下一个定时事件
+                        scheduledUpdate(coreId, id, nextDeadline, quadrantCycle, clazz);
                     }
                 } catch (Exception e) {
                     throw new GlobalServiceException(e.getMessage());

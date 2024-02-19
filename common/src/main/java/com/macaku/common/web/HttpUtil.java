@@ -20,11 +20,22 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class HttpUtil {
 
-    public static String getBody(HttpServletRequest request) {
+    private static final String GET = "GET";
+
+    private static final String POST = "POST";
+
+    private static final Integer HTTP_CONNECT_TIMEOUT = 15000;
+
+    private static final Integer HTTP_READ_TIMEOUT = 60000;
+
+    private static final Integer HTTP_CODE = 200;
+
+    public static String getRequestBody(HttpServletRequest request) {
         ServletInputStream inputStream = null;
         StringBuilder builder = new StringBuilder();
         try {
@@ -38,54 +49,6 @@ public class HttpUtil {
             throw new GlobalServiceException(e.getMessage());
         }
         return builder.toString();
-    }
-
-    public static String doGet(String httpUrl) {
-        return doGet(httpUrl, null);
-    }
-
-
-    public static String doGet(String httpUrl, Map<String, Object> map) {
-        // 有queryString的就加
-        httpUrl += HttpUtil.getQueryString(map);
-        HttpURLConnection connection = null;
-        InputStream inputStream = null;
-        BufferedReader bufferedReader = null;
-        String result = null;// 返回结果字符串
-        try {
-            // 创建远程url连接对象
-            URL url = new URL(httpUrl);
-            // 通过远程url连接对象打开一个连接，强转成httpURLConnection类
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setConnectTimeout(15000);
-            connection.setReadTimeout(60000);
-            connection.connect();
-            if (connection.getResponseCode() == 200) {
-                inputStream = connection.getInputStream();
-                // 封装输入流，并指定字符集
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-                // 存放数据
-                StringBuilder sbf = new StringBuilder();
-                String temp;
-                while ((temp = bufferedReader.readLine()) != null) {
-                    sbf.append(temp);
-                    sbf.append(System.getProperty("line.separator"));
-                }
-                result = sbf.toString();
-            }
-        } catch (IOException e) {
-            throw new GlobalServiceException(e.getMessage());
-        } finally {
-            try {
-                bufferedReader.close();
-                inputStream.close();
-                connection.disconnect();// 关闭远程连接
-            } catch (IOException e) {
-                throw new GlobalServiceException(e.getMessage());
-            }
-        }
-        return result;
     }
 
     public static String getFormBody(Map<String, Object> map) {
@@ -114,6 +77,54 @@ public class HttpUtil {
         }
     }
 
+    public static String doGet(String httpUrl) {
+        return doGet(httpUrl, null);
+    }
+
+
+    public static String doGet(String httpUrl, Map<String, Object> map) {
+        // 有queryString的就加
+        httpUrl += HttpUtil.getQueryString(map);
+        HttpURLConnection connection = null;
+        InputStream inputStream = null;
+        BufferedReader bufferedReader = null;
+        String result = null;// 返回结果字符串
+        try {
+            // 创建远程url连接对象
+            URL url = new URL(httpUrl);
+            // 通过远程url连接对象打开一个连接，强转成httpURLConnection类
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(GET);
+            connection.setConnectTimeout(HTTP_CONNECT_TIMEOUT);
+            connection.setReadTimeout(HTTP_READ_TIMEOUT);
+            connection.connect();
+            if (connection.getResponseCode() == HTTP_CODE) {
+                inputStream = connection.getInputStream();
+                // 封装输入流，并指定字符集
+                bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+                // 存放数据
+                StringBuilder sbf = new StringBuilder();
+                String temp;
+                while ((temp = bufferedReader.readLine()) != null) {
+                    sbf.append(temp);
+                    sbf.append(System.getProperty("line.separator"));
+                }
+                result = sbf.toString();
+            }
+        } catch (IOException e) {
+            throw new GlobalServiceException(e.getMessage());
+        } finally {
+            try {
+                bufferedReader.close();
+                inputStream.close();
+                connection.disconnect();// 关闭远程连接
+            } catch (IOException e) {
+                throw new GlobalServiceException(e.getMessage());
+            }
+        }
+        return result;
+    }
+
     public static String doPostFrom(String httpUrl, Map<String, Object> map) {
         HttpURLConnection connection = null;
         InputStream inputStream = null;
@@ -125,14 +136,14 @@ public class HttpUtil {
             // 通过远程url连接对象打开连接
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
-            connection.setConnectTimeout(15000);
-            connection.setReadTimeout(60000);
+            connection.setConnectTimeout(HTTP_CONNECT_TIMEOUT);
+            connection.setReadTimeout(HTTP_READ_TIMEOUT);
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             outputStream = connection.getOutputStream();
             outputStream.write(getFormBody(map).getBytes());
             // 通过连接对象获取一个输入流，向远程读取
-            if (connection.getResponseCode() == 200) {
+            if (connection.getResponseCode() == HTTP_CODE) {
                 inputStream = connection.getInputStream();
                 // 对输入流对象进行包装:charset根据工作项目组的要求来设置
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
@@ -171,21 +182,21 @@ public class HttpUtil {
             // 通过远程url连接对象打开连接
             connection = (HttpURLConnection) url.openConnection();
             // 设置连接请求方式
-            connection.setRequestMethod("POST");
-            connection.setConnectTimeout(15000);
-            connection.setReadTimeout(60000);
+            connection.setRequestMethod(POST);
+            connection.setConnectTimeout(HTTP_CONNECT_TIMEOUT);
+            connection.setReadTimeout(HTTP_READ_TIMEOUT);
             connection.setDoOutput(true);
             connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             outputStream = connection.getOutputStream();
             outputStream.write(json.getBytes());
-            if (connection.getResponseCode() == 200) {
+            if (connection.getResponseCode() == HTTP_CODE) {
                 inputStream = connection.getInputStream();
                 // 对输入流对象进行包装:charset根据工作项目组的要求来设置
                 bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
                 StringBuilder sbf = new StringBuilder();
                 String temp;
                 // 循环遍历一行一行读取数据
-                while ((temp = bufferedReader.readLine()) != null) {
+                while (Objects.nonNull(temp = bufferedReader.readLine())) {
                     sbf.append(temp);
                     sbf.append(System.getProperty("line.separator"));
                 }
@@ -212,9 +223,9 @@ public class HttpUtil {
         httpClient = HttpClients.createDefault();
         HttpPost httpPost = new HttpPost(url);
         RequestConfig requestConfig = RequestConfig.custom()
-                .setConnectTimeout(15000)   //连接服务区主机超时时间
-                .setConnectionRequestTimeout(60000) //连接请求超时时间
-                .setSocketTimeout(60000).build(); //设置读取响应数据超时时间
+                .setConnectTimeout(HTTP_CONNECT_TIMEOUT)   //连接服务区主机超时时间
+                .setConnectionRequestTimeout(HTTP_READ_TIMEOUT) //连接请求超时时间
+                .setSocketTimeout(HTTP_READ_TIMEOUT).build(); //设置读取响应数据超时时间
         httpPost.setConfig(requestConfig);
         httpPost.setEntity(new StringEntity(json, "UTF-8"));
         //添加头信息
@@ -247,11 +258,11 @@ public class HttpUtil {
     public static InputStream getFileInputStream(String fileUrl) throws IOException {
         URL url = new URL(fileUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setConnectTimeout(15000);
-        connection.setReadTimeout(60000);
+        connection.setRequestMethod(GET);
+        connection.setConnectTimeout(HTTP_CONNECT_TIMEOUT);
+        connection.setReadTimeout(HTTP_READ_TIMEOUT);
         connection.connect();
-        return connection.getResponseCode() == 200 ? connection.getInputStream() : null;
+        return connection.getResponseCode() == HTTP_CODE ? connection.getInputStream() : null;
     }
 
 }
