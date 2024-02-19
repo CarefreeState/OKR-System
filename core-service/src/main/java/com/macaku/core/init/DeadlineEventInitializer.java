@@ -36,7 +36,6 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
 
     private final ThirdQuadrantService thirdQuadrantService;
 
-
     private void handleEvent(DeadlineEvent deadlineEvent) {
         Long id = deadlineEvent.getId();
         Date firstQuadrantDeadline = deadlineEvent.getFirstQuadrantDeadline();

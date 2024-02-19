@@ -192,6 +192,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
             }
             // 保存一下
             String mapPath = MediaUtil.saveImage(data);
+            // todo: 上限时限制邀请码生成
 //            redisCache.setCacheObject(redisKey, mapPath, TEAM_QR_MAP_TTL, TEAM_QR_MAP_UNIT);
             return mapPath;
         });

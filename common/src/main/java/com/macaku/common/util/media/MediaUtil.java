@@ -30,16 +30,28 @@ public class MediaUtil {
         return UUID.randomUUID().toString().replace("-", "");
     }
 
-    /**
-     *
-     */
-    public static String getUniqueFileName() {
+    public static String getUniqueImageName() {
         //拼接
         return String.format("%s.%s", getUUID_32(), SUFFIX);
     }
 
     public static String getFilePath(String mapPath) {
         return StaticMapperConfig.ROOT + mapPath;
+    }
+
+    public static void tryCreateFile(String savePath, String filePath) {
+        File directory = new File(savePath);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        File file = new File(filePath);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new GlobalServiceException(e.getMessage());
+            }
+        }
     }
 
     /**
@@ -59,34 +71,38 @@ public class MediaUtil {
 
     public static String saveImage(byte[] imageData) {
         String savePath = StaticMapperConfig.ROOT + StaticMapperConfig.MAP_ROOT;
-        String fileName = getUniqueFileName();
+        String fileName = getUniqueImageName();
         String filePath = savePath + fileName;
         String mapPath = StaticMapperConfig.MAP_ROOT + fileName;
-        File directory = new File(savePath);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        }
-        File file = new File(filePath);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                throw new GlobalServiceException(e.getMessage());
-            }
-        }
-        try (OutputStream outputStream = Files.newOutputStream(Paths.get(filePath))) {
-            outputStream.write(imageData);
+        saveFile(savePath, filePath, imageData);
+        log.info("图片保存成功 {}", filePath);
+        return mapPath;
+    }
+
+    public static void saveFile(String savePath, String filePath, String url) {
+        MediaUtil.tryCreateFile(savePath, filePath);
+        try(InputStream inputStream = HttpUtil.getFileInputStream(url);
+            OutputStream outputStream = Files.newOutputStream(Paths.get(filePath))) {
+            byte[] data  = MediaUtil.inputStreamToByte(inputStream);
+            outputStream.write(data);
             outputStream.flush();
-            log.info("图片保存成功 {}", filePath);
-            return mapPath;
         } catch (IOException e) {
             throw new GlobalServiceException(e.getMessage());
         }
     }
 
-    public static void deleteFile(String mapPath) {
-        String filePath = getFilePath(mapPath);
-        File file = new File(filePath);
+    public static void saveFile(String savePath, String filePath, byte[] data) {
+        MediaUtil.tryCreateFile(savePath, filePath);
+        try(OutputStream outputStream = Files.newOutputStream(Paths.get(filePath))) {
+            outputStream.write(data);
+            outputStream.flush();
+        } catch (IOException e) {
+            throw new GlobalServiceException(e.getMessage());
+        }
+    }
+
+    public static void deleteFile(String path) {
+        File file = new File(path);
         if (!file.exists()) {
             file.delete();
         }
