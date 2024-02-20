@@ -12,20 +12,21 @@
         <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
         <result property="isOver" column="is_over" jdbcType="BIT"/>
-        <association property="manager" resultMap="com.macaku.user.mapper.UserMapper.VOResultMap" columnPrefix="u_"/>
+        <association property="manager" resultMap="com.macaku.user.mapper.UserMapper.VOResultMap" columnPrefix="m_"/>
     </resultMap>
 
     <select id="getTeamPersonalOkrList" parameterType="java.lang.Long" resultMap="TeamListMap">
         select
             tp.id, o.id, tp.team_id, t.team_name, o.is_over, tp.create_time, tp.update_time, tp.core_id,
-            u.id u_id, u.nickname u_nickname, u.email u_email, u.phone u_phone, u.openid u_openid, u.unionid u_unionid, u.photo u_photo
-        from user u, team_okr t, okr_core o, team_personal_okr tp
+            m.id m_id, m.nickname m_nickname, m.email m_email, m.phone m_phone, m.openid m_openid, m.unionid m_unionid, m.photo m_photo
+        from user u, team_okr t, okr_core o, team_personal_okr tp, user m
         where
             u.id = #{id,jdbcType=BIGINT}
-          and u.is_deleted = 0 and t.is_deleted = 0 and o.is_deleted = 0 and tp.is_deleted = 0
+          and u.is_deleted = 0 and t.is_deleted = 0 and o.is_deleted = 0 and tp.is_deleted = 0 and m.is_deleted = 0
           and u.id = tp.user_id
           and tp.core_id = o.id
           and tp.team_id = t.id
+          and t.manager_id = m.id
         order by o.is_over, o.create_time desc
     </select>
 

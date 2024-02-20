@@ -1,7 +1,6 @@
 package com.macaku.center.domain.vo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.macaku.user.domain.vo.UserVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -24,7 +23,6 @@ public class TeamOkrVO {
     @ApiModelProperty("团队 OKR ID")
     private Long id;
 
-    @JsonInclude
     @TableField("parent_team_id")
     @ApiModelProperty("团队 OKR ID")
     private Long parentTeamId;
