@@ -23,6 +23,8 @@ public interface MemberService {
 
     void setExistsInTeam(Long teamId, Long userId);
 
+    void setNotExistsInTeam(Long teamId, Long userId);
+
     void removeMember(Long teamId, Long memberOkrId, Long userId);
 
 }

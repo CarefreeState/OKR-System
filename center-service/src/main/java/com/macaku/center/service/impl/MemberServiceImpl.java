@@ -102,6 +102,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public void setNotExistsInTeam(Long teamId, Long userId) {
+        Long rootId = TeamOkrUtil.getTeamRootId(teamId);
+        // 查看是否有缓存
+        String redisKey = USER_TEAM_MEMBER + rootId;
+        redisCache.setCacheMapValue(redisKey, userId, false);
+    }
+
+    @Override
     public void removeMember(Long teamId, Long memberOkrId, Long userId) {
         // 判断是否扩展了
         Boolean isExtend = haveExtendTeam(teamId, userId);
@@ -113,6 +121,8 @@ public class MemberServiceImpl implements MemberService {
         Db.lambdaUpdate(TeamPersonalOkr.class)
                 .eq(TeamPersonalOkr::getId, memberOkrId)
                 .remove();
+        // 设置为不存在
+        setNotExistsInTeam(teamId, userId);
     }
 
 }
