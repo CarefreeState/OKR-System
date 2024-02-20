@@ -1,6 +1,7 @@
 package com.macaku.center.domain.vo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.macaku.user.domain.vo.UserVO;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -45,6 +46,9 @@ public class TeamPersonalOkrVO {
     @TableField("update_time")
     @ApiModelProperty("更新时间")
     private Date updateTime;
+
+    @ApiModelProperty("管理员")
+    private UserVO manager;
 
 }
 

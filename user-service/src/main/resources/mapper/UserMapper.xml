@@ -18,6 +18,16 @@
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <resultMap id="VOResultMap" type="com.macaku.user.domain.vo.UserVO">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="openid" column="openid" jdbcType="VARCHAR"/>
+        <result property="unionid" column="unionid" jdbcType="VARCHAR"/>
+        <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+        <result property="photo" column="photo" jdbcType="VARCHAR"/>
+        <result property="email" column="email" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="CHAR"/>
+    </resultMap>
+
     <sql id="Base_Column_List">
         id,openid,unionid,
         nickname,photo,email,

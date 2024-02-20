@@ -53,7 +53,7 @@ public class SwaggerConfig {
                 ApiInfo apiInfo = new ApiInfoBuilder()
                         .title("OKR 系统API")
                         .description("OKR 系统相关接口文档！")
-                        .contact(new Contact("发际线与我作对", "https://github.com/CarefreeState/OKR-System", "2040484356@qq.com"))
+                        .contact(new Contact("发际线与我作队", "https://github.com/CarefreeState/OKR-System", "2040484356@qq.com"))
                         .version("3.0")
                         .build();
                 return apiInfo;

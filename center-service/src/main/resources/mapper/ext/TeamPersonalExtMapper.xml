@@ -4,9 +4,21 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.macaku.center.mapper.TeamPersonalOkrMapper">
 
-    <select id="getTeamPersonalOkrList" parameterType="java.lang.Long" resultType="com.macaku.center.domain.vo.TeamPersonalOkrVO">
+    <resultMap id="TeamListMap" type="com.macaku.center.domain.vo.TeamPersonalOkrVO">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="coreId" column="core_id" jdbcType="BIGINT"/>
+        <result property="teamId" column="team_id" jdbcType="BIGINT"/>
+        <result property="teamName" column="team_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isOver" column="is_over" jdbcType="BIT"/>
+        <association property="manager" resultMap="com.macaku.user.mapper.UserMapper.VOResultMap" columnPrefix="u_"/>
+    </resultMap>
+
+    <select id="getTeamPersonalOkrList" parameterType="java.lang.Long" resultMap="TeamListMap">
         select
-            tp.id, o.id, tp.team_id, t.team_name, o.is_over, tp.create_time, tp.update_time, tp.core_id
+            tp.id, o.id, tp.team_id, t.team_name, o.is_over, tp.create_time, tp.update_time, tp.core_id,
+            u.id u_id, u.nickname u_nickname, u.email u_email, u.phone u_phone, u.openid u_openid, u.unionid u_unionid, u.photo u_photo
         from user u, team_okr t, okr_core o, team_personal_okr tp
         where
             u.id = #{id,jdbcType=BIGINT}

@@ -25,15 +25,15 @@ import java.util.Set;
 
 public class HttpUtil {
 
-    private static final String GET = "GET";
+    private final static String GET = "GET";
 
-    private static final String POST = "POST";
+    private final static String POST = "POST";
 
-    private static final Integer HTTP_CONNECT_TIMEOUT = 15000;
+    private final static Integer HTTP_CONNECT_TIMEOUT = 15000;
 
-    private static final Integer HTTP_READ_TIMEOUT = 60000;
+    private final static Integer HTTP_READ_TIMEOUT = 60000;
 
-    private static final Integer HTTP_CODE = 200;
+    private final static Integer HTTP_CODE = 200;
 
     public static String getRequestBody(HttpServletRequest request) {
         ServletInputStream inputStream = null;

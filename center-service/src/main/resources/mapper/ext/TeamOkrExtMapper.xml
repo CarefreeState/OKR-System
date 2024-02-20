@@ -11,6 +11,17 @@
                     resultMap="com.macaku.core.mapper.inner.KeyResultMapper.BaseResultMap" columnPrefix="k_" />
     </resultMap>
 
+    <resultMap id="TeamListMap" type="com.macaku.center.domain.vo.TeamOkrVO">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="coreId" column="core_id" jdbcType="BIGINT"/>
+        <result property="parentTeamId" column="parent_team_id" jdbcType="BIGINT"/>
+        <result property="teamName" column="team_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isOver" column="is_over" jdbcType="BIT"/>
+        <association property="manager" resultMap="com.macaku.user.mapper.UserMapper.VOResultMap" columnPrefix="u_"/>
+    </resultMap>
+
     <select id="selectChildTeams" resultMap="BaseResultMap" >
         call GetTreeNodes(#{id,jdbcType=BIGINT})
     </select>
@@ -19,9 +30,10 @@
         call find_root_node(#{id,jdbcType=BIGINT})
     </select>
 
-    <select id="getTeamOkrList" parameterType="java.lang.Long" resultType="com.macaku.center.domain.vo.TeamOkrVO">
+    <select id="getTeamOkrList" parameterType="java.lang.Long" resultMap="TeamListMap">
         select
-            t.id, o.id, t.team_name, o.is_over, t.create_time, t.update_time, t.core_id, t.parent_team_id
+            t.id, t.team_name, o.is_over, t.create_time, t.update_time, t.core_id, t.parent_team_id,
+            u.id u_id, u.nickname u_nickname, u.email u_email, u.phone u_phone, u.openid u_openid, u.unionid u_unionid, u.photo u_photo
         from user u, team_okr t, okr_core o
         where
             u.id = #{id,jdbcType=BIGINT}
