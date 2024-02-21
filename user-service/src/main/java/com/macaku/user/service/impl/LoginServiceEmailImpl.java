@@ -15,9 +15,7 @@ import com.macaku.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created With Intellij IDEA
@@ -42,7 +40,6 @@ public class LoginServiceEmailImpl implements LoginService {
 
     @Override
     public boolean match(String type) {
-//        return false;
         return ShortCodeUtil.getShortCode(TYPE).equals(type);
     }
 
@@ -65,9 +62,6 @@ public class LoginServiceEmailImpl implements LoginService {
         }else {
             user.setId(dbUser.getId());
         }
-        // 记录一下
-        redisCache.setCacheObject(JwtUtil.JWT_LOGIN_EMAIL_USER + user.getId(), dbUser,
-                JwtUtil.JWT_TTL, JwtUtil.JWT_TTL_UNIT);
         // 构造 token
         Map<String, Object> tokenData = new HashMap<String, Object>(){{
             this.put(ExtractUtil.ID, user.getId());
@@ -80,4 +74,5 @@ public class LoginServiceEmailImpl implements LoginService {
             this.put(JwtUtil.JWT_HEADER, token);
         }};
     }
+
 }

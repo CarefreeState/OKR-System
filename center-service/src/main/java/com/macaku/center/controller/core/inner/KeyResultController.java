@@ -52,7 +52,7 @@ public class KeyResultController {
                                            @RequestBody OkrKeyResultDTO okrKeyResultDTO) {
         // 校验
         okrKeyResultDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         KeyResultDTO keyResultDTO = okrKeyResultDTO.getKeyResultDTO();
         keyResultDTO.validate();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrKeyResultDTO.getScene());
@@ -77,7 +77,7 @@ public class KeyResultController {
                                               @RequestBody OkrKeyResultUpdateDTO okrKeyResultUpdateDTO) {
         // 校验
         okrKeyResultUpdateDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         KeyResultUpdateDTO keyResultUpdateDTO = okrKeyResultUpdateDTO.getKeyResultUpdateDTO();
         keyResultUpdateDTO.validate();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrKeyResultUpdateDTO.getScene());

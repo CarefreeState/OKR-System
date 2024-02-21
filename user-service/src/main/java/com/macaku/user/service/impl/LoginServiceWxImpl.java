@@ -15,9 +15,7 @@ import com.macaku.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created With Intellij IDEA
@@ -76,12 +74,11 @@ public class LoginServiceWxImpl implements LoginService {
             // 更新一下数据
             userService.lambdaUpdate().eq(User::getOpenid, openid).update(user);
         }
-        redisCache.setCacheObject(JwtUtil.JWT_LOGIN_WX_USER + openid, dbUser, JwtUtil.JWT_TTL, JwtUtil.JWT_TTL_UNIT);
         // 5. 构造 token
         Map<String, Object> tokenData = new HashMap<String, Object>(){{
             this.put(ExtractUtil.OPENID, openid);
             this.put(ExtractUtil.UNIONID, unionid);
-            this.put(ExtractUtil.SESSION_KEY, sessionKey);
+//            this.put(ExtractUtil.SESSION_KEY, sessionKey);
         }};
         String jsonData = JsonUtil.analyzeData(tokenData);
         String token = JwtUtil.createJWT(jsonData);
@@ -90,6 +87,4 @@ public class LoginServiceWxImpl implements LoginService {
             this.put(JwtUtil.JWT_HEADER, token);
         }};
     }
-
-
 }

@@ -54,7 +54,7 @@ public class ThirdQuadrantController {
         Integer quadrantCycle = initQuadrantDTO.getQuadrantCycle();
         Long quadrantId = initQuadrantDTO.getId();
         Long coreId = thirdQuadrantService.getThirdQuadrantCoreId(quadrantId);
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrInitQuadrantDTO.getScene());
         // 检测身份
         Long userId = okrOperateService.getCoreUser(coreId);

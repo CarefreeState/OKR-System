@@ -42,7 +42,7 @@ public class TeamPersonalOkrController {
     @ApiOperation("获取团队个人 OKR 列表")
     public SystemJsonResponse<List<TeamPersonalOkrVO>> getTeamOkrs(HttpServletRequest request) {
         // 获取当前登录的用户
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         // 调用方法
         List<TeamPersonalOkrVO> teamPersonalOkrVOS = teamPersonalOkrService.getTeamPersonalOkrList(user);
         return SystemJsonResponse.SYSTEM_SUCCESS(teamPersonalOkrVOS);
@@ -53,7 +53,7 @@ public class TeamPersonalOkrController {
     public SystemJsonResponse<List<TeamMemberVO>> getTeamMember(HttpServletRequest request,
                                                                 @PathVariable("teamId") @NonNull @ApiParam("团队 OKR ID") Long teamId) {
         // 获取当前登录用户
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         // 判断是不是团队成员
         memberService.checkExistsInTeam(teamId, user.getId());
         // 查询
@@ -75,7 +75,7 @@ public class TeamPersonalOkrController {
         Long teamId = teamPersonalOkr.getTeamId();
         Long useId = teamPersonalOkr.getUserId();
         // 获取当前登录用户
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         // 判断是不是团队成员
         memberService.checkExistsInTeam(teamId, user.getId());
         // 尝试删除

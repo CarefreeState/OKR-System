@@ -1,6 +1,6 @@
 package com.macaku.user.service;
 
-import com.macaku.user.domain.po.User;
+import com.macaku.user.domain.dto.detail.LoginUser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -16,7 +16,7 @@ public interface UserRecordService {
 
     boolean match(String type);
 
-    Optional<User> getRecord(HttpServletRequest request);
+    Optional<LoginUser> getRecord(HttpServletRequest request);
 
     void deleteRecord(HttpServletRequest request);
 }

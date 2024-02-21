@@ -10,7 +10,9 @@ import com.macaku.user.mapper.UserMapper;
 import com.macaku.user.token.TokenUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -41,6 +43,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         user.setId(userId);
         // 修改
         this.lambdaUpdate().eq(User::getId, userId).update(user);
+    }
+
+    @Override
+    public List<String> getPermissions(Long userId) {
+        return Collections.emptyList();
     }
 }
 

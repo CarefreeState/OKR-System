@@ -53,7 +53,7 @@ public class StatusFlagController {
                                             @RequestBody OkrStatusFlagDTO okrStatusFlagDTO) {
         // 检查
         okrStatusFlagDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         StatusFlagDTO statusFlagDTO = okrStatusFlagDTO.getStatusFlagDTO();
         statusFlagDTO.validate();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrStatusFlagDTO.getScene());
@@ -78,7 +78,7 @@ public class StatusFlagController {
     public SystemJsonResponse remove(HttpServletRequest request,
                                      @RequestBody OkrStatusFlagRemoveDTO okrStatusFlagRemoveDTO) {
         okrStatusFlagRemoveDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         Long statusFlagId = okrStatusFlagRemoveDTO.getId();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrStatusFlagRemoveDTO.getScene());
         // 检测身份
@@ -99,7 +99,7 @@ public class StatusFlagController {
                                      @RequestBody OkrStatusFlagUpdateDTO okrStatusFlagUpdateDTO) {
         // 检查
         okrStatusFlagUpdateDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         StatusFlagUpdateDTO statusFlagUpdateDTO = okrStatusFlagUpdateDTO.getStatusFlagUpdateDTO();
         statusFlagUpdateDTO.validate();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrStatusFlagUpdateDTO.getScene());

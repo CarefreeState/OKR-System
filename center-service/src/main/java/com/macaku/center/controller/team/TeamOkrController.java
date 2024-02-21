@@ -47,7 +47,7 @@ public class TeamOkrController {
     @ApiOperation("获取管理的团队 OKR 列表")
     public SystemJsonResponse<List<TeamOkrVO>> getTeamOkrs(HttpServletRequest request) {
         // 获取当前登录的用户
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         // 调用方法
         List<TeamOkrVO> teamOkrVOS = teamOkrService.getTeamOkrList(user);
         return SystemJsonResponse.SYSTEM_SUCCESS(teamOkrVOS);
@@ -58,7 +58,7 @@ public class TeamOkrController {
     public SystemJsonResponse updateName(HttpServletRequest request,
                                          @RequestBody TeamUpdateDTO teamUpdateDTO) {
         // 获取当前登录用户
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         // 判断是不是管理员
         Long managerId = user.getId();
         teamUpdateDTO.validate();
@@ -80,7 +80,7 @@ public class TeamOkrController {
                                                              @PathVariable("id") @NonNull @ApiParam("团队 OKR ID") Long id) {
         // 获取当前团队的祖先 ID
         Long rootId = TeamOkrUtil.getTeamRootId(id);
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         Long userId = user.getId();
         // 判断是否是其中的成员
         memberService.checkExistsInTeam(rootId, userId);
@@ -100,7 +100,7 @@ public class TeamOkrController {
     public SystemJsonResponse<List<TeamOkrStatisticVO>> getChildTree(HttpServletRequest request,
                                                              @PathVariable("id") @NonNull @ApiParam("团队 OKR ID") Long id) {
         // 获取当前团队的祖先 ID
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         Long userId = user.getId();
         // 判断是否是其中的成员
         memberService.checkExistsInTeam(id, userId);
@@ -122,7 +122,7 @@ public class TeamOkrController {
         // 检测
         grantDTO.validate();
         // 获取当前管理员 ID
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         Long managerId = user.getId();
         Long userId = grantDTO.getUserId();
         Long teamId = grantDTO.getTeamId();
@@ -135,7 +135,7 @@ public class TeamOkrController {
     public SystemJsonResponse<String> getQRCode(HttpServletRequest request,
                                                 @PathVariable("teamId") @NonNull @ApiParam("团队 OKR ID") Long teamId) {
         // 检测
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         Long managerId = user.getId();
         // 检测管理者身份
         teamOkrService.checkManager(teamId, managerId);

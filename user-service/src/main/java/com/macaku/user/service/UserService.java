@@ -4,6 +4,8 @@ import com.macaku.user.domain.dto.UserinfoDTO;
 import com.macaku.user.domain.po.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
 * @author 马拉圈
 * @description 针对表【user(用户表)】的数据库操作Service
@@ -14,4 +16,6 @@ public interface UserService extends IService<User> {
     String getUserFlag(String code);
 
     void improveUserinfo(UserinfoDTO userinfoDTO, Long userId);
+
+    List<String> getPermissions(Long userId);
 }

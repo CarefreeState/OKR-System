@@ -47,7 +47,7 @@ public class OkrCoreController {
                                                              @RequestBody OkrOperateDTO okrOperateDTO) {
         // 检测
         okrOperateDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrOperateDTO.getScene());
         Map<String, Object> ret = okrOperateService.createOkrCore(user, okrOperateDTO);
         return SystemJsonResponse.SYSTEM_SUCCESS(ret);
@@ -58,7 +58,7 @@ public class OkrCoreController {
     public SystemJsonResponse<OkrCoreVO> searchOkrCore(HttpServletRequest request,
                                                        @RequestBody OkrCoreDTO okrCoreDTO) {
         okrCoreDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
         OkrCoreVO okrCoreVO = okrOperateService.selectAllOfCore(user, okrCoreDTO.getCoreId());
         return SystemJsonResponse.SYSTEM_SUCCESS(okrCoreVO);
@@ -73,7 +73,7 @@ public class OkrCoreController {
             throw new GlobalServiceException(GlobalServiceStatusCode.INVALID_CELEBRATE_DAY);
         }
         okrCoreDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         Long coreId = okrCoreDTO.getCoreId();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
         Long userId = okrOperateService.getCoreUser(coreId);
@@ -92,7 +92,7 @@ public class OkrCoreController {
                                          @RequestBody OkrCoreSummaryDTO okrCoreSummaryDTO) {
         // 检测
         okrCoreSummaryDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         Long coreId = okrCoreSummaryDTO.getCoreId();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreSummaryDTO.getScene());
         Long userId = okrOperateService.getCoreUser(coreId);
@@ -114,7 +114,7 @@ public class OkrCoreController {
         // 检测
         okrCoreDTO.validate();
         Long coreId = okrCoreDTO.getCoreId();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
         Long userId = okrOperateService.getCoreUser(coreId);
         if(user.getId().equals(userId)) {

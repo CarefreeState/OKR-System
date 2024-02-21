@@ -16,14 +16,17 @@ import javax.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(GlobalServiceException.class)
-    public SystemJsonResponse handleGlobalServiceException(GlobalServiceException e, HttpServletRequest request) {
+    public static SystemJsonResponse getGlobalServiceExceptionResult(GlobalServiceException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String message = e.getMessage();
         GlobalServiceStatusCode statusCode = e.getStatusCode();
         log.error("请求地址'{}', {}: {}", requestURI, statusCode, message);
         return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(statusCode, message);
-//        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(statusCode, statusCode.getMessage());
+    }
+
+    @ExceptionHandler(GlobalServiceException.class)
+    public SystemJsonResponse handleGlobalServiceException(GlobalServiceException e, HttpServletRequest request) {
+        return getGlobalServiceExceptionResult(e, request);
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
@@ -51,7 +54,6 @@ public class GlobalExceptionHandler {
         log.error("请求地址'{}' {}", requestURI, message);
         e.printStackTrace();
         return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.SYSTEM_SERVICE_FAIL, message);
-//        return SystemJsonResponse.CUSTOMIZE_MSG_ERROR(GlobalServiceStatusCode.SYSTEM_SERVICE_FAIL, GlobalServiceStatusCode.SYSTEM_SERVICE_FAIL.getMessage());
     }
 
 }

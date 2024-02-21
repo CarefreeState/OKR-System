@@ -4,10 +4,12 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.user.component.UserRecordServiceSelector;
+import com.macaku.user.domain.dto.detail.LoginUser;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.interceptor.config.VisitConfig;
 import com.macaku.user.service.UserRecordService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -34,8 +36,14 @@ public class UserRecordUtil {
         return USER_RECORD_SERVICE_SELECTOR.select(type);
     }
 
-    public static User getUserRecord(HttpServletRequest request) {
+    public static LoginUser getUserRecord(HttpServletRequest request) {
         return selectService(request).getRecord(request).orElse(null);
+    }
+
+
+    public static User getUserRecord() {
+        LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return loginUser.getUser();
     }
 
     public static void deleteUserRecord(HttpServletRequest request) {

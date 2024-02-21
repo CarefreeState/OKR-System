@@ -47,7 +47,7 @@ public class FirstQuadrantController {
                                                 @RequestBody OkrFirstQuadrantDTO okrFirstQuadrantDTO) {
         // 校验
         okrFirstQuadrantDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         FirstQuadrantDTO firstQuadrantDTO = okrFirstQuadrantDTO.getFirstQuadrantDTO();
         firstQuadrantDTO.validate();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrFirstQuadrantDTO.getScene());

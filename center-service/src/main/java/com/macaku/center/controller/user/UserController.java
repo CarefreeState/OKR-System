@@ -1,12 +1,12 @@
 package com.macaku.center.controller.user;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.macaku.user.domain.vo.UserVO;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.user.component.LoginServiceSelector;
 import com.macaku.user.domain.dto.UserinfoDTO;
 import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
+import com.macaku.user.domain.vo.UserVO;
 import com.macaku.user.interceptor.config.VisitConfig;
 import com.macaku.user.service.LoginService;
 import com.macaku.user.service.UserService;
@@ -54,7 +54,7 @@ public class UserController {
     public SystemJsonResponse improveUserinfo(HttpServletRequest request,
                                               @RequestBody UserinfoDTO userinfoDTO) {
         // 获取当前用户 ID
-        Long userId = UserRecordUtil.getUserRecord(request).getId();
+        Long userId = UserRecordUtil.getUserRecord().getId();
         // 完善信息
         userService.improveUserinfo(userinfoDTO, userId);
         // 删除记录
@@ -66,11 +66,10 @@ public class UserController {
     @ApiOperation("获取用户信息")
     public SystemJsonResponse<UserVO> getUserInfo(HttpServletRequest request) {
         // 获取当前登录用户
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         // 提取信息
         UserVO userVO = BeanUtil.copyProperties(user, UserVO.class);
         // 返回
         return SystemJsonResponse.SYSTEM_SUCCESS(userVO);
     }
-
 }

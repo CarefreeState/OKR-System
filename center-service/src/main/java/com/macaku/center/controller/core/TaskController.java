@@ -49,7 +49,7 @@ public class TaskController {
                                       @RequestBody OkrTaskDTO okrTaskDTO) {
         // 检查
         okrTaskDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         TaskDTO taskDTO = okrTaskDTO.getTaskDTO();
         taskDTO.validate();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrTaskDTO.getScene());
@@ -75,7 +75,7 @@ public class TaskController {
                                          @RequestBody OkrTaskRemoveDTO okrTaskRemoveDTO) {
         // 检查
         okrTaskRemoveDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         Long taskId = okrTaskRemoveDTO.getId();
         // 选择服务
         OkrOperateService okrOperateService = okrServiceSelector.select(okrTaskRemoveDTO.getScene());
@@ -101,7 +101,7 @@ public class TaskController {
         okrTaskUpdateDTO.validate();
         TaskUpdateDTO taskUpdateDTO = okrTaskUpdateDTO.getTaskUpdateDTO();
         taskUpdateDTO.validate();
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         // 选择服务
         OkrOperateService okrOperateService = okrServiceSelector.select(okrTaskUpdateDTO.getScene());
         TaskService taskService = taskServiceSelector.select(option);

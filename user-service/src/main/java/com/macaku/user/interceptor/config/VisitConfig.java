@@ -1,7 +1,6 @@
 package com.macaku.user.interceptor.config;
 
 import com.macaku.user.interceptor.ForceInterceptor;
-import com.macaku.user.interceptor.UserLoginInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,11 +13,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class VisitConfig implements WebMvcConfigurer {
 
-    public static final String HEADER = "Login-Type";
-
-    private final UserLoginInterceptor userLoginInterceptor;
+    public final static String HEADER = "Login-Type";
 
     private final ForceInterceptor forceInterceptor;
+
+    public final static String[] swaggers = {
+        "/doc.html/**",
+        "/v3/api-docs/**",
+        "/webjars/**",
+        "/error",
+        "/favicon.ico",
+        "/swagger-resources/**",
+        "/swagger-ui/**"
+    };
 
     @Value("${visit.swagger}")
     private Boolean swaggerCanBeVisited;
@@ -26,23 +33,6 @@ public class VisitConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // 接口文档
-        String[] swaggers = {
-                "/doc.html/**",
-                "/v3/api-docs/**",
-                "/webjars/**",
-                "/error",
-                "/favicon.ico",
-                "/swagger-resources/**",
-                "/swagger-ui/**"
-        };
-        registry.addInterceptor(userLoginInterceptor)
-                .addPathPatterns("/**")
-                // 不拦截的路径
-                .excludePathPatterns("/user/login")
-                // 静态资源
-                .excludePathPatterns("/media/**")
-                .excludePathPatterns(swaggers)
-        ;
         if(Boolean.FALSE.equals(swaggerCanBeVisited)) {
             registry.addInterceptor(forceInterceptor)
                             .addPathPatterns(swaggers);

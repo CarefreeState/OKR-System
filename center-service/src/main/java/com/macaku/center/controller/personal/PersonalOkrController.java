@@ -34,7 +34,7 @@ public class PersonalOkrController {
     @ApiOperation("获取个人 OKR 列表")
     public SystemJsonResponse<List<PersonalOkrVO>> getPersonalOkrs(HttpServletRequest request) {
         // 获取当前登录的用户
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         // 调用方法
         List<PersonalOkrVO> personalOkrVOS = personalOkrService.getPersonalOkrList(user);
         return SystemJsonResponse.SYSTEM_SUCCESS(personalOkrVOS);

@@ -57,7 +57,7 @@ public class SecondQuadrantController {
         if(secondQuadrantCycle.compareTo(quadrantCycle) > 0) {
             throw new GlobalServiceException(GlobalServiceStatusCode.SECOND_CYCLE_TOO_SHORT);
         }
-        User user = UserRecordUtil.getUserRecord(request);
+        User user = UserRecordUtil.getUserRecord();
         Long quadrantId = initQuadrantDTO.getId();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrInitQuadrantDTO.getScene());
         // 检测身份
