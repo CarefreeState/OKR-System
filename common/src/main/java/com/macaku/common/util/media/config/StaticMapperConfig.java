@@ -12,6 +12,8 @@ public class StaticMapperConfig implements WebMvcConfigurer {
 
     public static String ROOT;
 
+    public static String STATIC_PATH;
+
     /**
      * 配置静态访问资源
      * @param registry
@@ -30,6 +32,11 @@ public class StaticMapperConfig implements WebMvcConfigurer {
     @Value("${media.root}")
     private void setROOT(String root) {
         ROOT = root;
+    }
+
+    @Value("${media.static}")
+    private void setSTATIC_PATH(String staticPath) {
+        STATIC_PATH = staticPath;
     }
 
 }

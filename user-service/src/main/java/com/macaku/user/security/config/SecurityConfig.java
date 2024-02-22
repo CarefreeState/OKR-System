@@ -36,9 +36,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             .and()
             .authorizeRequests()
+            .antMatchers("/").permitAll()
             .antMatchers("/user/login").permitAll()
             .antMatchers("/media/**").permitAll()
-            .antMatchers(AuthFailHandler.redirectUrl).permitAll()
+            .antMatchers(AuthFailHandler.REDIRECT_URL).permitAll()
             .antMatchers(VisitConfig.swaggers).permitAll()
             .anyRequest().authenticated();
         // 添加过滤器
