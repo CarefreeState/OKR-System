@@ -29,18 +29,21 @@ public class AuthFailHandler implements AuthenticationEntryPoint {
 
     public final static String EXCEPTION_MESSAGE = "exceptionMessage";
 
+    public final static String LOCATION_HEADER = "Location";
+
     @Value("${spring.domain}")
     private String domain;
 
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
-        String url = httpServletRequest.getRequestURL().toString();
+        String requestURI = httpServletRequest.getRequestURI();
+        String message = e.getMessage() + String.format("%s    (%s)", e.getMessage(), httpServletResponse.getHeader(EXCEPTION_MESSAGE));
         String redirect = domain + REDIRECT_URL + HttpUtil.getQueryString(new HashMap<String, Object>(){{
-            this.put(EXCEPTION_MESSAGE, e.getMessage());
+            this.put(EXCEPTION_MESSAGE, message);
         }});
-        log.warn("'{}' 重定向 --> '{}'", url, redirect);
+        log.warn("'{}' 重定向 --> '{}'", requestURI, redirect);
         httpServletResponse.setStatus(HttpStatus.FOUND.value());
-        httpServletResponse.setHeader("Location", redirect);
+        httpServletResponse.setHeader(LOCATION_HEADER, redirect);
     }
 
 }

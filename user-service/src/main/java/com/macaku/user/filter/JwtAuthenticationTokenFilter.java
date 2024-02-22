@@ -2,6 +2,7 @@ package com.macaku.user.filter;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.handler.AuthFailHandler;
 import com.macaku.user.domain.dto.detail.LoginUser;
 import com.macaku.user.util.UserRecordUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +37,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             PreAuthenticatedAuthenticationToken authenticationToken =
                     new PreAuthenticatedAuthenticationToken(userRecord, null, userRecord.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-        } catch (Exception ignored) {
-            // ignore
+        } catch (Exception e) {
+            httpServletResponse.setHeader(AuthFailHandler.EXCEPTION_MESSAGE, e.getMessage());
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);//放行
     }
