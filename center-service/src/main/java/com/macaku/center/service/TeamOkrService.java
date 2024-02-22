@@ -25,7 +25,7 @@ public interface TeamOkrService extends IService<TeamOkr> {
     TeamOkr checkManager(Long teamId, Long managerId);
 
     @Transactional
-    Map<String, Object> grantTeamForMember(Long teamId, Long managerId, Long userId);
+    Map<String, Object> grantTeamForMember(Long teamId, Long managerId, Long userId, String teamName);
 
     List<TeamOkrStatisticVO> countCompletionRate(List<TeamOkr> teamOkrs);
 

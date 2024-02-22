@@ -126,7 +126,8 @@ public class TeamOkrController {
         Long managerId = user.getId();
         Long userId = grantDTO.getUserId();
         Long teamId = grantDTO.getTeamId();
-        Map<String, Object> ret = teamOkrService.grantTeamForMember(teamId, managerId, userId);
+        String teamName = grantDTO.getTeamName();
+        Map<String, Object> ret = teamOkrService.grantTeamForMember(teamId, managerId, userId, teamName);
         return SystemJsonResponse.SYSTEM_SUCCESS(ret);
     }
 

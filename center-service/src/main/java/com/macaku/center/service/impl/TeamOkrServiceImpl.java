@@ -109,7 +109,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     }
 
     @Override
-    public Map<String, Object> grantTeamForMember(Long teamId, Long managerId, Long userId) {
+    public Map<String, Object> grantTeamForMember(Long teamId, Long managerId, Long userId, String teamName) {
         if(managerId.equals(userId)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
@@ -136,6 +136,13 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         newTeamOkr.setManagerId(userId);
         teamOkrMapper.insert(newTeamOkr);
         Long id = newTeamOkr.getId();
+        // 更新一下团队名（如果需要的话）
+        if(StringUtils.hasText(teamName)) {
+            TeamOkr updateTeam = new TeamOkr();
+            updateTeam.setId(id);
+            updateTeam.setTeamName(teamName);
+            Db.lambdaUpdate(TeamOkr.class).eq(TeamOkr::getId, teamId).update(updateTeam);
+        }
         // 本来就有团队个人 OKR，无需再次生成
         log.info("管理员 {} 为成员 {} 授权创建团队原OKR {} 的子 OKR {} 内核 {}",
                 managerId, userId, teamId, id, coreId);

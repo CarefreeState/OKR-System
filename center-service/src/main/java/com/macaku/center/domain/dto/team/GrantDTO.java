@@ -26,6 +26,9 @@ public class GrantDTO {
     @ApiModelProperty("用户 ID")
     private Long userId;
 
+    @ApiModelProperty("团队名")
+    private String teamName;
+
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
         if(Objects.isNull(teamId)) {
