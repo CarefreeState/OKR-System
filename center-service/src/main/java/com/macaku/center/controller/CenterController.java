@@ -4,7 +4,9 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.handler.AuthFailHandler;
 import com.macaku.common.response.SystemJsonResponse;
+import lombok.NonNull;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -17,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CenterController {
 
-    @RequestMapping(AuthFailHandler.redirectUrl)
-    public SystemJsonResponse getUserInfo() {
-        throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_LOGIN);
+    @RequestMapping(AuthFailHandler.REDIRECT_URL)
+    public SystemJsonResponse getUserInfo(@NonNull @RequestParam(AuthFailHandler.EXCEPTION_MESSAGE) String exceptionMessage) {
+        throw new GlobalServiceException(exceptionMessage, GlobalServiceStatusCode.USER_NOT_LOGIN);
     }
 
 }

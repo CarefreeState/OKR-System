@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Objects;
@@ -34,6 +35,8 @@ public class HttpUtil {
     private final static Integer HTTP_READ_TIMEOUT = 60000;
 
     private final static Integer HTTP_CODE = 200;
+
+    private final static String UTF8 = "UTF-8";
 
     public static String getRequestBody(HttpServletRequest request) {
         ServletInputStream inputStream = null;
@@ -55,17 +58,22 @@ public class HttpUtil {
         if (map == null) {
             return "";
         }
-        Set<Map.Entry<String, Object>> entrySet = map.entrySet();
-        StringBuilder builder = new StringBuilder();
-        for (Map.Entry<String, Object> entry : entrySet) {
-            builder.append(entry.toString());
-            builder.append("&");
+        try {
+            Set<Map.Entry<String, Object>> entrySet = map.entrySet();
+            StringBuilder builder = new StringBuilder();
+            for (Map.Entry<String, Object> entry : entrySet) {
+                String keyVale = String.format("%s=%s", entry.getKey(), URLEncoder.encode(entry.getValue().toString(), UTF8));
+                builder.append(keyVale);
+                builder.append("&");
+            }
+            String formBody = builder.toString();
+            if (StringUtils.hasLength(formBody)) {
+                formBody = formBody.substring(0, formBody.length() - 1);
+            }
+            return formBody;
+        } catch (UnsupportedEncodingException e) {
+            throw new GlobalServiceException(e.getMessage());
         }
-        String formBody = builder.toString();
-        if (StringUtils.hasLength(formBody)) {
-            formBody = formBody.substring(0, formBody.length() - 1);
-        }
-        return formBody;
     }
 
     public static String getQueryString(Map<String, Object> map) {
