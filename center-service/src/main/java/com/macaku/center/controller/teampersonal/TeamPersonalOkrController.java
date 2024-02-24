@@ -5,6 +5,7 @@ import com.macaku.center.domain.po.TeamPersonalOkr;
 import com.macaku.center.domain.vo.TeamMemberVO;
 import com.macaku.center.domain.vo.TeamPersonalOkrVO;
 import com.macaku.center.service.MemberService;
+import com.macaku.center.service.TeamOkrService;
 import com.macaku.center.service.TeamPersonalOkrService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
@@ -37,6 +38,8 @@ public class TeamPersonalOkrController {
     private final MemberService memberService;
 
     private final TeamPersonalOkrService teamPersonalOkrService;
+
+    private final TeamOkrService teamOkrService;
 
     @GetMapping("/list")
     @ApiOperation("获取团队个人 OKR 列表")
@@ -77,7 +80,8 @@ public class TeamPersonalOkrController {
         // 获取当前登录用户
         User user = UserRecordUtil.getUserRecord();
         // 判断是不是团队成员
-        memberService.checkExistsInTeam(teamId, user.getId());
+        memberService.checkExistsInTeam(teamId, useId);
+        teamOkrService.checkManager(teamId, user.getId());
         // 尝试删除
         memberService.removeMember(teamId, id, useId);
         return SystemJsonResponse.SYSTEM_SUCCESS();
