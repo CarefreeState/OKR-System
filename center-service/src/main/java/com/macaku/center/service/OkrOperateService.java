@@ -15,6 +15,7 @@ import java.util.Map;
  * Time: 18:36
  */
 public interface OkrOperateService {
+
     boolean match(String scope);
 
     @Transactional
