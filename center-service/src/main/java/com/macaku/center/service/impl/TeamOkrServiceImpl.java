@@ -141,7 +141,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
             TeamOkr updateTeam = new TeamOkr();
             updateTeam.setId(id);
             updateTeam.setTeamName(teamName);
-            Db.lambdaUpdate(TeamOkr.class).eq(TeamOkr::getId, teamId).update(updateTeam);
+            Db.lambdaUpdate(TeamOkr.class).eq(TeamOkr::getId, id).update(updateTeam);
         }
         // 本来就有团队个人 OKR，无需再次生成
         log.info("管理员 {} 为成员 {} 授权创建团队原OKR {} 的子 OKR {} 内核 {}",
