@@ -28,5 +28,6 @@ mybatis-plus:
       logic-delete-field: isDeleted
       logic-delete-value: 1 #逻辑已删除值(默认为1)
       logic-not-delete-value: 0 #逻辑未删除值(默认为0)
+      # todo: 考虑用什么 id
       id-type: auto #id为雪花算法生成 设置为none->为遵循版本默认，可见这个版本默认为assign_id
       update-strategy: not_null #更新策略:只更新非空字段
