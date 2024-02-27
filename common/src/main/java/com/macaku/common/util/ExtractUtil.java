@@ -34,14 +34,7 @@ public class ExtractUtil {
         if(Objects.isNull(token)) {
             return null;
         }
-        String redisKey = JwtUtil.JWT_RAW_DATA_MAP + token;
         String rawData = JwtUtil.parseJWTRawData(token);
-//        String rawData = (String) REDIS_CACHE.getCacheObject(redisKey)
-//                .orElseGet(() -> {
-//                    String raw = JwtUtil.parseJWTRawData(token);
-//                    REDIS_CACHE.setCacheObject(redisKey, raw, JwtUtil.JWT_MAP_TTL, JwtUtil.JWT_MAP_TTL_UNIT);
-//                    return raw;
-//                });
         return JsonUtil.analyzeJson(rawData, clazz);
     }
 

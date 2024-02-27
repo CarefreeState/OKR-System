@@ -389,3 +389,4 @@ END //
 
 DELIMITER ;
 
+show tables;

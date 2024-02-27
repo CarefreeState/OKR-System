@@ -55,17 +55,6 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
 
     private final FourthQuadrantService fourthQuadrantService;
 
-    private final PriorityNumberOneService priorityNumberOneService;
-
-    private final PriorityNumberTwoService priorityNumberTwoService;
-
-    private final OkrCoreMapper okrCoreMapper;
-
-    public void test() {
-        throw new GlobalServiceException();
-    }
-
-    @Override
     public Long createOkrCore() {
         // 1. 创建一个内核
         OkrCore okrCore = new OkrCore();
