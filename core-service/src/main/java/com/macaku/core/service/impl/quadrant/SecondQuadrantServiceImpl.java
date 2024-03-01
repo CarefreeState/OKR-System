@@ -79,7 +79,7 @@ public class SecondQuadrantServiceImpl extends ServiceImpl<SecondQuadrantMapper,
         updateQuadrant.setDeadline(deadline);
         this.lambdaUpdate().eq(SecondQuadrant::getId, id).update(updateQuadrant);
         // 发起一个定时任务
-        QuadrantDeadlineUtil.scheduledUpdate(coreId, id, deadline, quadrantCycle, SecondQuadrant.class);
+        QuadrantDeadlineUtil.scheduledUpdateSecondQuadrant(coreId, id, deadline, quadrantCycle);
     }
 
     @Override

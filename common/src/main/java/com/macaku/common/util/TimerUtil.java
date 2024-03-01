@@ -18,11 +18,40 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TimerUtil {
 
+    public static String getDateFormat(Date date) {
+        return new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(date);
+    }
+
     public static void schedule(TimerTask timerTask, long delay, TimeUnit timeUnit) {
         Timer timer = new Timer();
         long deadline = timeUnit.toMillis(delay) + System.currentTimeMillis();
         log.warn("计时开始，将于 “ {} ” {} 后执行，即 {} 截止", delay, timeUnit.name(),
-                new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format( new Date(deadline)));
-        timer.schedule(timerTask, deadline);
+                getDateFormat(new Date(deadline)));
+        timer.schedule(timerTask, timeUnit.toMillis(delay));
     }
+
+    public static void cycleScheduleTask(Date deadline, Integer cycle) {
+        final long deadTimestamp = deadline.getTime();
+        final long nowTimestamp = System.currentTimeMillis();
+        final long nextDeadTimestamp = deadTimestamp + TimeUnit.SECONDS.toMillis(cycle);
+        final long delay;
+        if(nowTimestamp == deadTimestamp) {
+            delay = TimeUnit.SECONDS.toMillis(cycle);
+        }else {
+            delay = deadTimestamp - nowTimestamp;
+        }
+        Date nextDeadline = new Date(nextDeadTimestamp);
+        TimerUtil.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                log.warn("好耶！");
+                cycleScheduleTask(nextDeadline, cycle);
+            }
+        }, TimeUnit.MILLISECONDS.toSeconds(delay), TimeUnit.SECONDS);
+    }
+
+    public static void main(String[] args) {
+        cycleScheduleTask(new Date(), 5);
+    }
+
 }

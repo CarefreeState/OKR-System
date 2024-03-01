@@ -69,7 +69,7 @@ public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, T
         // 为 core 设置周期
         OkrCore updateOkrCore = new OkrCore();
         updateOkrCore.setId(coreId);
-        updateOkrCore.setSecondQuadrantCycle(quadrantCycle);
+        updateOkrCore.setThirdQuadrantCycle(quadrantCycle);
         Db.lambdaUpdate(OkrCore.class).eq(OkrCore::getId, coreId).update(updateOkrCore);
         // 设置象限的截止时间
         ThirdQuadrant updateQuadrant = new ThirdQuadrant();
@@ -77,7 +77,7 @@ public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, T
         updateQuadrant.setDeadline(deadline);
         this.lambdaUpdate().eq(ThirdQuadrant::getId, id).update(updateQuadrant);
         // 发起一个定时任务
-        QuadrantDeadlineUtil.scheduledUpdate(coreId, id, deadline, quadrantCycle, ThirdQuadrant.class);
+        QuadrantDeadlineUtil.scheduledUpdateThirdQuadrant(coreId, id, deadline, quadrantCycle);
     }
 
     @Override

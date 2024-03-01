@@ -45,6 +45,8 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
         Integer thirdQuadrantCycle = deadlineEvent.getThirdQuadrantCycle();
         Long secondQuadrantId = deadlineEvent.getSecondQuadrantId();
         Long thirdQuadrantId = deadlineEvent.getThirdQuadrantId();
+        log.warn("处理事件：1. {}; 2. {} {}; 3. {} {};", firstQuadrantDeadline,
+                secondQuadrantDeadline, secondQuadrantCycle, thirdQuadrantDeadline, thirdQuadrantCycle);
         final long nowTimestamp = System.currentTimeMillis();
         // 1. 判断是否截止
         if(Objects.nonNull(firstQuadrantDeadline) &&
@@ -76,8 +78,8 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
                         .update(updateQuadrant);
             }
             // 3.3 发起定时任务
-            QuadrantDeadlineUtil.scheduledUpdate(id, secondQuadrantId, nextDeadline,
-                    secondQuadrantCycle, SecondQuadrant.class);
+            QuadrantDeadlineUtil.scheduledUpdateSecondQuadrant(id, secondQuadrantId, nextDeadline,
+                    secondQuadrantCycle);
         }
         // 4. 是否设置了第三象限截止时间和周期
         if(Objects.nonNull(thirdQuadrantDeadline) && Objects.nonNull(thirdQuadrantCycle)) {
@@ -99,8 +101,8 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
                         .update(updateQuadrant);
             }
             // 4.3 发起定时任务
-            QuadrantDeadlineUtil.scheduledUpdate(id, thirdQuadrantId, nextDeadline,
-                    thirdQuadrantCycle, ThirdQuadrant.class);
+            QuadrantDeadlineUtil.scheduledUpdateThirdQuadrant(id, thirdQuadrantId, nextDeadline,
+                    thirdQuadrantCycle);
         }
     }
 
