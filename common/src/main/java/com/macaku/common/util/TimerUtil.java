@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class TimerUtil {
 
     public static String getDateFormat(Date date) {
-        return new SimpleDateFormat("YYYY-MM-dd HH:mm:ss").format(date);
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
     }
 
     public static void schedule(TimerTask timerTask, long delay, TimeUnit timeUnit) {
