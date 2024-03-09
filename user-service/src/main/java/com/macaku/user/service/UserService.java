@@ -18,4 +18,22 @@ public interface UserService extends IService<User> {
     void improveUserinfo(UserinfoDTO userinfoDTO, Long userId);
 
     List<String> getPermissions(Long userId);
+
+    User getUserByEmail(String email);
+
+    User getUserByOpenid(String openid);
+
+    String getOpenidByUserId(Long userId);
+
+    void deleteUserEmailCache(String email);
+
+    void deleteUserOpenidCache(String openid);
+
+    void deleteUserIdOpenIdCache(Long userId);
+
+    void bindingEmail(Long userId, String email, String code, String recordEmail);
+
+    void bindingWx(Long userId, String randomCode, String code);
+
+    void checkIdentifyingCode(Long userId, String randomCode);
 }

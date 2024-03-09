@@ -2,18 +2,25 @@ package com.macaku.user.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.common.email.component.EmailServiceSelector;
+import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.redis.RedisCache;
+import com.macaku.common.util.JsonUtil;
 import com.macaku.common.web.HttpUtil;
 import com.macaku.user.domain.dto.UserinfoDTO;
 import com.macaku.user.domain.po.User;
-import com.macaku.user.service.UserService;
 import com.macaku.user.mapper.UserMapper;
+import com.macaku.user.qrcode.config.QRCodeConfig;
+import com.macaku.user.service.UserService;
 import com.macaku.user.token.TokenUtil;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
 * @author 马拉圈
@@ -21,8 +28,33 @@ import java.util.Map;
 * @createDate 2024-01-22 14:18:10
 */
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     implements UserService{
+
+    private final static String EMAIL_USER_MAP = "emailUserMap:";
+
+    private final static String WX_USER_MAP = "wxUserMap:";
+
+    private final static String USERID_OPENID_MAP = "useridOpenidMap:";
+
+    private final static Long EMAIL_USER_TTL = 2L;
+
+    private final static Long WX_USER_TTL = 2L;
+
+    private final static Long USERID_OPENID_TTL = 2L;
+
+    private final static TimeUnit EMAIL_USER_UNIT = TimeUnit.HOURS;
+
+    private final static TimeUnit WX_USER_UNIT = TimeUnit.HOURS;
+
+    private final static TimeUnit USERID_OPENID_UNIT = TimeUnit.HOURS;
+
+    private final RedisCache redisCache;
+
+    private final EmailServiceSelector emailServiceSelector;
+
 
     @Override
     public String getUserFlag(String code) {
@@ -49,6 +81,116 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public List<String> getPermissions(Long userId) {
         return Collections.emptyList();
     }
+
+    @Override
+    public User getUserByEmail(String email) {
+        String redisKey = EMAIL_USER_MAP + email;
+        return (User) redisCache.getCacheObject(redisKey).orElseGet(() -> {
+            User user = this.lambdaQuery().eq(User::getEmail, email).one();
+            redisCache.setCacheObject(redisKey, user, EMAIL_USER_TTL, EMAIL_USER_UNIT);
+            return user;
+        });
+    }
+
+    @Override
+    public User getUserByOpenid(String openid) {
+        String redisKey = WX_USER_MAP + openid;
+        return (User) redisCache.getCacheObject(redisKey).orElseGet(() -> {
+            User user = this.lambdaQuery().eq(User::getOpenid, openid).one();
+            redisCache.setCacheObject(redisKey, user, WX_USER_TTL, WX_USER_UNIT);
+            return user;
+        });
+    }
+
+    @Override
+    public String getOpenidByUserId(Long userId) {
+        String redisKey = USERID_OPENID_MAP + userId;
+        return (String) redisCache.getCacheObject(redisKey).orElseGet(() -> {
+            User user = this.lambdaQuery().eq(User::getId, userId).one();
+            String openid = Objects.isNull(user) ? null : user.getOpenid();
+            redisCache.setCacheObject(redisKey, openid, USERID_OPENID_TTL, USERID_OPENID_UNIT);
+            return openid;
+        });
+    }
+
+    @Override
+    public void deleteUserEmailCache(String email) {
+        redisCache.deleteObject(EMAIL_USER_MAP + email);
+    }
+
+    @Override
+    public void deleteUserOpenidCache(String openid) {
+        redisCache.deleteObject(WX_USER_MAP + openid);
+
+    }
+
+    @Override
+    public void deleteUserIdOpenIdCache(Long userId) {
+        redisCache.deleteObject(USERID_OPENID_MAP + userId);
+
+    }
+
+    @Override
+    public void bindingEmail(Long userId, String email, String code, String recordEmail) {
+        // 检查验证码
+        emailServiceSelector
+                .select(EmailServiceSelector.EMAIL_BINDING)
+                .checkIdentifyingCode(email, code);
+        // 判断邮箱用户是否存在
+        User userByEmail = getUserByEmail(email);
+        if(Objects.nonNull(userByEmail)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.EMAIL_USER_BE_BOUND);
+        }
+        this.lambdaUpdate()
+                .eq(User::getId, userId)
+                .set(User::getEmail, email)
+                .update();
+        deleteUserEmailCache(email);
+        if(StringUtils.hasText(recordEmail)) {
+            deleteUserEmailCache(recordEmail);
+        }
+        log.info("用户 {} 成功绑定 邮箱 {}", userId, email);
+    }
+
+    @Override
+    public void bindingWx(Long userId, String randomCode, String code) {
+        // 验证以下验证码
+        checkIdentifyingCode(userId, randomCode);
+        String resultJson = getUserFlag(code);
+        Map<String, Object> response = JsonUtil.analyzeJson(resultJson, Map.class);
+        String openid = (String) response.get("openid");
+        String unionid = (String) response.get("unionid");
+        // 查询 openid 是否被注册过
+        User userByOpenid = getUserByOpenid(openid);
+        if(Objects.nonNull(userByOpenid)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.WX_USER_BE_BOUND);
+        }
+        // 判断当前用户是否绑定了微信
+        // todo: 避免混乱所以现在暂且不支持微信重新绑定，之后需要再说
+        String openidByUserId = getOpenidByUserId(userId);
+        if(Objects.nonNull(openidByUserId)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_BOUND_WX);
+        }
+        this.lambdaUpdate()
+                .eq(User::getId, userId)
+                .set(User::getOpenid, openid)
+                .update();
+        deleteUserIdOpenIdCache(userId);
+        deleteUserOpenidCache(openid);
+        log.info("用户 {} 成功绑定 微信 {}", userId, openid);
+    }
+
+    @Override
+    public void checkIdentifyingCode(Long userId, String randomCode) {
+        String redisKey = QRCodeConfig.WX_CHECK_QR_CODE_MAP + userId;
+        String code = (String) redisCache.getCacheObject(redisKey).orElseThrow(() ->
+                new GlobalServiceException(GlobalServiceStatusCode.WX_NOT_EXIST_RECORD));
+        if(!randomCode.equals(code)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.WX_CODE_NOT_CONSISTENT);
+        }
+        redisCache.deleteObject(redisKey);
+    }
+
 }
 
 

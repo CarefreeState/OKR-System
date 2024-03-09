@@ -20,13 +20,10 @@ import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
-import com.macaku.common.util.media.MediaUtil;
-import com.macaku.common.web.HttpUtil;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.user.domain.po.User;
-import com.macaku.user.token.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -49,8 +46,6 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     implements TeamOkrService, OkrOperateService {
 
     private final static String TEAM_QR_CODE_MAP = "teamQRCodeMap:";
-
-    private final static String WX_QR_CORE_URL = "https://api.weixin.qq.com/wxa/getwxacodeunlimit";
 
     private final static Long TEAM_QR_MAP_TTL = 30L;
 
@@ -186,19 +181,9 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     public String getQRCode(Long teamId) {
         String redisKey = TEAM_QR_CODE_MAP + teamId;
         return (String)redisCache.getCacheObject(redisKey).orElseGet(() -> {
-            String accessToken = TokenUtil.getToken();
-            String url = WX_QR_CORE_URL + HttpUtil.getQueryString(new HashMap<String, Object>(){{
-                this.put("access_token", accessToken);
-            }});
             // 获取 QRCode
             String json = wxQRCodeService.getQRCodeJson(teamId);
-            log.info("请求微信（json） -> {}", json);
-            byte[] data = HttpUtil.doPostJsonBytes(url, json);
-            if(!MediaUtil.isImage(data)) {
-                throw new GlobalServiceException(new String(data), GlobalServiceStatusCode.QR_CODE_GENERATE_FAIL);
-            }
-            // 保存一下
-            String mapPath = MediaUtil.saveImage(data);
+            String mapPath = wxQRCodeService.doPostGetQRCode(json);
             redisCache.setCacheObject(redisKey, mapPath, TEAM_QR_MAP_TTL, TEAM_QR_MAP_UNIT);
             return mapPath;
         });

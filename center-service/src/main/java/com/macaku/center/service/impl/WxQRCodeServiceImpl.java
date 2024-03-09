@@ -1,10 +1,16 @@
 package com.macaku.center.service.impl;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.center.service.WxQRCodeService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.ShortCodeUtil;
+import com.macaku.common.util.media.MediaUtil;
+import com.macaku.common.web.HttpUtil;
+import com.macaku.user.qrcode.config.QRCodeConfig;
+import com.macaku.user.token.TokenUtil;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -28,6 +34,8 @@ import java.util.Objects;
 @ConfigurationProperties(prefix = "wx.invite")
 public class WxQRCodeServiceImpl implements WxQRCodeService {
 
+    private String userKey;
+
     private String sceneKey;
 
     private String secret;
@@ -46,6 +54,8 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
 
     private Boolean isHyaline;
 
+    private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
+
     @Override
     public void checkParams(Long teamId, String secret) {
         if(Objects.isNull(teamId)) {
@@ -60,9 +70,21 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
         }
     }
 
+    private Map<String, Object> getQRCodeParams() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("page", StringUtils.hasText(page) ? page : null);
+        params.put("check_path", checkPath);
+        params.put("env_version", envVersion);
+        params.put("width", width);
+        params.put("auto_color", autoColor);
+        params.put("line_color", lineColor);
+        params.put("is_hyaline", isHyaline);
+        return params;
+    }
+
     @Override
     public String getQRCodeJson(Long teamId) {
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = getQRCodeParams();
         StringBuilder sceneBuilder = new StringBuilder();
         // 记录一下 teamId 与 inviteSecret 关系，携带这个密钥才行
         sceneBuilder
@@ -77,14 +99,39 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
                 .append("=")
                 .append(inviteSecret);
         params.put("scene", sceneBuilder.toString());
-        params.put("page", StringUtils.hasText(page) ? page : null);
-        params.put("check_path", checkPath);
-        params.put("env_version", envVersion);
-        params.put("width", width);
-        params.put("auto_color", autoColor);
-        params.put("line_color", lineColor);
-        params.put("is_hyaline", isHyaline);
         return JsonUtil.analyzeData(params);
+    }
+
+    @Override
+    public String getQRCodeJson(Long userId, String randomCode) {
+        Map<String, Object> params = getQRCodeParams();
+        String scene = String.format("%s=%d&%s=%s", userKey, userId, secret, randomCode);
+        params.put("scene", scene);
+        return JsonUtil.analyzeData(params);
+    }
+
+    @Override
+    public String doPostGetQRCode(String json) {
+        String accessToken = TokenUtil.getToken();
+        String url = QRCodeConfig.WX_QR_CORE_URL + HttpUtil.getQueryString(new HashMap<String, Object>(){{
+            this.put("access_token", accessToken);
+        }});
+        log.info("请求微信（json） -> {}", json);
+        byte[] data = HttpUtil.doPostJsonBytes(url, json);
+        if(!MediaUtil.isImage(data)) {
+            throw new GlobalServiceException(new String(data), GlobalServiceStatusCode.QR_CODE_GENERATE_FAIL);
+        }
+        // 保存一下
+        return MediaUtil.saveImage(data);
+    }
+
+    @Override
+    public String getCheckQRCode(Long userId, String randomCode) {
+        String redisKey = QRCodeConfig.WX_CHECK_QR_CODE_MAP + userId;
+        String json = getQRCodeJson(userId, randomCode);
+        String mapPath = doPostGetQRCode(json);
+        redisCache.setCacheObject(redisKey, randomCode, QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
+        return mapPath;
     }
 
 }

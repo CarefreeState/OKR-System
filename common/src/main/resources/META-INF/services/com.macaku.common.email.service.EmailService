@@ -1,0 +1,2 @@
+com.macaku.common.email.service.impl.EmailServiceLoginImpl
+com.macaku.common.email.service.impl.EmailServiceBindingImpl

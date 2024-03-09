@@ -1,7 +1,6 @@
 package com.macaku.user.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.JwtUtil;
@@ -37,8 +36,6 @@ public class LoginServiceWxImpl implements LoginService {
     private final static String DEFAULT_PHOTO = "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";
 
     private final UserService userService = SpringUtil.getBean(UserService.class);
-
-    private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
     @Override
     public boolean match(String type) {

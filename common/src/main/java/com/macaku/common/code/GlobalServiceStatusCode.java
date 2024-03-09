@@ -91,6 +91,18 @@ public enum GlobalServiceStatusCode {
     SECOND_CYCLE_TOO_SHORT(6200, "第二象限周期太短了"),
     THIRD_CYCLE_TOO_SHORT(6201, "第三象限周期太短了"),
 
+    /*邮箱与微信相关*/
+    EMAIL_SEND_FAIL(7000, "邮箱发送异常"),
+    EMAIL_NOT_EXIST_RECORD(7001, "邮箱不存在记录"),
+    EMAIL_CODE_OPPORTUNITIES_EXHAUST(7002, "邮箱验证次数上限"),
+    EMAIL_CODE_NOT_CONSISTENT(7003, "邮箱验证码不一致"),
+    EMAIL_USER_BE_BOUND(7004, "邮箱用户已被绑定"),
+
+    WX_USER_BE_BOUND(7100, "微信用户已被绑定"),
+    USER_BOUND_WX(7101, "用户已经绑定了微信"),
+    WX_CODE_NOT_CONSISTENT(7002, "微信验证码不一致"),
+    WX_NOT_EXIST_RECORD(7003, "微信不存在验证记录"),
+
 
 
 

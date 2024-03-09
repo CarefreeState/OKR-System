@@ -1,7 +1,7 @@
 package com.macaku.user.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.common.redis.RedisCache;
+import com.macaku.common.email.component.EmailServiceSelector;
 import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.JwtUtil;
@@ -15,7 +15,9 @@ import com.macaku.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created With Intellij IDEA
@@ -34,9 +36,9 @@ public class LoginServiceEmailImpl implements LoginService {
 
     private final static String DEFAULT_PHOTO = "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";
 
-    private UserService userService = SpringUtil.getBean(UserService.class);
+    private final UserService userService = SpringUtil.getBean(UserService.class);
 
-    private RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
+    private final EmailServiceSelector emailServiceSelector = SpringUtil.getBean(EmailServiceSelector.class);
 
     @Override
     public boolean match(String type) {
@@ -47,9 +49,12 @@ public class LoginServiceEmailImpl implements LoginService {
     public Map<String, Object> login(LoginDTO loginDTO) {
         EmailLoginDTO emailLoginDTO = loginDTO.createEmailLoginDTO();
         emailLoginDTO.validate();
-        // todo: （这里邮箱登录只是方便测试，所以原本的验证码验证的工作在这里省略了）
         String email = emailLoginDTO.getEmail();
         String code = emailLoginDTO.getCode();
+        // 验证码验证
+        emailServiceSelector.
+                select(EmailServiceSelector.EMAIL_LOGIN).
+                checkIdentifyingCode(email, code);
         User user = emailLoginDTO.transToUser();
         // 如果用户未不存在（邮箱未注册），则注册
         User dbUser = userService.lambdaQuery().eq(User::getEmail, email).one();

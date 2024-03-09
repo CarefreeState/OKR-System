@@ -1,28 +1,23 @@
 package com.macaku.user.domain.dto;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.email.component.EmailValidator;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.user.domain.po.User;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
-import java.util.Map;
-
 /**
  * Created With Intellij IDEA
  * Description:
  * User: 马拉圈
- * Date: 2024-01-24
- * Time: 11:54
+ * Date: 2024-03-09
+ * Time: 14:55
  */
-@ApiModel("邮箱登录数据")
+@ApiModel("邮箱绑定数据")
 @Data
-public class EmailLoginDTO {
+public class EmailBindingDTO {
 
     @ApiModelProperty("code")
     private String code;
@@ -43,15 +38,4 @@ public class EmailLoginDTO {
             throw new GlobalServiceException(message, GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
     }
-
-    public User transToUser() {
-        User user = new User();
-        user.setEmail(this.email);
-        return user;
-    }
-
-    public static EmailLoginDTO create(Map<?, ?> data) {
-        return BeanUtil.mapToBean(data, EmailLoginDTO.class, false, new CopyOptions());
-    }
-
 }

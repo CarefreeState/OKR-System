@@ -57,11 +57,12 @@ public class RedisCache {
     }
 
     /**
-     *  获得对象的剩余存活时间
+     * 获得对象的剩余存活时间
+     *
      * @param key 键
      * @return 剩余存活时间
      */
-    public long getKeyTTL(final String key, final TimeUnit timeUnit) {
+    public long getKeyTTL(final String key) {
         int ttl = Math.toIntExact(redisTemplate.opsForValue().getOperations().getExpire(key));
         String message = null;
         switch (ttl) {
@@ -76,7 +77,7 @@ public class RedisCache {
                 break;
         }
         log.info("查询 Redis key[{}] 剩余存活时间:{}", key, message);
-        return TimeUnit.SECONDS.convert(ttl, timeUnit);
+        return TimeUnit.SECONDS.convert(ttl, TimeUnit.MILLISECONDS);
     }
 
     /**

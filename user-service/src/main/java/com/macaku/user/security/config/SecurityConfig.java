@@ -38,6 +38,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
             .antMatchers("/").permitAll()
             .antMatchers("/user/login").permitAll()
+            .antMatchers("/user/check/email").permitAll()
+            .antMatchers("/user/binding/wx").permitAll()
             .antMatchers("/media/**").permitAll()
             .antMatchers(AuthFailHandler.REDIRECT_URL).permitAll()
             .antMatchers(VisitConfig.swaggers).permitAll()

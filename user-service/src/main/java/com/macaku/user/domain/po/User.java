@@ -17,8 +17,6 @@ import java.util.Date;
 @Data
 public class User implements Serializable {
 
-    public final static String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-
     @ApiModelProperty("ID")
     private Long id;
 
