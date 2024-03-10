@@ -108,18 +108,6 @@ public class MediaUtil {
         }
     }
 
-    public static boolean isImage(String url) {
-        try (InputStream inputStream = HttpUtil.getFileInputStream(url)) {
-            if (Objects.isNull(inputStream)) {
-                return false;
-            }
-            Image img = ImageIO.read(inputStream);
-            return !(img == null || img.getWidth(null) <= 0 || img.getHeight(null) <= 0);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     public static boolean isImage(InputStream inputStream) {
         try {
             if (Objects.isNull(inputStream)) {
@@ -132,13 +120,20 @@ public class MediaUtil {
         }
     }
 
+    public static boolean isImage(String url) {
+        try (InputStream inputStream = HttpUtil.getFileInputStream(url)) {
+            return isImage(inputStream);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public static boolean isImage(byte[] bytes) {
         if (Objects.isNull(bytes)) {
             return false;
         }
         try (InputStream inputStream = new ByteArrayInputStream(bytes)) {
-            Image img = ImageIO.read(inputStream);
-            return !(img == null || img.getWidth(null) <= 0 || img.getHeight(null) <= 0);
+            return isImage(inputStream);
         } catch (Exception e) {
             return false;
         }
