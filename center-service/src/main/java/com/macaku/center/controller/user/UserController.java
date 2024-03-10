@@ -80,7 +80,7 @@ public class UserController {
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
-    @PostMapping("/check/wx")
+    @GetMapping("/check/wx")
     @ApiOperation("验证微信用户")
     public SystemJsonResponse<String> wxIdentifyCheck() {
         Long userId = UserRecordUtil.getUserRecord().getId();
