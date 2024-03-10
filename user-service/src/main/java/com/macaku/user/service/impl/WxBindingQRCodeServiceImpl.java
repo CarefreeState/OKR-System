@@ -75,12 +75,11 @@ public class WxBindingQRCodeServiceImpl implements WxBindingQRCodeService {
         String redisKey = QRCodeConfig.WX_CHECK_QR_CODE_MAP + userId;
         String code = (String) redisCache.getCacheObject(redisKey).orElseThrow(() ->
                 new GlobalServiceException(GlobalServiceStatusCode.WX_NOT_EXIST_RECORD));
+        redisCache.deleteObject(redisKey);
         if(!randomCode.equals(code)) {
             // 这个随机码肯定是伪造的，因为这个请求的参数不是用户手动输入的值
-            redisCache.deleteObject(redisKey);
             throw new GlobalServiceException(GlobalServiceStatusCode.WX_CODE_NOT_CONSISTENT);
         }
-        redisCache.deleteObject(redisKey);
     }
 
 }
