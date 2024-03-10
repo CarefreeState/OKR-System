@@ -6,12 +6,10 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.email.component.EmailServiceSelector;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
-import com.macaku.common.util.JsonUtil;
 import com.macaku.common.web.HttpUtil;
 import com.macaku.user.domain.dto.UserinfoDTO;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.mapper.UserMapper;
-import com.macaku.user.qrcode.config.QRCodeConfig;
 import com.macaku.user.service.UserService;
 import com.macaku.user.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
@@ -150,45 +148,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             deleteUserEmailCache(recordEmail);
         }
         log.info("用户 {} 成功绑定 邮箱 {}", userId, email);
-    }
-
-    @Override
-    public void bindingWx(Long userId, String randomCode, String code) {
-        // 验证以下验证码
-        checkIdentifyingCode(userId, randomCode);
-        String resultJson = getUserFlag(code);
-        Map<String, Object> response = JsonUtil.analyzeJson(resultJson, Map.class);
-        String openid = (String) response.get("openid");
-        String unionid = (String) response.get("unionid");
-        // 查询 openid 是否被注册过
-        User userByOpenid = getUserByOpenid(openid);
-        if(Objects.nonNull(userByOpenid)) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.WX_USER_BE_BOUND);
-        }
-        // 判断当前用户是否绑定了微信
-        // todo: 避免混乱所以现在暂且不支持微信重新绑定，之后需要再说
-        String openidByUserId = getOpenidByUserId(userId);
-        if(Objects.nonNull(openidByUserId)) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.USER_BOUND_WX);
-        }
-        this.lambdaUpdate()
-                .eq(User::getId, userId)
-                .set(User::getOpenid, openid)
-                .update();
-        deleteUserIdOpenIdCache(userId);
-        deleteUserOpenidCache(openid);
-        log.info("用户 {} 成功绑定 微信 {}", userId, openid);
-    }
-
-    @Override
-    public void checkIdentifyingCode(Long userId, String randomCode) {
-        String redisKey = QRCodeConfig.WX_CHECK_QR_CODE_MAP + userId;
-        String code = (String) redisCache.getCacheObject(redisKey).orElseThrow(() ->
-                new GlobalServiceException(GlobalServiceStatusCode.WX_NOT_EXIST_RECORD));
-        if(!randomCode.equals(code)) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.WX_CODE_NOT_CONSISTENT);
-        }
-        redisCache.deleteObject(redisKey);
     }
 
 }

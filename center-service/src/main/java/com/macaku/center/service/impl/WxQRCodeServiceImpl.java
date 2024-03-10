@@ -10,6 +10,7 @@ import com.macaku.common.util.ShortCodeUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.web.HttpUtil;
 import com.macaku.user.qrcode.config.QRCodeConfig;
+import com.macaku.user.service.BindingQRCodeService;
 import com.macaku.user.token.TokenUtil;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +35,6 @@ import java.util.Objects;
 @ConfigurationProperties(prefix = "wx.invite")
 public class WxQRCodeServiceImpl implements WxQRCodeService {
 
-    private String userKey;
-
     private String sceneKey;
 
     private String secret;
@@ -56,6 +55,8 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
+    private final BindingQRCodeService bindingQRCodeService = SpringUtil.getBean(BindingQRCodeService.class);
+
     @Override
     public void checkParams(Long teamId, String secret) {
         if(Objects.isNull(teamId)) {
@@ -70,7 +71,8 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
         }
     }
 
-    private Map<String, Object> getQRCodeParams() {
+    @Override
+    public Map<String, Object> getQRCodeParams() {
         Map<String, Object> params = new HashMap<>();
         params.put("page", StringUtils.hasText(page) ? page : null);
         params.put("check_path", checkPath);
@@ -103,14 +105,6 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
     }
 
     @Override
-    public String getQRCodeJson(Long userId, String randomCode) {
-        Map<String, Object> params = getQRCodeParams();
-        String scene = String.format("%s=%d&%s=%s", userKey, userId, secret, randomCode);
-        params.put("scene", scene);
-        return JsonUtil.analyzeData(params);
-    }
-
-    @Override
     public String doPostGetQRCode(String json) {
         String accessToken = TokenUtil.getToken();
         String url = QRCodeConfig.WX_QR_CORE_URL + HttpUtil.getQueryString(new HashMap<String, Object>(){{
@@ -128,7 +122,7 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
     @Override
     public String getCheckQRCode(Long userId, String randomCode) {
         String redisKey = QRCodeConfig.WX_CHECK_QR_CODE_MAP + userId;
-        String json = getQRCodeJson(userId, randomCode);
+        String json = bindingQRCodeService.getQRCodeJson(userId, randomCode);
         String mapPath = doPostGetQRCode(json);
         redisCache.setCacheObject(redisKey, randomCode, QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
         return mapPath;

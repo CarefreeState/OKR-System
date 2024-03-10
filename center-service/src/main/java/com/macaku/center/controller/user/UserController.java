@@ -14,6 +14,7 @@ import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.domain.vo.UserVO;
 import com.macaku.user.interceptor.config.VisitConfig;
+import com.macaku.user.service.BindingQRCodeService;
 import com.macaku.user.service.LoginService;
 import com.macaku.user.service.UserService;
 import com.macaku.user.util.UserRecordUtil;
@@ -45,6 +46,8 @@ public class UserController {
     private final EmailServiceSelector emailServiceSelector;
 
     private final WxQRCodeService wxQRCodeService;
+
+    private final BindingQRCodeService bindingQRCodeService;
 
     @PostMapping("/login")
     @ApiOperation("用户登录")
@@ -79,7 +82,7 @@ public class UserController {
     public SystemJsonResponse<String> wxIdentifyCheck() {
         Long userId = UserRecordUtil.getUserRecord().getId();
         String randomCode = IdentifyingCodeValidator.getIdentifyingCode();
-        // 生成一个二维码
+        // 生成一个小程序检查码
         String mapPath = wxQRCodeService.getCheckQRCode(userId, randomCode);
         return SystemJsonResponse.SYSTEM_SUCCESS(mapPath);
     }
@@ -109,7 +112,7 @@ public class UserController {
         Long userId = wxBindingDTO.getUserId();
         String randomCode = wxBindingDTO.getRandomCode();
         String code = wxBindingDTO.getCode();
-        userService.bindingWx(userId, randomCode, code);
+        bindingQRCodeService.bindingWx(userId, randomCode, code);
         UserRecordUtil.deleteUserRecord(request);
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
