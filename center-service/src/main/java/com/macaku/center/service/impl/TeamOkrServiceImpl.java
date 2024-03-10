@@ -15,7 +15,7 @@ import com.macaku.center.redis.config.CoreUserMapConfig;
 import com.macaku.center.service.MemberService;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.center.service.TeamOkrService;
-import com.macaku.center.service.WxQRCodeService;
+import com.macaku.center.service.WxInviteQRCodeService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
@@ -63,7 +63,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
 
     private final MemberService memberService = SpringUtil.getBean(MemberService.class);
 
-    private final WxQRCodeService wxQRCodeService = SpringUtil.getBean(WxQRCodeService.class);
+    private final WxInviteQRCodeService wxInviteQRCodeService = SpringUtil.getBean(WxInviteQRCodeService.class);
 
     @Override
     public boolean match(String scene) {
@@ -175,18 +175,6 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
                     teamOkrStatisticVO.setKeyResults(null);
                 });
         return statisticVOS;
-    }
-
-    @Override
-    public String getQRCode(Long teamId) {
-        String redisKey = TEAM_QR_CODE_MAP + teamId;
-        return (String)redisCache.getCacheObject(redisKey).orElseGet(() -> {
-            // 获取 QRCode
-            String json = wxQRCodeService.getQRCodeJson(teamId);
-            String mapPath = wxQRCodeService.doPostGetQRCode(json);
-            redisCache.setCacheObject(redisKey, mapPath, TEAM_QR_MAP_TTL, TEAM_QR_MAP_UNIT);
-            return mapPath;
-        });
     }
 
     @Override

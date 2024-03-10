@@ -7,6 +7,7 @@ import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.center.service.MemberService;
 import com.macaku.center.service.TeamOkrService;
+import com.macaku.center.service.WxQRCodeService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
@@ -42,6 +43,8 @@ public class TeamOkrController {
     private final TeamOkrService teamOkrService;
 
     private final MemberService memberService;
+
+    private final WxQRCodeService wxQRCodeService;
 
     @GetMapping("/list")
     @ApiOperation("获取管理的团队 OKR 列表")
@@ -141,7 +144,7 @@ public class TeamOkrController {
         // 检测管理者身份
         teamOkrService.checkManager(teamId, managerId);
         // 进行操作
-        String path = teamOkrService.getQRCode(teamId);
+        String path = wxQRCodeService.getInviteQRCode(teamId);
         return SystemJsonResponse.SYSTEM_SUCCESS(path);
     }
 }

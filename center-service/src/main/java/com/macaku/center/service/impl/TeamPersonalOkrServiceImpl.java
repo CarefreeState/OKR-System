@@ -46,7 +46,7 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
-    private final WxQRCodeService wxQRCodeService = SpringUtil.getBean(WxQRCodeService.class);
+    private final WxInviteQRCodeService wxInviteQRCodeService = SpringUtil.getBean(WxInviteQRCodeService.class);
 
     @Override
     public boolean match(String scene) {
@@ -58,7 +58,7 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
         // 检测密钥
         Long teamId = okrOperateDTO.getTeamOkrId();
         String secret = okrOperateDTO.getSecret();
-        wxQRCodeService.checkParams(teamId, secret);
+        wxInviteQRCodeService.checkParams(teamId, secret);
         // 获取用户 ID（受邀者）
         Long userId = user.getId();
         // 判断是否可以加入团队

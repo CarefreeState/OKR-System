@@ -9,14 +9,12 @@ import java.util.Map;
  * Date: 2024-03-10
  * Time: 19:36
  */
-public interface BindingQRCodeService {
+public interface WxBindingQRCodeService {
 
     Map<String, Object> getQRCodeParams();
 
     String getQRCodeJson(Long userId, String randomCode);
 
-    void bindingWx(Long userId, String randomCode, String code);
-
-    void checkIdentifyingCode(Long userId, String randomCode);
+    void checkParams(Long userId, String randomCode);
 
 }

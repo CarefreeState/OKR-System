@@ -1,6 +1,7 @@
 package com.macaku.center.controller.user;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.macaku.center.service.WxInviteQRCodeService;
 import com.macaku.center.service.WxQRCodeService;
 import com.macaku.common.email.component.EmailServiceSelector;
 import com.macaku.common.response.SystemJsonResponse;
@@ -14,7 +15,7 @@ import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.domain.vo.UserVO;
 import com.macaku.user.interceptor.config.VisitConfig;
-import com.macaku.user.service.BindingQRCodeService;
+import com.macaku.user.service.WxBindingQRCodeService;
 import com.macaku.user.service.LoginService;
 import com.macaku.user.service.UserService;
 import com.macaku.user.util.UserRecordUtil;
@@ -45,9 +46,11 @@ public class UserController {
 
     private final EmailServiceSelector emailServiceSelector;
 
-    private final WxQRCodeService wxQRCodeService;
+    private final WxInviteQRCodeService wxInviteQRCodeService;
 
-    private final BindingQRCodeService bindingQRCodeService;
+    private final WxBindingQRCodeService wxBindingQRCodeService;
+
+    private final WxQRCodeService wxQRCodeService;
 
     @PostMapping("/login")
     @ApiOperation("用户登录")
@@ -83,7 +86,7 @@ public class UserController {
         Long userId = UserRecordUtil.getUserRecord().getId();
         String randomCode = IdentifyingCodeValidator.getIdentifyingCode();
         // 生成一个小程序检查码
-        String mapPath = wxQRCodeService.getCheckQRCode(userId, randomCode);
+        String mapPath = wxQRCodeService.getBindingQRCode(userId, randomCode);
         return SystemJsonResponse.SYSTEM_SUCCESS(mapPath);
     }
 
@@ -112,7 +115,7 @@ public class UserController {
         Long userId = wxBindingDTO.getUserId();
         String randomCode = wxBindingDTO.getRandomCode();
         String code = wxBindingDTO.getCode();
-        bindingQRCodeService.bindingWx(userId, randomCode, code);
+        userService.bindingWx(userId, randomCode, code);
         UserRecordUtil.deleteUserRecord(request);
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }

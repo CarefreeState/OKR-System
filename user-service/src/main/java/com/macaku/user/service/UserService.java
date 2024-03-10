@@ -33,4 +33,6 @@ public interface UserService extends IService<User> {
 
     void bindingEmail(Long userId, String email, String code, String recordEmail);
 
+    void bindingWx(Long userId, String randomCode, String code);
+
 }
