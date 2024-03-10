@@ -7,7 +7,6 @@ import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.user.qrcode.config.QRCodeConfig;
 import com.macaku.user.service.WxBindingQRCodeService;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -77,6 +76,8 @@ public class WxBindingQRCodeServiceImpl implements WxBindingQRCodeService {
         String code = (String) redisCache.getCacheObject(redisKey).orElseThrow(() ->
                 new GlobalServiceException(GlobalServiceStatusCode.WX_NOT_EXIST_RECORD));
         if(!randomCode.equals(code)) {
+            // 这个随机码肯定是伪造的，因为这个请求的参数不是用户手动输入的值
+            redisCache.deleteObject(redisKey);
             throw new GlobalServiceException(GlobalServiceStatusCode.WX_CODE_NOT_CONSISTENT);
         }
         redisCache.deleteObject(redisKey);
