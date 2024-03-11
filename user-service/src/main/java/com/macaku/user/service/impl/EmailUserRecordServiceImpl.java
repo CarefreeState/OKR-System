@@ -6,7 +6,7 @@ import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JwtUtil;
 import com.macaku.common.util.ShortCodeUtil;
-import com.macaku.user.component.LoginServiceSelector;
+import com.macaku.user.component.UserRecordServiceSelector;
 import com.macaku.user.domain.dto.detail.LoginUser;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.service.UserRecordService;
@@ -29,7 +29,7 @@ import java.util.Optional;
 @Slf4j
 public class EmailUserRecordServiceImpl implements UserRecordService {
 
-    private final static String TYPE = LoginServiceSelector.EMAIL_LOGIN_TYPE;
+    private final static String TYPE = UserRecordServiceSelector.EMAIL_LOGIN_TYPE;
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
