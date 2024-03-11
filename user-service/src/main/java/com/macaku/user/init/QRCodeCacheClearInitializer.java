@@ -28,19 +28,23 @@ public class QRCodeCacheClearInitializer implements ApplicationListener<Applicat
 
     private final RedisCache redisCache;
 
-    private void clearCacheCycle(File directory) {
+    private void clearQRCodeCache(File directory) {
+        File[] files = directory.listFiles();
+        // 如果文件没有缓存在
+        Arrays.stream(files).parallel().forEach(file -> {
+            redisCache.getCacheObject(QRCodeConfig.WX_CHECK_QR_CODE_CACHE + file.getName()).orElseGet(file::delete);
+        });
+    }
+
+    private void clearQRCodeCacheCycle(File directory) {
         if (!directory.exists()) {
             directory.mkdirs();
         }
+        clearQRCodeCache(directory);
         TimerUtil.schedule(new TimerTask() {
             @Override
             public void run() {
-                File[] files = directory.listFiles();
-                // 如果文件没有缓存在
-                Arrays.stream(files).parallel().forEach(file -> {
-                    redisCache.getCacheObject(QRCodeConfig.WX_CHECK_QR_CODE_CACHE + file.getName()).orElseGet(file::delete);
-                });
-                clearCacheCycle(directory);
+                clearQRCodeCacheCycle(directory);
             }
         }, QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
     }
@@ -52,7 +56,7 @@ public class QRCodeCacheClearInitializer implements ApplicationListener<Applicat
         String path = StaticMapperConfig.ROOT + StaticMapperConfig.MAP_ROOT + StaticMapperConfig.BINDING_PATH;
         File directory = new File(path);
         // 循环检查是否清除缓存
-        clearCacheCycle(directory);
+        clearQRCodeCacheCycle(directory);
         log.warn("<-- <-- <-- <-- <-- 清除微信绑定码的缓存的任务启动成功 <-- <-- <-- <-- <--");
     }
 }
