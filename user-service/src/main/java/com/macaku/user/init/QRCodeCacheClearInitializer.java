@@ -32,7 +32,11 @@ public class QRCodeCacheClearInitializer implements ApplicationListener<Applicat
         File[] files = directory.listFiles();
         // 如果文件没有缓存在
         Arrays.stream(files).parallel().forEach(file -> {
-            redisCache.getCacheObject(QRCodeConfig.WX_CHECK_QR_CODE_CACHE + file.getName()).orElseGet(file::delete);
+            String fileName = file.getName();
+            redisCache.getCacheObject(QRCodeConfig.WX_CHECK_QR_CODE_CACHE + fileName).orElseGet(() -> {
+                log.warn("文件 {} 逻辑失效，删除！", fileName);
+                return file.delete();
+            });
         });
     }
 

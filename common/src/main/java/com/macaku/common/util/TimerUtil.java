@@ -25,7 +25,7 @@ public class TimerUtil {
     public static void schedule(TimerTask timerTask, long delay, TimeUnit timeUnit) {
         Timer timer = new Timer();
         long deadline = timeUnit.toMillis(delay) + System.currentTimeMillis();
-        log.warn("计时开始，将于 “ {} ” {} 后执行，即 {} 截止", delay, timeUnit.name(),
+        log.warn("计时开始，将于 “ {} ” {} 后执行，即于 {} 执行！", delay, timeUnit.name(),
                 getDateFormat(new Date(deadline)));
         timer.schedule(timerTask, timeUnit.toMillis(delay));
     }
