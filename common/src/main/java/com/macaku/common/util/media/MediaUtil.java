@@ -4,6 +4,7 @@ import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.common.web.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -74,6 +75,20 @@ public class MediaUtil {
         String fileName = getUniqueImageName();
         String filePath = savePath + fileName;
         String mapPath = StaticMapperConfig.MAP_ROOT + fileName;
+        saveFile(savePath, filePath, imageData);
+        log.info("图片保存成功 {}", filePath);
+        return mapPath;
+    }
+
+    public static String saveImage(byte[] imageData, String extraPath) {
+        if(!StringUtils.hasText(extraPath)) {
+            return saveImage(imageData);
+        }
+        String mapBasePath = StaticMapperConfig.MAP_ROOT + extraPath;
+        String savePath = StaticMapperConfig.ROOT + mapBasePath;
+        String fileName = getUniqueImageName();
+        String filePath = savePath + fileName;
+        String mapPath = mapBasePath + fileName;
         saveFile(savePath, filePath, imageData);
         log.info("图片保存成功 {}", filePath);
         return mapPath;

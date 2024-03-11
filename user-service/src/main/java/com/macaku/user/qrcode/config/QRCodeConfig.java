@@ -14,6 +14,8 @@ public class QRCodeConfig {
 
     public final static String WX_CHECK_QR_CODE_MAP = "wxCheckQRCodeMap:";
 
+    public final static String WX_CHECK_QR_CODE_CACHE = "wxCheckQRCodeCache:";
+
     public final static Long WX_CHECK_QR_CODE_TTL = 5L;
 
     public final static TimeUnit WX_CHECK_QR_CODE_UNIT = TimeUnit.MINUTES;

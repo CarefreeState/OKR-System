@@ -128,7 +128,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public void deleteUserIdOpenIdCache(Long userId) {
         redisCache.deleteObject(USERID_OPENID_MAP + userId);
-
     }
 
     @Override

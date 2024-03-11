@@ -9,7 +9,7 @@ package com.macaku.center.service;
  */
 public interface WxQRCodeService {
 
-    String doPostGetQRCode(String json);
+    byte[] doPostGetQRCodeData(String json);
 
     String getInviteQRCode(Long teamId);
 

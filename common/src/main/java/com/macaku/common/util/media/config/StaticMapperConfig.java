@@ -14,6 +14,10 @@ public class StaticMapperConfig implements WebMvcConfigurer {
 
     public static String STATIC_PATH;
 
+    public static String BINDING_PATH;
+
+    public static String SWAGGER_PATH;
+
     /**
      * 配置静态访问资源
      * @param registry
@@ -37,6 +41,16 @@ public class StaticMapperConfig implements WebMvcConfigurer {
     @Value("${media.static}")
     private void setSTATIC_PATH(String staticPath) {
         STATIC_PATH = staticPath;
+    }
+
+    @Value("${media.binding}")
+    private void setBINDING_PATH(String bindingPath) {
+        BINDING_PATH = bindingPath;
+    }
+
+    @Value("${media.swagger}")
+    private void setSWAGGER_PATH(String swaggerPath) {
+        SWAGGER_PATH = swaggerPath;
     }
 
 }
