@@ -7,7 +7,6 @@ import com.macaku.core.init.handler.ext.SecondQuadrantEventHandler;
 import com.macaku.core.init.handler.ext.ThirdQuadrantEventHandler;
 import com.macaku.core.mapper.OkrCoreMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
