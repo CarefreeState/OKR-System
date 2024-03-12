@@ -6,8 +6,8 @@ import com.macaku.core.init.handler.ext.FirstQuadrantEventHandler;
 import com.macaku.core.init.handler.ext.SecondQuadrantEventHandler;
 import com.macaku.core.init.handler.ext.ThirdQuadrantEventHandler;
 import com.macaku.core.mapper.OkrCoreMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,6 @@ import java.util.List;
 
 @Component
 @Slf4j
-@RequiredArgsConstructor
 public class DeadlineEventInitializer implements ApplicationListener<ApplicationStartedEvent> {
 
     private final OkrCoreMapper okrCoreMapper;
@@ -27,6 +26,19 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
 
     private final ThirdQuadrantEventHandler thirdQuadrantEventHandler;
 
+    private final EventHandler handlerChain;
+
+    public DeadlineEventInitializer(final OkrCoreMapper okrCoreMapper,
+                                    final FirstQuadrantEventHandler firstQuadrantEventHandler,
+                                    final SecondQuadrantEventHandler secondQuadrantEventHandler,
+                                    final ThirdQuadrantEventHandler thirdQuadrantEventHandler) {
+        this.okrCoreMapper = okrCoreMapper;
+        this.firstQuadrantEventHandler = firstQuadrantEventHandler;
+        this.secondQuadrantEventHandler = secondQuadrantEventHandler;
+        this.thirdQuadrantEventHandler = thirdQuadrantEventHandler;
+        this.handlerChain = initHandlerChain();
+    }
+
     private EventHandler initHandlerChain() {
         firstQuadrantEventHandler.setNextHandler(secondQuadrantEventHandler);
         secondQuadrantEventHandler.setNextHandler(thirdQuadrantEventHandler);
@@ -34,9 +46,8 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
     }
 
     private void handleEvent(DeadlineEvent deadlineEvent) {
-        EventHandler firstHandler = initHandlerChain();
         final long nowTimestamp = System.currentTimeMillis();// 当前时间
-        firstHandler.handle(deadlineEvent, nowTimestamp);
+        handlerChain.handle(deadlineEvent, nowTimestamp);
     }
 
     @Override
