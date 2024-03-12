@@ -45,12 +45,6 @@ import java.util.stream.Collectors;
 public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     implements TeamOkrService, OkrOperateService {
 
-    private final static String TEAM_QR_CODE_MAP = "teamQRCodeMap:";
-
-    private final static Long TEAM_QR_MAP_TTL = 30L;
-
-    private final static TimeUnit TEAM_QR_MAP_UNIT = TimeUnit.DAYS;
-
     private final static String SCENE = OkrServiceSelector.TEAM_OKR_SCENE;
 
     private final TeamOkrMapper teamOkrMapper = SpringUtil.getBean(TeamOkrMapper.class);

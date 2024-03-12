@@ -43,8 +43,6 @@ public class PersonalOkrServiceImpl extends ServiceImpl<PersonalOkrMapper, Perso
 
     private final PersonalOkrMapper personalOkrMapper = SpringUtil.getBean(PersonalOkrMapper.class);
 
-    private final FirstQuadrantService firstQuadrantService = SpringUtil.getBean(FirstQuadrantService.class);
-
     private final RedisCache redisCache =SpringUtil.getBean(RedisCache.class);
 
     @Override

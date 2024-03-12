@@ -46,10 +46,6 @@ public class UserController {
 
     private final EmailServiceSelector emailServiceSelector;
 
-    private final WxInviteQRCodeService wxInviteQRCodeService;
-
-    private final WxBindingQRCodeService wxBindingQRCodeService;
-
     private final WxQRCodeService wxQRCodeService;
 
     @PostMapping("/login")

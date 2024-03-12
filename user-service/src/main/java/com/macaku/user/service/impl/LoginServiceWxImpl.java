@@ -42,7 +42,6 @@ public class LoginServiceWxImpl implements LoginService {
         return ShortCodeUtil.getShortCode(TYPE).equals(type);
     }
 
-
     @Override
     public Map<String, Object> login(LoginDTO loginDTO) {
         WxLoginDTO wxLoginDTO = loginDTO.createWxLoginDTO();

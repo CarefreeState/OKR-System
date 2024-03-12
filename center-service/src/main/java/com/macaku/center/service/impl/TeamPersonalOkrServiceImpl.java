@@ -38,8 +38,6 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
 
     private final TeamPersonalOkrMapper teamPersonalOkrMapper = SpringUtil.getBean(TeamPersonalOkrMapper.class);
 
-    private final TeamOkrService teamOkrService = SpringUtil.getBean(TeamOkrService.class);
-
     private final OkrCoreService okrCoreService = SpringUtil.getBean(OkrCoreService.class);
 
     private final MemberService memberService = SpringUtil.getBean(MemberService.class);
