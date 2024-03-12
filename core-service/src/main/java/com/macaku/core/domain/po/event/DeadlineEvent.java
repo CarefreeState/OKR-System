@@ -28,6 +28,6 @@ public class DeadlineEvent {
 
     private Integer thirdQuadrantCycle; // 第三象限周期
 
-    private Date thirdQuadrantDeadline; // 第三象限
+    private Date thirdQuadrantDeadline; // 第三象限截止时间
 
 }
