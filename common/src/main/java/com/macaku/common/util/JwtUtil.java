@@ -160,9 +160,9 @@ public class JwtUtil {
         try {
             parseJWT(jwt);
         } catch (ExpiredJwtException e) {
-            return false;
+            return Boolean.FALSE;
         }
-        return true;
+        return Boolean.TRUE;
     }
 
 }

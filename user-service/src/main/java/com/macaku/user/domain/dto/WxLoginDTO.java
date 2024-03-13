@@ -43,7 +43,7 @@ public class WxLoginDTO {
     }
 
     public static WxLoginDTO create(Map<?, ?> data) {
-        return BeanUtil.mapToBean(data, WxLoginDTO.class, false, new CopyOptions());
+        return BeanUtil.mapToBean(data, WxLoginDTO.class, Boolean.FALSE, new CopyOptions());
     }
 
 }

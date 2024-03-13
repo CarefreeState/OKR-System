@@ -51,7 +51,7 @@ public class EmailLoginDTO {
     }
 
     public static EmailLoginDTO create(Map<?, ?> data) {
-        return BeanUtil.mapToBean(data, EmailLoginDTO.class, false, new CopyOptions());
+        return BeanUtil.mapToBean(data, EmailLoginDTO.class, Boolean.FALSE, new CopyOptions());
     }
 
 }

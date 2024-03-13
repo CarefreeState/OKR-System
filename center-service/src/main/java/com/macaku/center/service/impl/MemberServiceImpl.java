@@ -98,7 +98,7 @@ public class MemberServiceImpl implements MemberService {
         Long rootId = TeamOkrUtil.getTeamRootId(teamId);
         // 查看是否有缓存
         String redisKey = USER_TEAM_MEMBER + rootId;
-        redisCache.setCacheMapValue(redisKey, userId, true);
+        redisCache.setCacheMapValue(redisKey, userId, Boolean.TRUE);
     }
 
     @Override
@@ -106,7 +106,7 @@ public class MemberServiceImpl implements MemberService {
         Long rootId = TeamOkrUtil.getTeamRootId(teamId);
         // 查看是否有缓存
         String redisKey = USER_TEAM_MEMBER + rootId;
-        redisCache.setCacheMapValue(redisKey, userId, false);
+        redisCache.setCacheMapValue(redisKey, userId, Boolean.FALSE);
     }
 
     @Override

@@ -41,7 +41,7 @@ public class EmailSender {
 
     public MimeMessageHelper emailIntoMimeMessageByHelper(MimeMessage mimeMessage, EmailMessage emailMessage) {
         try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, Boolean.TRUE);
             mimeMessageHelper.setFrom(emailMessage.getSender());
             mimeMessageHelper.setCc(emailMessage.getCarbonCopy());
             mimeMessageHelper.setSubject(emailMessage.getTitle());
@@ -76,7 +76,7 @@ public class EmailSender {
                     mimeMessageHelper.addAttachment(file.getName(), file);
                 }
             }
-            mimeMessageHelper.setText(emailMessage.getContent(), false);
+            mimeMessageHelper.setText(emailMessage.getContent(), Boolean.FALSE);
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             throw new GlobalServiceException(e.getMessage(), GlobalServiceStatusCode.EMAIL_SEND_FAIL);
@@ -96,7 +96,7 @@ public class EmailSender {
             context.setVariables(BeanUtil.beanToMap(modelMessage));
             //合并模板与数据
             String content = templateEngine.process(template, context);
-            mimeMessageHelper.setText(content, true);
+            mimeMessageHelper.setText(content, Boolean.TRUE);
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             throw new GlobalServiceException(e.getMessage(), GlobalServiceStatusCode.EMAIL_SEND_FAIL);
@@ -116,7 +116,7 @@ public class EmailSender {
             context.setVariables(BeanUtil.beanToMap(modelMessage));
             //合并模板与数据
             String content = templateEngine.process(template, context);
-            mimeMessageHelper.setText(content, true);
+            mimeMessageHelper.setText(content, Boolean.TRUE);
             // 添加附件
             for (File file : files) {
                 if (Objects.nonNull(file)) {
@@ -143,7 +143,7 @@ public class EmailSender {
                     try {
                         // 封装对象
                         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-                        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+                        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, Boolean.TRUE);
                         mimeMessageHelper.setTo(s);
                         mimeMessageHelper.setFrom(sender);
                         mimeMessageHelper.setCc(carbonCopy);
@@ -161,7 +161,7 @@ public class EmailSender {
                         //合并模板与数据
                         String content = templateEngine.process(template, context);
                         // 通过mimeMessageHelper设置到mimeMessage里
-                        mimeMessageHelper.setText(content, true);
+                        mimeMessageHelper.setText(content, Boolean.TRUE);
                         //发送
                         javaMailSender.send(mimeMessage);
                     } catch (MessagingException e) {
