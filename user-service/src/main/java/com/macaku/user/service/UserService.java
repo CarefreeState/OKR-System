@@ -35,4 +35,5 @@ public interface UserService extends IService<User> {
 
     void bindingWx(Long userId, String randomCode, String code);
 
+    String tryUploadPhoto(byte[] photoData, Long userId, String originPhoto);
 }

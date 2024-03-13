@@ -118,8 +118,9 @@ public class MediaUtil {
 
     public static void deleteFile(String path) {
         File file = new File(path);
-        if (!file.exists()) {
+        if (file.exists()) {
             file.delete();
+            log.warn("删除文件 {}", path);
         }
     }
 

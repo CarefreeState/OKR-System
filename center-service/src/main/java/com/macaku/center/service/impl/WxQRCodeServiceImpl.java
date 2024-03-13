@@ -56,7 +56,8 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
         return (String)redisCache.getCacheObject(redisKey).orElseGet(() -> {
             // 获取 QRCode
             String json = wxInviteQRCodeService.getQRCodeJson(teamId);
-            String mapPath = MediaUtil.saveImage(doPostGetQRCodeData(json));
+            String mapPath = MediaUtil.saveImage(doPostGetQRCodeData(json), StaticMapperConfig.INVITE_PATH);
+            // todo： 缓存小程序码
             redisCache.setCacheObject(redisKey, mapPath, QRCodeConfig.TEAM_QR_MAP_TTL, QRCodeConfig.TEAM_QR_MAP_UNIT);
             return mapPath;
         });

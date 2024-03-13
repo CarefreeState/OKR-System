@@ -7,6 +7,8 @@ import com.macaku.common.email.component.EmailServiceSelector;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.JsonUtil;
+import com.macaku.common.util.media.MediaUtil;
+import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.common.web.HttpUtil;
 import com.macaku.user.domain.dto.UserinfoDTO;
 import com.macaku.user.domain.po.User;
@@ -178,6 +180,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         deleteUserIdOpenIdCache(userId);
         deleteUserOpenidCache(openid);
         log.info("用户 {} 成功绑定 微信 {}", userId, openid);
+    }
+
+    @Override
+    public String tryUploadPhoto(byte[] photoData, Long userId, String originPhoto) {
+        // 检查是否是图片
+        if(!MediaUtil.isImage(photoData)) {
+            throw new GlobalServiceException(String.format("用户 %d 上传非法文件", userId), GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
+        }
+        // 删除原头像（哪怕是字符串是网络路径/非法，只要本地没有完全对应上，就不算存在本地）
+        String originSavePath = MediaUtil.getFilePath(originPhoto);
+        MediaUtil.deleteFile(originSavePath);
+        // 下载头像到本地
+        String mapPath = MediaUtil.saveImage(photoData, StaticMapperConfig.PHOTO_PATH);
+        // 修改数据库
+        this.lambdaUpdate()
+                .set(User::getPhoto, mapPath)
+                .eq(User::getId, userId)
+                .update();
+        return mapPath;
     }
 
 }

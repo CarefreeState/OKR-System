@@ -21,20 +21,11 @@ public class UserinfoDTO {
     @ApiModelProperty("昵称")
     private String nickname;
 
-    @ApiModelProperty("头像")
-    private String photo;
-
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();
         if(!StringUtils.hasText(nickname)) {
             messageBuilder.append("\n-> 昵称 为 空");
         }
-        if(!StringUtils.hasText(photo)) {
-            messageBuilder.append("\n-> 头像 为 空");
-        }
-//        if(!MediaUtil.isImage(photo)) {
-//            messageBuilder.append("\n-> 图片 非法");
-//        }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {
             throw new GlobalServiceException(message, GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);

@@ -38,6 +38,7 @@ public class QRCodeCacheClearInitializer implements ApplicationListener<Applicat
                 return file.delete();
             });
         });
+        log.warn("本轮清除任务结束，启动下一次清除任务...");
     }
 
     private void clearQRCodeCacheCycle(File directory) {

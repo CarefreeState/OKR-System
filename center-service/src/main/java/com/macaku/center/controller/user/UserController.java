@@ -1,7 +1,6 @@
 package com.macaku.center.controller.user;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.macaku.center.service.WxInviteQRCodeService;
 import com.macaku.center.service.WxQRCodeService;
 import com.macaku.common.email.component.EmailServiceSelector;
 import com.macaku.common.response.SystemJsonResponse;
@@ -15,16 +14,19 @@ import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.domain.vo.UserVO;
 import com.macaku.user.interceptor.config.VisitConfig;
-import com.macaku.user.service.WxBindingQRCodeService;
 import com.macaku.user.service.LoginService;
 import com.macaku.user.service.UserService;
 import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -116,6 +118,19 @@ public class UserController {
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
+    @PostMapping("/photo/upload")
+    @ApiOperation("上传用户头像")
+    public SystemJsonResponse<String> uploadPhoto(HttpServletRequest request,
+            @ApiParam("用户头像（只能上传图片，最大 1MB）") @NonNull @RequestPart("photo") MultipartFile multipartFile) throws IOException {
+        byte[] photoData = multipartFile.getBytes();
+        User user = UserRecordUtil.getUserRecord();
+        Long userId = user.getId();
+        String originPhoto = user.getPhoto();
+        String mapPath = userService.tryUploadPhoto(photoData, userId, originPhoto);
+        // 删除记录
+        UserRecordUtil.deleteUserRecord(request);
+        return SystemJsonResponse.SYSTEM_SUCCESS(mapPath);
+    }
 
     @PostMapping("/improve")
     @ApiOperation("完善用户信息")
@@ -132,7 +147,7 @@ public class UserController {
 
     @GetMapping("/userinfo")
     @ApiOperation("获取用户信息")
-    public SystemJsonResponse<UserVO> getUserInfo(HttpServletRequest request) {
+    public SystemJsonResponse<UserVO> getUserInfo() {
         // 获取当前登录用户
         User user = UserRecordUtil.getUserRecord();
         // 提取信息

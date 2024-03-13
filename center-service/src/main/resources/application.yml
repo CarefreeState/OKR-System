@@ -7,6 +7,11 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss # ⽇期格式
     default-property-inclusion: NON_NULL # 不为null序列化
     time-zone: Asia/Shanghai
+#  servlet:
+#    multipart: # 上传文件不限大小
+#      max-file-size: -1
+#      max-request-size: -1
+
 # 日志配置
 logging:
   level:
