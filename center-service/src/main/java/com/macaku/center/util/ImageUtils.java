@@ -1,0 +1,131 @@
+package com.macaku.center.util;
+
+import cn.hutool.extra.spring.SpringUtil;
+import com.freewayso.image.combiner.ImageCombiner;
+import com.freewayso.image.combiner.enums.OutputFormat;
+import com.freewayso.image.combiner.enums.ZoomMode;
+import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.util.media.MediaUtil;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+@Component
+public class ImageUtils {
+
+    private final static String DEFAULT_FONT = "宋体";
+
+    private final static String FONT_PATH = SpringUtil.getProperty("font.path");
+
+    public static Font getFont(float fontSize){
+        Font font = new Font(DEFAULT_FONT, Font.BOLD, (int)fontSize); // 默认字体
+        ClassPathResource classPathResource = new ClassPathResource(FONT_PATH);
+        try (FileInputStream fileInputStream = new FileInputStream( classPathResource.getFile())) {
+            Font tempFont = Font.createFont(Font.TRUETYPE_FONT, fileInputStream);
+            //当参数为 float 类型，才是设置文字大小
+            font = tempFont.deriveFont(fontSize);
+        } catch (IOException | FontFormatException e) {
+            throw new GlobalServiceException(e.getMessage());
+        }
+        return font;
+    }
+
+    public static void pressText(String text, String desc,
+                                 Color color, Font font,
+                                 int x, int y) throws IOException {
+        File img = new File(desc);
+        Image src = ImageIO.read(img);
+        int width = src.getWidth(null);
+        int height = src.getHeight(null);
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = image.createGraphics();
+        graphics.drawImage(src, 0, 0, width, height, null);
+        graphics.setColor(color);
+        graphics.setFont(font);
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+        // 在指定坐标（图片居中）绘制水印文字
+        graphics.drawString(text, x, y);
+        graphics.dispose();
+        // 输出到文件流
+        ImageIO.write(image, MediaUtil.SUFFIX, new File(desc));
+    }
+
+    public static double getLength(String text) {
+        double length = 0.0;
+        char[] charArray = text.toCharArray();
+        for(char ch : charArray) {
+            if (ch == ' ' || (String.valueOf(ch)).getBytes().length > 1) {
+                length += 0.675;
+            } else if(ch == 'i' || ch == 'I' || ch == 'l') {
+                length += 0.225;
+            } else if(ch == 'A' || ch == 'E' || ch == 'G') {
+                length += 0.500;
+            } else {
+                length += 0.475;
+            }
+        }
+        return length;
+    }
+
+    public static int calculateFontSize(double len) {
+        double px = Math.min(690.0 / len, 200.0);
+        return (int) px;
+    }
+
+    public static int calculateLeftSize(double len) {
+        double px = 690.0 / len;
+        px = px > 200.0 ? 200.0 : (px / 0.965);
+        return (int) ((750.0 - len * px) / 2);
+    }
+    public static int calculateTopSize(double len) {
+        double px = Math.min(690.0 / len, 200.0);
+        return (int) ((250.0 + px) / 2);
+    }
+
+    public static void writeFancy(String text, Color color, String desc) throws IOException {
+        double len = getLength(text);
+        Font systemFont = getFont(calculateFontSize(len));
+        pressText(text, desc, color, systemFont, calculateLeftSize(len), calculateTopSize(len));
+    }
+
+    public static void signatureFancy(String text, Color color, String desc) throws IOException {
+        Font systemFont = getFont(60);
+        pressText(text, desc, color, systemFont, 25, 300);
+    }
+
+    public static void mergeImage(String subjectPath, String boardPath, int x, int y, int width, int height) throws Exception {
+        BufferedImage boardImager = ImageIO.read(Files.newInputStream(Paths.get(boardPath)));
+        //合成器和背景图（整个图片的宽高和相关计算依赖于背景图，所以背景图的大小是个基准）
+        ImageCombiner combiner = new ImageCombiner(boardImager, OutputFormat.PNG);
+        combiner.setBackgroundBlur(0);     //设置背景高斯模糊（毛玻璃效果）
+        combiner.setCanvasRoundCorner(0); //设置整图圆角（输出格式必须为PNG）
+        //二维码（强制按指定宽度、高度缩放）
+        combiner.addImageElement(ImageIO.read(Files.newInputStream(Paths.get(subjectPath))),
+                x, y, width, height, ZoomMode.WidthHeight);
+        //执行图片合并
+        combiner.combine();
+        //保存文件
+        combiner.save(subjectPath);
+    }
+
+    public static void mergeSignatureWrite(String text, String flag, Color textColor, Color flagColor) {
+        String subject = "d:/demo/code.png";
+        String board = "d:/demo/board.png";
+        try {
+            mergeImage(subject, board, 125, 250, 500, 500);
+            signatureFancy(flag, flagColor, subject);
+            writeFancy(text, textColor, subject);
+        } catch (Exception e) {
+            throw new GlobalServiceException(e.getMessage());
+        }
+    }
+
+}

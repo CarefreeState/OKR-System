@@ -24,7 +24,7 @@ import java.util.UUID;
 @Slf4j
 public class MediaUtil {
 
-    private static final String SUFFIX = "png";
+    public static final String SUFFIX = "png";
 
     // 获取UUID
     public static String getUUID_32() {
