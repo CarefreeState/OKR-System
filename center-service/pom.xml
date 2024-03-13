@@ -41,6 +41,13 @@
             <version>${mybatis-plus-boot-starter.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.lalyos</groupId>
+            <artifactId>jfiglet</artifactId>
+            <version>${com.github.lalyos.version}</version>
+        </dependency>
+
+
         <!--   其他服务     -->
         <dependency>
             <groupId>com.macaku</groupId>
