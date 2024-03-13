@@ -53,8 +53,7 @@ public class TeamPersonalOkrController {
 
     @PostMapping("/members/{teamId}")
     @ApiOperation("获取团队成员列表")
-    public SystemJsonResponse<List<TeamMemberVO>> getTeamMember(HttpServletRequest request,
-                                                                @PathVariable("teamId") @NonNull @ApiParam("团队 OKR ID") Long teamId) {
+    public SystemJsonResponse<List<TeamMemberVO>> getTeamMember(@PathVariable("teamId") @NonNull @ApiParam("团队 OKR ID") Long teamId) {
         // 获取当前登录用户
         User user = UserRecordUtil.getUserRecord();
         // 判断是不是团队成员
@@ -66,8 +65,7 @@ public class TeamPersonalOkrController {
 
     @GetMapping("/remove/{id}")
     @ApiOperation("移除成员")
-    public SystemJsonResponse removeMember(HttpServletRequest request,
-                                           @PathVariable("id") @NonNull @ApiParam("团队个人 OKR ID") Long id) {
+    public SystemJsonResponse removeMember(@PathVariable("id") @NonNull @ApiParam("团队个人 OKR ID") Long id) {
         // 查询团队个人 Okr
         TeamPersonalOkr teamPersonalOkr = Db.lambdaQuery(TeamPersonalOkr.class)
                 .eq(TeamPersonalOkr::getId, id)

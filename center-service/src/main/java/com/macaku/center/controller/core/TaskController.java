@@ -22,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Created With Intellij IDEA
  * Description:
@@ -44,8 +42,7 @@ public class TaskController {
 
     @PostMapping("/{option}/add")
     @ApiOperation("增加一条任务")
-    public SystemJsonResponse addTask(HttpServletRequest request,
-                                      @PathVariable("option") @NonNull @ApiParam("任务选项（0:action, 1:P1, 2:P2）") Integer option,
+    public SystemJsonResponse addTask(@PathVariable("option") @NonNull @ApiParam("任务选项（0:action, 1:P1, 2:P2）") Integer option,
                                       @RequestBody OkrTaskDTO okrTaskDTO) {
         // 检查
         okrTaskDTO.validate();
@@ -70,8 +67,7 @@ public class TaskController {
 
     @PostMapping("/{option}/remove")
     @ApiOperation(("删除一个任务"))
-    public SystemJsonResponse removeTask(HttpServletRequest request,
-                                         @PathVariable("option") @NonNull @ApiParam("任务选项（0:action, 1:P1, 2:P2）") Integer option,
+    public SystemJsonResponse removeTask(@PathVariable("option") @NonNull @ApiParam("任务选项（0:action, 1:P1, 2:P2）") Integer option,
                                          @RequestBody OkrTaskRemoveDTO okrTaskRemoveDTO) {
         // 检查
         okrTaskRemoveDTO.validate();
@@ -94,8 +90,7 @@ public class TaskController {
 
     @PostMapping("/{option}/update")
     @ApiOperation("更新一条任务")
-    public SystemJsonResponse updateTask(HttpServletRequest request,
-                                         @PathVariable("option") @NonNull @ApiParam("任务选项（0:Action, 1:P1, 2:P2）") Integer option,
+    public SystemJsonResponse updateTask(@PathVariable("option") @NonNull @ApiParam("任务选项（0:Action, 1:P1, 2:P2）") Integer option,
                                          @RequestBody OkrTaskUpdateDTO okrTaskUpdateDTO) {
         // 检查
         okrTaskUpdateDTO.validate();

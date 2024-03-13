@@ -21,8 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Created With Intellij IDEA
  * Description:
@@ -43,8 +41,7 @@ public class FirstQuadrantController {
 
     @PostMapping("/init")
     @ApiOperation("初始化第一项象限")
-    public SystemJsonResponse initFirstQuadrant(HttpServletRequest request,
-                                                @RequestBody OkrFirstQuadrantDTO okrFirstQuadrantDTO) {
+    public SystemJsonResponse initFirstQuadrant(@RequestBody OkrFirstQuadrantDTO okrFirstQuadrantDTO) {
         // 校验
         okrFirstQuadrantDTO.validate();
         User user = UserRecordUtil.getUserRecord();

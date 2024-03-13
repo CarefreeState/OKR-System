@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Created With Intellij IDEA
  * Description:
@@ -49,8 +47,7 @@ public class StatusFlagController {
 
     @PostMapping("/add")
     @ApiOperation("增加一条状态指标")
-    public SystemJsonResponse addStatusFlag(HttpServletRequest request,
-                                            @RequestBody OkrStatusFlagDTO okrStatusFlagDTO) {
+    public SystemJsonResponse addStatusFlag(@RequestBody OkrStatusFlagDTO okrStatusFlagDTO) {
         // 检查
         okrStatusFlagDTO.validate();
         User user = UserRecordUtil.getUserRecord();
@@ -75,8 +72,7 @@ public class StatusFlagController {
 
     @PostMapping("/remove")
     @ApiOperation("删除一条指标")
-    public SystemJsonResponse remove(HttpServletRequest request,
-                                     @RequestBody OkrStatusFlagRemoveDTO okrStatusFlagRemoveDTO) {
+    public SystemJsonResponse remove(@RequestBody OkrStatusFlagRemoveDTO okrStatusFlagRemoveDTO) {
         okrStatusFlagRemoveDTO.validate();
         User user = UserRecordUtil.getUserRecord();
         Long statusFlagId = okrStatusFlagRemoveDTO.getId();
@@ -95,8 +91,7 @@ public class StatusFlagController {
 
     @PostMapping("/update")
     @ApiOperation("更新一条指标")
-    public SystemJsonResponse update(HttpServletRequest request,
-                                     @RequestBody OkrStatusFlagUpdateDTO okrStatusFlagUpdateDTO) {
+    public SystemJsonResponse update(@RequestBody OkrStatusFlagUpdateDTO okrStatusFlagUpdateDTO) {
         // 检查
         okrStatusFlagUpdateDTO.validate();
         User user = UserRecordUtil.getUserRecord();

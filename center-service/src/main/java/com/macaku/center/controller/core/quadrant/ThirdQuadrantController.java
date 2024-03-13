@@ -44,8 +44,7 @@ public class ThirdQuadrantController {
 
     @PostMapping("/init")
     @ApiOperation("初始化第三象限")
-    public SystemJsonResponse initThirdQuadrant(HttpServletRequest request,
-                                                @RequestBody OkrInitQuadrantDTO okrInitQuadrantDTO) {
+    public SystemJsonResponse initThirdQuadrant(@RequestBody OkrInitQuadrantDTO okrInitQuadrantDTO) {
         // 校验
         okrInitQuadrantDTO.validate();
         // 初始化

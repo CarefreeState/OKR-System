@@ -24,8 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Created With Intellij IDEA
  * Description:
@@ -48,8 +46,7 @@ public class KeyResultController {
 
     @PostMapping("/add")
     @ApiOperation("添加关键结果")
-    public SystemJsonResponse<Long> addKeyResult(HttpServletRequest request,
-                                           @RequestBody OkrKeyResultDTO okrKeyResultDTO) {
+    public SystemJsonResponse<Long> addKeyResult(@RequestBody OkrKeyResultDTO okrKeyResultDTO) {
         // 校验
         okrKeyResultDTO.validate();
         User user = UserRecordUtil.getUserRecord();
@@ -73,8 +70,7 @@ public class KeyResultController {
 
     @PostMapping("/update")
     @ApiOperation("更新完成概率")
-    public SystemJsonResponse updateKeyResult(HttpServletRequest request,
-                                              @RequestBody OkrKeyResultUpdateDTO okrKeyResultUpdateDTO) {
+    public SystemJsonResponse updateKeyResult(@RequestBody OkrKeyResultUpdateDTO okrKeyResultUpdateDTO) {
         // 校验
         okrKeyResultUpdateDTO.validate();
         User user = UserRecordUtil.getUserRecord();

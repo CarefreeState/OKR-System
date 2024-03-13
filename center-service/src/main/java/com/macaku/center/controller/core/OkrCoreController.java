@@ -20,7 +20,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 /**
@@ -43,8 +42,7 @@ public class OkrCoreController {
 
     @PostMapping("/create")
     @ApiOperation("创建一个 OKR")
-    public SystemJsonResponse<Map<String, Object>> createOkr(HttpServletRequest request,
-                                                             @RequestBody OkrOperateDTO okrOperateDTO) {
+    public SystemJsonResponse<Map<String, Object>> createOkr(@RequestBody OkrOperateDTO okrOperateDTO) {
         // 检测
         okrOperateDTO.validate();
         User user = UserRecordUtil.getUserRecord();
@@ -55,8 +53,7 @@ public class OkrCoreController {
 
     @PostMapping("/search")
     @ApiOperation("查看一个 OKR")
-    public SystemJsonResponse<OkrCoreVO> searchOkrCore(HttpServletRequest request,
-                                                       @RequestBody OkrCoreDTO okrCoreDTO) {
+    public SystemJsonResponse<OkrCoreVO> searchOkrCore(@RequestBody OkrCoreDTO okrCoreDTO) {
         okrCoreDTO.validate();
         User user = UserRecordUtil.getUserRecord();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
@@ -66,8 +63,7 @@ public class OkrCoreController {
 
     @PostMapping("/celebrate/{day}")
     @ApiOperation("确定庆祝日")
-    public SystemJsonResponse confirmCelebrateDay(HttpServletRequest request,
-                                                  @RequestBody OkrCoreDTO okrCoreDTO,
+    public SystemJsonResponse confirmCelebrateDay(@RequestBody OkrCoreDTO okrCoreDTO,
                                                   @PathVariable("day") @NonNull @ApiParam("庆祝日（星期）") Integer celebrateDay) {
         if(celebrateDay.compareTo(1) < 0 || celebrateDay.compareTo(7) > 0) {
             throw new GlobalServiceException(GlobalServiceStatusCode.INVALID_CELEBRATE_DAY);
@@ -88,8 +84,7 @@ public class OkrCoreController {
 
     @PostMapping("/summary")
     @ApiOperation("总结 OKR")
-    public SystemJsonResponse summaryOKR(HttpServletRequest request,
-                                         @RequestBody OkrCoreSummaryDTO okrCoreSummaryDTO) {
+    public SystemJsonResponse summaryOKR(@RequestBody OkrCoreSummaryDTO okrCoreSummaryDTO) {
         // 检测
         okrCoreSummaryDTO.validate();
         User user = UserRecordUtil.getUserRecord();
@@ -109,8 +104,7 @@ public class OkrCoreController {
 
     @PostMapping("/complete")
     @ApiOperation("结束 OKR")
-    public SystemJsonResponse complete(HttpServletRequest request,
-                                       @RequestBody OkrCoreDTO okrCoreDTO) {
+    public SystemJsonResponse complete(@RequestBody OkrCoreDTO okrCoreDTO) {
         // 检测
         okrCoreDTO.validate();
         Long coreId = okrCoreDTO.getCoreId();

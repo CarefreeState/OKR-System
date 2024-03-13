@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -32,7 +31,7 @@ public class PersonalOkrController {
 
     @GetMapping("/list")
     @ApiOperation("获取个人 OKR 列表")
-    public SystemJsonResponse<List<PersonalOkrVO>> getPersonalOkrs(HttpServletRequest request) {
+    public SystemJsonResponse<List<PersonalOkrVO>> getPersonalOkrs() {
         // 获取当前登录的用户
         User user = UserRecordUtil.getUserRecord();
         // 调用方法

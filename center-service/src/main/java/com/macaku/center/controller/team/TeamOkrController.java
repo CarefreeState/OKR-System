@@ -7,6 +7,7 @@ import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.center.service.MemberService;
 import com.macaku.center.service.TeamOkrService;
+import com.macaku.center.service.WxInviteQRCodeService;
 import com.macaku.center.service.WxQRCodeService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
@@ -22,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -46,9 +46,11 @@ public class TeamOkrController {
 
     private final WxQRCodeService wxQRCodeService;
 
+    private final WxInviteQRCodeService wxInviteQRCodeService;
+
     @GetMapping("/list")
     @ApiOperation("获取管理的团队 OKR 列表")
-    public SystemJsonResponse<List<TeamOkrVO>> getTeamOkrs(HttpServletRequest request) {
+    public SystemJsonResponse<List<TeamOkrVO>> getTeamOkrs() {
         // 获取当前登录的用户
         User user = UserRecordUtil.getUserRecord();
         // 调用方法
@@ -58,8 +60,7 @@ public class TeamOkrController {
 
     @PostMapping("/rename")
     @ApiOperation("修改团队的名字")
-    public SystemJsonResponse updateName(HttpServletRequest request,
-                                         @RequestBody TeamUpdateDTO teamUpdateDTO) {
+    public SystemJsonResponse updateName(@RequestBody TeamUpdateDTO teamUpdateDTO) {
         // 获取当前登录用户
         User user = UserRecordUtil.getUserRecord();
         // 判断是不是管理员
@@ -79,8 +80,7 @@ public class TeamOkrController {
 
     @PostMapping("/tree/{id}")
     @ApiOperation("获取一个团队所在的树")
-    public SystemJsonResponse<List<TeamOkrStatisticVO>> getCompleteTree(HttpServletRequest request,
-                                                             @PathVariable("id") @NonNull @ApiParam("团队 OKR ID") Long id) {
+    public SystemJsonResponse<List<TeamOkrStatisticVO>> getCompleteTree(@PathVariable("id") @NonNull @ApiParam("团队 OKR ID") Long id) {
         // 获取当前团队的祖先 ID
         Long rootId = TeamOkrUtil.getTeamRootId(id);
         User user = UserRecordUtil.getUserRecord();
@@ -100,8 +100,7 @@ public class TeamOkrController {
 
     @PostMapping("/tree/child/{id}")
     @ApiOperation("获取一个团队的子树")
-    public SystemJsonResponse<List<TeamOkrStatisticVO>> getChildTree(HttpServletRequest request,
-                                                             @PathVariable("id") @NonNull @ApiParam("团队 OKR ID") Long id) {
+    public SystemJsonResponse<List<TeamOkrStatisticVO>> getChildTree(@PathVariable("id") @NonNull @ApiParam("团队 OKR ID") Long id) {
         // 获取当前团队的祖先 ID
         User user = UserRecordUtil.getUserRecord();
         Long userId = user.getId();
@@ -120,8 +119,7 @@ public class TeamOkrController {
 
     @PostMapping("/grant")
     @ApiOperation("给成员授权，使其可以扩展一个子团队")
-    public SystemJsonResponse<Map<String, Object>> grantTeamForMember(HttpServletRequest request,
-                                                 @RequestBody GrantDTO grantDTO) {
+    public SystemJsonResponse<Map<String, Object>> grantTeamForMember(@RequestBody GrantDTO grantDTO) {
         // 检测
         grantDTO.validate();
         // 获取当前管理员 ID
@@ -136,8 +134,7 @@ public class TeamOkrController {
 
     @PostMapping("/qrcode/{teamId}")
     @ApiOperation("获取邀请码")
-    public SystemJsonResponse<String> getQRCode(HttpServletRequest request,
-                                                @PathVariable("teamId") @NonNull @ApiParam("团队 OKR ID") Long teamId) {
+    public SystemJsonResponse<String> getQRCode(@PathVariable("teamId") @NonNull @ApiParam("团队 OKR ID") Long teamId) {
         // 检测
         User user = UserRecordUtil.getUserRecord();
         Long managerId = user.getId();
@@ -146,5 +143,16 @@ public class TeamOkrController {
         // 进行操作
         String path = wxQRCodeService.getInviteQRCode(teamId);
         return SystemJsonResponse.SYSTEM_SUCCESS(path);
+    }
+
+    @GetMapping("/describe/{teamId}")
+    @ApiOperation("了解团队")
+    public SystemJsonResponse<String> getTeamName(@PathVariable("teamId") @NonNull @ApiParam("团队 OKR ID") Long teamId) {
+        String teamName = teamOkrService.lambdaQuery()
+                .eq(TeamOkr::getId, teamId)
+                .oneOpt().orElseThrow(() ->
+                new GlobalServiceException(GlobalServiceStatusCode.TEAM_NOT_EXISTS))
+                .getTeamName();
+        return SystemJsonResponse.SYSTEM_SUCCESS(teamName);
     }
 }

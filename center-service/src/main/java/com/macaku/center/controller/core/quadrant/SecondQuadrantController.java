@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Created With Intellij IDEA
  * Description:
@@ -45,8 +43,7 @@ public class SecondQuadrantController {
 
     @PostMapping("/init")
     @ApiOperation("初始化第二象限")
-    public SystemJsonResponse initSecondQuadrant(HttpServletRequest request,
-                                                 @RequestBody OkrInitQuadrantDTO okrInitQuadrantDTO) {
+    public SystemJsonResponse initSecondQuadrant(@RequestBody OkrInitQuadrantDTO okrInitQuadrantDTO) {
         // 校验
         okrInitQuadrantDTO.validate();
         // 初始化
