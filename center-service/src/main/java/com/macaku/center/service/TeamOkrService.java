@@ -16,6 +16,7 @@ import java.util.Map;
 * @createDate 2024-01-20 02:25:52
 */
 public interface TeamOkrService extends IService<TeamOkr> {
+
     List<TeamOkr> selectChildTeams(Long id);
 
     TeamOkr findRootTeam(Long id);
@@ -28,5 +29,7 @@ public interface TeamOkrService extends IService<TeamOkr> {
     Map<String, Object> grantTeamForMember(Long teamId, Long managerId, Long userId, String teamName);
 
     List<TeamOkrStatisticVO> countCompletionRate(List<TeamOkr> teamOkrs);
+
+    void deleteTeamNameCache(Long teamId);
 
 }

@@ -5,14 +5,18 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.JsonUtil;
+import com.macaku.common.util.media.ImageUtil;
 import com.macaku.user.qrcode.config.QRCodeConfig;
 import com.macaku.user.service.WxBindingQRCodeService;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +31,7 @@ import java.util.Map;
 @Setter
 @Slf4j
 @ConfigurationProperties(prefix = "wx.binding")
-public class WxBindingQRCodeServiceImpl implements WxBindingQRCodeService {
+public class WxBindingQRCodeServiceImpl implements WxBindingQRCodeService, BeanNameAware {
 
     private String userKey;
 
@@ -48,6 +52,13 @@ public class WxBindingQRCodeServiceImpl implements WxBindingQRCodeService {
     private Boolean isHyaline;
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
+
+    private Color qrCodeColor;
+
+    @Override
+    public Color getQRCodeColor() {
+        return this.qrCodeColor;
+    }
 
     @Override
     public Map<String, Object> getQRCodeParams() {
@@ -82,4 +93,13 @@ public class WxBindingQRCodeServiceImpl implements WxBindingQRCodeService {
         }
     }
 
+    @PostConstruct
+    public void doPostConstruct() {
+        qrCodeColor = ImageUtil.getColorByMap(lineColor);
+    }
+
+    @Override
+    public void setBeanName(String s) {
+
+    }
 }

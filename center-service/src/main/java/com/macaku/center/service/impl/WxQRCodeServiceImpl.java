@@ -2,9 +2,11 @@ package com.macaku.center.service.impl;
 
 import com.macaku.center.service.WxInviteQRCodeService;
 import com.macaku.center.service.WxQRCodeService;
+import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
+import com.macaku.common.util.media.ImageUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.common.web.HttpUtil;
@@ -12,10 +14,16 @@ import com.macaku.user.qrcode.config.QRCodeConfig;
 import com.macaku.user.service.WxBindingQRCodeService;
 import com.macaku.user.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.BeanNameAware;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import java.awt.*;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created With Intellij IDEA
@@ -26,8 +34,21 @@ import java.util.HashMap;
  */
 @Service
 @Slf4j
+@Setter
 @RequiredArgsConstructor
-public class WxQRCodeServiceImpl implements WxQRCodeService {
+@ConfigurationProperties(prefix = "font.color")
+public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
+
+    private Color textColor;
+
+    private final static String INVITE_FLAG = "[invite]";
+
+    private final static String BINDING_FLAG = "[binding]";
+
+    private final static String BINDING_CODE_MESSAGE = String .format("请在 %d %s 内前往微信扫码进行绑定！",
+            QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
+
+    private Map<String, Integer> text;
 
     private final RedisCache redisCache;
 
@@ -57,6 +78,11 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
             // 获取 QRCode
             String json = wxInviteQRCodeService.getQRCodeJson(teamId);
             String mapPath = MediaUtil.saveImage(doPostGetQRCodeData(json), StaticMapperConfig.INVITE_PATH);
+            // 获取到团队名字
+            String teamName = TeamOkrUtil.getTeamName(teamId);
+            String savePath = StaticMapperConfig.ROOT + mapPath;
+            ImageUtil.mergeSignatureWrite(savePath, teamName,
+                    INVITE_FLAG, this.textColor, wxInviteQRCodeService.getQRCodeColor());
             // todo： 缓存小程序码
             redisCache.setCacheObject(redisKey, mapPath, QRCodeConfig.TEAM_QR_MAP_TTL, QRCodeConfig.TEAM_QR_MAP_UNIT);
             return mapPath;
@@ -71,10 +97,21 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
         redisCache.setCacheObject(redisKey, randomCode,
                 QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
         // 为图片记录缓存时间，时间一到，在服务器存储的文件应该删除掉！
+        String savePath = StaticMapperConfig.ROOT + mapPath;
+        ImageUtil.mergeSignatureWrite(savePath, BINDING_CODE_MESSAGE,
+                BINDING_FLAG, this.textColor, wxBindingQRCodeService.getQRCodeColor());
         redisCache.setCacheObject(QRCodeConfig.WX_CHECK_QR_CODE_CACHE + mapPath.substring(mapPath.lastIndexOf("/") + 1), 0,
                 QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
         return mapPath;
     }
 
+    @PostConstruct
+    public void doPostConstruct() {
+        textColor = ImageUtil.getColorByMap(text);
+    }
 
+    @Override
+    public void setBeanName(String s) {
+
+    }
 }

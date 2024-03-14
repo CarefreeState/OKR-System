@@ -129,6 +129,13 @@
             <version>${lombok.version}</version>
         </dependency>
 
+        <!--   图片拼接   -->
+        <dependency>
+            <groupId>com.freewayso</groupId>
+            <artifactId>image-combiner</artifactId>
+            <version>${com.freewayso.version}</version>
+        </dependency>
+
 
 
     </dependencies>

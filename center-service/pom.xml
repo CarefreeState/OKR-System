@@ -47,13 +47,6 @@
             <version>${com.github.lalyos.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>com.freewayso</groupId>
-            <artifactId>image-combiner</artifactId>
-            <version>${com.freewayso.version}</version>
-        </dependency>
-
-
         <!--   其他服务     -->
         <dependency>
             <groupId>com.macaku</groupId>

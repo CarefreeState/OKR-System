@@ -7,9 +7,7 @@ import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.center.service.MemberService;
 import com.macaku.center.service.TeamOkrService;
-import com.macaku.center.service.WxInviteQRCodeService;
 import com.macaku.center.service.WxQRCodeService;
-import com.macaku.center.util.ImageUtil;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
@@ -24,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -48,8 +45,6 @@ public class TeamOkrController {
     private final MemberService memberService;
 
     private final WxQRCodeService wxQRCodeService;
-
-    private final WxInviteQRCodeService wxInviteQRCodeService;
 
     @GetMapping("/list")
     @ApiOperation("获取管理的团队 OKR 列表")
@@ -78,6 +73,8 @@ public class TeamOkrController {
         updateTeam.setId(teamId);
         updateTeam.setTeamName(teamName);
         teamOkrService.lambdaUpdate().eq(TeamOkr::getId, teamId).update(updateTeam);
+        // 删除缓存
+        teamOkrService.deleteTeamNameCache(teamId);
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
@@ -151,12 +148,7 @@ public class TeamOkrController {
     @GetMapping("/describe/{teamId}")
     @ApiOperation("了解团队")
     public SystemJsonResponse<String> getTeamName(@PathVariable("teamId") @NonNull @ApiParam("团队 OKR ID") Long teamId) throws IOException {
-        String teamName = teamOkrService.lambdaQuery()
-                .eq(TeamOkr::getId, teamId)
-                .oneOpt().orElseThrow(() ->
-                new GlobalServiceException(GlobalServiceStatusCode.TEAM_NOT_EXISTS))
-                .getTeamName();
-        ImageUtil.mergeSignatureWrite(teamName, "[invite]", new Color(63, 90, 103), new Color(20, 133, 238));
+        String teamName = TeamOkrUtil.getTeamName(teamId);
         return SystemJsonResponse.SYSTEM_SUCCESS(teamName);
     }
 }

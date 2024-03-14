@@ -1,5 +1,6 @@
 package com.macaku.user.service;
 
+import java.awt.*;
 import java.util.Map;
 
 /**
@@ -10,6 +11,8 @@ import java.util.Map;
  * Time: 19:36
  */
 public interface WxBindingQRCodeService {
+
+    Color getQRCodeColor();
 
     Map<String, Object> getQRCodeParams();
 

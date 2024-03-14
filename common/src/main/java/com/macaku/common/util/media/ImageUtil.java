@@ -1,11 +1,10 @@
-package com.macaku.center.util;
+package com.macaku.common.util.media;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.freewayso.image.combiner.ImageCombiner;
 import com.freewayso.image.combiner.enums.OutputFormat;
 import com.freewayso.image.combiner.enums.ZoomMode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.media.MediaUtil;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 
 @Component
 public class ImageUtil {
@@ -27,6 +27,9 @@ public class ImageUtil {
 
     private final static String BOARD_PATH = SpringUtil.getProperty("font.board");
 
+    public static Color getColorByMap(Map<String, Integer> lineColor) {
+        return new Color(lineColor.get("r"), lineColor.get("g"), lineColor.get("b"));
+    }
 
     public static Font getFont(float fontSize){
         Font font = new Font(DEFAULT_FONT, Font.BOLD, (int)fontSize); // 默认字体
@@ -135,8 +138,7 @@ public class ImageUtil {
         combiner.save(subjectPath);
     }
 
-    public static void mergeSignatureWrite(String text, String flag, Color textColor, Color flagColor) {
-        String subject = "d:/demo/code.png";
+    public static void mergeSignatureWrite(String subject, String text, String flag, Color textColor, Color flagColor) {
         try {
             mergeImage(subject, 125, 250, 500, 500);
             signatureFancy(flag, flagColor, subject);

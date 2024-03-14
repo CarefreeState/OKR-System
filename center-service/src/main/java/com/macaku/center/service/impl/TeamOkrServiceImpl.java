@@ -24,6 +24,7 @@ import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.user.domain.po.User;
+import com.macaku.user.qrcode.config.QRCodeConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -32,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -169,6 +169,14 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
                     teamOkrStatisticVO.setKeyResults(null);
                 });
         return statisticVOS;
+    }
+
+    @Override
+    public void deleteTeamNameCache(Long teamId) {
+        // 1. 删除 ID - TeamName 的映射
+        redisCache.deleteObject(TeamOkrUtil.TEAM_ID_NAME_MAP + teamId);
+        // 2. 删除邀请码的缓存
+        redisCache.deleteObject(QRCodeConfig.TEAM_QR_CODE_MAP + teamId);
     }
 
     @Override

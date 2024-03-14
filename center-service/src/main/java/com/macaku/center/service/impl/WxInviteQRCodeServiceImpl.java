@@ -5,12 +5,16 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.ShortCodeUtil;
+import com.macaku.common.util.media.ImageUtil;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -26,7 +30,7 @@ import java.util.Objects;
 @Setter
 @Slf4j
 @ConfigurationProperties(prefix = "wx.invite")
-public class WxInviteQRCodeServiceImpl implements WxInviteQRCodeService {
+public class WxInviteQRCodeServiceImpl implements WxInviteQRCodeService, BeanNameAware {
 
     private String sceneKey;
 
@@ -45,6 +49,13 @@ public class WxInviteQRCodeServiceImpl implements WxInviteQRCodeService {
     private Map<String, Integer> lineColor;
 
     private Boolean isHyaline;
+
+    private Color qrCodeColor;
+
+    @Override
+    public Color getQRCodeColor() {
+        return this.qrCodeColor;
+    }
 
     @Override
     public void checkParams(Long teamId, String secret) {
@@ -93,4 +104,13 @@ public class WxInviteQRCodeServiceImpl implements WxInviteQRCodeService {
         return JsonUtil.analyzeData(params);
     }
 
+    @PostConstruct
+    public void doPostConstruct() {
+        qrCodeColor = ImageUtil.getColorByMap(lineColor);
+    }
+
+    @Override
+    public void setBeanName(String s) {
+
+    }
 }
