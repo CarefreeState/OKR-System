@@ -27,7 +27,13 @@ public class ImageUtil {
 
     private final static String BOARD_PATH = SpringUtil.getProperty("font.board");
 
-    private final static double MAX_PX = 180.0;
+    private final static double MAX_PX = 160.0;
+
+    private final static double REFER_WIDTH = 666.0;
+
+    private final static double REFER_HEIGHT = 250.0;
+
+    private final static double IMAGE_SIZE = 750.0;
 
     public static Color getColorByMap(Map<String, Integer> lineColor) {
         return new Color(lineColor.get("r"), lineColor.get("g"), lineColor.get("b"));
@@ -84,18 +90,18 @@ public class ImageUtil {
     }
 
     public static int calculateFontSize(double len) {
-        double px = Math.min(690.0 / len, MAX_PX);
+        double px = Math.min(REFER_WIDTH / len, MAX_PX);
         return (int) px;
     }
 
     public static int calculateLeftSize(double len) {
-        double px = 690.0 / len;
+        double px = REFER_WIDTH / len;
         px = px > MAX_PX ? MAX_PX : Math.min(px / 0.965, MAX_PX);
-        return (int) ((750.0 - len * px) / 2);
+        return (int) ((IMAGE_SIZE - len * px) / 2);
     }
     public static int calculateTopSize(double len) {
-        double px = Math.min(690.0 / len, MAX_PX);
-        return (int) ((250.0 + px) / 2);
+        double px = Math.min(REFER_WIDTH / len, MAX_PX);
+        return (int) ((REFER_HEIGHT + px) / 2);
     }
 
     public static void writeFancy(String text, Color color, String desc) throws IOException {
