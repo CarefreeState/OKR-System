@@ -189,7 +189,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new GlobalServiceException(String.format("用户 %d 上传非法文件", userId), GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
         // 删除原头像（哪怕是字符串是网络路径/非法，只要本地没有完全对应上，就不算存在本地）
-        String originSavePath = MediaUtil.getFilePath(originPhoto);
+        String originSavePath = MediaUtil.getLocalFilePath(originPhoto);
         MediaUtil.deleteFile(originSavePath);
         // 下载头像到本地
         String mapPath = MediaUtil.saveImage(photoData, StaticMapperConfig.PHOTO_PATH);

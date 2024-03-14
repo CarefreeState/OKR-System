@@ -97,7 +97,7 @@ public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
         redisCache.setCacheObject(redisKey, randomCode,
                 QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
         // 为图片记录缓存时间，时间一到，在服务器存储的文件应该删除掉！
-        String savePath = StaticMapperConfig.ROOT + mapPath;
+        String savePath = MediaUtil.getLocalFilePath(mapPath);
         ImageUtil.mergeSignatureWrite(savePath, BINDING_CODE_MESSAGE,
                 BINDING_FLAG, this.textColor, wxBindingQRCodeService.getQRCodeColor());
         redisCache.setCacheObject(QRCodeConfig.WX_CHECK_QR_CODE_CACHE + mapPath.substring(mapPath.lastIndexOf("/") + 1), 0,

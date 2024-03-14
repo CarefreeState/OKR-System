@@ -36,7 +36,7 @@ public class MediaUtil {
         return String.format("%s.%s", getUUID_32(), SUFFIX);
     }
 
-    public static String getFilePath(String mapPath) {
+    public static String getLocalFilePath(String mapPath) {
         return StaticMapperConfig.ROOT + mapPath;
     }
 

@@ -20,6 +20,7 @@ import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
+import com.macaku.common.util.media.MediaUtil;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
@@ -176,7 +177,13 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         // 1. 删除 ID - TeamName 的映射
         redisCache.deleteObject(TeamOkrUtil.TEAM_ID_NAME_MAP + teamId);
         // 2. 删除邀请码的缓存
-        redisCache.deleteObject(QRCodeConfig.TEAM_QR_CODE_MAP + teamId);
+        // (如果经常修改，那么这个团队一直都在本地只有一个小程序码，如果一个月内一次修改都没有，那么应该也不会重新获取邀请码，即使有，每个月多一张无伤大雅)
+        String redisKey = QRCodeConfig.TEAM_QR_CODE_MAP + teamId;
+        redisCache.getCacheObject(redisKey).ifPresent(mapPath -> {
+            redisCache.deleteObject(redisKey);
+            String originPath = MediaUtil.getLocalFilePath((String) mapPath);
+            MediaUtil.deleteFile(originPath);
+        });
     }
 
     @Override
