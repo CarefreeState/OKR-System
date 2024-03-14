@@ -27,6 +27,8 @@ public class ImageUtil {
 
     private final static String BOARD_PATH = SpringUtil.getProperty("font.board");
 
+    private final static double MAX_PX = 180.0;
+
     public static Color getColorByMap(Map<String, Integer> lineColor) {
         return new Color(lineColor.get("r"), lineColor.get("g"), lineColor.get("b"));
     }
@@ -82,17 +84,17 @@ public class ImageUtil {
     }
 
     public static int calculateFontSize(double len) {
-        double px = Math.min(690.0 / len, 200.0);
+        double px = Math.min(690.0 / len, MAX_PX);
         return (int) px;
     }
 
     public static int calculateLeftSize(double len) {
         double px = 690.0 / len;
-        px = px > 200.0 ? 200.0 : (px / 0.965);
+        px = px > MAX_PX ? MAX_PX : Math.min(px / 0.965, MAX_PX);
         return (int) ((750.0 - len * px) / 2);
     }
     public static int calculateTopSize(double len) {
-        double px = Math.min(690.0 / len, 200.0);
+        double px = Math.min(690.0 / len, MAX_PX);
         return (int) ((250.0 + px) / 2);
     }
 
