@@ -19,11 +19,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 @Component
-public class ImageUtils {
+public class ImageUtil {
 
     private final static String DEFAULT_FONT = "宋体";
 
     private final static String FONT_PATH = SpringUtil.getProperty("font.path");
+
+    private final static String BOARD_PATH = SpringUtil.getProperty("font.board");
+
 
     public static Font getFont(float fontSize){
         Font font = new Font(DEFAULT_FONT, Font.BOLD, (int)fontSize); // 默认字体
@@ -116,11 +119,26 @@ public class ImageUtils {
         combiner.save(subjectPath);
     }
 
+    public static void mergeImage(String subjectPath, int x, int y, int width, int height) throws Exception {
+        ClassPathResource classPathResource = new ClassPathResource(BOARD_PATH);
+        BufferedImage boardImager = ImageIO.read(classPathResource.getFile());
+        //合成器和背景图（整个图片的宽高和相关计算依赖于背景图，所以背景图的大小是个基准）
+        ImageCombiner combiner = new ImageCombiner(boardImager, OutputFormat.PNG);
+        combiner.setBackgroundBlur(0);     //设置背景高斯模糊（毛玻璃效果）
+        combiner.setCanvasRoundCorner(0); //设置整图圆角（输出格式必须为PNG）
+        //二维码（强制按指定宽度、高度缩放）
+        combiner.addImageElement(ImageIO.read(Files.newInputStream(Paths.get(subjectPath))),
+                x, y, width, height, ZoomMode.WidthHeight);
+        //执行图片合并
+        combiner.combine();
+        //保存文件
+        combiner.save(subjectPath);
+    }
+
     public static void mergeSignatureWrite(String text, String flag, Color textColor, Color flagColor) {
         String subject = "d:/demo/code.png";
-        String board = "d:/demo/board.png";
         try {
-            mergeImage(subject, board, 125, 250, 500, 500);
+            mergeImage(subject, 125, 250, 500, 500);
             signatureFancy(flag, flagColor, subject);
             writeFancy(text, textColor, subject);
         } catch (Exception e) {

@@ -9,7 +9,7 @@ import com.macaku.center.service.MemberService;
 import com.macaku.center.service.TeamOkrService;
 import com.macaku.center.service.WxInviteQRCodeService;
 import com.macaku.center.service.WxQRCodeService;
-import com.macaku.center.util.ImageUtils;
+import com.macaku.center.util.ImageUtil;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
@@ -156,7 +156,7 @@ public class TeamOkrController {
                 .oneOpt().orElseThrow(() ->
                 new GlobalServiceException(GlobalServiceStatusCode.TEAM_NOT_EXISTS))
                 .getTeamName();
-        ImageUtils.mergeSignatureWrite(teamName, "[invite]", new Color(63, 90, 103), new Color(20, 133, 238));
+        ImageUtil.mergeSignatureWrite(teamName, "[invite]", new Color(63, 90, 103), new Color(20, 133, 238));
         return SystemJsonResponse.SYSTEM_SUCCESS(teamName);
     }
 }
