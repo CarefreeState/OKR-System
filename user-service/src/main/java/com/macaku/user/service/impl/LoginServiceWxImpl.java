@@ -1,6 +1,8 @@
 package com.macaku.user.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
+import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.JwtUtil;
@@ -45,6 +47,9 @@ public class LoginServiceWxImpl implements LoginService {
     @Override
     public Map<String, Object> login(LoginDTO loginDTO) {
         WxLoginDTO wxLoginDTO = loginDTO.createWxLoginDTO();
+        if(Objects.isNull(wxLoginDTO)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
+        }
         wxLoginDTO.validate();
         // 1. 构造请求 + 发起请求 -> code2Session
         String code = wxLoginDTO.getCode();

@@ -29,7 +29,7 @@ public class ImageUtil {
 
     private final static double MAX_PX = 160.0;
 
-    private final static double REFER_WIDTH = 666.0;
+    private final static double REFER_WIDTH = 650.0;
 
     private final static double REFER_HEIGHT = 250.0;
 

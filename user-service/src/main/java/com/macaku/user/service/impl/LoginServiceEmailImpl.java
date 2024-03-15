@@ -1,7 +1,9 @@
 package com.macaku.user.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
+import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.email.component.EmailServiceSelector;
+import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.JwtUtil;
@@ -48,6 +50,9 @@ public class LoginServiceEmailImpl implements LoginService {
     @Override
     public Map<String, Object> login(LoginDTO loginDTO) {
         EmailLoginDTO emailLoginDTO = loginDTO.createEmailLoginDTO();
+        if(Objects.isNull(emailLoginDTO)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
+        }
         emailLoginDTO.validate();
         String email = emailLoginDTO.getEmail();
         String code = emailLoginDTO.getCode();
