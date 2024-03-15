@@ -27,15 +27,21 @@ public class ImageUtil {
 
     private final static String BOARD_PATH = SpringUtil.getProperty("font.board");
 
-    private final static double MAX_PX = 160.0;
+    private final static double MAX_PX_RATE = 0.213;
 
-    private final static double REFER_WIDTH = 650.0;
+    private final static double REFER_WIDTH_RATE = 0.824;
 
-    private final static double REFER_HEIGHT = 250.0;
-
-    private final static double IMAGE_SIZE = 750.0;
+    private final static double REFER_HEIGHT_RATE = 0.333;
 
     private final static double SHIN_BACK_RATE = 0.965;
+
+    private final static double IMAGE_SIZE = 750.000;
+
+    private final static double MAX_PX = MAX_PX_RATE * IMAGE_SIZE;
+
+    private final static double REFER_WIDTH = REFER_WIDTH_RATE * IMAGE_SIZE;
+
+    private final static double REFER_HEIGHT = REFER_HEIGHT_RATE * IMAGE_SIZE;
 
     public static Color getColorByMap(Map<String, Integer> lineColor) {
         return new Color(lineColor.get("r"), lineColor.get("g"), lineColor.get("b"));
