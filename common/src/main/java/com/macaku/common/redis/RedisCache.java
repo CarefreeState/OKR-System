@@ -56,6 +56,11 @@ public class RedisCache {
         });
     }
 
+    public <T> void execute(SessionCallback<T> session) {
+        log.info("Redis 执行原子任务");
+        redisTemplate.execute(session);
+    }
+
     /**
      * 获得对象的剩余存活时间
      *

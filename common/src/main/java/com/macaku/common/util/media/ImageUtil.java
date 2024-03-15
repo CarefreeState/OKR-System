@@ -12,8 +12,8 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -35,6 +35,8 @@ public class ImageUtil {
 
     private final static double IMAGE_SIZE = 750.0;
 
+    private final static double SHIN_BACK_RATE = 0.965;
+
     public static Color getColorByMap(Map<String, Integer> lineColor) {
         return new Color(lineColor.get("r"), lineColor.get("g"), lineColor.get("b"));
     }
@@ -42,8 +44,8 @@ public class ImageUtil {
     public static Font getFont(float fontSize){
         Font font = new Font(DEFAULT_FONT, Font.BOLD, (int)fontSize); // 默认字体
         ClassPathResource classPathResource = new ClassPathResource(FONT_PATH);
-        try (FileInputStream fileInputStream = new FileInputStream( classPathResource.getFile())) {
-            Font tempFont = Font.createFont(Font.TRUETYPE_FONT, fileInputStream);
+        try (InputStream inputStream = classPathResource.getInputStream()) {
+            Font tempFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
             //当参数为 float 类型，才是设置文字大小
             font = tempFont.deriveFont(fontSize);
         } catch (IOException | FontFormatException e) {
@@ -96,7 +98,7 @@ public class ImageUtil {
 
     public static int calculateLeftSize(double len) {
         double px = REFER_WIDTH / len;
-        px = px > MAX_PX ? MAX_PX : Math.min(px / 0.965, MAX_PX);
+        px = px > MAX_PX ? MAX_PX : Math.min(px / SHIN_BACK_RATE, MAX_PX);
         return (int) ((IMAGE_SIZE - len * px) / 2);
     }
     public static int calculateTopSize(double len) {
@@ -132,18 +134,20 @@ public class ImageUtil {
 
     public static void mergeImage(String subjectPath, int x, int y, int width, int height) throws Exception {
         ClassPathResource classPathResource = new ClassPathResource(BOARD_PATH);
-        BufferedImage boardImager = ImageIO.read(classPathResource.getFile());
-        //合成器和背景图（整个图片的宽高和相关计算依赖于背景图，所以背景图的大小是个基准）
-        ImageCombiner combiner = new ImageCombiner(boardImager, OutputFormat.PNG);
-        combiner.setBackgroundBlur(0);     //设置背景高斯模糊（毛玻璃效果）
-        combiner.setCanvasRoundCorner(0); //设置整图圆角（输出格式必须为PNG）
-        //二维码（强制按指定宽度、高度缩放）
-        combiner.addImageElement(ImageIO.read(Files.newInputStream(Paths.get(subjectPath))),
-                x, y, width, height, ZoomMode.WidthHeight);
-        //执行图片合并
-        combiner.combine();
-        //保存文件
-        combiner.save(subjectPath);
+        try (InputStream inputStream = classPathResource.getInputStream()) {
+            BufferedImage boardImager = ImageIO.read(inputStream);
+            //合成器和背景图（整个图片的宽高和相关计算依赖于背景图，所以背景图的大小是个基准）
+            ImageCombiner combiner = new ImageCombiner(boardImager, OutputFormat.PNG);
+            combiner.setBackgroundBlur(0);     //设置背景高斯模糊（毛玻璃效果）
+            combiner.setCanvasRoundCorner(0); //设置整图圆角（输出格式必须为PNG）
+            //二维码（强制按指定宽度、高度缩放）
+            combiner.addImageElement(ImageIO.read(Files.newInputStream(Paths.get(subjectPath))),
+                    x, y, width, height, ZoomMode.WidthHeight);
+            //执行图片合并
+            combiner.combine();
+            //保存文件
+            combiner.save(subjectPath);
+        }
     }
 
     public static void mergeSignatureWrite(String subject, String text, String flag, Color textColor, Color flagColor) {
