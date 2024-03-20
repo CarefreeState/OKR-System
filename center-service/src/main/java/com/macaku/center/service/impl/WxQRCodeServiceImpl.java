@@ -125,7 +125,8 @@ public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
         redisCache.addToBloomFilter(bloomFilterName, secret);
         String redisKey = QRCodeConfig.WX_LOGIN_QR_CODE_MAP + secret;
         // 设置 为 false
-        redisCache.setCacheObject(redisKey, Boolean.FALSE);
+        redisCache.setCacheObject(redisKey, Boolean.FALSE,
+                QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
         // 获取一个小程序码
         String json = wxLoginQRCodeService.getQRCodeJson(secret);
         String mapPath = MediaUtil.saveImage(doPostGetQRCodeData(json), StaticMapperConfig.LOGIN_PATH);
