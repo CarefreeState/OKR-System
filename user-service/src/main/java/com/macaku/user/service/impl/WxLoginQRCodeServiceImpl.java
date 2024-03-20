@@ -1,8 +1,10 @@
-package com.macaku.center.service.impl;
+package com.macaku.user.service.impl;
 
-import com.macaku.center.service.WxLoginQRCodeService;
+import cn.hutool.extra.spring.SpringUtil;
+import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.media.ImageUtil;
+import com.macaku.user.service.WxLoginQRCodeService;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanNameAware;
@@ -46,6 +48,8 @@ public class WxLoginQRCodeServiceImpl implements WxLoginQRCodeService, BeanNameA
 
     private Color qrCodeColor;
 
+    private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
+
     @Override
     public Color getQRCodeColor() {
         return this.qrCodeColor;
@@ -71,7 +75,6 @@ public class WxLoginQRCodeServiceImpl implements WxLoginQRCodeService, BeanNameA
         params.put("scene", scene);
         return JsonUtil.analyzeData(params);
     }
-
 
     @PostConstruct
     public void doPostConstruct() {

@@ -6,13 +6,16 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.email.component.EmailServiceSelector;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
+import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JsonUtil;
+import com.macaku.common.util.JwtUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.common.web.HttpUtil;
 import com.macaku.user.domain.dto.UserinfoDTO;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.mapper.UserMapper;
+import com.macaku.user.qrcode.config.QRCodeConfig;
 import com.macaku.user.service.UserService;
 import com.macaku.user.service.WxBindingQRCodeService;
 import com.macaku.user.token.TokenUtil;
@@ -33,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
-    implements UserService{
+    implements UserService {
 
     private final static String EMAIL_USER_MAP = "emailUserMap:";
 
@@ -62,7 +65,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public String getUserFlag(String code) {
         String code2SessionUrl = "https://api.weixin.qq.com/sns/jscode2session";
-        Map<String, Object> param = new HashMap<String, Object>(){{
+        Map<String, Object> param = new HashMap<String, Object>() {{
             this.put("appid", TokenUtil.APP_ID);
             this.put("secret", TokenUtil.APP_SECRET);
             this.put("js_code", code);
@@ -140,7 +143,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .checkIdentifyingCode(email, code);
         // 判断邮箱用户是否存在
         User userByEmail = getUserByEmail(email);
-        if(Objects.nonNull(userByEmail)) {
+        if (Objects.nonNull(userByEmail)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.EMAIL_USER_BE_BOUND);
         }
         this.lambdaUpdate()
@@ -148,7 +151,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .set(User::getEmail, email)
                 .update();
         deleteUserEmailCache(email);
-        if(StringUtils.hasText(recordEmail)) {
+        if (StringUtils.hasText(recordEmail)) {
             deleteUserEmailCache(recordEmail);
         }
         log.info("用户 {} 成功绑定 邮箱 {}", userId, email);
@@ -164,13 +167,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         String unionid = (String) response.get("unionid");
         // 查询 openid 是否被注册过
         User userByOpenid = getUserByOpenid(openid);
-        if(Objects.nonNull(userByOpenid)) {
+        if (Objects.nonNull(userByOpenid)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.WX_USER_BE_BOUND);
         }
         // 判断当前用户是否绑定了微信
         // todo: 避免混乱所以现在暂且不支持微信重新绑定，之后需要再说
         String openidByUserId = getOpenidByUserId(userId);
-        if(Objects.nonNull(openidByUserId)) {
+        if (Objects.nonNull(openidByUserId)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_BOUND_WX);
         }
         this.lambdaUpdate()
@@ -185,7 +188,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public String tryUploadPhoto(byte[] photoData, Long userId, String originPhoto) {
         // 检查是否是图片
-        if(!MediaUtil.isImage(photoData)) {
+        if (!MediaUtil.isImage(photoData)) {
             throw new GlobalServiceException(String.format("用户 %d 上传非法文件", userId), GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
         // 删除原头像（哪怕是字符串是网络路径/非法，只要本地没有完全对应上，就不算存在本地）
@@ -201,4 +204,35 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return mapPath;
     }
 
+    @Override
+    public void onLoginState(String secret, String openid, String unionid) {
+        String redisKey = QRCodeConfig.WX_LOGIN_QR_CODE_MAP + secret;
+        Object check = redisCache.getCacheObject(redisKey).orElseThrow(() ->
+                new GlobalServiceException(GlobalServiceStatusCode.USER_LOGIN_CODE_VALID));
+        if (Boolean.FALSE.equals(check)) {
+            Map<String, Object> tokenData = new HashMap<String, Object>(){{
+                this.put(ExtractUtil.OPENID, openid);
+                this.put(ExtractUtil.UNIONID, unionid);
+//                this.put(ExtractUtil.SESSION_KEY, sessionKey);
+            }};
+            String jsonData = JsonUtil.analyzeData(tokenData);
+            String token = JwtUtil.createJWT(jsonData);
+            redisCache.setCacheObject(redisKey, token,
+                    QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
+        }
+    }
+
+    @Override
+    public Map<String, Object> checkLoginState(String secret) {
+        String redisKey = QRCodeConfig.WX_LOGIN_QR_CODE_MAP + secret;
+        Object check = redisCache.getCacheObject(redisKey).orElseThrow(() ->
+                new GlobalServiceException(GlobalServiceStatusCode.USER_LOGIN_CODE_VALID));
+        if (Boolean.FALSE.equals(check)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_LOGIN_NOT_CHECK);
+        }
+        redisCache.deleteObject(redisKey);
+        return new HashMap<String, Object>() {{
+            this.put(JwtUtil.JWT_HEADER, check);
+        }};
+    }
 }

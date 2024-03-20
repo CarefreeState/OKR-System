@@ -1,4 +1,4 @@
-package com.macaku.center.service;
+package com.macaku.user.service;
 
 import java.awt.*;
 import java.util.Map;

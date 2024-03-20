@@ -39,6 +39,8 @@ public enum GlobalServiceStatusCode {
     USER_ACCOUNT_USE_BY_OTHERS(2009, "账号下线"),
 
     USER_TOKEN_NOT_VALID(2010, "用户登录凭据无效"),
+    USER_LOGIN_CODE_VALID(2011, "用户登录码失效"),
+    USER_LOGIN_NOT_CHECK(2012, "用户登录码未验证"),
 
     USER_NO_PERMISSION(2403, "用户无权限"),
     USER_NO_PHONE_CODE(2500, "验证码错误"),

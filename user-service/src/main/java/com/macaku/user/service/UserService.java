@@ -1,10 +1,11 @@
 package com.macaku.user.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.macaku.user.domain.dto.UserinfoDTO;
 import com.macaku.user.domain.po.User;
-import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author 马拉圈
@@ -36,4 +37,9 @@ public interface UserService extends IService<User> {
     void bindingWx(Long userId, String randomCode, String code);
 
     String tryUploadPhoto(byte[] photoData, Long userId, String originPhoto);
+
+    void onLoginState(String secret, String openId, String unionid);
+
+    Map<String, Object> checkLoginState(String secret);
+
 }

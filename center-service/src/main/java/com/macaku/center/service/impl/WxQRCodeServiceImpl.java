@@ -2,7 +2,7 @@ package com.macaku.center.service.impl;
 
 import com.macaku.center.redis.config.BloomFilterConfig;
 import com.macaku.center.service.WxInviteQRCodeService;
-import com.macaku.center.service.WxLoginQRCodeService;
+import com.macaku.user.service.WxLoginQRCodeService;
 import com.macaku.center.service.WxQRCodeService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;

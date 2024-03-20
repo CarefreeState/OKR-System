@@ -21,3 +21,8 @@ values
     ('a16bfdc390f44302be0f0c187b871405', '刘阳', 'bogusmail@example.net', '36587421059', 'https://c-ssl.dtstatic.com/uploads/item/201806/26/20180626110230_VjeyZ.thumb.400_0.jpeg'),
     ('544d69d405234b16aa96ba8c136c3f04', '陈明', 'unrealmail@testmail.com', '90285736149', 'https://c-ssl.dtstatic.com/uploads/blog/202009/18/20200918210552_263be.thumb.400_0.jpg')
 ;
+
+insert into `user` (openid, nickname, email, phone, photo)
+values
+    ('oU0Wz6z7_ZIpdY92gqpM75BJ58vg', '陈明', '', '', 'https://c-ssl.dtstatic.com/uploads/blog/202009/18/20200918210552_263be.thumb.400_0.jpg')
+;

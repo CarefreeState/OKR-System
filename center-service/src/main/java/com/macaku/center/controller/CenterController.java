@@ -59,7 +59,6 @@ public class CenterController {
         }
         Map<String, Object> tokenData = new HashMap<String, Object>(){{
             this.put(ExtractUtil.OPENID, openid);
-            this.put(ExtractUtil.SESSION_KEY, "123456");
         }};
         String jsonData = JsonUtil.analyzeData(tokenData);
         String token = JwtUtil.createJWT(jsonData);

@@ -88,12 +88,29 @@ public class UserController {
         return SystemJsonResponse.SYSTEM_SUCCESS(mapPath);
     }
 
-    @PostMapping("/wx/login")
-    @ApiOperation("微信登录")
+    @GetMapping("/wx/login")
+    @ApiOperation("获取微信登录码")
     public SystemJsonResponse<String> wxLoginCheck() {
         // 生成一个小程序检查码
         String mapPath = wxQRCodeService.getLoginQRCode();
         return SystemJsonResponse.SYSTEM_SUCCESS(mapPath);
+    }
+
+    @PostMapping("/wx/confirm/{secret}")
+    @ApiOperation("微信登录确认")
+    public SystemJsonResponse wxLoginConfirm(@PathVariable("secret") @NonNull @ApiParam("secret") String secret) {
+        User user = UserRecordUtil.getUserRecord();
+        String openid = user.getOpenid();
+        String unionid = user.getUnionid();
+        userService.onLoginState(secret, openid, unionid);//如果不是微信用户，token 的数据没意义，对不上
+        return SystemJsonResponse.SYSTEM_SUCCESS();
+    }
+
+    @PostMapping("/wx/login/{secret}")
+    @ApiOperation("微信登录检查")
+    public SystemJsonResponse<Map<String, Object>> wxLoginCheck(@PathVariable("secret") @NonNull @ApiParam("secret") String secret) {
+        Map<String, Object> result = userService.checkLoginState(secret);
+        return SystemJsonResponse.SYSTEM_SUCCESS(result);
     }
 
     @PostMapping("/binding/email")
