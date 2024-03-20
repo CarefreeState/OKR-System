@@ -15,4 +15,6 @@ public interface WxQRCodeService {
 
     String getBindingQRCode(Long userId, String randomCode);
 
+    String getLoginQRCode();
+
 }

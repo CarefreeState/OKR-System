@@ -58,3 +58,42 @@ where
   and f.core_id = o.id
 order by t.id
 ;
+
+
+select id, parent_team_id, manager_id , team_name
+from team_okr
+where team_name in ('水晶帝国', '暮光城堡', '坎特洛特', '暮光城堡', '无尽之森') or team_name like '古希腊%';
+
+
+select id, team_id, user_id
+from team_personal_okr
+where team_id = 3 and user_id = 186;
+
+update team_okr
+set parent_team_id = 3
+where id in (9, 16);
+
+update team_personal_okr
+set team_id = 3
+where id in (49, 71);
+
+update team_okr
+set parent_team_id = 27
+where id = 16;
+
+update team_personal_okr
+set team_id = 27
+where id = 71;
+
+
+update key_result
+set content = '接口开发面向扩展，并且完成度大于1'
+where id = 4;
+
+update key_result
+set content = '接口性能达到优良以上，用户拥有较好的体验'
+where id = 5;
+
+update key_result
+set content = '拥有严格的业务逻辑的校验、数据一致的保证、恶意操作的防御'
+where id = 6;

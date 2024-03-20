@@ -88,6 +88,14 @@ public class UserController {
         return SystemJsonResponse.SYSTEM_SUCCESS(mapPath);
     }
 
+    @PostMapping("/wx/login")
+    @ApiOperation("微信登录")
+    public SystemJsonResponse<String> wxLoginCheck() {
+        // 生成一个小程序检查码
+        String mapPath = wxQRCodeService.getLoginQRCode();
+        return SystemJsonResponse.SYSTEM_SUCCESS(mapPath);
+    }
+
     @PostMapping("/binding/email")
     @ApiOperation("绑定用户邮箱")
     public SystemJsonResponse emailBinding(HttpServletRequest request,

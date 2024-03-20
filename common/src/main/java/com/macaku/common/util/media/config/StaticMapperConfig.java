@@ -20,6 +20,8 @@ public class StaticMapperConfig implements WebMvcConfigurer {
 
     public static String SWAGGER_PATH;
 
+    public static String LOGIN_PATH;
+
     public static String PHOTO_PATH;
 
     /**
@@ -60,6 +62,11 @@ public class StaticMapperConfig implements WebMvcConfigurer {
     @Value("${media.swagger}")
     private void setSWAGGER_PATH(String swaggerPath) {
         SWAGGER_PATH = swaggerPath;
+    }
+
+    @Value("${media.login}")
+    private void setLOGIN_PATH(String loginPath) {
+        LOGIN_PATH = loginPath;
     }
 
     @Value("${media.photo}")

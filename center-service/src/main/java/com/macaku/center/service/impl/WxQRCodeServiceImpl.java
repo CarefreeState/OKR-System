@@ -1,11 +1,14 @@
 package com.macaku.center.service.impl;
 
+import com.macaku.center.redis.config.BloomFilterConfig;
 import com.macaku.center.service.WxInviteQRCodeService;
+import com.macaku.center.service.WxLoginQRCodeService;
 import com.macaku.center.service.WxQRCodeService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
+import com.macaku.common.util.ShortCodeUtil;
 import com.macaku.common.util.media.ImageUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
@@ -45,8 +48,13 @@ public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
 
     private final static String BINDING_FLAG = "[binding]";
 
+    private final static String LOGIN_FLAG = "[login]";
+
     private final static String BINDING_CODE_MESSAGE = String .format("请在 %d %s 内前往微信扫码进行绑定！",
             QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
+
+    private final static String LOGIN_CODE_MESSAGE = String .format("请在 %d %s 内前往微信扫码进行验证！",
+            QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
 
     private Map<String, Integer> text;
 
@@ -55,6 +63,8 @@ public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
     private final WxBindingQRCodeService wxBindingQRCodeService;
 
     private final WxInviteQRCodeService wxInviteQRCodeService;
+
+    private final WxLoginQRCodeService wxLoginQRCodeService;
 
     @Override
     public byte[] doPostGetQRCodeData(String json) {
@@ -102,6 +112,28 @@ public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
                 BINDING_FLAG, this.textColor, wxBindingQRCodeService.getQRCodeColor());
         redisCache.setCacheObject(QRCodeConfig.WX_CHECK_QR_CODE_CACHE + mapPath.substring(mapPath.lastIndexOf("/") + 1), 0,
                 QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
+        return mapPath;
+    }
+
+    @Override
+    public String getLoginQRCode() {
+        String secret;
+        String bloomFilterName = BloomFilterConfig.BLOOM_FILTER_NAME;
+        do {
+            secret = ShortCodeUtil.getShortCode(ShortCodeUtil.getSalt());
+        } while (redisCache.containsInBloomFilter(bloomFilterName, secret));
+        redisCache.addToBloomFilter(bloomFilterName, secret);
+        String redisKey = QRCodeConfig.WX_LOGIN_QR_CODE_MAP + secret;
+        // 设置 为 false
+        redisCache.setCacheObject(redisKey, Boolean.FALSE);
+        // 获取一个小程序码
+        String json = wxLoginQRCodeService.getQRCodeJson(secret);
+        String mapPath = MediaUtil.saveImage(doPostGetQRCodeData(json), StaticMapperConfig.LOGIN_PATH);
+        String savePath = MediaUtil.getLocalFilePath(mapPath);
+        ImageUtil.mergeSignatureWrite(savePath, LOGIN_CODE_MESSAGE,
+                LOGIN_FLAG, this.textColor, wxBindingQRCodeService.getQRCodeColor());
+        redisCache.setCacheObject(QRCodeConfig.WX_LOGIN_QR_CODE_CACHE + mapPath.substring(mapPath.lastIndexOf("/") + 1), 0,
+                QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
         return mapPath;
     }
 

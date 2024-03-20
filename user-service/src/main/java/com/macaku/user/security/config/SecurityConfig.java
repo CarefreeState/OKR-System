@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/user/login").permitAll()
             .antMatchers("/user/check/email").permitAll()
             .antMatchers("/user/binding/wx").permitAll()
+            .antMatchers("/user/wx/login").permitAll()
             .antMatchers("/team/describe/**").permitAll()
             .antMatchers("/jwt/**").permitAll()
             .antMatchers("/media/**").permitAll()

@@ -41,6 +41,19 @@ public class QRCodeCacheClearInitializer implements ApplicationListener<Applicat
         log.warn("本轮清除任务结束，启动下一次清除任务...");
     }
 
+    private void clearLoginQRCodeCache(File directory) {
+        File[] files = directory.listFiles();
+        // 如果文件没有缓存在
+        Arrays.stream(files).parallel().forEach(file -> {
+            String fileName = file.getName();
+            redisCache.getCacheObject(QRCodeConfig.WX_LOGIN_QR_CODE_CACHE + fileName).orElseGet(() -> {
+                log.warn("文件 {} 逻辑失效，删除！", fileName);
+                return file.delete();
+            });
+        });
+        log.warn("本轮清除任务结束，启动下一次清除任务...");
+    }
+
     private void clearQRCodeCacheCycle(File directory) {
         if (!directory.exists()) {
             directory.mkdirs();
@@ -54,15 +67,33 @@ public class QRCodeCacheClearInitializer implements ApplicationListener<Applicat
         }, QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
     }
 
+    private void clearLoginQRCodeCacheCycle(File directory) {
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        clearLoginQRCodeCache(directory);
+        TimerUtil.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                clearLoginQRCodeCacheCycle(directory);
+            }
+        }, QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
+    }
+
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
-        log.warn("--> --> --> 应用启动成功 --> 开始清除微信绑定码的缓存 --> --> -->");
+        log.warn("--> --> --> 应用启动成功 --> 开始清除微信小程序码的缓存 --> --> -->");
         // 查看 media/binding/ 下的文件
         String path = StaticMapperConfig.ROOT + StaticMapperConfig.MAP_ROOT + StaticMapperConfig.BINDING_PATH;
         File directory = new File(path);
         // 循环检查是否清除缓存
         clearQRCodeCacheCycle(directory);
-        log.warn("<-- <-- <-- <-- <-- 清除微信绑定码的缓存的任务启动成功 <-- <-- <-- <-- <--");
+        // 查看 media/login/ 下的文件
+        path = StaticMapperConfig.ROOT + StaticMapperConfig.MAP_ROOT + StaticMapperConfig.LOGIN_PATH;
+        directory = new File(path);
+        // 循环检查是否清除缓存
+        clearLoginQRCodeCacheCycle(directory);
+        log.warn("<-- <-- <-- <-- <-- 清除微信小程序码的缓存的任务启动成功 <-- <-- <-- <-- <--");
     }
 }
 
