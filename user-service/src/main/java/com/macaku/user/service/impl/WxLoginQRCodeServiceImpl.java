@@ -7,7 +7,6 @@ import com.macaku.common.util.media.ImageUtil;
 import com.macaku.user.service.WxLoginQRCodeService;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -28,7 +27,7 @@ import java.util.Map;
 @Setter
 @Slf4j
 @ConfigurationProperties(prefix = "wx.login")
-public class WxLoginQRCodeServiceImpl implements WxLoginQRCodeService, BeanNameAware {
+public class WxLoginQRCodeServiceImpl implements WxLoginQRCodeService {
 
     private String secret;
 
@@ -81,8 +80,4 @@ public class WxLoginQRCodeServiceImpl implements WxLoginQRCodeService, BeanNameA
         qrCodeColor = ImageUtil.getColorByMap(lineColor);
     }
 
-    @Override
-    public void setBeanName(String s) {
-
-    }
 }

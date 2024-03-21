@@ -20,7 +20,6 @@ import com.macaku.user.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
@@ -41,7 +40,7 @@ import java.util.Map;
 @Setter
 @RequiredArgsConstructor
 @ConfigurationProperties(prefix = "font.text")
-public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
+public class WxQRCodeServiceImpl implements WxQRCodeService {
 
     private final static String BINDING_CODE_MESSAGE = java.lang.String.format("请在 %d %s 内前往微信扫码进行绑定！",
             QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
@@ -93,7 +92,7 @@ public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
             String teamName = TeamOkrUtil.getTeamName(teamId);
             String savePath = StaticMapperConfig.ROOT + mapPath;
             ImageUtil.mergeSignatureWrite(savePath, teamName,
-                    invite, this.textColor, wxInviteQRCodeService.getQRCodeColor());
+                    invite, textColor, wxInviteQRCodeService.getQRCodeColor());
             // todo： 缓存小程序码
             redisCache.setCacheObject(redisKey, mapPath, QRCodeConfig.TEAM_QR_MAP_TTL, QRCodeConfig.TEAM_QR_MAP_UNIT);
             return mapPath;
@@ -110,7 +109,7 @@ public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
         // 为图片记录缓存时间，时间一到，在服务器存储的文件应该删除掉！
         String savePath = MediaUtil.getLocalFilePath(mapPath);
         ImageUtil.mergeSignatureWrite(savePath, BINDING_CODE_MESSAGE,
-                binding, this.textColor, wxBindingQRCodeService.getQRCodeColor());
+                binding, textColor, wxBindingQRCodeService.getQRCodeColor());
         redisCache.setCacheObject(QRCodeConfig.WX_CHECK_QR_CODE_CACHE + MediaUtil.getLocalFileName(mapPath), 0,
                 QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
         return mapPath;
@@ -133,7 +132,7 @@ public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
         String mapPath = MediaUtil.saveImage(doPostGetQRCodeData(json), StaticMapperConfig.LOGIN_PATH);
         String savePath = MediaUtil.getLocalFilePath(mapPath);
         ImageUtil.mergeSignatureWrite(savePath, LOGIN_CODE_MESSAGE,
-                login, this.textColor, wxLoginQRCodeService.getQRCodeColor());
+                login, textColor, wxLoginQRCodeService.getQRCodeColor());
         redisCache.setCacheObject(QRCodeConfig.WX_LOGIN_QR_CODE_CACHE + MediaUtil.getLocalFileName(mapPath), 0,
                 QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
         return LoginQRCodeVO.builder()
@@ -147,8 +146,4 @@ public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
         textColor = ImageUtil.getColorByMap(color);
     }
 
-    @Override
-    public void setBeanName(String s) {
-
-    }
 }

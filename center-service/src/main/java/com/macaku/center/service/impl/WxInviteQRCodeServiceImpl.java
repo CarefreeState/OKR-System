@@ -8,7 +8,6 @@ import com.macaku.common.util.ShortCodeUtil;
 import com.macaku.common.util.media.ImageUtil;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -30,7 +29,7 @@ import java.util.Objects;
 @Setter
 @Slf4j
 @ConfigurationProperties(prefix = "wx.invite")
-public class WxInviteQRCodeServiceImpl implements WxInviteQRCodeService, BeanNameAware {
+public class WxInviteQRCodeServiceImpl implements WxInviteQRCodeService {
 
     private String sceneKey;
 
@@ -109,8 +108,4 @@ public class WxInviteQRCodeServiceImpl implements WxInviteQRCodeService, BeanNam
         qrCodeColor = ImageUtil.getColorByMap(lineColor);
     }
 
-    @Override
-    public void setBeanName(String s) {
-
-    }
 }

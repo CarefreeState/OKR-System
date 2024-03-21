@@ -10,7 +10,6 @@ import com.macaku.user.qrcode.config.QRCodeConfig;
 import com.macaku.user.service.WxBindingQRCodeService;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -31,7 +30,7 @@ import java.util.Map;
 @Setter
 @Slf4j
 @ConfigurationProperties(prefix = "wx.binding")
-public class WxBindingQRCodeServiceImpl implements WxBindingQRCodeService, BeanNameAware {
+public class WxBindingQRCodeServiceImpl implements WxBindingQRCodeService {
 
     private String userKey;
 
@@ -98,8 +97,4 @@ public class WxBindingQRCodeServiceImpl implements WxBindingQRCodeService, BeanN
         qrCodeColor = ImageUtil.getColorByMap(lineColor);
     }
 
-    @Override
-    public void setBeanName(String s) {
-
-    }
 }
