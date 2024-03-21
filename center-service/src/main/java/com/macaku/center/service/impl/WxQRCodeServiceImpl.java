@@ -1,8 +1,8 @@
 package com.macaku.center.service.impl;
 
+import com.macaku.center.domain.vo.LoginQRCodeVO;
 import com.macaku.center.redis.config.BloomFilterConfig;
 import com.macaku.center.service.WxInviteQRCodeService;
-import com.macaku.user.service.WxLoginQRCodeService;
 import com.macaku.center.service.WxQRCodeService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
@@ -15,6 +15,7 @@ import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.common.web.HttpUtil;
 import com.macaku.user.qrcode.config.QRCodeConfig;
 import com.macaku.user.service.WxBindingQRCodeService;
+import com.macaku.user.service.WxLoginQRCodeService;
 import com.macaku.user.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -110,13 +111,13 @@ public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
         String savePath = MediaUtil.getLocalFilePath(mapPath);
         ImageUtil.mergeSignatureWrite(savePath, BINDING_CODE_MESSAGE,
                 BINDING_FLAG, this.textColor, wxBindingQRCodeService.getQRCodeColor());
-        redisCache.setCacheObject(QRCodeConfig.WX_CHECK_QR_CODE_CACHE + mapPath.substring(mapPath.lastIndexOf("/") + 1), 0,
+        redisCache.setCacheObject(QRCodeConfig.WX_CHECK_QR_CODE_CACHE + MediaUtil.getLocalFileName(mapPath), 0,
                 QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
         return mapPath;
     }
 
     @Override
-    public String getLoginQRCode() {
+    public LoginQRCodeVO getLoginQRCode() {
         String secret;
         String bloomFilterName = BloomFilterConfig.BLOOM_FILTER_NAME;
         do {
@@ -133,9 +134,12 @@ public class WxQRCodeServiceImpl implements WxQRCodeService, BeanNameAware {
         String savePath = MediaUtil.getLocalFilePath(mapPath);
         ImageUtil.mergeSignatureWrite(savePath, LOGIN_CODE_MESSAGE,
                 LOGIN_FLAG, this.textColor, wxBindingQRCodeService.getQRCodeColor());
-        redisCache.setCacheObject(QRCodeConfig.WX_LOGIN_QR_CODE_CACHE + mapPath.substring(mapPath.lastIndexOf("/") + 1), 0,
+        redisCache.setCacheObject(QRCodeConfig.WX_LOGIN_QR_CODE_CACHE + MediaUtil.getLocalFileName(mapPath), 0,
                 QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
-        return mapPath;
+        return LoginQRCodeVO.builder()
+                .path(mapPath)
+                .secret(secret)
+                .build();
     }
 
     @PostConstruct

@@ -1,6 +1,7 @@
 package com.macaku.center.controller.user;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.macaku.center.domain.vo.LoginQRCodeVO;
 import com.macaku.center.service.WxQRCodeService;
 import com.macaku.common.email.component.EmailServiceSelector;
 import com.macaku.common.response.SystemJsonResponse;
@@ -90,10 +91,10 @@ public class UserController {
 
     @GetMapping("/wx/login")
     @ApiOperation("获取微信登录码")
-    public SystemJsonResponse<String> wxLoginCheck() {
+    public SystemJsonResponse<LoginQRCodeVO> wxLoginCheck() {
         // 生成一个小程序检查码
-        String mapPath = wxQRCodeService.getLoginQRCode();
-        return SystemJsonResponse.SYSTEM_SUCCESS(mapPath);
+        LoginQRCodeVO result = wxQRCodeService.getLoginQRCode();
+        return SystemJsonResponse.SYSTEM_SUCCESS(result);
     }
 
     @PostMapping("/wx/confirm/{secret}")

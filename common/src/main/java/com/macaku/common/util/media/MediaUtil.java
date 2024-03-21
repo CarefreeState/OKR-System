@@ -40,6 +40,10 @@ public class MediaUtil {
         return StaticMapperConfig.ROOT + mapPath;
     }
 
+    public static String getLocalFileName(String mapPath) {
+        return mapPath.substring(mapPath.lastIndexOf("/") + 1);
+    }
+
     public static void tryCreateFile(String savePath, String filePath) {
         File directory = new File(savePath);
         if (!directory.exists()) {

@@ -1,5 +1,7 @@
 package com.macaku.center.service;
 
+import com.macaku.center.domain.vo.LoginQRCodeVO;
+
 /**
  * Created With Intellij IDEA
  * Description:
@@ -15,6 +17,6 @@ public interface WxQRCodeService {
 
     String getBindingQRCode(Long userId, String randomCode);
 
-    String getLoginQRCode();
+    LoginQRCodeVO getLoginQRCode();
 
 }
