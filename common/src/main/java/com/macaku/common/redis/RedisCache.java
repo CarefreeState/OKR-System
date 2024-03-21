@@ -9,10 +9,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -323,6 +320,19 @@ public class RedisCache {
     public boolean deleteObject(final String key) {
         log.info("删除 Redis 的键值\tkey[{}]", key);
         return redisTemplate.delete(key);
+    }
+
+    /**
+     * 获得缓存的基本对象列表
+     *   *：匹配任意数量个字符（包括 0 个字符）
+     *   ?：匹配单个字符
+     *   []：匹配指定范围内的字符
+     * @param prefix 字符串前缀
+     * @return 键的集合
+     */
+    public Set<String> getCacheKeysByPrefix(final String prefix) {
+        log.info("获取 Redis 以 [{}] 为前缀的键", prefix);
+        return redisTemplate.keys(prefix + "*");
     }
 
 }
