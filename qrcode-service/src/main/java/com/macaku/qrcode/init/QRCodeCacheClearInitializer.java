@@ -1,9 +1,9 @@
-package com.macaku.user.init;
+package com.macaku.qrcode.init;
 
 import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.TimerUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
-import com.macaku.user.qrcode.config.QRCodeConfig;
+import com.macaku.qrcode.config.QRCodeConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;

@@ -1,4 +1,4 @@
-package com.macaku.center.domain.vo;
+package com.macaku.qrcode.domain.vo;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

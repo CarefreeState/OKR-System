@@ -1,6 +1,6 @@
-package com.macaku.center.service;
+package com.macaku.qrcode.service;
 
-import com.macaku.center.domain.vo.LoginQRCodeVO;
+import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
 
 /**
  * Created With Intellij IDEA
@@ -11,7 +11,7 @@ import com.macaku.center.domain.vo.LoginQRCodeVO;
  */
 public interface OkrQRCodeService {
 
-    String getInviteQRCode(Long teamId, String type);
+    String getInviteQRCode(Long teamId, String teamName, String type);
 
     String getBindingQRCode(Long userId, String randomCode);
 

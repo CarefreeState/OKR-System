@@ -1,4 +1,4 @@
-package com.macaku.user.qrcode.config;
+package com.macaku.qrcode.config;
 
 import java.util.concurrent.TimeUnit;
 
@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
  * Time: 17:49
  */
 public class QRCodeConfig {
+
     public final static String WX_QR_CORE_URL = "https://api.weixin.qq.com/wxa/getwxacodeunlimit";
 
     public final static String WX_CHECK_QR_CODE_MAP = "wxCheckQRCodeMap:";

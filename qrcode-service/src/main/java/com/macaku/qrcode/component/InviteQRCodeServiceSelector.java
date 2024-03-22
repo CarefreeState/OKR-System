@@ -1,6 +1,6 @@
-package com.macaku.center.component;
+package com.macaku.qrcode.component;
 
-import com.macaku.center.service.InviteQRCodeService;
+import com.macaku.qrcode.service.InviteQRCodeService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import lombok.RequiredArgsConstructor;

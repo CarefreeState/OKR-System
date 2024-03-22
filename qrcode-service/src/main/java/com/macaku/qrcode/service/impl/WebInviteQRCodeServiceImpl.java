@@ -1,15 +1,14 @@
-package com.macaku.center.service.impl;
+package com.macaku.qrcode.service.impl;
 
-import com.macaku.center.component.InviteQRCodeServiceSelector;
-import com.macaku.center.service.InviteQRCodeService;
-import com.macaku.user.util.QRCodeUtil;
+import com.google.zxing.WriterException;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.ShortCodeUtil;
 import com.macaku.common.util.media.ImageUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
+import com.macaku.qrcode.component.InviteQRCodeServiceSelector;
+import com.macaku.qrcode.service.InviteQRCodeService;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -18,6 +17,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -26,16 +26,16 @@ import java.util.Objects;
  * Created With Intellij IDEA
  * Description:
  * User: 马拉圈
- * Date: 2024-01-29
- * Time: 0:42
+ * Date: 2024-03-22
+ * Time: 18:36
  */
 @Service
 @Setter
 @Slf4j
-@ConfigurationProperties(prefix = "wx.invite")
-public class WxInviteQRCodeServiceImpl implements InviteQRCodeService {
+@ConfigurationProperties(prefix = "web.invite")
+public class WebInviteQRCodeServiceImpl implements InviteQRCodeService {
 
-    private final static String TYPE = InviteQRCodeServiceSelector.WX_TYPE;
+    private final static String TYPE = InviteQRCodeServiceSelector.WEB_TYPE;
 
     private String sceneKey;
 
@@ -43,17 +43,9 @@ public class WxInviteQRCodeServiceImpl implements InviteQRCodeService {
 
     private String page;
 
-    private Boolean checkPath;
-
-    private String envVersion;
-
     private Integer width;
 
-    private Boolean autoColor;
-
     private Map<String, Integer> lineColor;
-
-    private Boolean isHyaline;
 
     private Color qrCodeColor;
 
@@ -68,35 +60,15 @@ public class WxInviteQRCodeServiceImpl implements InviteQRCodeService {
     }
 
     @Override
-    public void checkParams(Long teamId, String secret) {
-        if(Objects.isNull(teamId)) {
-            throw new GlobalServiceException("团队 OKR ID 为 null", GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
-        }
-        String raw = sceneKey + "=" + teamId;
-        String inviteSecret = ShortCodeUtil.getShortCode(raw);
-        boolean isInvited = inviteSecret.equals(secret);
-        log.info("用户想要加入团队 {}, 校验：{} -> {} 与 {} 比较 -> {}", teamId, raw, inviteSecret, secret, isInvited);
-        if(Boolean.FALSE.equals(isInvited)) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.USER_CANNOT_JOIN_TEAM);
-        }
-    }
-
-    @Override
     public Map<String, Object> getQRCodeParams() {
         Map<String, Object> params = new HashMap<>();
         params.put("page", StringUtils.hasText(page) ? page : null);
-        params.put("check_path", checkPath);
-        params.put("env_version", envVersion);
         params.put("width", width);
-        params.put("auto_color", autoColor);
-        params.put("line_color", lineColor);
-        params.put("is_hyaline", isHyaline);
         return params;
     }
 
     @Override
     public String getQRCode(Long teamId) {
-        Map<String, Object> params = getQRCodeParams();
         StringBuilder sceneBuilder = new StringBuilder();
         // 记录一下 teamId 与 inviteSecret 关系，携带这个密钥才行
         sceneBuilder
@@ -110,9 +82,28 @@ public class WxInviteQRCodeServiceImpl implements InviteQRCodeService {
                 .append(secret)
                 .append("=")
                 .append(inviteSecret);
-        params.put("scene", sceneBuilder.toString());
-        String json = JsonUtil.analyzeData(params);
-        return MediaUtil.saveImage(QRCodeUtil.doPostGetQRCodeData(json), StaticMapperConfig.INVITE_PATH);
+        String url = page + "?" + sceneBuilder;
+        try {
+            log.info("生成二维码 -> {}  {}  {} ", url, width, width);
+            byte[] codeBytes = MediaUtil.getCustomColorQRCodeByteArray(url, width, width);
+            return MediaUtil.saveImage(codeBytes, StaticMapperConfig.INVITE_PATH);
+        } catch (WriterException | IOException e) {
+            throw new GlobalServiceException(e.getMessage());
+        }
+    }
+
+    @Override
+    public void checkParams(Long teamId, String secret) {
+        if(Objects.isNull(teamId)) {
+            throw new GlobalServiceException("团队 OKR ID 为 null", GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
+        }
+        String raw = sceneKey + "=" + teamId;
+        String inviteSecret = ShortCodeUtil.getShortCode(raw);
+        boolean isInvited = inviteSecret.equals(secret);
+        log.info("用户想要加入团队 {}, 校验：{} -> {} 与 {} 比较 -> {}", teamId, raw, inviteSecret, secret, isInvited);
+        if(Boolean.FALSE.equals(isInvited)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.USER_CANNOT_JOIN_TEAM);
+        }
     }
 
     @PostConstruct

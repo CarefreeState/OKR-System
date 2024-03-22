@@ -1,0 +1,2 @@
+com.macaku.qrcode.service.impl.WebInviteQRCodeServiceImpl
+com.macaku.qrcode.service.impl.WxInviteQRCodeServiceImpl

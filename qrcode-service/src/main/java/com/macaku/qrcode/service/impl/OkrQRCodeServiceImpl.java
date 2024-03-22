@@ -1,19 +1,18 @@
-package com.macaku.center.service.impl;
+package com.macaku.qrcode.service.impl;
 
-import com.macaku.center.component.InviteQRCodeServiceSelector;
-import com.macaku.center.domain.vo.LoginQRCodeVO;
-import com.macaku.center.redis.config.BloomFilterConfig;
-import com.macaku.center.service.InviteQRCodeService;
-import com.macaku.center.service.OkrQRCodeService;
-import com.macaku.center.util.TeamOkrUtil;
+import com.macaku.qrcode.component.InviteQRCodeServiceSelector;
+import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
+import com.macaku.qrcode.config.BloomFilterConfig;
+import com.macaku.qrcode.service.InviteQRCodeService;
+import com.macaku.qrcode.service.OkrQRCodeService;
 import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.ShortCodeUtil;
 import com.macaku.common.util.media.ImageUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
-import com.macaku.user.qrcode.config.QRCodeConfig;
-import com.macaku.user.service.WxBindingQRCodeService;
-import com.macaku.user.service.WxLoginQRCodeService;
+import com.macaku.qrcode.config.QRCodeConfig;
+import com.macaku.qrcode.service.WxBindingQRCodeService;
+import com.macaku.qrcode.service.WxLoginQRCodeService;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +62,7 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
     private Color textColor;
 
     @Override
-    public String getInviteQRCode(Long teamId, String type) {
+    public String getInviteQRCode(Long teamId, String teamName, String type) {
         InviteQRCodeService inviteQRCodeService = inviteQRCodeServiceSelector.select(type);
         String redisKey = QRCodeConfig.TEAM_QR_CODE_MAP
                 + inviteQRCodeServiceSelector.getType(type)
@@ -72,7 +71,6 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
             // 获取 QRCode
             String mapPath = inviteQRCodeService.getQRCode(teamId);
             // 获取到团队名字
-            String teamName = TeamOkrUtil.getTeamName(teamId);
             String savePath = StaticMapperConfig.ROOT + mapPath;
             ImageUtil.mergeSignatureWrite(savePath, teamName,
                     invite, textColor, inviteQRCodeService.getQRCodeColor());

@@ -1,4 +1,4 @@
-package com.macaku.center.redis.config;
+package com.macaku.qrcode.config;
 
 /**
  * Created With Intellij IDEA

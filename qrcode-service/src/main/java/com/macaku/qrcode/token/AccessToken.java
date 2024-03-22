@@ -1,4 +1,4 @@
-package com.macaku.user.token;
+package com.macaku.qrcode.token;
 
 import lombok.Getter;
 

@@ -1,4 +1,4 @@
-package com.macaku.user.service;
+package com.macaku.qrcode.service;
 
 import java.awt.*;
 import java.util.Map;

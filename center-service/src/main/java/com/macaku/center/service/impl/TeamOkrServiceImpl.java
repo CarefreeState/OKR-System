@@ -22,7 +22,7 @@ import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.user.domain.po.User;
-import com.macaku.user.qrcode.config.QRCodeConfig;
+import com.macaku.qrcode.config.QRCodeConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
