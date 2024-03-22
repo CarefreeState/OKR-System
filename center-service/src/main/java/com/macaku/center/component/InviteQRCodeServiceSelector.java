@@ -5,9 +5,9 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
-import java.util.ServiceLoader;
 
 /**
  * Created With Intellij IDEA
@@ -26,7 +26,12 @@ public class InviteQRCodeServiceSelector {
 
     public final List<InviteQRCodeService> inviteQRCodeServices;
 
+    public String getType(String type) {
+        return StringUtils.hasText(type) ? type : WX_TYPE;
+    }
+
     public InviteQRCodeService select(String type) {
+        type = getType(type);
         // 选取服务
         for (InviteQRCodeService inviteQRCodeService : inviteQRCodeServices) {
             if (inviteQRCodeService.match(type)) {
@@ -35,4 +40,5 @@ public class InviteQRCodeServiceSelector {
         }
         throw new GlobalServiceException(GlobalServiceStatusCode.HEAD_NOT_VALID);
     }
+
 }

@@ -65,7 +65,9 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
     @Override
     public String getInviteQRCode(Long teamId, String type) {
         InviteQRCodeService inviteQRCodeService = inviteQRCodeServiceSelector.select(type);
-        String redisKey = QRCodeConfig.TEAM_QR_CODE_MAP + teamId;
+        String redisKey = QRCodeConfig.TEAM_QR_CODE_MAP
+                + inviteQRCodeServiceSelector.getType(type)
+                + ":" + teamId;
         return (String)redisCache.getCacheObject(redisKey).orElseGet(() -> {
             // 获取 QRCode
             String mapPath = inviteQRCodeService.getQRCode(teamId);

@@ -59,7 +59,7 @@ public class WxInviteQRCodeServiceImpl implements InviteQRCodeService {
 
     @Override
     public boolean match(String type) {
-        return !StringUtils.hasText(type) || TYPE.equals(type);
+        return TYPE.equals(type);
     }
 
     @Override
