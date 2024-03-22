@@ -6,8 +6,11 @@ import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.media.ImageUtil;
+import com.macaku.common.util.media.MediaUtil;
+import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.user.qrcode.config.QRCodeConfig;
 import com.macaku.user.service.WxBindingQRCodeService;
+import com.macaku.user.util.QRCodeUtil;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -73,11 +76,12 @@ public class WxBindingQRCodeServiceImpl implements WxBindingQRCodeService {
     }
 
     @Override
-    public String getQRCodeJson(Long userId, String randomCode) {
+    public String getQRCode(Long userId, String randomCode) {
         Map<String, Object> params = getQRCodeParams();
         String scene = String.format("%s=%d&%s=%s", userKey, userId, secret, randomCode);
         params.put("scene", scene);
-        return JsonUtil.analyzeData(params);
+        String json = JsonUtil.analyzeData(params);
+        return MediaUtil.saveImage(QRCodeUtil.doPostGetQRCodeData(json), StaticMapperConfig.BINDING_PATH);
     }
 
     @Override

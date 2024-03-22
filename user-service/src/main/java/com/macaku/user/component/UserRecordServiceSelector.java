@@ -25,10 +25,8 @@ public class UserRecordServiceSelector {
     public UserRecordService select(String type) {
         // 选取服务
         ServiceLoader<UserRecordService> userRecordServices = ServiceLoader.load(UserRecordService.class);
-        Iterator<UserRecordService> serviceIterator = userRecordServices.iterator();
-        while (serviceIterator.hasNext()) {
-            UserRecordService userRecordService =  serviceIterator.next();
-            if(userRecordService.match(type)) {
+        for (UserRecordService userRecordService : userRecordServices) {
+            if (userRecordService.match(type)) {
                 return userRecordService;
             }
         }

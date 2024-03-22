@@ -9,11 +9,9 @@ import com.macaku.center.domain.vo.LoginQRCodeVO;
  * Date: 2024-03-10
  * Time: 21:05
  */
-public interface WxQRCodeService {
+public interface OkrQRCodeService {
 
-    byte[] doPostGetQRCodeData(String json);
-
-    String getInviteQRCode(Long teamId);
+    String getInviteQRCode(Long teamId, String type);
 
     String getBindingQRCode(Long userId, String randomCode);
 

@@ -1,22 +1,19 @@
 package com.macaku.center.service.impl;
 
+import com.macaku.center.component.InviteQRCodeServiceSelector;
 import com.macaku.center.domain.vo.LoginQRCodeVO;
 import com.macaku.center.redis.config.BloomFilterConfig;
-import com.macaku.center.service.WxInviteQRCodeService;
-import com.macaku.center.service.WxQRCodeService;
+import com.macaku.center.service.InviteQRCodeService;
+import com.macaku.center.service.OkrQRCodeService;
 import com.macaku.center.util.TeamOkrUtil;
-import com.macaku.common.code.GlobalServiceStatusCode;
-import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.ShortCodeUtil;
 import com.macaku.common.util.media.ImageUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
-import com.macaku.common.web.HttpUtil;
 import com.macaku.user.qrcode.config.QRCodeConfig;
 import com.macaku.user.service.WxBindingQRCodeService;
 import com.macaku.user.service.WxLoginQRCodeService;
-import com.macaku.user.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +22,6 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -40,7 +36,7 @@ import java.util.Map;
 @Setter
 @RequiredArgsConstructor
 @ConfigurationProperties(prefix = "font.text")
-public class WxQRCodeServiceImpl implements WxQRCodeService {
+public class OkrQRCodeServiceImpl implements OkrQRCodeService {
 
     private final static String BINDING_CODE_MESSAGE = java.lang.String.format("请在 %d %s 内前往微信扫码进行绑定！",
             QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
@@ -58,41 +54,26 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
 
     private final RedisCache redisCache;
 
-    private final WxBindingQRCodeService wxBindingQRCodeService;
+    private final InviteQRCodeServiceSelector inviteQRCodeServiceSelector;
 
-    private final WxInviteQRCodeService wxInviteQRCodeService;
+    private final WxBindingQRCodeService wxBindingQRCodeService;
 
     private final WxLoginQRCodeService wxLoginQRCodeService;
 
     private Color textColor;
 
     @Override
-    public byte[] doPostGetQRCodeData(String json) {
-        String accessToken = TokenUtil.getToken();
-        String url = QRCodeConfig.WX_QR_CORE_URL + HttpUtil.getQueryString(new HashMap<String, Object>(){{
-            this.put("access_token", accessToken);
-        }});
-        log.info("请求微信（json） -> {}", json);
-        byte[] data = HttpUtil.doPostJsonBytes(url, json);
-        if(!MediaUtil.isImage(data)) {
-            throw new GlobalServiceException(new String(data), GlobalServiceStatusCode.QR_CODE_GENERATE_FAIL);
-        }
-        // 保存一下
-        return data;
-    }
-
-    @Override
-    public String getInviteQRCode(Long teamId) {
+    public String getInviteQRCode(Long teamId, String type) {
+        InviteQRCodeService inviteQRCodeService = inviteQRCodeServiceSelector.select(type);
         String redisKey = QRCodeConfig.TEAM_QR_CODE_MAP + teamId;
         return (String)redisCache.getCacheObject(redisKey).orElseGet(() -> {
             // 获取 QRCode
-            String json = wxInviteQRCodeService.getQRCodeJson(teamId);
-            String mapPath = MediaUtil.saveImage(doPostGetQRCodeData(json), StaticMapperConfig.INVITE_PATH);
+            String mapPath = inviteQRCodeService.getQRCode(teamId);
             // 获取到团队名字
             String teamName = TeamOkrUtil.getTeamName(teamId);
             String savePath = StaticMapperConfig.ROOT + mapPath;
             ImageUtil.mergeSignatureWrite(savePath, teamName,
-                    invite, textColor, wxInviteQRCodeService.getQRCodeColor());
+                    invite, textColor, inviteQRCodeService.getQRCodeColor());
             // todo： 缓存小程序码
             redisCache.setCacheObject(redisKey, mapPath, QRCodeConfig.TEAM_QR_MAP_TTL, QRCodeConfig.TEAM_QR_MAP_UNIT);
             return mapPath;
@@ -102,8 +83,7 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
     @Override
     public String getBindingQRCode(Long userId, String randomCode) {
         String redisKey = QRCodeConfig.WX_CHECK_QR_CODE_MAP + userId;
-        String json = wxBindingQRCodeService.getQRCodeJson(userId, randomCode);
-        String mapPath = MediaUtil.saveImage(doPostGetQRCodeData(json), StaticMapperConfig.BINDING_PATH);
+        String mapPath = wxBindingQRCodeService.getQRCode(userId, randomCode);
         redisCache.setCacheObject(redisKey, randomCode,
                 QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
         // 为图片记录缓存时间，时间一到，在服务器存储的文件应该删除掉！
@@ -128,8 +108,7 @@ public class WxQRCodeServiceImpl implements WxQRCodeService {
         redisCache.setCacheObject(redisKey, Boolean.FALSE,
                 QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
         // 获取一个小程序码
-        String json = wxLoginQRCodeService.getQRCodeJson(secret);
-        String mapPath = MediaUtil.saveImage(doPostGetQRCodeData(json), StaticMapperConfig.LOGIN_PATH);
+        String mapPath = wxLoginQRCodeService.getQRCode(secret);
         String savePath = MediaUtil.getLocalFilePath(mapPath);
         ImageUtil.mergeSignatureWrite(savePath, LOGIN_CODE_MESSAGE,
                 login, textColor, wxLoginQRCodeService.getQRCodeColor());

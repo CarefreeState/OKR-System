@@ -16,6 +16,6 @@ public interface WxLoginQRCodeService {
 
     Map<String, Object> getQRCodeParams();
 
-    String getQRCodeJson(String secret);
+    String getQRCode(String secret);
 
 }

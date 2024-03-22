@@ -32,6 +32,7 @@
         <mybatis-plus-boot-starter.version>3.5.3.1</mybatis-plus-boot-starter.version>
         <com.github.lalyos.version>0.0.9</com.github.lalyos.version>
         <com.freewayso.version>2.4.1</com.freewayso.version>
+        <com.google.zxing.version>3.4.1</com.google.zxing.version>
         <spring-boot-starter-security.version>3.0.4</spring-boot-starter-security.version>
         <guava.version>31.1-jre</guava.version>
         <hutool-all.version>5.8.11</hutool-all.version>

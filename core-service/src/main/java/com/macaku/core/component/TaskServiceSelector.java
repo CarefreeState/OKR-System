@@ -27,10 +27,8 @@ public class TaskServiceSelector {
     public TaskService select(Integer option) {
         // 选取服务
         ServiceLoader<TaskService> taskServices = ServiceLoader.load(TaskService.class);
-        Iterator<TaskService> serviceIterator = taskServices.iterator();
-        while (serviceIterator.hasNext()) {
-            TaskService taskService =  serviceIterator.next();
-            if(taskService.match(option)) {
+        for (TaskService taskService : taskServices) {
+            if (taskService.match(option)) {
                 return taskService;
             }
         }

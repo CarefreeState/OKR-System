@@ -16,7 +16,7 @@ public interface WxBindingQRCodeService {
 
     Map<String, Object> getQRCodeParams();
 
-    String getQRCodeJson(Long userId, String randomCode);
+    String getQRCode(Long userId, String randomCode);
 
     void checkParams(Long userId, String randomCode);
 

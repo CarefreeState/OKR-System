@@ -7,7 +7,7 @@ import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.center.service.MemberService;
 import com.macaku.center.service.TeamOkrService;
-import com.macaku.center.service.WxQRCodeService;
+import com.macaku.center.service.OkrQRCodeService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
@@ -44,7 +44,7 @@ public class TeamOkrController {
 
     private final MemberService memberService;
 
-    private final WxQRCodeService wxQRCodeService;
+    private final OkrQRCodeService okrQRCodeService;
 
     @GetMapping("/list")
     @ApiOperation("获取管理的团队 OKR 列表")
@@ -134,14 +134,15 @@ public class TeamOkrController {
 
     @PostMapping("/qrcode/{teamId}")
     @ApiOperation("获取邀请码")
-    public SystemJsonResponse<String> getQRCode(@PathVariable("teamId") @NonNull @ApiParam("团队 OKR ID") Long teamId) {
+    public SystemJsonResponse<String> getQRCode(@PathVariable("teamId") @NonNull @ApiParam("团队 OKR ID") Long teamId,
+                                                @RequestParam(value = "type", required = false) @ApiParam("邀请码类型") String type) {
         // 检测
         User user = UserRecordUtil.getUserRecord();
         Long managerId = user.getId();
         // 检测管理者身份
         teamOkrService.checkManager(teamId, managerId);
         // 进行操作
-        String path = wxQRCodeService.getInviteQRCode(teamId);
+        String path = okrQRCodeService.getInviteQRCode(teamId, type);
         return SystemJsonResponse.SYSTEM_SUCCESS(path);
     }
 

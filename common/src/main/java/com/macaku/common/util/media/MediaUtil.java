@@ -1,5 +1,10 @@
 package com.macaku.common.util.media;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.common.web.HttpUtil;
@@ -8,11 +13,11 @@ import org.springframework.util.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,6 +30,8 @@ import java.util.UUID;
 public class MediaUtil {
 
     public static final String SUFFIX = "png";
+
+    public static final String UTF_8 = "UTF-8";
 
     // 获取UUID
     public static String getUUID_32() {
@@ -157,6 +164,40 @@ public class MediaUtil {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public static byte[] getCustomColorQRCodeByteArray(String url, int width, int height) throws WriterException, IOException {
+        // 配置生成二维码的参数
+        Map<EncodeHintType, String> hintMap = new HashMap<>();
+        hintMap.put(EncodeHintType.CHARACTER_SET, UTF_8);
+        // 生成二维码矩阵
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix bitMatrix = qrCodeWriter.encode(url, BarcodeFormat.QR_CODE, width, height, hintMap);
+        // 创建二维码图片
+        BufferedImage qrImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        qrImage.createGraphics();
+        // 将二维码矩阵渲染到图片上
+        Graphics2D graphics = (Graphics2D) qrImage.getGraphics();
+        graphics.fillRect(0, 0, width, height);
+        graphics.setColor(Color.BLACK);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                if (bitMatrix.get(i, j)) {
+                    graphics.fillRect(i, j, 1, 1);
+                }
+            }
+        }
+        graphics.dispose();
+        // 将二维码图片转换为输入流
+        // 将BufferedImage转换为字节数组
+        try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+            ImageIO.write(qrImage, SUFFIX, byteArrayOutputStream);
+            return byteArrayOutputStream.toByteArray();
+        }
+    }
+
+    public static InputStream getCustomColorQRCodeInputStream(String url, int width, int height) throws WriterException, IOException {
+        return new ByteArrayInputStream(getCustomColorQRCodeByteArray(url, width, height));
     }
 
 }

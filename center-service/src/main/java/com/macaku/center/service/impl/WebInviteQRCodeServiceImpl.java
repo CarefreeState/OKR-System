@@ -1,11 +1,10 @@
 package com.macaku.center.service.impl;
 
+import com.google.zxing.WriterException;
 import com.macaku.center.component.InviteQRCodeServiceSelector;
 import com.macaku.center.service.InviteQRCodeService;
-import com.macaku.user.util.QRCodeUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.ShortCodeUtil;
 import com.macaku.common.util.media.ImageUtil;
 import com.macaku.common.util.media.MediaUtil;
@@ -18,6 +17,7 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -26,16 +26,16 @@ import java.util.Objects;
  * Created With Intellij IDEA
  * Description:
  * User: 马拉圈
- * Date: 2024-01-29
- * Time: 0:42
+ * Date: 2024-03-22
+ * Time: 18:36
  */
 @Service
 @Setter
 @Slf4j
-@ConfigurationProperties(prefix = "wx.invite")
-public class WxInviteQRCodeServiceImpl implements InviteQRCodeService {
+@ConfigurationProperties(prefix = "web.invite")
+public class WebInviteQRCodeServiceImpl implements InviteQRCodeService {
 
-    private final static String TYPE = InviteQRCodeServiceSelector.WX_TYPE;
+    private final static String TYPE = InviteQRCodeServiceSelector.WEB_TYPE;
 
     private String sceneKey;
 
@@ -43,28 +43,53 @@ public class WxInviteQRCodeServiceImpl implements InviteQRCodeService {
 
     private String page;
 
-    private Boolean checkPath;
-
-    private String envVersion;
-
     private Integer width;
 
-    private Boolean autoColor;
-
     private Map<String, Integer> lineColor;
-
-    private Boolean isHyaline;
 
     private Color qrCodeColor;
 
     @Override
     public boolean match(String type) {
-        return !StringUtils.hasText(type) || TYPE.equals(type);
+        return TYPE.equals(type);
     }
 
     @Override
     public Color getQRCodeColor() {
         return this.qrCodeColor;
+    }
+
+    @Override
+    public Map<String, Object> getQRCodeParams() {
+        Map<String, Object> params = new HashMap<>();
+        params.put("page", StringUtils.hasText(page) ? page : null);
+        params.put("width", width);
+        return params;
+    }
+
+    @Override
+    public String getQRCode(Long teamId) {
+        StringBuilder sceneBuilder = new StringBuilder();
+        // 记录一下 teamId 与 inviteSecret 关系，携带这个密钥才行
+        sceneBuilder
+                .append(sceneKey)
+                .append("=")
+                .append(teamId);
+        // 短码虽然无法保证绝对的唯一，但是 teamId 能确定短码即可
+        String inviteSecret = ShortCodeUtil.getShortCode(sceneBuilder.toString());
+        sceneBuilder
+                .append("&")
+                .append(secret)
+                .append("=")
+                .append(inviteSecret);
+        String url = page + "?" + sceneBuilder;
+        try {
+            log.info("生成二维码 -> {}  {}  {} ", url, width, width);
+            byte[] codeBytes = MediaUtil.getCustomColorQRCodeByteArray(url, width, width);
+            return MediaUtil.saveImage(codeBytes, StaticMapperConfig.INVITE_PATH);
+        } catch (WriterException | IOException e) {
+            throw new GlobalServiceException(e.getMessage());
+        }
     }
 
     @Override
@@ -79,40 +104,6 @@ public class WxInviteQRCodeServiceImpl implements InviteQRCodeService {
         if(Boolean.FALSE.equals(isInvited)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_CANNOT_JOIN_TEAM);
         }
-    }
-
-    @Override
-    public Map<String, Object> getQRCodeParams() {
-        Map<String, Object> params = new HashMap<>();
-        params.put("page", StringUtils.hasText(page) ? page : null);
-        params.put("check_path", checkPath);
-        params.put("env_version", envVersion);
-        params.put("width", width);
-        params.put("auto_color", autoColor);
-        params.put("line_color", lineColor);
-        params.put("is_hyaline", isHyaline);
-        return params;
-    }
-
-    @Override
-    public String getQRCode(Long teamId) {
-        Map<String, Object> params = getQRCodeParams();
-        StringBuilder sceneBuilder = new StringBuilder();
-        // 记录一下 teamId 与 inviteSecret 关系，携带这个密钥才行
-        sceneBuilder
-                .append(sceneKey)
-                .append("=")
-                .append(teamId);
-        // 短码虽然无法保证绝对的唯一，但是 teamId 能确定短码即可
-        String inviteSecret = ShortCodeUtil.getShortCode(sceneBuilder.toString());
-        sceneBuilder
-                .append("&")
-                .append(secret)
-                .append("=")
-                .append(inviteSecret);
-        params.put("scene", sceneBuilder.toString());
-        String json = JsonUtil.analyzeData(params);
-        return MediaUtil.saveImage(QRCodeUtil.doPostGetQRCodeData(json), StaticMapperConfig.INVITE_PATH);
     }
 
     @PostConstruct

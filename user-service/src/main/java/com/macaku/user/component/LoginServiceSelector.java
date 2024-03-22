@@ -25,10 +25,8 @@ public class LoginServiceSelector {
     public LoginService select(String type) {
         // 选取服务
         ServiceLoader<LoginService> loginServices = ServiceLoader.load(LoginService.class);
-        Iterator<LoginService> serviceIterator = loginServices.iterator();
-        while (serviceIterator.hasNext()) {
-            LoginService loginService =  serviceIterator.next();
-            if(loginService.match(type)) {
+        for (LoginService loginService : loginServices) {
+            if (loginService.match(type)) {
                 return loginService;
             }
         }

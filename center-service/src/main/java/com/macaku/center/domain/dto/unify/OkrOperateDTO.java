@@ -27,8 +27,12 @@ public class OkrOperateDTO {
     @ApiModelProperty("邀请密钥")
     private String secret;
 
+    @ApiModelProperty("邀请码类型")
+    private String type;
+
     @ApiModelProperty("团队名")
     private String teamName;
+
 
     public void validate() {
         StringBuilder messageBuilder = new StringBuilder();

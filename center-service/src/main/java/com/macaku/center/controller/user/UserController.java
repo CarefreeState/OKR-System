@@ -2,7 +2,7 @@ package com.macaku.center.controller.user;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.macaku.center.domain.vo.LoginQRCodeVO;
-import com.macaku.center.service.WxQRCodeService;
+import com.macaku.center.service.OkrQRCodeService;
 import com.macaku.common.email.component.EmailServiceSelector;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.common.util.IdentifyingCodeValidator;
@@ -49,7 +49,7 @@ public class UserController {
 
     private final EmailServiceSelector emailServiceSelector;
 
-    private final WxQRCodeService wxQRCodeService;
+    private final OkrQRCodeService okrQRCodeService;
 
     @PostMapping("/login")
     @ApiOperation("用户登录")
@@ -85,7 +85,7 @@ public class UserController {
         Long userId = UserRecordUtil.getUserRecord().getId();
         String randomCode = IdentifyingCodeValidator.getIdentifyingCode();
         // 生成一个小程序检查码
-        String mapPath = wxQRCodeService.getBindingQRCode(userId, randomCode);
+        String mapPath = okrQRCodeService.getBindingQRCode(userId, randomCode);
         return SystemJsonResponse.SYSTEM_SUCCESS(mapPath);
     }
 
@@ -93,7 +93,7 @@ public class UserController {
     @ApiOperation("获取微信登录码")
     public SystemJsonResponse<LoginQRCodeVO> wxLoginCheck() {
         // 生成一个小程序检查码
-        LoginQRCodeVO result = wxQRCodeService.getLoginQRCode();
+        LoginQRCodeVO result = okrQRCodeService.getLoginQRCode();
         return SystemJsonResponse.SYSTEM_SUCCESS(result);
     }
 

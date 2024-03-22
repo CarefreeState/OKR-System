@@ -4,7 +4,10 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.media.ImageUtil;
+import com.macaku.common.util.media.MediaUtil;
+import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.user.service.WxLoginQRCodeService;
+import com.macaku.user.util.QRCodeUtil;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -68,11 +71,12 @@ public class WxLoginQRCodeServiceImpl implements WxLoginQRCodeService {
     }
 
     @Override
-    public String getQRCodeJson(String secret) {
+    public String getQRCode(String secret) {
         Map<String, Object> params = getQRCodeParams();
         String scene = String.format("%s=%s", this.secret, secret);
         params.put("scene", scene);
-        return JsonUtil.analyzeData(params);
+        String json = JsonUtil.analyzeData(params);
+        return MediaUtil.saveImage(QRCodeUtil.doPostGetQRCodeData(json), StaticMapperConfig.LOGIN_PATH);
     }
 
     @PostConstruct

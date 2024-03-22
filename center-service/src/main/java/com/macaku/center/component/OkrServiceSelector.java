@@ -5,7 +5,6 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import org.springframework.stereotype.Component;
 
-import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
@@ -27,15 +26,12 @@ public class OkrServiceSelector {
     public OkrOperateService select(String scope) {
         // 选取服务
         ServiceLoader<OkrOperateService> operateServices = ServiceLoader.load(OkrOperateService.class);
-        Iterator<OkrOperateService> serviceIterator = operateServices.iterator();
-        while (serviceIterator.hasNext()) {
-            OkrOperateService operateService =  serviceIterator.next();
-            if(operateService.match(scope)) {
+        for (OkrOperateService operateService : operateServices) {
+            if (operateService.match(scope)) {
                 return operateService;
             }
         }
         throw new GlobalServiceException(GlobalServiceStatusCode.HEAD_NOT_VALID);
     }
-
 
 }

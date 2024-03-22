@@ -25,10 +25,8 @@ public class EmailServiceSelector {
     public EmailService select(String type) {
         // 选取服务
         ServiceLoader<EmailService> emailServices = ServiceLoader.load(EmailService.class);
-        Iterator<EmailService> serviceIterator = emailServices.iterator();
-        while (serviceIterator.hasNext()) {
-            EmailService emailService =  serviceIterator.next();
-            if(emailService.match(type)) {
+        for (EmailService emailService : emailServices) {
+            if (emailService.match(type)) {
                 return emailService;
             }
         }

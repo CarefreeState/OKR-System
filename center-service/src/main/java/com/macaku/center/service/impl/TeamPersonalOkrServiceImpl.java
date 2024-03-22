@@ -3,6 +3,7 @@ package com.macaku.center.service.impl;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
+import com.macaku.center.component.InviteQRCodeServiceSelector;
 import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.domain.po.TeamPersonalOkr;
@@ -44,7 +45,7 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
-    private final WxInviteQRCodeService wxInviteQRCodeService = SpringUtil.getBean(WxInviteQRCodeService.class);
+    private final InviteQRCodeServiceSelector inviteQRCodeServiceSelector = SpringUtil.getBean(InviteQRCodeServiceSelector.class);
 
     @Override
     public boolean match(String scene) {
@@ -56,7 +57,9 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
         // 检测密钥
         Long teamId = okrOperateDTO.getTeamOkrId();
         String secret = okrOperateDTO.getSecret();
-        wxInviteQRCodeService.checkParams(teamId, secret);
+        String type = okrOperateDTO.getType();
+        InviteQRCodeService inviteQRCodeService = inviteQRCodeServiceSelector.select(type);
+        inviteQRCodeService.checkParams(teamId, secret);
         // 获取用户 ID（受邀者）
         Long userId = user.getId();
         // 判断是否可以加入团队
