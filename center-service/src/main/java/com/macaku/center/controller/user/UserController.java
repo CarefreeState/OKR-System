@@ -64,6 +64,16 @@ public class UserController {
         return SystemJsonResponse.SYSTEM_SUCCESS(result);
     }
 
+    @PostMapping("/logout")
+    @ApiOperation("用户登出")
+    public SystemJsonResponse logout(HttpServletRequest request) {
+        String type = request.getHeader(VisitConfig.HEADER);
+        // 选取服务
+        LoginService loginService = loginServiceSelector.select(type);
+        loginService.logout(request);
+        return SystemJsonResponse.SYSTEM_SUCCESS();
+    }
+
     @PostMapping("/check/email")
     @ApiOperation("验证邮箱用户")
     public SystemJsonResponse emailIdentityCheck(@RequestBody EmailCheckDTO emailCheckDTO) {

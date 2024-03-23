@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created With Intellij IDEA
@@ -28,6 +29,8 @@ public class ExtractUtil {
 
     private static final RedisCache REDIS_CACHE = SpringUtil.getBean(RedisCache.class);
 
+    private static final String TOKEN_BLACKLIST = "tokenBlacklist:";
+
 
     public static <T> T getJWTRawDataOnRequest(HttpServletRequest request, Class<T> clazz) {
         final String token = request.getHeader(JwtUtil.JWT_HEADER);
@@ -36,6 +39,19 @@ public class ExtractUtil {
         }
         String rawData = JwtUtil.parseJWTRawData(token);
         return JsonUtil.analyzeJson(rawData, clazz);
+    }
+
+    public static void joinTheTokenBlacklist(HttpServletRequest request) {
+        final String token = request.getHeader(JwtUtil.JWT_HEADER);
+        String redisKey = TOKEN_BLACKLIST + token;
+        long keyTTL = JwtUtil.getExpiredDate(token).getTime() - System.currentTimeMillis();
+        REDIS_CACHE.setCacheObject(redisKey, Boolean.TRUE, keyTTL, TimeUnit.MILLISECONDS);
+    }
+
+    public static Boolean isInTheTokenBlacklist(HttpServletRequest request) {
+        final String token = request.getHeader(JwtUtil.JWT_HEADER);
+        String redisKey = TOKEN_BLACKLIST + token;
+        return (Boolean) REDIS_CACHE.getCacheObject(redisKey).orElse(Boolean.FALSE);
     }
 
     public static Map<String, Object> getMapFromJWT(HttpServletRequest request) {

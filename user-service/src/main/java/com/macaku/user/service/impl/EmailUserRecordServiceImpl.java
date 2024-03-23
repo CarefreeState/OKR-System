@@ -42,6 +42,9 @@ public class EmailUserRecordServiceImpl implements UserRecordService {
 
     @Override
     public Optional<LoginUser> getRecord(HttpServletRequest request) {
+        if(ExtractUtil.isInTheTokenBlacklist(request)) {
+            return Optional.empty();
+        }
         Long id = ExtractUtil.getUserIdFromJWT(request);
         String redisKey = JwtUtil.JWT_LOGIN_EMAIL_USER + id;
         return Optional.ofNullable((LoginUser) redisCache.getCacheObject(redisKey)

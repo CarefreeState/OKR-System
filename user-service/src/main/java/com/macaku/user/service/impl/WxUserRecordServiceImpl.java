@@ -41,6 +41,9 @@ public class WxUserRecordServiceImpl implements UserRecordService {
 
     @Override
     public Optional<LoginUser> getRecord(HttpServletRequest request) {
+        if(ExtractUtil.isInTheTokenBlacklist(request)) {
+            return Optional.empty();
+        }
         String openid = ExtractUtil.getOpenIDFromJWT(request);
         String redisKey = JwtUtil.JWT_LOGIN_WX_USER + openid;
         return Optional.ofNullable((LoginUser) redisCache.getCacheObject(redisKey)

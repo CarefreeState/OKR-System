@@ -17,6 +17,7 @@ import com.macaku.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -80,6 +81,11 @@ public class LoginServiceEmailImpl implements LoginService {
         return new HashMap<String, Object>(){{
             this.put(JwtUtil.JWT_HEADER, token);
         }};
+    }
+
+    @Override
+    public void logout(HttpServletRequest request) {
+        ExtractUtil.joinTheTokenBlacklist(request);
     }
 
 }

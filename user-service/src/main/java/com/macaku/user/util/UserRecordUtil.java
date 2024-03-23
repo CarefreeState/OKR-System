@@ -40,7 +40,6 @@ public class UserRecordUtil {
         return selectService(request).getRecord(request).orElse(null);
     }
 
-
     public static User getUserRecord() {
         LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return loginUser.getUser();
