@@ -52,5 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // 配置异常处理器（默认的话貌似是抛对应的异常，一大串的东西、或者控制台无表示，用对应的响应状态码表示异常）
         http.exceptionHandling()
                 .authenticationEntryPoint(authFailHandler);
+        // 处理跨域
+//        http.cors();
     }
 }
