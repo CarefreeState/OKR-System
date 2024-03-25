@@ -1,7 +1,5 @@
 package com.macaku.center.service;
 
-import com.macaku.center.domain.po.TeamOkr;
-
 import java.util.List;
 
 /**
@@ -13,7 +11,7 @@ import java.util.List;
  */
 public interface MemberService {
 
-    Boolean findExistsInTeam(List<TeamOkr> teamOkrs, Long userId);
+    Boolean findExistsInTeam(List<Long> ids, Long userId);
 
     void checkExistsInTeam(Long teamId, Long userId);
 

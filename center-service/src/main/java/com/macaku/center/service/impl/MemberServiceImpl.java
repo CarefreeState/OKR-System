@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * Created With Intellij IDEA
@@ -41,16 +40,10 @@ public class MemberServiceImpl implements MemberService {
 
     private final TeamPersonalOkrMapper teamPersonalOkrMapper;
 
-    private final TeamOkrMapper teamOkrMapper;
-
     private final RedisCache redisCache;
 
     @Override
-    public Boolean findExistsInTeam(List<TeamOkr> teamOkrs, Long userId) {
-        List<Long> ids = teamOkrs.stream()
-                .parallel()
-                .map(TeamOkr::getId)
-                .collect(Collectors.toList());
+    public Boolean findExistsInTeam(List<Long> ids, Long userId) {
         return teamPersonalOkrMapper.getTeamPersonalOkrList(userId).stream()
                 .parallel()
                 .map(TeamPersonalOkrVO::getTeamId)
@@ -71,8 +64,8 @@ public class MemberServiceImpl implements MemberService {
         // 查看是否有缓存
         String redisKey = USER_TEAM_MEMBER + rootId;
        return (Boolean) redisCache.getCacheMapValue(redisKey, userId).orElseGet(() -> {
-            List<TeamOkr> teamOkrs = teamOkrMapper.selectChildTeams(rootId);
-            Boolean isExists = findExistsInTeam(teamOkrs, userId);
+            List<Long> ids = TeamOkrUtil.getChildIds(rootId);
+            Boolean isExists = findExistsInTeam(ids, userId);
             redisCache.getCacheMap(redisKey).orElseGet(() -> {
                 Map<Long, Boolean> data = new HashMap<>();
                 redisCache.setCacheMap(redisKey, data, USER_TEAM_MEMBER_TTL, USER_TEAM_MEMBER_TTL_UNIT);

@@ -19,6 +19,7 @@ import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
+import com.macaku.common.util.TimerUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.vo.OkrCoreVO;
@@ -29,10 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
 * @author 马拉圈
@@ -45,6 +44,10 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     implements TeamOkrService, OkrOperateService {
 
     private final static String SCENE = OkrServiceSelector.TEAM_OKR_SCENE;
+
+    private final static Long DELAY = 5L;
+
+    private final static TimeUnit DELAY_UNIT = TimeUnit.SECONDS;
 
     private final TeamOkrMapper teamOkrMapper = SpringUtil.getBean(TeamOkrMapper.class);
 
@@ -129,6 +132,13 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
                 managerId, userId, teamId, id, coreId);
         // 删除缓存
         TeamOkrUtil.deleteChildListCache(teamId);
+        // 延时再次删除（先数据库后删缓存出现问题 + 5s 内系统挂了的概率实在太低了！）
+        TimerUtil.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                TeamOkrUtil.deleteChildListCache(teamId);
+            }
+        }, DELAY, DELAY_UNIT);
         return new HashMap<String, Object>() {{
             this.put("id", id);
             this.put("coreId", coreId);
