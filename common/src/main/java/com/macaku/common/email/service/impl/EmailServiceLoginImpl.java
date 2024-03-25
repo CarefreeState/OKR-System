@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created With Intellij IDEA
@@ -32,9 +33,15 @@ public class EmailServiceLoginImpl implements EmailService {
 
     private static final int IDENTIFYING_CODE_MINUTES = 5;//过期分钟数
 
-    private static final long IDENTIFYING_CODE_INTERVAL_Limit = 1 * 60 * 1000; // 两次发送验证码的最短时间间隔
+    private static final TimeUnit IDENTIFYING_CODE_UNIT = TimeUnit.MINUTES;//过期分钟
 
-    private static final long IDENTIFYING_CODE_TIMEOUT = IDENTIFYING_CODE_MINUTES * 60 * 1000; //单位为毫秒
+    private static final int IDENTIFYING_CODE_CD_MINUTES = 1;//CD分钟数
+
+    private static final TimeUnit IDENTIFYING_CODE_CD_UNIT = TimeUnit.MINUTES;//CD分钟
+
+    private static final long IDENTIFYING_CODE_TIMEOUT = IDENTIFYING_CODE_UNIT.toMillis(IDENTIFYING_CODE_MINUTES); //单位为毫秒
+
+    private static final long IDENTIFYING_CODE_INTERVAL_Limit = IDENTIFYING_CODE_CD_UNIT.toMillis(IDENTIFYING_CODE_CD_MINUTES); // 两次发送验证码的最短时间间隔
 
     private static final int IDENTIFYING_CODE_INTERVAL_LIMIT = 5; // 只有五次验证机会
 
@@ -51,13 +58,21 @@ public class EmailServiceLoginImpl implements EmailService {
         return TYPE.equals(type);
     }
 
+    private boolean canSendEmail(long ttl) {
+        return ttl > IDENTIFYING_CODE_TIMEOUT - IDENTIFYING_CODE_INTERVAL_Limit;
+    }
+
+    private long getCanSendSeconds(long ttl) {
+        return TimeUnit.MILLISECONDS.toSeconds(ttl + IDENTIFYING_CODE_INTERVAL_Limit - IDENTIFYING_CODE_TIMEOUT);
+    }
+
     @Override
     public void sendIdentifyingCode(String email, String code) {
         final String redisKey = IdentifyingCodeValidator.REDIS_EMAIL_IDENTIFYING_CODE + email;
         // 验证一下一分钟以内发过了没有
         long ttl = emailRepository.getTTLOfCode(redisKey); // 小于 0 则代表没有到期时间或者不存在，允许发送
-        if(ttl > IDENTIFYING_CODE_TIMEOUT - IDENTIFYING_CODE_INTERVAL_Limit) {
-            String message = String.format("请在 %d 分钟后再重新申请", IDENTIFYING_CODE_INTERVAL_Limit / (60 * 1000L));
+        if(Boolean.TRUE.equals(canSendEmail(ttl))) {
+            String message = String.format("请在 %d 秒后再重新申请", getCanSendSeconds(ttl));
             throw new GlobalServiceException(message, GlobalServiceStatusCode.EMAIL_SEND_FAIL);
         }
         // 封装 Email
@@ -73,7 +88,7 @@ public class EmailServiceLoginImpl implements EmailService {
         // 构造模板消息
         VerificationCodeTemplate verificationCodeTemplate = VerificationCodeTemplate.builder()
                 .code(code)
-                .minutes(IDENTIFYING_CODE_MINUTES)
+                .minutes((int) TimeUnit.MILLISECONDS.toMinutes(IDENTIFYING_CODE_TIMEOUT))
                 .build();
         // 发送模板消息
         emailSender.sendModelMail(emailMessage, EMAIL_MODEL_HTML, verificationCodeTemplate);

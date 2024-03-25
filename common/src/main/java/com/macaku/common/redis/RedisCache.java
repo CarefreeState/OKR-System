@@ -68,7 +68,25 @@ public class RedisCache {
                 break;
         }
         log.info("查询 Redis key[{}] 剩余存活时间:{}", key, message);
-        return TimeUnit.SECONDS.convert(ttl, TimeUnit.MILLISECONDS);
+        return TimeUnit.MILLISECONDS.convert(ttl, TimeUnit.SECONDS);
+    }
+
+    public long getKeyTTL(final String key, final TimeUnit timeUnit) {
+        int ttl = Math.toIntExact(redisTemplate.opsForValue().getOperations().getExpire(key));
+        String message = null;
+        switch (ttl) {
+            case -1:
+                message = "没有设置过期时间";
+                break;
+            case -2:
+                message = "key不存在";
+                break;
+            default:
+                message = ttl + "  " + TimeUnit.SECONDS.name();
+                break;
+        }
+        log.info("查询 Redis key[{}] 剩余存活时间:{}", key, message);
+        return timeUnit.convert(ttl, TimeUnit.SECONDS);
     }
 
     /**
