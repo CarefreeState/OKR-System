@@ -12,7 +12,9 @@ import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.center.mapper.TeamOkrMapper;
 import com.macaku.center.mapper.TeamPersonalOkrMapper;
 import com.macaku.center.redis.config.CoreUserMapConfig;
-import com.macaku.center.service.*;
+import com.macaku.center.service.MemberService;
+import com.macaku.center.service.OkrOperateService;
+import com.macaku.center.service.TeamOkrService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
@@ -21,8 +23,8 @@ import com.macaku.common.util.media.MediaUtil;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
-import com.macaku.user.domain.po.User;
 import com.macaku.qrcode.config.QRCodeConfig;
+import com.macaku.user.domain.po.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -31,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
 * @author 马拉圈
@@ -82,15 +83,10 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     }
 
     @Override
-    public TeamOkr checkManager(Long teamId, Long managerId) {
-        TeamOkr teamOkr = teamOkrMapper.selectById(teamId);
-        if (Objects.isNull(teamOkr)) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.TEAM_NOT_EXISTS);
-        }
-        if (!teamOkr.getManagerId().equals(managerId)) {
+    public void checkManager(Long teamId, Long managerId) {
+        if (!TeamOkrUtil.getManagerId(teamId).equals(managerId)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.NON_TEAM_MANAGER);
         }
-        return teamOkr;
     }
 
     @Override
@@ -131,6 +127,8 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         // 本来就有团队个人 OKR，无需再次生成
         log.info("管理员 {} 为成员 {} 授权创建团队原OKR {} 的子 OKR {} 内核 {}",
                 managerId, userId, teamId, id, coreId);
+        // 删除缓存
+        TeamOkrUtil.deleteChildListCache(teamId);
         return new HashMap<String, Object>() {{
             this.put("id", id);
             this.put("coreId", coreId);
@@ -138,9 +136,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     }
 
     @Override
-    public List<TeamOkrStatisticVO> countCompletionRate(List<TeamOkr> teamOkrs) {
-        // 获取 ids
-        List<Long> ids = teamOkrs.stream().parallel().map(TeamOkr::getId).collect(Collectors.toList());
+    public List<TeamOkrStatisticVO> countCompletionRate(List<Long> ids) {
         // 通过 ids 换取第一象限列表，并统计数据
         List<TeamOkrStatisticVO> statisticVOS = teamOkrMapper.selectKeyResultsByTeamId(ids);
         statisticVOS.stream()

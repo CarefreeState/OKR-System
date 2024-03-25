@@ -23,12 +23,12 @@ public interface TeamOkrService extends IService<TeamOkr> {
 
     List<TeamOkrVO> getTeamOkrList(User user);
 
-    TeamOkr checkManager(Long teamId, Long managerId);
+    void checkManager(Long teamId, Long managerId);
 
     @Transactional
     Map<String, Object> grantTeamForMember(Long teamId, Long managerId, Long userId, String teamName);
 
-    List<TeamOkrStatisticVO> countCompletionRate(List<TeamOkr> teamOkrs);
+    List<TeamOkrStatisticVO> countCompletionRate(List<Long> ids);
 
     void deleteTeamNameCache(Long teamId);
 

@@ -88,12 +88,12 @@ public class TeamOkrController {
         // 判断是否是其中的成员
         memberService.checkExistsInTeam(rootId, userId);
         // 获取根团队的所有孩子节点
-        List<TeamOkr> teamOkrs = teamOkrService.selectChildTeams(rootId);
-        if(teamOkrs.isEmpty()) {
+        List<Long> ids = TeamOkrUtil.getChildIds(rootId);
+        if(ids.isEmpty()) {
             throw new GlobalServiceException(GlobalServiceStatusCode.TEAM_NOT_EXISTS);
         }
         // 计算完成度
-        List<TeamOkrStatisticVO> statisticVOS = teamOkrService.countCompletionRate(teamOkrs);
+        List<TeamOkrStatisticVO> statisticVOS = teamOkrService.countCompletionRate(ids);
         log.info("查询团队 {} 在 根团队 {} 中， 树的总节点数为 {}", id, rootId, statisticVOS.size());
         return SystemJsonResponse.SYSTEM_SUCCESS(statisticVOS);
     }
@@ -107,13 +107,13 @@ public class TeamOkrController {
         // 判断是否是其中的成员
         memberService.checkExistsInTeam(id, userId);
         // 获取根团队的所有孩子节点
-        List<TeamOkr> teamOkrs = teamOkrService.selectChildTeams(id);
-        if(teamOkrs.isEmpty()) {
+        List<Long> ids = TeamOkrUtil.getChildIds(id);
+        if(ids.isEmpty()) {
             throw new GlobalServiceException(GlobalServiceStatusCode.TEAM_NOT_EXISTS);
         }
-        log.info("查询团队 {} 的子树， 树的总节点数为 {}", id, teamOkrs.size());
+        log.info("查询团队 {} 的子树， 树的总节点数为 {}", id, ids.size());
         // 计算完成度
-        List<TeamOkrStatisticVO> statisticVOS = teamOkrService.countCompletionRate(teamOkrs);
+        List<TeamOkrStatisticVO> statisticVOS = teamOkrService.countCompletionRate(ids);
         return SystemJsonResponse.SYSTEM_SUCCESS(statisticVOS);
     }
 

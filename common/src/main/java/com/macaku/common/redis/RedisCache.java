@@ -3,8 +3,11 @@ package com.macaku.common.redis;
 import com.macaku.common.redis.component.RedisBloomFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.core.BoundSetOperations;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -34,9 +37,14 @@ public class RedisCache {
 
     public <T> void execute(Runnable runnable) {
         log.info("Redis 执行原子任务");
-        redisTemplate.multi();
-        runnable.run();
-        redisTemplate.exec();
+        redisTemplate.execute(new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations redisOperations) throws DataAccessException {
+                redisOperations.multi();
+                runnable.run();
+                return redisOperations.exec();
+            }
+        });
     }
 
     /**
@@ -339,10 +347,11 @@ public class RedisCache {
      * @param key
      * @return
      */
-    public <T> Set<T> getCacheSet(final String key) {
+    public <T> Optional<Set<T>> getCacheSet(final String key, Class<T> clazz) {
         Set members = redisTemplate.opsForSet().members(key);
+        members = Objects.isNull(members) || members.isEmpty() ? null : members;
         log.info("获取 Redis 中的 Set 缓存\t[{}]-[{}]", key, members);
-        return members;
+        return Optional.ofNullable(members);
     }
 
 
@@ -374,15 +383,32 @@ public class RedisCache {
     }
 
     /**
+     * 缓存List数据（覆盖）
+     *
+     * @param key      缓存的键值
+     * @param dataList 待缓存的List数据
+     * @return 缓存的对象
+     */
+    public <T> void setOverCacheList(final String key, final List<T> dataList, final long timeout, final TimeUnit timeUnit) {
+        log.info("存入 Redis 中的 List 缓存（覆盖）\t[{}]-[{}]", key, dataList);
+        execute(() -> {
+            deleteObject(key);
+            redisTemplate.opsForList().rightPushAll(key, dataList);
+            expire(key, timeout, timeUnit);
+        });
+    }
+
+    /**
      * 获得缓存的list对象
      *
      * @param key 缓存的键值
      * @return 缓存键值对应的数据
      */
-    public <T> List<T> getCacheList(final String key) {
+    public <T> Optional<List<T>> getCacheList(final String key, Class<T> clazz) {
         List<T> dataList = redisTemplate.opsForList().range(key, 0, -1);
+        dataList = Objects.isNull(dataList) || dataList.isEmpty() ? null : dataList;
         log.info("获取 Redis 中的 List 缓存\t[{}]-[{}]", key, dataList);
-        return dataList;
+        return Optional.ofNullable(dataList);
     }
 
     /**
@@ -392,10 +418,11 @@ public class RedisCache {
      * @param hKeys Hash键集合
      * @return Hash对象集合
      */
-    public <T> List<T> getMultiCacheMapValue(final String key, final Collection<Object> hKeys) {
+    public <T> Optional<List<T>> getMultiCacheMapValue(final String key, final Collection<Object> hKeys) {
         List<T> dataList = redisTemplate.opsForHash().multiGet(key, hKeys);
+        dataList = Objects.isNull(dataList) || dataList.isEmpty() ? null : dataList;
         log.info("获取 Redis 中的 Map Value 缓存\t[{}.[{}]]-[{}]", key, hKeys, dataList);
-        return dataList;
+        return Optional.ofNullable(dataList);
     }
 
 }

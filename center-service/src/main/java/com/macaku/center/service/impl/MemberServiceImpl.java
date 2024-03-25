@@ -35,7 +35,6 @@ import java.util.stream.Collectors;
 public class MemberServiceImpl implements MemberService {
 
     private final static String USER_TEAM_MEMBER = "userTeamMember:";
-
     private final static Long USER_TEAM_MEMBER_TTL = 30L;
 
     private final static TimeUnit USER_TEAM_MEMBER_TTL_UNIT = TimeUnit.DAYS;
