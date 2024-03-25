@@ -1,6 +1,5 @@
 package com.macaku.qrcode.service.impl;
 
-import com.google.zxing.WriterException;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.ShortCodeUtil;
@@ -17,7 +16,6 @@ import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -83,13 +81,9 @@ public class WebInviteQRCodeServiceImpl implements InviteQRCodeService {
                 .append("=")
                 .append(inviteSecret);
         String url = page + "?" + sceneBuilder;
-        try {
-            log.info("生成二维码 -> {}  {}  {} ", url, width, width);
-            byte[] codeBytes = MediaUtil.getCustomColorQRCodeByteArray(url, width, width);
-            return MediaUtil.saveImage(codeBytes, StaticMapperConfig.INVITE_PATH);
-        } catch (WriterException | IOException e) {
-            throw new GlobalServiceException(e.getMessage());
-        }
+        log.info("生成二维码 -> {}  {}  {} ", url, width, width);
+        byte[] codeBytes = MediaUtil.getCustomColorQRCodeByteArray(url, width, width);
+        return MediaUtil.saveImage(codeBytes, StaticMapperConfig.INVITE_PATH);
     }
 
     @Override
