@@ -3,10 +3,8 @@ package com.macaku.common.redis;
 import com.macaku.common.redis.component.RedisBloomFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataAccessException;
-import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -25,7 +23,7 @@ public class RedisCache {
     /**
      * 设置有效时间
      *
-     * @param key Redis键
+     * @param key     Redis键
      * @param timeout 超时时间
      * @return true=设置成功；false=设置失败
      */
@@ -34,28 +32,11 @@ public class RedisCache {
         return redisTemplate.expire(key, timeout, timeUnit);
     }
 
-    /**
-     * 原子设置过期时间
-     * @param key
-     * @param value
-     * @param timeout
-     */
-    public <T> void execute(final String key, final T value, final long timeout, final TimeUnit timeUnit) {
-        log.info("尝试存入 Redis\t[{}]-[{}]，超时时间:[{}  {}]", key, value, timeout, timeUnit.name());
-        redisTemplate.execute(new SessionCallback() {
-            @Override
-            public Object execute(RedisOperations redisOperations) throws DataAccessException {
-                redisOperations.multi();
-                redisOperations.opsForValue().set(key, value);
-                redisOperations.expire(key, timeout, timeUnit);
-                return redisOperations.exec();
-            }
-        });
-    }
-
-    public <T> void execute(SessionCallback<T> session) {
+    public <T> void execute(Runnable runnable) {
         log.info("Redis 执行原子任务");
-        redisTemplate.execute(session);
+        redisTemplate.multi();
+        runnable.run();
+        redisTemplate.exec();
     }
 
     /**
@@ -85,7 +66,7 @@ public class RedisCache {
     /**
      * 缓存基本的对象，Integer、String、实体类等
      *
-     * @param key 缓存的键值
+     * @param key   缓存的键值
      * @param value 缓存的值
      */
     public <T> void setCacheObject(final String key, final T value) {
@@ -96,8 +77,8 @@ public class RedisCache {
     /**
      * 缓存基本的对象，Integer、String、实体类等
      *
-     * @param key 缓存的键值
-     * @param value 缓存的值
+     * @param key    缓存的键值
+     * @param value  缓存的值
      * @param timout 超时时间
      */
     public <T> void setCacheObject(final String key, final T value, final long timout, final TimeUnit timeUnit) {
@@ -107,9 +88,10 @@ public class RedisCache {
 
     /**
      * 获取键值
+     *
      * @param key 键
-     * @return 键对应的值，并封装成 Optional 对象
      * @param <T>
+     * @return 键对应的值，并封装成 Optional 对象
      */
     public <T> Optional<T> getCacheObject(final String key) {
         T value = (T) redisTemplate.opsForValue().get(key);
@@ -119,6 +101,7 @@ public class RedisCache {
 
     /**
      * 让指定 Redis 键值进行自减
+     *
      * @param key 键
      * @return 自减后的值
      */
@@ -130,6 +113,7 @@ public class RedisCache {
 
     /**
      * 让指定 Redis 键值进行自增
+     *
      * @param key 键
      * @return 自增后的值
      */
@@ -141,59 +125,49 @@ public class RedisCache {
 
     /**
      * 初始化布隆过滤器
+     *
      * @param bloomFilterName
      */
     public void initBloomFilter(final String bloomFilterName) {
         log.info("初始化布隆过滤器[{}]", bloomFilterName);
-        redisTemplate.execute(new SessionCallback() {
-            @Override
-            public Object execute(RedisOperations redisOperations) throws DataAccessException {
-                redisOperations.multi();
-                redisBloomFilter.init(bloomFilterName);
-                return redisOperations.exec();
-            }
+        execute(() -> {
+            redisBloomFilter.init(bloomFilterName);
         });
     }
 
     /**
      * 初始化布隆过滤器
+     *
      * @param bloomFilterName
      * @param timeout
      * @param timeUnit
      */
     public void initBloomFilter(final String bloomFilterName, final long timeout, final TimeUnit timeUnit) {
-        redisTemplate.execute(new SessionCallback() {
-            @Override
-            public Object execute(RedisOperations redisOperations) throws DataAccessException {
-                redisOperations.multi();
-                redisBloomFilter.init(bloomFilterName);
-                expire(bloomFilterName, timeout, timeUnit);
-                return redisOperations.exec();
-            }
+        log.info("初始化布隆过滤器[{}]  超时时间:[{}  {}]", bloomFilterName, timeout, timeUnit);
+        execute(() -> {
+            redisBloomFilter.init(bloomFilterName);
+            expire(bloomFilterName, timeout, timeUnit);
         });
     }
 
     /**
      * 加入布隆过滤器
+     *
      * @param bloomFilterName 隆过滤器的名字
-     * @param key key 键
+     * @param key             key 键
      */
     public <T> void addToBloomFilter(final String bloomFilterName, final T key) {
         log.info("加入布隆过滤器[{}]\tkey[{}]", bloomFilterName, key);
-        redisTemplate.execute(new SessionCallback() {
-            @Override
-            public Object execute(RedisOperations redisOperations) throws DataAccessException {
-                redisOperations.multi();
-                redisBloomFilter.add(bloomFilterName, key);
-                return redisOperations.exec();
-            }
+        execute(() -> {
+            redisBloomFilter.add(bloomFilterName, key);
         });
     }
 
     /**
      * 布隆过滤器是否存在该键值
+     *
      * @param bloomFilterName 布隆过滤器的名字
-     * @param key 键
+     * @param key             键
      * @return 键是否存在
      */
     public <T> boolean containsInBloomFilter(final String bloomFilterName, final T key) {
@@ -228,14 +202,9 @@ public class RedisCache {
                 map.put(entry.getKey().toString(), entry.getValue());
             });
             log.info("尝试存入 Redis\t[{}]-[{}] 超时时间:[{}  {}]", key, map, timeout, timeUnit.name());
-            redisTemplate.execute(new SessionCallback() {
-                @Override
-                public Object execute(RedisOperations redisOperations) throws DataAccessException {
-                    redisOperations.multi();
-                    redisTemplate.opsForHash().putAll(key, map);
-                    expire(key, timeout, timeUnit);
-                    return redisOperations.exec();
-                }
+            execute(() -> {
+                redisTemplate.opsForHash().putAll(key, map);
+                expire(key, timeout, timeUnit);
             });
         }
     }
@@ -248,7 +217,7 @@ public class RedisCache {
      */
     public <K, T> Optional<Map<K, T>> getCacheMap(final String key) {
         Map<K, T> data = redisTemplate.opsForHash().entries(key);
-        data = data.size() == 0 ? null: data;
+        data = data.size() == 0 ? null : data;
         log.info("获取 Redis 中的 Map 缓存\t[{}]-[{}]", key, data);
         return Optional.ofNullable(data);
     }
@@ -256,9 +225,9 @@ public class RedisCache {
     /**
      * 往Hash中存入数据
      *
-     * @param key Redis键
+     * @param key     Redis键
      * @param hashKey Hash键
-     * @param value 值
+     * @param value   值
      */
     public <K, T> void setCacheMapValue(final String key, final K hashKey, final T value) {
         log.info("存入 Redis 的某个 Map\t[{}.{}]-[{}]", key, hashKey, value);
@@ -268,7 +237,7 @@ public class RedisCache {
     /**
      * 获取Hash中的数据
      *
-     * @param key Redis键
+     * @param key     Redis键
      * @param hashKey Hash键
      * @return Hash中的对象
      */
@@ -291,7 +260,8 @@ public class RedisCache {
 
     /**
      * 让指定 HashMap 的键值进行自减
-     * @param key HashMap的名字
+     *
+     * @param key     HashMap的名字
      * @param hashKey HashMap的一个键
      * @return 自减后的值
      */
@@ -303,7 +273,8 @@ public class RedisCache {
 
     /**
      * 让指定 HashMap 的键值进行自增
-     * @param key HashMap的名字
+     *
+     * @param key     HashMap的名字
      * @param hashKey HashMap的一个键
      * @return 自增后的值
      */
@@ -315,6 +286,7 @@ public class RedisCache {
 
     /**
      * 删除单个对象
+     *
      * @param key
      */
     public boolean deleteObject(final String key) {
@@ -324,7 +296,8 @@ public class RedisCache {
 
     /**
      * 获得缓存的基本对象列表
-     *   *：匹配任意数量个字符（包括 0 个字符）
+     * *：匹配任意数量个字符（包括 0 个字符）
+     *
      * @param prefix 字符串前缀
      * @return 键的集合
      */
@@ -335,15 +308,94 @@ public class RedisCache {
 
     /**
      * 获得缓存的基本对象列表
-     *   *：匹配任意数量个字符（包括 0 个字符）
-     *   ?：匹配单个字符
-     *   []：匹配指定范围内的字符
+     * *：匹配任意数量个字符（包括 0 个字符）
+     * ?：匹配单个字符
+     * []：匹配指定范围内的字符
+     *
      * @param pattern 字符串格式
      * @return 键的集合
      */
     public Set<String> getCacheKeysByPattern(final String pattern) {
         log.info("获取 Redis 格式为 [{}] 的键", pattern);
         return redisTemplate.keys(pattern);
+    }
+
+    /**
+     * 缓存Set
+     *
+     * @param key     缓存键值
+     * @param dataSet 缓存的数据
+     * @return 缓存数据的对象
+     */
+    public <T> void setCacheSet(final String key, final Set<T> dataSet) {
+        log.info("存入 Redis 中的 Set 缓存\t[{}]-[{}]", key, dataSet);
+        BoundSetOperations<String, T> setOperation = redisTemplate.boundSetOps(key);
+        dataSet.forEach(setOperation::add);
+    }
+
+    /**
+     * 获得缓存的set
+     *
+     * @param key
+     * @return
+     */
+    public <T> Set<T> getCacheSet(final String key) {
+        Set members = redisTemplate.opsForSet().members(key);
+        log.info("获取 Redis 中的 Set 缓存\t[{}]-[{}]", key, members);
+        return members;
+    }
+
+
+    /**
+     * 缓存List数据
+     *
+     * @param key      缓存的键值
+     * @param dataList 待缓存的List数据
+     * @return 缓存的对象
+     */
+    public <T> void setCacheList(final String key, final List<T> dataList) {
+        log.info("存入 Redis 中的 List 缓存\t[{}]-[{}]", key, dataList);
+        redisTemplate.opsForList().rightPushAll(key, dataList);
+    }
+
+    /**
+     * 缓存List数据（覆盖）
+     *
+     * @param key      缓存的键值
+     * @param dataList 待缓存的List数据
+     * @return 缓存的对象
+     */
+    public <T> void setOverCacheList(final String key, final List<T> dataList) {
+        log.info("存入 Redis 中的 List 缓存（覆盖）\t[{}]-[{}]", key, dataList);
+        execute(() -> {
+            deleteObject(key);
+            redisTemplate.opsForList().rightPushAll(key, dataList);
+        });
+    }
+
+    /**
+     * 获得缓存的list对象
+     *
+     * @param key 缓存的键值
+     * @return 缓存键值对应的数据
+     */
+    public <T> List<T> getCacheList(final String key) {
+        List<T> dataList = redisTemplate.opsForList().range(key, 0, -1);
+        log.info("获取 Redis 中的 List 缓存\t[{}]-[{}]", key, dataList);
+        return dataList;
+    }
+
+    /**
+     * 获取多个Hash中的数据
+     *
+     * @param key   Redis键
+     * @param hKeys Hash键集合
+     * @return Hash对象集合
+     */
+    public <T> List<T> getMultiCacheMapValue(final String key, final Collection<Object> hKeys) {
+        List<T> dataList = redisTemplate.opsForHash().multiGet(key, hKeys);
+        log.info("获取 Redis 中的 Map Value 缓存\t[{}.[{}]]-[{}]", key, hKeys, dataList);
+        return dataList;
     }
 
 }
