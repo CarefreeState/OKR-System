@@ -3,7 +3,6 @@ package com.macaku.user.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.macaku.common.code.GlobalServiceStatusCode;
-import com.macaku.common.email.component.EmailServiceSelector;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.ExtractUtil;
@@ -12,13 +11,14 @@ import com.macaku.common.util.JwtUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.common.web.HttpUtil;
+import com.macaku.email.component.EmailServiceSelector;
 import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.qrcode.service.WxBindingQRCodeService;
+import com.macaku.qrcode.token.TokenUtil;
 import com.macaku.user.domain.dto.UserinfoDTO;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.mapper.UserMapper;
 import com.macaku.user.service.UserService;
-import com.macaku.qrcode.token.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -165,6 +165,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Map<String, Object> response = JsonUtil.analyzeJson(resultJson, Map.class);
         String openid = (String) response.get("openid");
         String unionid = (String) response.get("unionid");
+        if(Objects.isNull(openid)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.WX_CODE_NOT_VALID);
+        }
         // 查询 openid 是否被注册过
         User userByOpenid = getUserByOpenid(openid);
         if (Objects.nonNull(userByOpenid)) {

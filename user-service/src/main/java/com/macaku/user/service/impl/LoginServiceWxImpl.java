@@ -60,6 +60,9 @@ public class LoginServiceWxImpl implements LoginService {
         String openid = (String) response.get("openid");
         String unionid = (String) response.get("unionid");
         String sessionKey = (String) response.get("session_key");
+        if(Objects.isNull(openid)) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.WX_CODE_NOT_VALID);
+        }
         // 3. 构造用户对象
         User user = wxLoginDTO.transToUser();
         user.setOpenid(openid);

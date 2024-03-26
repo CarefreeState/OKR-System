@@ -27,6 +27,8 @@ public enum GlobalServiceStatusCode {
 
     HEAD_NOT_VALID(1101, "请求头无效"),
 
+    WX_CODE_NOT_VALID(1201, "微信 code 无效"),
+
     /* 用户错误 2001-3000 */
     USER_NOT_LOGIN(2001, "用户未登录"),
     USER_ACCOUNT_EXPIRED(2002, "账号已过期"),

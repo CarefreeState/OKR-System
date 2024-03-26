@@ -1,8 +1,8 @@
 package com.macaku.user.domain.dto;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
-import com.macaku.common.email.component.EmailValidator;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.email.component.EmailValidator;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
