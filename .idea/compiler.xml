@@ -12,6 +12,7 @@
         <module name="center-service" />
         <module name="qrcode-service" />
         <module name="core-service" />
+        <module name="email-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -20,6 +21,7 @@
       <module name="center-service" options="-parameters" />
       <module name="common" options="-parameters" />
       <module name="core-service" options="-parameters" />
+      <module name="email-service" options="-parameters" />
       <module name="okr-system" options="-parameters" />
       <module name="qrcode-service" options="-parameters" />
       <module name="user-service" options="-parameters" />

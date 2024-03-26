@@ -1,13 +1,13 @@
-package com.macaku.common.email.service.impl;
+package com.macaku.email.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
-import com.macaku.common.email.component.EmailSender;
-import com.macaku.common.email.component.EmailServiceSelector;
-import com.macaku.common.email.component.po.EmailMessage;
-import com.macaku.common.email.model.vo.VerificationCodeTemplate;
-import com.macaku.common.email.repository.EmailRepository;
-import com.macaku.common.email.service.EmailService;
+import com.macaku.email.component.EmailSender;
+import com.macaku.email.component.EmailServiceSelector;
+import com.macaku.email.component.po.EmailMessage;
+import com.macaku.email.model.vo.VerificationCodeTemplate;
+import com.macaku.email.repository.EmailRepository;
+import com.macaku.email.service.EmailService;
 import com.macaku.common.util.IdentifyingCodeValidator;
 import com.macaku.common.exception.GlobalServiceException;
 import lombok.extern.slf4j.Slf4j;

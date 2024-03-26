@@ -1,8 +1,8 @@
-package com.macaku.common.email.component;
+package com.macaku.email.component;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
-import com.macaku.common.email.component.po.EmailMessage;
+import com.macaku.email.component.po.EmailMessage;
 import com.macaku.common.exception.GlobalServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

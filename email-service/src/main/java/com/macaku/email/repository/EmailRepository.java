@@ -1,4 +1,4 @@
-package com.macaku.common.email.repository;
+package com.macaku.email.repository;
 
 import com.macaku.common.util.IdentifyingCodeValidator;
 import com.macaku.common.redis.RedisCache;

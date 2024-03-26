@@ -1,4 +1,4 @@
-package com.macaku.common.email.component;
+package com.macaku.email.component;
 
 public class EmailValidator {
 

@@ -1,11 +1,10 @@
-package com.macaku.common.email.component;
+package com.macaku.email.component;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
-import com.macaku.common.email.service.EmailService;
+import com.macaku.email.service.EmailService;
 import com.macaku.common.exception.GlobalServiceException;
 import org.springframework.stereotype.Component;
 
-import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**

@@ -2,12 +2,12 @@ package com.macaku.user.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
-import com.macaku.common.email.component.EmailServiceSelector;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.JwtUtil;
 import com.macaku.common.util.ShortCodeUtil;
+import com.macaku.email.component.EmailServiceSelector;
 import com.macaku.user.component.LoginServiceSelector;
 import com.macaku.user.domain.dto.EmailLoginDTO;
 import com.macaku.user.domain.dto.unify.LoginDTO;

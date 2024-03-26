@@ -1,4 +1,4 @@
-package com.macaku.common.email.model.vo;
+package com.macaku.email.model.vo;
 
 import lombok.Builder;
 import lombok.Getter;

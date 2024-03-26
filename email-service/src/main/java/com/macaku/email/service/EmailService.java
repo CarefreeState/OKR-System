@@ -1,4 +1,4 @@
-package com.macaku.common.email.service;
+package com.macaku.email.service;
 
 public interface EmailService {
 

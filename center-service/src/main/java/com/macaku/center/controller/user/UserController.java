@@ -3,7 +3,7 @@ package com.macaku.center.controller.user;
 import cn.hutool.core.bean.BeanUtil;
 import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
 import com.macaku.qrcode.service.OkrQRCodeService;
-import com.macaku.common.email.component.EmailServiceSelector;
+import com.macaku.email.component.EmailServiceSelector;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.common.util.IdentifyingCodeValidator;
 import com.macaku.user.component.LoginServiceSelector;
