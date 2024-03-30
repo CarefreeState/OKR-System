@@ -1,27 +1,22 @@
 package com.macaku.qrcode.service.impl;
 
-import com.macaku.qrcode.component.InviteQRCodeServiceSelector;
-import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
-import com.macaku.qrcode.config.BloomFilterConfig;
-import com.macaku.qrcode.service.InviteQRCodeService;
-import com.macaku.qrcode.service.OkrQRCodeService;
 import com.macaku.common.redis.RedisCache;
 import com.macaku.common.util.ShortCodeUtil;
 import com.macaku.common.util.media.ImageUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
+import com.macaku.qrcode.component.InviteQRCodeServiceSelector;
+import com.macaku.qrcode.config.BloomFilterConfig;
 import com.macaku.qrcode.config.QRCodeConfig;
+import com.macaku.qrcode.domain.config.OkrQRCode;
+import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
+import com.macaku.qrcode.service.InviteQRCodeService;
+import com.macaku.qrcode.service.OkrQRCodeService;
 import com.macaku.qrcode.service.WxBindingQRCodeService;
 import com.macaku.qrcode.service.WxLoginQRCodeService;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
-
-import javax.annotation.PostConstruct;
-import java.awt.*;
-import java.util.Map;
 
 /**
  * Created With Intellij IDEA
@@ -32,9 +27,7 @@ import java.util.Map;
  */
 @Service
 @Slf4j
-@Setter
 @RequiredArgsConstructor
-@ConfigurationProperties(prefix = "font.text")
 public class OkrQRCodeServiceImpl implements OkrQRCodeService {
 
     private final static String BINDING_CODE_MESSAGE = java.lang.String.format("请在 %d %s 内前往微信扫码进行绑定！",
@@ -43,13 +36,7 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
     private final static String LOGIN_CODE_MESSAGE = java.lang.String.format("请在 %d %s 内前往微信扫码进行验证！",
             QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
 
-    private Map<String, Integer> color;
-
-    private String invite;
-
-    private String binding;
-
-    private String login;
+    private final OkrQRCode okrQRCode;
 
     private final RedisCache redisCache;
 
@@ -59,9 +46,6 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
 
     private final WxLoginQRCodeService wxLoginQRCodeService;
 
-    private Color textColor;
-
-    @Override
     public String getInviteQRCode(Long teamId, String teamName, String type) {
         InviteQRCodeService inviteQRCodeService = inviteQRCodeServiceSelector.select(type);
         String redisKey = QRCodeConfig.TEAM_QR_CODE_MAP
@@ -73,7 +57,7 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
             // 获取到团队名字
             String savePath = StaticMapperConfig.ROOT + mapPath;
             ImageUtil.mergeSignatureWrite(savePath, teamName,
-                    invite, textColor, inviteQRCodeService.getQRCodeColor());
+                    okrQRCode.getInvite(), okrQRCode.getTextColor(), inviteQRCodeService.getQRCodeColor());
             // todo： 缓存小程序码
             redisCache.setCacheObject(redisKey, mapPath, QRCodeConfig.TEAM_QR_MAP_TTL, QRCodeConfig.TEAM_QR_MAP_UNIT);
             return mapPath;
@@ -89,7 +73,7 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
         // 为图片记录缓存时间，时间一到，在服务器存储的文件应该删除掉！
         String savePath = MediaUtil.getLocalFilePath(mapPath);
         ImageUtil.mergeSignatureWrite(savePath, BINDING_CODE_MESSAGE,
-                binding, textColor, wxBindingQRCodeService.getQRCodeColor());
+                okrQRCode.getBinding(), okrQRCode.getTextColor(), wxBindingQRCodeService.getQRCodeColor());
         redisCache.setCacheObject(QRCodeConfig.WX_CHECK_QR_CODE_CACHE + MediaUtil.getLocalFileName(mapPath), 0,
                 QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
         return mapPath;
@@ -111,18 +95,13 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
         String mapPath = wxLoginQRCodeService.getQRCode(secret);
         String savePath = MediaUtil.getLocalFilePath(mapPath);
         ImageUtil.mergeSignatureWrite(savePath, LOGIN_CODE_MESSAGE,
-                login, textColor, wxLoginQRCodeService.getQRCodeColor());
+                okrQRCode.getLogin(), okrQRCode.getTextColor(), wxLoginQRCodeService.getQRCodeColor());
         redisCache.setCacheObject(QRCodeConfig.WX_LOGIN_QR_CODE_CACHE + MediaUtil.getLocalFileName(mapPath), 0,
                 QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
         return LoginQRCodeVO.builder()
                 .path(mapPath)
                 .secret(secret)
                 .build();
-    }
-
-    @PostConstruct
-    public void doPostConstruct() {
-        textColor = ImageUtil.getColorByMap(color);
     }
 
 }

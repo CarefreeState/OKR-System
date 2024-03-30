@@ -1,7 +1,6 @@
 package com.macaku.qrcode.service;
 
 import java.awt.*;
-import java.util.Map;
 
 /**
  * Created With Intellij IDEA
@@ -15,8 +14,6 @@ public interface InviteQRCodeService {
     boolean match(String type);
 
     Color getQRCodeColor();
-
-    Map<String, Object> getQRCodeParams();
 
     String getQRCode(Long teamId);
 

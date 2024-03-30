@@ -1,7 +1,6 @@
 package com.macaku.qrcode.service;
 
 import java.awt.*;
-import java.util.Map;
 
 /**
  * Created With Intellij IDEA
@@ -13,8 +12,6 @@ import java.util.Map;
 public interface WxLoginQRCodeService {
 
     Color getQRCodeColor();
-
-    Map<String, Object> getQRCodeParams();
 
     String getQRCode(String secret);
 
