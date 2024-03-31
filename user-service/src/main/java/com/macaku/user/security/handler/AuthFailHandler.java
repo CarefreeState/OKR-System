@@ -1,4 +1,4 @@
-package com.macaku.common.handler;
+package com.macaku.user.security.handler;
 
 import com.macaku.common.web.HttpUtil;
 import lombok.extern.slf4j.Slf4j;

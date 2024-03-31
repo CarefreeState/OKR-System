@@ -1,7 +1,7 @@
 package com.macaku.user.security.config;
 
-import com.macaku.common.handler.AuthFailHandler;
-import com.macaku.user.filter.JwtAuthenticationTokenFilter;
+import com.macaku.user.security.handler.AuthFailHandler;
+import com.macaku.user.security.filter.JwtAuthenticationTokenFilter;
 import com.macaku.user.interceptor.config.VisitConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

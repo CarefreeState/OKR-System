@@ -10,7 +10,7 @@ import com.macaku.center.domain.po.TeamPersonalOkr;
 import com.macaku.center.domain.vo.TeamMemberVO;
 import com.macaku.center.domain.vo.TeamPersonalOkrVO;
 import com.macaku.center.mapper.TeamPersonalOkrMapper;
-import com.macaku.center.redis.config.CoreUserMapConfig;
+import com.macaku.center.config.CoreUserMapConfig;
 import com.macaku.center.service.*;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;

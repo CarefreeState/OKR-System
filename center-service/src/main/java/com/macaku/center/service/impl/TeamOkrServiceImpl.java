@@ -11,7 +11,7 @@ import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.center.mapper.TeamOkrMapper;
 import com.macaku.center.mapper.TeamPersonalOkrMapper;
-import com.macaku.center.redis.config.CoreUserMapConfig;
+import com.macaku.center.config.CoreUserMapConfig;
 import com.macaku.center.service.MemberService;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.center.service.TeamOkrService;

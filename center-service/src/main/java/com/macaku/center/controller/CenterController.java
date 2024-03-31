@@ -2,7 +2,7 @@ package com.macaku.center.controller;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.handler.AuthFailHandler;
+import com.macaku.user.security.handler.AuthFailHandler;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JsonUtil;

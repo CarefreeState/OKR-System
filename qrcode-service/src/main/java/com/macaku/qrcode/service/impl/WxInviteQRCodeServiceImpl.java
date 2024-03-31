@@ -31,6 +31,8 @@ public class WxInviteQRCodeServiceImpl implements InviteQRCodeService {
 
     private final static String TYPE = InviteQRCodeServiceSelector.WX_TYPE;
 
+    private final static String VERSION = SpringUtil.getProperty("spring.application.version");
+
     private final WxInviteQRCode wxInviteQRCode = SpringUtil.getBean(WxInviteQRCode.class);
 
     @Override
@@ -50,7 +52,7 @@ public class WxInviteQRCodeServiceImpl implements InviteQRCodeService {
         }
         String sceneKey = wxInviteQRCode.getSceneKey();
         String raw = sceneKey + "=" + teamId;
-        String inviteSecret = ShortCodeUtil.getShortCode(raw);
+        String inviteSecret = ShortCodeUtil.getShortCode(raw, VERSION);
         boolean isInvited = inviteSecret.equals(secret);
         log.info("用户想要加入团队 {}, 校验：{} -> {} 与 {} 比较 -> {}", teamId, raw, inviteSecret, secret, isInvited);
         if(Boolean.FALSE.equals(isInvited)) {
@@ -70,7 +72,7 @@ public class WxInviteQRCodeServiceImpl implements InviteQRCodeService {
                 .append("=")
                 .append(teamId);
         // 短码虽然无法保证绝对的唯一，但是 teamId 能确定短码即可
-        String inviteSecret = ShortCodeUtil.getShortCode(sceneBuilder.toString());
+        String inviteSecret = ShortCodeUtil.getShortCode(sceneBuilder.toString(), VERSION);
         sceneBuilder
                 .append("&")
                 .append(secret)

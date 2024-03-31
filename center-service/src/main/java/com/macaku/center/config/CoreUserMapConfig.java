@@ -1,4 +1,4 @@
-package com.macaku.center.redis.config;
+package com.macaku.center.config;
 
 import java.util.concurrent.TimeUnit;
 

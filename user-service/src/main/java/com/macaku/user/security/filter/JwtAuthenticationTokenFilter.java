@@ -1,8 +1,8 @@
-package com.macaku.user.filter;
+package com.macaku.user.security.filter;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.handler.AuthFailHandler;
+import com.macaku.user.security.handler.AuthFailHandler;
 import com.macaku.user.domain.dto.detail.LoginUser;
 import com.macaku.user.util.UserRecordUtil;
 import lombok.extern.slf4j.Slf4j;
