@@ -1,6 +1,7 @@
 spring:
   application:
     name: center-service
+    version: 1.0
   profiles:
     active: @profiles.active@
   jackson: # Spring 返回默认用 jackson 序列化的

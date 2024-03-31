@@ -1,5 +1,6 @@
 package com.macaku.common.doc.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.CorsEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
 import org.springframework.boot.actuate.autoconfigure.web.server.ManagementPortType;
@@ -32,6 +33,9 @@ import java.util.List;
 @EnableOpenApi
 public class SwaggerConfig {
 
+        @Value("${spring.application.version}")
+        private String version;
+
         /**
          * Springfox-Swagger基本配置
          * @return
@@ -54,7 +58,7 @@ public class SwaggerConfig {
                         .title("OKR 系统API")
                         .description("OKR 系统相关接口文档！")
                         .contact(new Contact("发际线与我作队", "https://github.com/CarefreeState/OKR-System", "2040484356@qq.com"))
-                        .version("3.0")
+                        .version(version)
                         .build();
                 return apiInfo;
         }
