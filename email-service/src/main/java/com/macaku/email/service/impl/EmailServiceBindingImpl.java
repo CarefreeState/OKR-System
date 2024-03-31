@@ -2,6 +2,7 @@ package com.macaku.email.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.common.util.threadpool.CPUThreadPool;
 import com.macaku.email.component.EmailSender;
 import com.macaku.email.component.EmailServiceSelector;
 import com.macaku.email.component.po.EmailMessage;
@@ -68,24 +69,26 @@ public class EmailServiceBindingImpl implements EmailService {
             String message = String.format("请在 %d 秒后再重新申请", getCanSendSeconds(ttl));
             throw new GlobalServiceException(message, GlobalServiceStatusCode.EMAIL_SEND_FAIL);
         }
-        // 封装 Email
-        EmailMessage emailMessage = new EmailMessage();
-        emailMessage.setContent(code);
-        emailMessage.setCreateTime(new Date());
-        emailMessage.setTitle(IdentifyingCodeValidator.IDENTIFYING_CODE_PURPOSE);
-        emailMessage.setRecipient(email);
-        emailMessage.setCarbonCopy();
-        emailMessage.setSender(systemEmail);
-        // 存到 redis 中
-        emailRepository.setIdentifyingCode(redisKey, code, IDENTIFYING_CODE_TIMEOUT, IDENTIFYING_CODE_INTERVAL_LIMIT);
         // 构造模板消息
-        VerificationCodeTemplate verificationCodeTemplate = VerificationCodeTemplate.builder()
-                .code(code)
-                .minutes((int) TimeUnit.MILLISECONDS.toMinutes(IDENTIFYING_CODE_TIMEOUT))
-                .build();
-        // 发送模板消息
-        emailSender.sendModelMail(emailMessage, EMAIL_MODEL_HTML, verificationCodeTemplate);
-        log.info("发送验证码:{} -> email:{}", code, email);
+        CPUThreadPool.submit(() -> {
+            // 封装 Email
+            EmailMessage emailMessage = new EmailMessage();
+            emailMessage.setContent(code);
+            emailMessage.setCreateTime(new Date());
+            emailMessage.setTitle(IdentifyingCodeValidator.IDENTIFYING_CODE_PURPOSE);
+            emailMessage.setRecipient(email);
+            emailMessage.setCarbonCopy();
+            emailMessage.setSender(systemEmail);
+            // 存到 redis 中
+            emailRepository.setIdentifyingCode(redisKey, code, IDENTIFYING_CODE_TIMEOUT, IDENTIFYING_CODE_INTERVAL_LIMIT);
+            VerificationCodeTemplate verificationCodeTemplate = VerificationCodeTemplate.builder()
+                    .code(code)
+                    .minutes((int) TimeUnit.MILLISECONDS.toMinutes(IDENTIFYING_CODE_TIMEOUT))
+                    .build();
+            // 发送模板消息
+            emailSender.sendModelMail(emailMessage, EMAIL_MODEL_HTML, verificationCodeTemplate);
+            log.info("发送验证码:{} -> email:{}", code, email);
+        });
     }
 
     @Override

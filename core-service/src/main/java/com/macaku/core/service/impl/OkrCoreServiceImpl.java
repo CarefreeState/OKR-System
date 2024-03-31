@@ -4,7 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.ThreadPool;
+import com.macaku.common.util.threadpool.IOThreadPool;
 import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.FourthQuadrant;
@@ -17,8 +17,6 @@ import com.macaku.core.domain.po.quadrant.vo.ThirdQuadrantVO;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.mapper.OkrCoreMapper;
 import com.macaku.core.service.OkrCoreService;
-import com.macaku.core.service.inner.PriorityNumberOneService;
-import com.macaku.core.service.inner.PriorityNumberTwoService;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
 import com.macaku.core.service.quadrant.FourthQuadrantService;
 import com.macaku.core.service.quadrant.SecondQuadrantService;
@@ -100,7 +98,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         FutureTask<FourthQuadrantVO> task4 = new FutureTask<>(() ->
             fourthQuadrantService.searchFourthQuadrant(id)
         );
-        ThreadPool.submit(task1, task2, task3, task4);
+        IOThreadPool.submit(task1, task2, task3, task4);
         try {
             okrCoreVO.setFirstQuadrantVO(task1.get());
             okrCoreVO.setSecondQuadrantVO(task2.get());
