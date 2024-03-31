@@ -9,7 +9,7 @@ import com.macaku.email.component.po.EmailMessage;
 import com.macaku.email.model.vo.VerificationCodeTemplate;
 import com.macaku.email.repository.EmailRepository;
 import com.macaku.email.service.EmailService;
-import com.macaku.common.util.IdentifyingCodeValidator;
+import com.macaku.email.util.IdentifyingCodeValidator;
 import com.macaku.common.exception.GlobalServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

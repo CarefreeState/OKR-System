@@ -1,6 +1,6 @@
 package com.macaku.email.repository;
 
-import com.macaku.common.util.IdentifyingCodeValidator;
+import com.macaku.email.util.IdentifyingCodeValidator;
 import com.macaku.redis.repository.RedisCache;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

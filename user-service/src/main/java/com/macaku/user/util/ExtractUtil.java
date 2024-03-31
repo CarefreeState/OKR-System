@@ -1,6 +1,8 @@
-package com.macaku.common.util;
+package com.macaku.user.util;
 
 import cn.hutool.extra.spring.SpringUtil;
+import com.macaku.common.util.JsonUtil;
+import com.macaku.common.util.JwtUtil;
 import com.macaku.redis.repository.RedisCache;
 import lombok.extern.slf4j.Slf4j;
 

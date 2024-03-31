@@ -1,4 +1,4 @@
-package com.macaku.common.util;
+package com.macaku.email.util;
 
 import cn.hutool.core.util.RandomUtil;
 

@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.redis.repository.RedisCache;
-import com.macaku.common.util.ExtractUtil;
+import com.macaku.user.util.ExtractUtil;
 import com.macaku.common.util.JsonUtil;
 import com.macaku.common.util.JwtUtil;
 import com.macaku.common.util.media.MediaUtil;

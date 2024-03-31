@@ -5,7 +5,7 @@ import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
 import com.macaku.qrcode.service.OkrQRCodeService;
 import com.macaku.email.component.EmailServiceSelector;
 import com.macaku.common.response.SystemJsonResponse;
-import com.macaku.common.util.IdentifyingCodeValidator;
+import com.macaku.email.util.IdentifyingCodeValidator;
 import com.macaku.user.component.LoginServiceSelector;
 import com.macaku.user.domain.dto.EmailBindingDTO;
 import com.macaku.user.domain.dto.EmailCheckDTO;
