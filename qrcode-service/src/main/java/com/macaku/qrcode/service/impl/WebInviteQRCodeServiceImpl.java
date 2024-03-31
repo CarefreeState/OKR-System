@@ -3,7 +3,7 @@ package com.macaku.qrcode.service.impl;
 import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.ShortCodeUtil;
+import com.macaku.common.util.convert.ShortCodeUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.qrcode.component.InviteQRCodeServiceSelector;

@@ -1,7 +1,7 @@
 package com.macaku.qrcode.token;
 
 
-import com.macaku.common.util.JsonUtil;
+import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.web.HttpUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

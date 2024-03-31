@@ -1,7 +1,7 @@
 package com.macaku.qrcode.init;
 
 import com.macaku.redis.repository.RedisCache;
-import com.macaku.common.util.TimerUtil;
+import com.macaku.common.util.timer.TimerUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.qrcode.config.QRCodeConfig;
 import lombok.RequiredArgsConstructor;

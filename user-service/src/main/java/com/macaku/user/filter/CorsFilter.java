@@ -1,6 +1,6 @@
 package com.macaku.user.filter;
 
-import com.macaku.common.util.JwtUtil;
+import com.macaku.common.util.convert.JwtUtil;
 import com.macaku.user.interceptor.config.VisitConfig;
 import org.springframework.stereotype.Component;
 

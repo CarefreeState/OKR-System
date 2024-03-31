@@ -1,4 +1,4 @@
-package com.macaku.common.util;
+package com.macaku.common.util.timer;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -2,7 +2,7 @@ package com.macaku.core.init.util;
 
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.TimerUtil;
+import com.macaku.common.util.timer.TimerUtil;
 import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.quadrant.SecondQuadrant;
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;

@@ -1,4 +1,4 @@
-package com.macaku.common.util;
+package com.macaku.common.util.convert;
 
 import org.apache.commons.codec.digest.DigestUtils;
 

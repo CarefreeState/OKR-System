@@ -1,7 +1,7 @@
 package com.macaku.qrcode.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.common.util.JsonUtil;
+import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.qrcode.domain.config.WxLoginQRCode;

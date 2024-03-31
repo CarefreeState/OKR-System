@@ -4,7 +4,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.redis.repository.RedisCache;
-import com.macaku.common.util.JsonUtil;
+import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.qrcode.config.QRCodeConfig;

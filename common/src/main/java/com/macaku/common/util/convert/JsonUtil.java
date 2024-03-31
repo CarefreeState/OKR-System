@@ -1,4 +1,4 @@
-package com.macaku.common.util;
+package com.macaku.common.util.convert;
 
 import cn.hutool.json.JSONUtil;
 
