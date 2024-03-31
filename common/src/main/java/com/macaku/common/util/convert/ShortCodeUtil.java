@@ -50,7 +50,8 @@ public class ShortCodeUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(subCodeByString(EncryptUtil.md5("teamId=" + 29 + "macaku")));
+        long teamId = 29;
+        System.out.println(subCodeByString(EncryptUtil.md5("teamId=" + teamId + "macaku")));
     }
 
 }

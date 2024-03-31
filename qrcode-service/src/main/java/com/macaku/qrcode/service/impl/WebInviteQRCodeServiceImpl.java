@@ -28,8 +28,6 @@ public class WebInviteQRCodeServiceImpl implements InviteQRCodeService {
 
     private final static String TYPE = InviteQRCodeServiceSelector.WEB_TYPE;
 
-    private final static String VERSION = SpringUtil.getProperty("spring.application.version");
-
     private final WebInviteQRCode webInviteQRCode = SpringUtil.getBean(WebInviteQRCode.class);
 
     @Override
@@ -55,7 +53,7 @@ public class WebInviteQRCodeServiceImpl implements InviteQRCodeService {
                 .append("=")
                 .append(teamId);
         // 短码虽然无法保证绝对的唯一，但是 teamId 能确定短码即可
-        String inviteSecret = ShortCodeUtil.getShortCode(sceneBuilder.toString(), VERSION);
+        String inviteSecret = ShortCodeUtil.getShortCode(sceneBuilder.toString());
         sceneBuilder
                 .append("&")
                 .append(secret)
@@ -73,7 +71,7 @@ public class WebInviteQRCodeServiceImpl implements InviteQRCodeService {
             throw new GlobalServiceException("团队 OKR ID 为 null", GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
         String raw = webInviteQRCode.getSceneKey() + "=" + teamId;
-        String inviteSecret = ShortCodeUtil.getShortCode(raw, VERSION);
+        String inviteSecret = ShortCodeUtil.getShortCode(raw);
         boolean isInvited = inviteSecret.equals(secret);
         log.info("用户想要加入团队 {}, 校验：{} -> {} 与 {} 比较 -> {}", teamId, raw, inviteSecret, secret, isInvited);
         if(Boolean.FALSE.equals(isInvited)) {
