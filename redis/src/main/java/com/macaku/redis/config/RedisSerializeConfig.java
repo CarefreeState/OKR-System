@@ -1,6 +1,6 @@
-package com.macaku.common.redis.config;
+package com.macaku.redis.config;
 
-import com.macaku.common.redis.component.FastJsonRedisSerializer;
+import com.macaku.redis.component.FastJsonRedisSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;

@@ -2,7 +2,7 @@ package com.macaku.user.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
-import com.macaku.common.redis.RedisCache;
+import com.macaku.redis.repository.RedisCache;
 import com.macaku.common.util.ExtractUtil;
 import com.macaku.common.util.JwtUtil;
 import com.macaku.common.util.ShortCodeUtil;

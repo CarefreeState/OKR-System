@@ -14,7 +14,7 @@ import com.macaku.center.config.CoreUserMapConfig;
 import com.macaku.center.service.*;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.redis.RedisCache;
+import com.macaku.redis.repository.RedisCache;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.qrcode.service.InviteQRCodeService;

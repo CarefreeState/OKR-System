@@ -1,4 +1,4 @@
-package com.macaku.common.redis.component;
+package com.macaku.redis.component;
 
 import com.google.common.hash.Funnel;
 import com.google.common.hash.Hashing;

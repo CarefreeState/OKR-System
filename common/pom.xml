@@ -147,7 +147,10 @@
             <artifactId>javase</artifactId>
             <version>${com.google.zxing.version}</version>
         </dependency>
-
-
+        <dependency>
+            <groupId>com.macaku</groupId>
+            <artifactId>redis</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

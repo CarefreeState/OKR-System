@@ -1,4 +1,4 @@
-package com.macaku.common.redis.component;
+package com.macaku.redis.component;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;

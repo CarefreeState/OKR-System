@@ -1,4 +1,4 @@
-package com.macaku.common.redis.component;
+package com.macaku.redis.component;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.parser.ParserConfig;

@@ -3,7 +3,7 @@ package com.macaku.core.service.impl.inner;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.redis.RedisCache;
+import com.macaku.redis.repository.RedisCache;
 import com.macaku.core.domain.po.inner.StatusFlag;
 import com.macaku.core.mapper.inner.StatusFlagMapper;
 import com.macaku.core.service.inner.StatusFlagService;

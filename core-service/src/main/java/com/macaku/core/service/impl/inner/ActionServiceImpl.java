@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.redis.RedisCache;
+import com.macaku.redis.repository.RedisCache;
 import com.macaku.core.component.TaskServiceSelector;
 import com.macaku.core.domain.po.inner.Action;
 import com.macaku.core.mapper.inner.ActionMapper;

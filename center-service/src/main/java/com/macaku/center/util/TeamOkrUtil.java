@@ -6,7 +6,7 @@ import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.service.TeamOkrService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.redis.RedisCache;
+import com.macaku.redis.repository.RedisCache;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

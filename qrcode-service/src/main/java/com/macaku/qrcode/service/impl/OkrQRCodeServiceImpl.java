@@ -1,6 +1,6 @@
 package com.macaku.qrcode.service.impl;
 
-import com.macaku.common.redis.RedisCache;
+import com.macaku.redis.repository.RedisCache;
 import com.macaku.common.util.ShortCodeUtil;
 import com.macaku.common.util.media.ImageUtil;
 import com.macaku.common.util.media.MediaUtil;

@@ -3,7 +3,7 @@ package com.macaku.core.service.impl.quadrant;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.redis.RedisCache;
+import com.macaku.redis.repository.RedisCache;
 import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
 import com.macaku.core.init.util.QuadrantDeadlineUtil;

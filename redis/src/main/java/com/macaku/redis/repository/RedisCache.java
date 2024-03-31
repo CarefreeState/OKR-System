@@ -1,6 +1,6 @@
-package com.macaku.common.redis;
+package com.macaku.redis.repository;
 
-import com.macaku.common.redis.component.RedisBloomFilter;
+import com.macaku.redis.component.RedisBloomFilter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
