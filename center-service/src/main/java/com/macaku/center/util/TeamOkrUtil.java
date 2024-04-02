@@ -86,8 +86,7 @@ public class TeamOkrUtil {
         List<Long> ids = getAllChildIds(teamId); // 这里应该是获取到老的缓存 ids，不过缺少的那些也没必要删，因为本来就没有缓存
         REDIS_CACHE.execute(() -> {
             ids.forEach(id -> {
-                String redisKey = TEAM_CHILD_LIST + id;
-                REDIS_CACHE.deleteObject(redisKey);
+                REDIS_CACHE.deleteObject(TEAM_CHILD_LIST + id);
             });
         });
     }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @Component
 @RequiredArgsConstructor
@@ -41,7 +42,20 @@ public class RedisCache {
             @Override
             public Object execute(RedisOperations redisOperations) throws DataAccessException {
                 redisOperations.multi();
+                // runnable 方法中的 Redis 操作，得用这里同一个 redisTemplate 去操作 Redis 的代码才能被放入事务块
                 runnable.run();
+                return redisOperations.exec();
+            }
+        });
+    }
+
+    public <T> void execute(Consumer<RedisOperations> consumer) {
+        log.info("Redis 执行原子任务");
+        redisTemplate.execute(new SessionCallback() {
+            @Override
+            public Object execute(RedisOperations redisOperations) throws DataAccessException {
+                redisOperations.multi();
+                consumer.accept(redisOperations);
                 return redisOperations.exec();
             }
         });
@@ -356,7 +370,9 @@ public class RedisCache {
     public <T> void setCacheSet(final String key, final Set<T> dataSet) {
         log.info("存入 Redis 中的 Set 缓存\t[{}]-[{}]", key, dataSet);
         BoundSetOperations<String, T> setOperation = redisTemplate.boundSetOps(key);
-        dataSet.forEach(setOperation::add);
+        execute(() -> {
+            dataSet.forEach(setOperation::add);
+        });
     }
 
     /**
