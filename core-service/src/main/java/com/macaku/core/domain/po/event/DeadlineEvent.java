@@ -1,8 +1,9 @@
 package com.macaku.core.domain.po.event;
 
+import com.macaku.core.domain.po.event.quadrant.FirstQuadrantEvent;
+import com.macaku.core.domain.po.event.quadrant.SecondQuadrantEvent;
+import com.macaku.core.domain.po.event.quadrant.ThirdQuadrantEvent;
 import lombok.Data;
-
-import java.util.Date;
 
 /**
  * Created With Intellij IDEA
@@ -14,20 +15,10 @@ import java.util.Date;
 @Data
 public class DeadlineEvent {
 
-    private Long id; // OKR ID
+    private FirstQuadrantEvent firstQuadrantEvent;
 
-    private Date firstQuadrantDeadline; // 第一象限截止时间
+    private SecondQuadrantEvent secondQuadrantEvent;
 
-    private Long secondQuadrantId; // 第二象限 ID
-
-    private Integer secondQuadrantCycle; // 第二象限周期
-
-    private Date secondQuadrantDeadline; // 第二象限截止时间
-
-    private Long thirdQuadrantId; // 第三象限 ID
-
-    private Integer thirdQuadrantCycle; // 第三象限周期
-
-    private Date thirdQuadrantDeadline; // 第三象限截止时间
+    private ThirdQuadrantEvent thirdQuadrantEvent;
 
 }

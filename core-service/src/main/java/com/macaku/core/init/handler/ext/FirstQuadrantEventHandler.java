@@ -27,8 +27,8 @@ public class FirstQuadrantEventHandler extends EventHandler {
 
     @Override
     public void handle(DeadlineEvent deadlineEvent, long nowTimestamp) {
-        Long id = deadlineEvent.getId();
-        Date firstQuadrantDeadline = deadlineEvent.getFirstQuadrantDeadline();
+        Long id = deadlineEvent.getSecondQuadrantEvent().getCoreId();
+        Date firstQuadrantDeadline = deadlineEvent.getFirstQuadrantEvent().getDeadline();
         log.warn("处理事件：内核 ID {}，第一象限截止时间 {}", id, firstQuadrantDeadline);
         // 1. 判断是否截止
         if(Objects.nonNull(firstQuadrantDeadline) &&

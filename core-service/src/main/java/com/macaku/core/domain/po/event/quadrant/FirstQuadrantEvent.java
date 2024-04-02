@@ -1,4 +1,4 @@
-package com.macaku.core.domain.po.event;
+package com.macaku.core.domain.po.event.quadrant;
 
 import lombok.Data;
 
@@ -14,8 +14,8 @@ import java.util.Date;
 @Data
 public class FirstQuadrantEvent {
 
-    private Long id; // OKR ID
+    private Long coreId; // OKR ID
 
-    private Date firstQuadrantDeadline; // 第一象限截止时间
+    private Date deadline; // 第一象限截止时间
 
 }

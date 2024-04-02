@@ -29,10 +29,10 @@ public class ThirdQuadrantEventHandler extends EventHandler {
 
     @Override
     public void handle(DeadlineEvent deadlineEvent, long nowTimestamp) {
-        Long id = deadlineEvent.getId();
-        Long thirdQuadrantId = deadlineEvent.getThirdQuadrantId();
-        Date thirdQuadrantDeadline = deadlineEvent.getThirdQuadrantDeadline();
-        Integer thirdQuadrantCycle = deadlineEvent.getThirdQuadrantCycle();
+        Long id = deadlineEvent.getThirdQuadrantEvent().getCoreId();
+        Long thirdQuadrantId = deadlineEvent.getThirdQuadrantEvent().getId();
+        Date thirdQuadrantDeadline = deadlineEvent.getThirdQuadrantEvent().getDeadline();
+        Integer thirdQuadrantCycle = deadlineEvent.getThirdQuadrantEvent().getCycle();
         log.warn("处理事件：内核 ID {}，第三象限 ID {}，第三象限截止时间 {}，第三象限周期 {}",
                 id, thirdQuadrantId, thirdQuadrantDeadline, thirdQuadrantCycle);
         // 4. 是否设置了第三象限截止时间和周期

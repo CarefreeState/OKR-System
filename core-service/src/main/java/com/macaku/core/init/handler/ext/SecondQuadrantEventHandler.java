@@ -29,10 +29,10 @@ public class SecondQuadrantEventHandler extends EventHandler {
 
     @Override
     public void handle(DeadlineEvent deadlineEvent, long nowTimestamp) {
-        Long id = deadlineEvent.getId();
-        Long secondQuadrantId = deadlineEvent.getSecondQuadrantId();
-        Date secondQuadrantDeadline = deadlineEvent.getSecondQuadrantDeadline();
-        Integer secondQuadrantCycle = deadlineEvent.getSecondQuadrantCycle();
+        Long id = deadlineEvent.getSecondQuadrantEvent().getCoreId();
+        Long secondQuadrantId = deadlineEvent.getSecondQuadrantEvent().getId();
+        Date secondQuadrantDeadline = deadlineEvent.getSecondQuadrantEvent().getDeadline();
+        Integer secondQuadrantCycle = deadlineEvent.getSecondQuadrantEvent().getCycle();
         log.warn("处理事件：内核 ID {}，第二象限 ID {}，第二象限截止时间 {}，第二象限周期 {}",
                 id, secondQuadrantId, secondQuadrantDeadline, secondQuadrantCycle);
         // 3. 是否设置了第二象限截止时间和周期

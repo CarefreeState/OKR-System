@@ -4,24 +4,34 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.macaku.core.mapper.OkrCoreMapper">
 
-    <resultMap id="DeadlineEvent" type="com.macaku.core.domain.po.event.DeadlineEvent">
-        <id property="id" column="id" jdbcType="BIGINT"/>
-        <result property="firstQuadrantDeadline" column="f_deadline" jdbcType="TIMESTAMP"/>
-        <result property="secondQuadrantId" column="s_id" jdbcType="BIGINT"/>
-        <result property="secondQuadrantCycle" column="second_quadrant_cycle" jdbcType="INTEGER"/>
-        <result property="secondQuadrantDeadline" column="s_deadline" jdbcType="TIMESTAMP"/>
-        <result property="thirdQuadrantId" column="t_id" jdbcType="BIGINT"/>
-        <result property="thirdQuadrantCycle" column="third_quadrant_cycle" jdbcType="INTEGER"/>
-        <result property="thirdQuadrantDeadline" column="t_deadline" jdbcType="TIMESTAMP"/>
+    <resultMap id="FirstQuadrantEventResultMap" type="com.macaku.core.domain.po.event.quadrant.FirstQuadrantEvent">
+        <result property="coreId" column="core_id" jdbcType="BIGINT"/>
+        <result property="deadline" column="deadline" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap id="SecondQuadrantEventResultMap" type="com.macaku.core.domain.po.event.quadrant.SecondQuadrantEvent">
+        <result property="coreId" column="core_id" jdbcType="BIGINT"/>
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="cycle" column="cycle" jdbcType="TIMESTAMP"/>
+        <result property="deadline" column="deadline" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <resultMap id="ThirdQuadrantEventResultMap" type="com.macaku.core.domain.po.event.quadrant.ThirdQuadrantEvent">
+        <result property="coreId" column="core_id" jdbcType="BIGINT"/>
+        <result property="id" column="id" jdbcType="BIGINT"/>
+        <result property="cycle" column="cycle" jdbcType="TIMESTAMP"/>
+        <result property="deadline" column="deadline" jdbcType="TIMESTAMP"/>
+    </resultMap>
 
+    <resultMap id="DeadlineEvent" type="com.macaku.core.domain.po.event.DeadlineEvent">
+        <association property="firstQuadrantEvent" resultMap="FirstQuadrantEventResultMap" columnPrefix="f_"/>
+        <association property="secondQuadrantEvent" resultMap="SecondQuadrantEventResultMap" columnPrefix="s_"/>
+        <association property="thirdQuadrantEvent" resultMap="ThirdQuadrantEventResultMap" columnPrefix="t_"/>
     </resultMap>
 
     <select id="getDeadlineEvents" resultMap="DeadlineEvent">
         select
-            o.id,
-            f.deadline f_deadline,
-            s.id s_id, s.deadline s_deadline, o.second_quadrant_cycle,
-            t.id t_id, t.deadline t_deadline, o.third_quadrant_cycle
+            f.deadline f_deadline, f.core_id f_core_id,
+            s.id s_id, s.deadline s_deadline, o.second_quadrant_cycle o_cycle, s.core_id s_core_id,
+            t.id t_id, t.deadline t_deadline, o.third_quadrant_cycle o_cycle, t.core_id t_core_id
         from
             okr_core o, first_quadrant f, second_quadrant s, third_quadrant t
         where
