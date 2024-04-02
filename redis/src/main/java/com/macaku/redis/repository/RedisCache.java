@@ -36,7 +36,11 @@ public class RedisCache {
         return redisTemplate.expire(key, timeout, timeUnit);
     }
 
-    public <T> void execute(Runnable runnable) {
+    /**
+     * Redis 事务
+     * @param runnable 业务代码
+     */
+    public void execute(Runnable runnable) {
         log.info("Redis 执行原子任务");
         redisTemplate.execute(new SessionCallback() {
             @Override
@@ -49,7 +53,11 @@ public class RedisCache {
         });
     }
 
-    public <T> void execute(Consumer<RedisOperations> consumer) {
+    /**
+     *  Redis 事务
+     * @param consumer 消费 redisOperations 的方法
+     */
+    public void execute(Consumer<RedisOperations> consumer) {
         log.info("Redis 执行原子任务");
         redisTemplate.execute(new SessionCallback() {
             @Override
@@ -371,6 +379,7 @@ public class RedisCache {
         log.info("存入 Redis 中的 Set 缓存\t[{}]-[{}]", key, dataSet);
         BoundSetOperations<String, T> setOperation = redisTemplate.boundSetOps(key);
         execute(() -> {
+            // 用的也是 redisTemplate 的会话
             dataSet.forEach(setOperation::add);
         });
     }
