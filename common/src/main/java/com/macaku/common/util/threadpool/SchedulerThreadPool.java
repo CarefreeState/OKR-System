@@ -62,6 +62,14 @@ public class SchedulerThreadPool {
         }, delay, unit);
     }
 
+    // 添加下个周期运行的定时任务
+    public static <T> void scheduleCircle(Consumer<T> task, T data, long delay, TimeUnit unit) {
+        THREAD_POOL.schedule(() -> {
+            task.accept(data);
+            scheduleCircle(task, data, delay, unit);
+        }, delay, unit);
+    }
+
     // 关闭线程池
     public static void shutdown() {
         THREAD_POOL.shutdown();
