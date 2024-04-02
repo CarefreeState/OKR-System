@@ -1,12 +1,17 @@
 package com.macaku.common.util.thread;
 
 import com.macaku.common.util.thread.ext.CustomScheduledExecutor;
+import com.macaku.common.util.thread.timer.TimerUtil;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
+@Slf4j
 public class SchedulerThreadPool {
 
     private static final AtomicLong THEAD_ID = new AtomicLong(1);
@@ -47,21 +52,31 @@ public class SchedulerThreadPool {
 
     // 添加普通定时任务
     public static void schedule(Runnable task, long delay, TimeUnit unit) {
+        TimerUtil.log(delay, unit);
         THREAD_POOL.schedule(task, delay, unit);
     }
 
     // 添加周期定时任务
     public static void scheduleCircle(Runnable task, long initialDelay, long period, TimeUnit unit) {
-        THREAD_POOL.scheduleAtFixedRate(task, initialDelay, period, unit);
+        TimerUtil.log(initialDelay, unit);
+        THREAD_POOL.scheduleAtFixedRate(() -> {
+            task.run();
+            TimerUtil.log(period, unit);
+        }, initialDelay, period, unit);
     }
 
     // 添加下个周期运行的定时任务
     public static void scheduleCircle(Runnable task, long delay, TimeUnit unit) {
-        THREAD_POOL.scheduleAtFixedRate(task, delay, delay, unit);
+        TimerUtil.log(delay, unit);
+        THREAD_POOL.scheduleAtFixedRate(() -> {
+            task.run();
+            TimerUtil.log(delay, unit);
+        }, delay, delay, unit);
     }
 
     // 添加下个周期运行的定时任务
     public static void scheduleCircle(Consumer<Map<String, Object>> task, Map<String, Object> session, long delay, TimeUnit unit) {
+        TimerUtil.log(delay, unit);
         THREAD_POOL.schedule(() -> {
             task.accept(session);
             scheduleCircle(task, session, delay, unit);
@@ -70,26 +85,37 @@ public class SchedulerThreadPool {
 
     // 添加下个周期运行的定时任务
     public static void scheduleCircle(Consumer<Map<String, Object>> task, Map<String, Object> session, long initialDelay, long period, TimeUnit unit) {
-        THREAD_POOL.scheduleAtFixedRate(() -> {
-            task.accept(session);
+        TimerUtil.log(initialDelay, unit);
+        schedule(() -> {
             scheduleCircle(task, session, period, unit);
-        }, initialDelay, period, unit);
+        }, initialDelay, unit);
     }
 
     // 添加下个周期运行的定时任务
     public static <T> void scheduleCircle(Consumer<T> task, T object, long delay, TimeUnit unit) {
+        TimerUtil.log(delay, unit);
         THREAD_POOL.schedule(() -> {
             task.accept(object);
             scheduleCircle(task, object, delay, unit);
         }, delay, unit);
     }
 
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>();
+        list.add("666");
+        scheduleCircle(l -> {
+            String elem = l.get(0);
+            System.out.println(elem);
+            l.set(0, elem + THEAD_ID.get());
+        }, list, 2, TimeUnit.SECONDS);
+    }
+
     // 添加下个周期运行的定时任务
     public static <T> void scheduleCircle(Consumer<T> task, T object, long initialDelay, long period, TimeUnit unit) {
-        THREAD_POOL.scheduleAtFixedRate(() -> {
-            task.accept(object);
+        TimerUtil.log(initialDelay, unit);
+        schedule(() -> {
             scheduleCircle(task, object, period, unit);
-        }, initialDelay, period, unit);
+        }, initialDelay, unit);
     }
 
     // 关闭线程池
