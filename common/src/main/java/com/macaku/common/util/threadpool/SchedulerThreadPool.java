@@ -1,5 +1,7 @@
 package com.macaku.common.util.threadpool;
 
+import com.macaku.common.util.threadpool.ext.CustomScheduledExecutor;
+
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -19,6 +21,8 @@ public class SchedulerThreadPool {
 
     private static final TimeUnit KEEP_ALIVE_TIMEUNIT = TimeUnit.SECONDS;
 
+    private static final BlockingDeque<Runnable> BLOCKING_DEQUE = null;
+
     private static final ThreadFactory THREAD_FACTORY = r -> new Thread(r, "OKR-System-Thread-Scheduler-IO" + THEAD_ID.getAndIncrement());
 
     private static final RejectedExecutionHandler REJECTED_EXECUTION_HANDLER = new ThreadPoolExecutor.CallerRunsPolicy();
@@ -30,13 +34,15 @@ public class SchedulerThreadPool {
     private static final TimeUnit AWAIT_TIMEUNIT = TimeUnit.SECONDS;
 
     static {
-        THREAD_POOL = new ScheduledThreadPoolExecutor (
+        THREAD_POOL = new CustomScheduledExecutor(
                 CORE_POOL_SIZE,
+                MAXIMUM_POOL_SIZE,
+                KEEP_ALIVE_TIME,
+                KEEP_ALIVE_TIMEUNIT,
+                BLOCKING_DEQUE,
                 THREAD_FACTORY,
                 REJECTED_EXECUTION_HANDLER
         );
-        ((ScheduledThreadPoolExecutor) THREAD_POOL).setMaximumPoolSize(MAXIMUM_POOL_SIZE);
-        ((ScheduledThreadPoolExecutor) THREAD_POOL).setKeepAliveTime(KEEP_ALIVE_TIME, KEEP_ALIVE_TIMEUNIT);
     }
 
     // 添加普通定时任务
