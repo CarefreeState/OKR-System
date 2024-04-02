@@ -1,6 +1,7 @@
 package com.macaku.core.init.handler.ext;
 
 import com.macaku.core.domain.po.event.DeadlineEvent;
+import com.macaku.core.domain.po.event.quadrant.SecondQuadrantEvent;
 import com.macaku.core.domain.po.quadrant.SecondQuadrant;
 import com.macaku.core.init.handler.EventHandler;
 import com.macaku.core.init.util.QuadrantDeadlineUtil;
@@ -29,11 +30,12 @@ public class SecondQuadrantEventHandler extends EventHandler {
 
     @Override
     public void handle(DeadlineEvent deadlineEvent, long nowTimestamp) {
-        Long id = deadlineEvent.getSecondQuadrantEvent().getCoreId();
-        Long secondQuadrantId = deadlineEvent.getSecondQuadrantEvent().getId();
-        Date secondQuadrantDeadline = deadlineEvent.getSecondQuadrantEvent().getDeadline();
-        Integer secondQuadrantCycle = deadlineEvent.getSecondQuadrantEvent().getCycle();
-        log.warn("处理事件：内核 ID {}，第二象限 ID {}，第二象限截止时间 {}，第二象限周期 {}",
+        SecondQuadrantEvent secondQuadrantEvent = deadlineEvent.getSecondQuadrantEvent();
+        Long id = secondQuadrantEvent.getCoreId();
+        Long secondQuadrantId = secondQuadrantEvent.getId();
+        Date secondQuadrantDeadline = secondQuadrantEvent.getDeadline();
+        Integer secondQuadrantCycle = secondQuadrantEvent.getCycle();
+        log.info("处理事件：内核 ID {}，第二象限 ID {}，第二象限截止时间 {}，第二象限周期 {}",
                 id, secondQuadrantId, secondQuadrantDeadline, secondQuadrantCycle);
         // 3. 是否设置了第二象限截止时间和周期
         if(Objects.nonNull(secondQuadrantDeadline) && Objects.nonNull(secondQuadrantCycle)) {
@@ -55,8 +57,8 @@ public class SecondQuadrantEventHandler extends EventHandler {
                         .update(updateQuadrant);
             }
             // 3.3 发起定时任务
-            QuadrantDeadlineUtil.scheduledUpdateSecondQuadrant(id, secondQuadrantId, nextDeadline,
-                    secondQuadrantCycle);
+            secondQuadrantEvent.setDeadline(nextDeadline);
+            QuadrantDeadlineUtil.scheduledUpdateSecondQuadrant(secondQuadrantEvent);
         }
         super.doNextHandler(deadlineEvent, nowTimestamp);//执行下一个责任处理器
     }

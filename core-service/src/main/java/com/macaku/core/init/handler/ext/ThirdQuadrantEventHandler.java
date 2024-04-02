@@ -1,6 +1,7 @@
 package com.macaku.core.init.handler.ext;
 
 import com.macaku.core.domain.po.event.DeadlineEvent;
+import com.macaku.core.domain.po.event.quadrant.ThirdQuadrantEvent;
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
 import com.macaku.core.init.handler.EventHandler;
 import com.macaku.core.init.util.QuadrantDeadlineUtil;
@@ -29,11 +30,12 @@ public class ThirdQuadrantEventHandler extends EventHandler {
 
     @Override
     public void handle(DeadlineEvent deadlineEvent, long nowTimestamp) {
-        Long id = deadlineEvent.getThirdQuadrantEvent().getCoreId();
-        Long thirdQuadrantId = deadlineEvent.getThirdQuadrantEvent().getId();
-        Date thirdQuadrantDeadline = deadlineEvent.getThirdQuadrantEvent().getDeadline();
-        Integer thirdQuadrantCycle = deadlineEvent.getThirdQuadrantEvent().getCycle();
-        log.warn("处理事件：内核 ID {}，第三象限 ID {}，第三象限截止时间 {}，第三象限周期 {}",
+        ThirdQuadrantEvent thirdQuadrantEvent = deadlineEvent.getThirdQuadrantEvent();
+        Long id = thirdQuadrantEvent.getCoreId();
+        Long thirdQuadrantId = thirdQuadrantEvent.getId();
+        Date thirdQuadrantDeadline = thirdQuadrantEvent.getDeadline();
+        Integer thirdQuadrantCycle = thirdQuadrantEvent.getCycle();
+        log.info("处理事件：内核 ID {}，第三象限 ID {}，第三象限截止时间 {}，第三象限周期 {}",
                 id, thirdQuadrantId, thirdQuadrantDeadline, thirdQuadrantCycle);
         // 4. 是否设置了第三象限截止时间和周期
         if(Objects.nonNull(thirdQuadrantDeadline) && Objects.nonNull(thirdQuadrantCycle)) {
@@ -55,8 +57,8 @@ public class ThirdQuadrantEventHandler extends EventHandler {
                         .update(updateQuadrant);
             }
             // 4.3 发起定时任务
-            QuadrantDeadlineUtil.scheduledUpdateThirdQuadrant(id, thirdQuadrantId, nextDeadline,
-                    thirdQuadrantCycle);
+            thirdQuadrantEvent.setDeadline(nextDeadline);
+            QuadrantDeadlineUtil.scheduledUpdateThirdQuadrant(thirdQuadrantEvent);
         }
         super.doNextHandler(deadlineEvent, nowTimestamp);//执行下一个责任处理器
 

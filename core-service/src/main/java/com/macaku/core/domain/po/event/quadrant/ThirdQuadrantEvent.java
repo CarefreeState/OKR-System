@@ -1,6 +1,5 @@
 package com.macaku.core.domain.po.event.quadrant;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.util.Date;

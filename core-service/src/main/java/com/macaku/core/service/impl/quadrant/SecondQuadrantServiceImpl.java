@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.core.domain.po.event.quadrant.SecondQuadrantEvent;
 import com.macaku.redis.repository.RedisCache;
 import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.quadrant.SecondQuadrant;
@@ -79,7 +80,12 @@ public class SecondQuadrantServiceImpl extends ServiceImpl<SecondQuadrantMapper,
         updateQuadrant.setDeadline(deadline);
         this.lambdaUpdate().eq(SecondQuadrant::getId, id).update(updateQuadrant);
         // 发起一个定时任务
-        QuadrantDeadlineUtil.scheduledUpdateSecondQuadrant(coreId, id, deadline, quadrantCycle);
+        SecondQuadrantEvent event = new SecondQuadrantEvent();
+        event.setCoreId(coreId);
+        event.setId(id);
+        event.setCycle(quadrantCycle);
+        event.setDeadline(deadline);
+        QuadrantDeadlineUtil.scheduledUpdateSecondQuadrant(event);
     }
 
     @Override

@@ -35,7 +35,7 @@ public class InviteQRCodeServiceSelector {
                 return inviteQRCodeService;
             }
         }
-        throw new GlobalServiceException(GlobalServiceStatusCode.HEAD_NOT_VALID);
+        throw new GlobalServiceException(GlobalServiceStatusCode.REQUEST_NOT_VALID);
     }
 
 }

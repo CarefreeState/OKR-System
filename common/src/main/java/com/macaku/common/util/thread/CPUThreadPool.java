@@ -32,6 +32,10 @@ public class CPUThreadPool {
 
     private static final ExecutorService THREAD_POOL;
 
+    private static final int AWAIT_TIME = 5;
+
+    private static final TimeUnit AWAIT_TIMEUNIT = TimeUnit.SECONDS;
+
     static {
         THREAD_POOL = new ThreadPoolExecutor(
                 CORE_POOL_SIZE,
@@ -53,6 +57,18 @@ public class CPUThreadPool {
 
     public static void submit(Runnable runnable) {
         THREAD_POOL.submit(runnable);
+    }
+
+    public static void shutdown() {
+        THREAD_POOL.shutdown();
+        try {
+            if (!THREAD_POOL.awaitTermination(AWAIT_TIME, AWAIT_TIMEUNIT)) {
+                THREAD_POOL.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            THREAD_POOL.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 
 }

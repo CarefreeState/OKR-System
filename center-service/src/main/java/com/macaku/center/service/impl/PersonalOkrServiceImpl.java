@@ -65,7 +65,7 @@ public class PersonalOkrServiceImpl extends ServiceImpl<PersonalOkrMapper, Perso
         personalOkr.setUserId(userId);
         personalOkrMapper.insert(personalOkr);
         Long id = personalOkr.getId();
-        log.info("用户 {} 个人团队 OKR {}  内核 {}", userId, id, coreId);
+        log.info("用户 {} 个人 OKR {}  内核 {}", userId, id, coreId);
         return new HashMap<String, Object>() {{
             this.put("id", id);
             this.put("coreId", coreId);

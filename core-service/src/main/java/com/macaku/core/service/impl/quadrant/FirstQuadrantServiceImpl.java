@@ -3,6 +3,7 @@ package com.macaku.core.service.impl.quadrant;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.core.domain.po.event.quadrant.FirstQuadrantEvent;
 import com.macaku.redis.repository.RedisCache;
 import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
@@ -62,7 +63,10 @@ public class FirstQuadrantServiceImpl extends ServiceImpl<FirstQuadrantMapper, F
                 .eq(FirstQuadrant::getId, id)
                 .one().getCoreId();
         // 发起一个定时任务
-        QuadrantDeadlineUtil.scheduledComplete(coreId, deadline);
+        FirstQuadrantEvent event = new FirstQuadrantEvent();
+        event.setCoreId(coreId);
+        event.setDeadline(deadline);
+        QuadrantDeadlineUtil.scheduledComplete(event);
     }
 
     @Override

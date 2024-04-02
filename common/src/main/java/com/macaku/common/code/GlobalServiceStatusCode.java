@@ -25,7 +25,7 @@ public enum GlobalServiceStatusCode {
     PARAM_NOT_COMPLETE(1004, "参数缺失"),
     PARAM_FAILED_VALIDATE(1005, "参数未通过验证"),
 
-    HEAD_NOT_VALID(1101, "请求头无效"),
+    REQUEST_NOT_VALID(1101, "请求无效"),
 
     WX_CODE_NOT_VALID(1201, "微信 code 无效"),
 

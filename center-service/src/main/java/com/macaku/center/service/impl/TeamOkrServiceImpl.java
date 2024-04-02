@@ -4,6 +4,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.config.CoreUserMapConfig;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.domain.po.TeamOkr;
 import com.macaku.center.domain.po.TeamPersonalOkr;
@@ -11,26 +12,28 @@ import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.center.mapper.TeamOkrMapper;
 import com.macaku.center.mapper.TeamPersonalOkrMapper;
-import com.macaku.center.config.CoreUserMapConfig;
 import com.macaku.center.service.MemberService;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.center.service.TeamOkrService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.redis.repository.RedisCache;
-import com.macaku.common.util.thread.timer.TimerUtil;
 import com.macaku.common.util.media.MediaUtil;
+import com.macaku.common.util.thread.SchedulerThreadPool;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.qrcode.config.QRCodeConfig;
+import com.macaku.redis.repository.RedisCache;
 import com.macaku.user.domain.po.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -133,11 +136,8 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         // 删除缓存
         TeamOkrUtil.deleteChildListCache(teamId);
         // 延时再次删除（先数据库后删缓存出现问题 + 5s 内系统挂了的概率实在太低了！）
-        TimerUtil.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                TeamOkrUtil.deleteChildListCache(teamId);
-            }
+        SchedulerThreadPool.schedule(() -> {
+            TeamOkrUtil.deleteChildListCache(teamId);
         }, DELAY, DELAY_UNIT);
         return new HashMap<String, Object>() {{
             this.put("id", id);

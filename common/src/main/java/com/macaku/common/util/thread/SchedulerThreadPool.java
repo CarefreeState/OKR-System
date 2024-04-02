@@ -4,12 +4,12 @@ import com.macaku.common.util.thread.ext.CustomScheduledExecutor;
 import com.macaku.common.util.thread.timer.TimerUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @Slf4j
 public class SchedulerThreadPool {
@@ -74,6 +74,10 @@ public class SchedulerThreadPool {
         }, delay, delay, unit);
     }
 
+    /**
+     * 函数式接口： Runnable run、Consumer accept、Supplier get、Function apply
+     */
+
     // 添加下个周期运行的定时任务
     public static void scheduleCircle(Consumer<Map<String, Object>> task, Map<String, Object> session, long delay, TimeUnit unit) {
         schedule(() -> {
@@ -104,14 +108,32 @@ public class SchedulerThreadPool {
         }, initialDelay, unit);
     }
 
+    // 添加下个周期运行的定时任务
+    public static void scheduleCircle(Supplier<Boolean> task, long delay, TimeUnit unit) {
+        schedule(() -> {
+            if(Boolean.TRUE.equals(task.get())) {
+                scheduleCircle(task, delay, unit);
+            }
+        }, delay, unit);
+    }
+
+    // 添加下个周期运行的定时任务
+    public static void scheduleCircle(Supplier<Boolean> task, long initialDelay, long period, TimeUnit unit) {
+        schedule(() -> {
+            scheduleCircle(task, period, unit);
+        }, initialDelay, unit);
+    }
+
     public static void main(String[] args) {
-        List<String> list = new ArrayList<>();
-        list.add("666");
-        scheduleCircle(l -> {
-            String elem = l.get(0);
-            System.out.println(elem);
-            l.set(0, elem + THEAD_ID.get());
-        }, list, 2, TimeUnit.SECONDS);
+        AtomicInteger atomicInteger = new AtomicInteger(1);
+        scheduleCircle(() -> {
+            if(atomicInteger.get() < 5) {
+                atomicInteger.incrementAndGet();
+                return Boolean.TRUE;
+            }else {
+                return Boolean.FALSE;
+            }
+        }, 2, TimeUnit.SECONDS);
     }
 
     // 关闭线程池
@@ -125,5 +147,9 @@ public class SchedulerThreadPool {
             THREAD_POOL.shutdownNow();
             Thread.currentThread().interrupt();
         }
+    }
+
+    public static void remove(Runnable task) {
+        ((ScheduledThreadPoolExecutor) THREAD_POOL).remove(task);
     }
 }

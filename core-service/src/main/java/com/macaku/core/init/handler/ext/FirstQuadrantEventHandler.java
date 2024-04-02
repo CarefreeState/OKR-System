@@ -1,6 +1,7 @@
 package com.macaku.core.init.handler.ext;
 
 import com.macaku.core.domain.po.event.DeadlineEvent;
+import com.macaku.core.domain.po.event.quadrant.FirstQuadrantEvent;
 import com.macaku.core.init.handler.EventHandler;
 import com.macaku.core.init.util.QuadrantDeadlineUtil;
 import com.macaku.core.service.OkrCoreService;
@@ -27,9 +28,10 @@ public class FirstQuadrantEventHandler extends EventHandler {
 
     @Override
     public void handle(DeadlineEvent deadlineEvent, long nowTimestamp) {
-        Long id = deadlineEvent.getSecondQuadrantEvent().getCoreId();
-        Date firstQuadrantDeadline = deadlineEvent.getFirstQuadrantEvent().getDeadline();
-        log.warn("处理事件：内核 ID {}，第一象限截止时间 {}", id, firstQuadrantDeadline);
+        FirstQuadrantEvent firstQuadrantEvent = deadlineEvent.getFirstQuadrantEvent();
+        Long id = firstQuadrantEvent.getCoreId();
+        Date firstQuadrantDeadline = firstQuadrantEvent.getDeadline();
+        log.info("处理事件：内核 ID {}，第一象限截止时间 {}", id, firstQuadrantDeadline);
         // 1. 判断是否截止
         if(Objects.nonNull(firstQuadrantDeadline) &&
                 firstQuadrantDeadline.getTime() <= nowTimestamp) {
@@ -38,7 +40,7 @@ public class FirstQuadrantEventHandler extends EventHandler {
         }
         // 2. 是否设置了第一象限截止时间（这里一定代表未截止）
         if(Objects.nonNull(firstQuadrantDeadline)) {
-            QuadrantDeadlineUtil.scheduledComplete(id, firstQuadrantDeadline);
+            QuadrantDeadlineUtil.scheduledComplete(firstQuadrantEvent);
         }
         super.doNextHandler(deadlineEvent, nowTimestamp);//执行下一个责任处理器
     }
