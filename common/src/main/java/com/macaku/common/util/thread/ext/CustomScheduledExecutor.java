@@ -1,4 +1,4 @@
-package com.macaku.common.util.threadpool.ext;
+package com.macaku.common.util.thread.ext;
 
 import java.util.Objects;
 import java.util.concurrent.*;

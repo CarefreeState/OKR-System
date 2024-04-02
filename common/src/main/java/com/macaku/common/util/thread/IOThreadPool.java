@@ -1,4 +1,4 @@
-package com.macaku.common.util.threadpool;
+package com.macaku.common.util.thread;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;

@@ -1,6 +1,6 @@
-package com.macaku.common.util.threadpool;
+package com.macaku.common.util.thread;
 
-import com.macaku.common.util.threadpool.ext.CustomScheduledExecutor;
+import com.macaku.common.util.thread.ext.CustomScheduledExecutor;
 
 import java.util.Map;
 import java.util.concurrent.*;
@@ -69,11 +69,27 @@ public class SchedulerThreadPool {
     }
 
     // 添加下个周期运行的定时任务
-    public static <T> void scheduleCircle(Consumer<T> task, T data, long delay, TimeUnit unit) {
+    public static void scheduleCircle(Consumer<Map<String, Object>> task, Map<String, Object> session, long initialDelay, long period, TimeUnit unit) {
+        THREAD_POOL.scheduleAtFixedRate(() -> {
+            task.accept(session);
+            scheduleCircle(task, session, period, unit);
+        }, initialDelay, period, unit);
+    }
+
+    // 添加下个周期运行的定时任务
+    public static <T> void scheduleCircle(Consumer<T> task, T object, long delay, TimeUnit unit) {
         THREAD_POOL.schedule(() -> {
-            task.accept(data);
-            scheduleCircle(task, data, delay, unit);
+            task.accept(object);
+            scheduleCircle(task, object, delay, unit);
         }, delay, unit);
+    }
+
+    // 添加下个周期运行的定时任务
+    public static <T> void scheduleCircle(Consumer<T> task, T object, long initialDelay, long period, TimeUnit unit) {
+        THREAD_POOL.scheduleAtFixedRate(() -> {
+            task.accept(object);
+            scheduleCircle(task, object, period, unit);
+        }, initialDelay, period, unit);
     }
 
     // 关闭线程池

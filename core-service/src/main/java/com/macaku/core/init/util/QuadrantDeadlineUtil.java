@@ -2,7 +2,7 @@ package com.macaku.core.init.util;
 
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.timer.TimerUtil;
+import com.macaku.common.util.thread.timer.TimerUtil;
 import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.quadrant.SecondQuadrant;
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
@@ -37,7 +37,7 @@ public class QuadrantDeadlineUtil {
         }, TimeUnit.MILLISECONDS.toSeconds(deadline.getTime() - System.currentTimeMillis()), TimeUnit.SECONDS);
     }
 
-    public static <T> void scheduledUpdateThirdQuadrant(Long coreId, Long id, Date deadline, Integer quadrantCycle) {
+    public static void scheduledUpdateThirdQuadrant(Long coreId, Long id, Date deadline, Integer quadrantCycle) {
         final long deadTimestamp = deadline.getTime();
         final long nowTimestamp = System.currentTimeMillis();
         final long nextDeadTimestamp = deadTimestamp + TimeUnit.SECONDS.toMillis(quadrantCycle);
@@ -79,7 +79,7 @@ public class QuadrantDeadlineUtil {
         }, TimeUnit.MILLISECONDS.toSeconds(delay), TimeUnit.SECONDS);
     }
 
-    public static <T> void scheduledUpdateSecondQuadrant(Long coreId, Long id, Date deadline, Integer quadrantCycle) {
+    public static void scheduledUpdateSecondQuadrant(Long coreId, Long id, Date deadline, Integer quadrantCycle) {
         final long deadTimestamp = deadline.getTime();
         final long nowTimestamp = System.currentTimeMillis();
         final long nextDeadTimestamp = deadTimestamp + TimeUnit.SECONDS.toMillis(quadrantCycle);

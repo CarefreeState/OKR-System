@@ -2,7 +2,7 @@ package com.macaku.email.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
-import com.macaku.common.util.threadpool.CPUThreadPool;
+import com.macaku.common.util.thread.CPUThreadPool;
 import com.macaku.email.component.EmailSender;
 import com.macaku.email.component.EmailServiceSelector;
 import com.macaku.email.component.po.EmailMessage;
