@@ -21,7 +21,7 @@ public class SchedulerThreadPool {
 
     private static final TimeUnit KEEP_ALIVE_TIMEUNIT = TimeUnit.SECONDS;
 
-    private static final BlockingDeque<Runnable> BLOCKING_DEQUE = null;
+    private static final BlockingDeque<Runnable> BLOCKING_DEQUE = null; // null 代表使用默认的阻塞队列
 
     private static final ThreadFactory THREAD_FACTORY = r -> new Thread(r, "OKR-System-Thread-Scheduler-IO" + THEAD_ID.getAndIncrement());
 
