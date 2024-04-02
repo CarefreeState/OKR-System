@@ -1,7 +1,10 @@
 package com.macaku.common.util.threadpool;
 
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
+
 public class SchedulerThreadPool {
 
     private static final AtomicLong THEAD_ID = new AtomicLong(1);
@@ -49,6 +52,14 @@ public class SchedulerThreadPool {
     // 添加下个周期运行的定时任务
     public static void scheduleCircle(Runnable task, long delay, TimeUnit unit) {
         THREAD_POOL.scheduleAtFixedRate(task, delay, delay, unit);
+    }
+
+    // 添加下个周期运行的定时任务
+    public static void scheduleCircle(Consumer<Map<String, Object>> task, Map<String, Object> session, long delay, TimeUnit unit) {
+        THREAD_POOL.schedule(() -> {
+            task.accept(session);
+            scheduleCircle(task, session, delay, unit);
+        }, delay, unit);
     }
 
     // 关闭线程池
