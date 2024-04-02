@@ -76,8 +76,7 @@ public class SchedulerThreadPool {
 
     // 添加下个周期运行的定时任务
     public static void scheduleCircle(Consumer<Map<String, Object>> task, Map<String, Object> session, long delay, TimeUnit unit) {
-        TimerUtil.log(delay, unit);
-        THREAD_POOL.schedule(() -> {
+        schedule(() -> {
             task.accept(session);
             scheduleCircle(task, session, delay, unit);
         }, delay, unit);
@@ -85,7 +84,6 @@ public class SchedulerThreadPool {
 
     // 添加下个周期运行的定时任务
     public static void scheduleCircle(Consumer<Map<String, Object>> task, Map<String, Object> session, long initialDelay, long period, TimeUnit unit) {
-        TimerUtil.log(initialDelay, unit);
         schedule(() -> {
             scheduleCircle(task, session, period, unit);
         }, initialDelay, unit);
@@ -93,11 +91,17 @@ public class SchedulerThreadPool {
 
     // 添加下个周期运行的定时任务
     public static <T> void scheduleCircle(Consumer<T> task, T object, long delay, TimeUnit unit) {
-        TimerUtil.log(delay, unit);
-        THREAD_POOL.schedule(() -> {
+        schedule(() -> {
             task.accept(object);
             scheduleCircle(task, object, delay, unit);
         }, delay, unit);
+    }
+
+    // 添加下个周期运行的定时任务
+    public static <T> void scheduleCircle(Consumer<T> task, T object, long initialDelay, long period, TimeUnit unit) {
+        schedule(() -> {
+            scheduleCircle(task, object, period, unit);
+        }, initialDelay, unit);
     }
 
     public static void main(String[] args) {
@@ -108,14 +112,6 @@ public class SchedulerThreadPool {
             System.out.println(elem);
             l.set(0, elem + THEAD_ID.get());
         }, list, 2, TimeUnit.SECONDS);
-    }
-
-    // 添加下个周期运行的定时任务
-    public static <T> void scheduleCircle(Consumer<T> task, T object, long initialDelay, long period, TimeUnit unit) {
-        TimerUtil.log(initialDelay, unit);
-        schedule(() -> {
-            scheduleCircle(task, object, period, unit);
-        }, initialDelay, unit);
     }
 
     // 关闭线程池

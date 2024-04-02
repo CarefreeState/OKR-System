@@ -1,6 +1,5 @@
 package com.macaku.core.domain.po.event.quadrant;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.util.Date;
@@ -15,16 +14,12 @@ import java.util.Date;
 @Data
 public class SecondQuadrantEvent {
 
-    @TableField("core_id")
     private Long coreId; // OKR ID
 
-    @TableField("id")
     private Long id; // 第二象限 ID
 
-    @TableField("cycle")
     private Integer cycle; // 第二象限周期
 
-    @TableField("deadline")
     private Date deadline; // 第二象限截止时间
 
 }

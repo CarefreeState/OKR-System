@@ -15,16 +15,12 @@ import java.util.Date;
 @Data
 public class ThirdQuadrantEvent {
 
-    @TableField("core_id")
     private Long coreId; // OKR ID
 
-    @TableField("id")
     private Long id; // 第三象限 ID
 
-    @TableField("cycle")
     private Integer cycle; // 第三象限周期
 
-    @TableField("deadline")
     private Date deadline; // 第三象限截止时间
 
 }

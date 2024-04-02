@@ -1,9 +1,9 @@
 package com.macaku.qrcode.init;
 
-import com.macaku.redis.repository.RedisCache;
-import com.macaku.common.util.thread.timer.TimerUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
+import com.macaku.common.util.thread.SchedulerThreadPool;
 import com.macaku.qrcode.config.QRCodeConfig;
+import com.macaku.redis.repository.RedisCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.TimerTask;
 
 /**
  * Created With Intellij IDEA
@@ -58,26 +57,18 @@ public class QRCodeCacheClearInitializer implements ApplicationListener<Applicat
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        clearQRCodeCache(directory);
-        TimerUtil.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                clearQRCodeCacheCycle(directory);
-            }
-        }, QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
+        SchedulerThreadPool.scheduleCircle(() -> {
+            clearQRCodeCache(directory);
+        }, 0, QRCodeConfig.WX_CHECK_QR_CODE_TTL, QRCodeConfig.WX_CHECK_QR_CODE_UNIT);
     }
 
     private void clearLoginQRCodeCacheCycle(File directory) {
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        clearLoginQRCodeCache(directory);
-        TimerUtil.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                clearLoginQRCodeCacheCycle(directory);
-            }
-        }, QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
+        SchedulerThreadPool.scheduleCircle(() -> {
+            clearLoginQRCodeCache(directory);
+        }, 0, QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
     }
 
     @Override
