@@ -13,6 +13,8 @@ public interface OkrQRCodeService {
 
     String getInviteQRCode(Long teamId, String teamName, String type);
 
+    String getInviteQRCodeLock(Long teamId, String teamName, String type);
+
     String getBindingQRCode(Long userId, String randomCode);
 
     LoginQRCodeVO getLoginQRCode();

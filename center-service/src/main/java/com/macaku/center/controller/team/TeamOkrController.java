@@ -142,7 +142,7 @@ public class TeamOkrController {
         // 检测管理者身份
         teamOkrService.checkManager(teamId, managerId);
         // 进行操作
-        String path = okrQRCodeService.getInviteQRCode(teamId, TeamOkrUtil.getTeamName(teamId), type);
+        String path = okrQRCodeService.getInviteQRCodeLock(teamId, TeamOkrUtil.getTeamName(teamId), type);
         return SystemJsonResponse.SYSTEM_SUCCESS(path);
     }
 

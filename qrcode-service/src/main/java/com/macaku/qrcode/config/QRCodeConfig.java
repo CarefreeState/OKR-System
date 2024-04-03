@@ -35,4 +35,6 @@ public class QRCodeConfig {
 
     public final static TimeUnit TEAM_QR_MAP_UNIT = TimeUnit.DAYS;
 
+    public final static String OKR_INVITE_QR_CODE_LOCK = "okrInviteQRCodeLock:";
+
 }

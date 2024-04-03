@@ -40,6 +40,7 @@
         <guava.version>31.1-jre</guava.version>
         <hutool-all.version>5.8.11</hutool-all.version>
         <fastjson.version>1.2.31</fastjson.version>
+        <org.redisson.version>3.27.2</org.redisson.version>
         <springfox-boot-starter.version>3.0.0</springfox-boot-starter.version>
         <knife4j.version>4.1.0</knife4j.version>
         <!--httpClient需要的依赖-->

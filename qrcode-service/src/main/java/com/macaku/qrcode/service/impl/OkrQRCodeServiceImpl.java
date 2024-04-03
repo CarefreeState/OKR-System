@@ -1,6 +1,7 @@
 package com.macaku.qrcode.service.impl;
 
-import com.macaku.redis.repository.RedisCache;
+import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.ShortCodeUtil;
 import com.macaku.common.util.media.ImageUtil;
 import com.macaku.common.util.media.MediaUtil;
@@ -14,6 +15,8 @@ import com.macaku.qrcode.service.InviteQRCodeService;
 import com.macaku.qrcode.service.OkrQRCodeService;
 import com.macaku.qrcode.service.WxBindingQRCodeService;
 import com.macaku.qrcode.service.WxLoginQRCodeService;
+import com.macaku.redis.repository.RedisCache;
+import com.macaku.redis.repository.RedisLock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,6 +43,8 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
 
     private final RedisCache redisCache;
 
+    private final RedisLock redisLock;
+
     private final InviteQRCodeServiceSelector inviteQRCodeServiceSelector;
 
     private final WxBindingQRCodeService wxBindingQRCodeService;
@@ -61,6 +66,14 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
             // todo： 缓存小程序码
             redisCache.setCacheObject(redisKey, mapPath, QRCodeConfig.TEAM_QR_MAP_TTL, QRCodeConfig.TEAM_QR_MAP_UNIT);
             return mapPath;
+        });
+    }
+
+    @Override
+    public String getInviteQRCodeLock(Long teamId, String teamName, String type) {
+        String lockKey = QRCodeConfig.OKR_INVITE_QR_CODE_LOCK + teamId;
+        return redisLock.tryLockDoSomething(lockKey, () -> getInviteQRCode(teamId, teamName, type), () -> {
+            throw new GlobalServiceException(GlobalServiceStatusCode.REDIS_LOCK_FAIL);
         });
     }
 
