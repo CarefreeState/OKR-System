@@ -18,6 +18,7 @@ import com.macaku.center.service.TeamOkrService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.common.util.thread.pool.IOThreadPool;
 import com.macaku.common.util.thread.pool.SchedulerThreadPool;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.vo.OkrCoreVO;
@@ -176,11 +177,13 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
 
     @Override
     public void deleteTeamNameCache(Long teamId) {
-        // 1. 删除 ID - TeamName 的映射
-        redisCache.deleteObject(TeamOkrUtil.TEAM_ID_NAME_MAP + teamId);
-        // 2. 删除邀请码的缓存
-        // (如果经常修改，那么这个团队一直都在本地只有一个小程序码，如果一个月内一次修改都没有，那么应该也不会重新获取邀请码，即使有，每个月多一张无伤大雅)
-        okrQRCodeService.deleteTeamNameCache(teamId);
+        IOThreadPool.submit(() -> {
+            // 1. 删除 ID - TeamName 的映射
+            redisCache.deleteObject(TeamOkrUtil.TEAM_ID_NAME_MAP + teamId);
+            // 2. 删除邀请码的缓存
+            // (如果经常修改，那么这个团队一直都在本地只有一个小程序码，如果一个月内一次修改都没有，那么应该也不会重新获取邀请码，即使有，每个月多一张无伤大雅)
+            okrQRCodeService.deleteTeamNameCache(teamId);
+        });
     }
 
     @Override
