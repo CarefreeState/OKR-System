@@ -78,6 +78,22 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
     }
 
     @Override
+    public void deleteTeamNameCache(Long teamId) {
+        String redisKey1 = QRCodeConfig.TEAM_QR_CODE_MAP + InviteQRCodeServiceSelector.WEB_TYPE + ":" + teamId;
+        String redisKey2 = QRCodeConfig.TEAM_QR_CODE_MAP + InviteQRCodeServiceSelector.WX_TYPE + ":" + teamId;
+        redisCache.getCacheObject(redisKey1).ifPresent(mapPath -> {
+            redisCache.deleteObject(redisKey1);
+            String originPath = MediaUtil.getLocalFilePath((String) mapPath);
+            MediaUtil.deleteFile(originPath);
+        });
+        redisCache.getCacheObject(redisKey2).ifPresent(mapPath -> {
+            redisCache.deleteObject(redisKey2);
+            String originPath = MediaUtil.getLocalFilePath((String) mapPath);
+            MediaUtil.deleteFile(originPath);
+        });
+    }
+
+    @Override
     public String getBindingQRCode(Long userId, String randomCode) {
         String redisKey = QRCodeConfig.WX_CHECK_QR_CODE_MAP + userId;
         String mapPath = wxBindingQRCodeService.getQRCode(userId, randomCode);

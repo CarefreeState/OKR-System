@@ -18,12 +18,11 @@ import com.macaku.center.service.TeamOkrService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.thread.pool.SchedulerThreadPool;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
-import com.macaku.qrcode.config.QRCodeConfig;
+import com.macaku.qrcode.service.OkrQRCodeService;
 import com.macaku.redis.repository.RedisCache;
 import com.macaku.user.domain.po.User;
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +60,8 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     private final OkrCoreService okrCoreService = SpringUtil.getBean(OkrCoreService.class);
 
     private final MemberService memberService = SpringUtil.getBean(MemberService.class);
+
+    private final OkrQRCodeService okrQRCodeService = SpringUtil.getBean(OkrQRCodeService.class);
 
     @Override
     public boolean match(String scene) {
@@ -179,12 +180,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
         redisCache.deleteObject(TeamOkrUtil.TEAM_ID_NAME_MAP + teamId);
         // 2. 删除邀请码的缓存
         // (如果经常修改，那么这个团队一直都在本地只有一个小程序码，如果一个月内一次修改都没有，那么应该也不会重新获取邀请码，即使有，每个月多一张无伤大雅)
-        String redisKey = QRCodeConfig.TEAM_QR_CODE_MAP + teamId;
-        redisCache.getCacheObject(redisKey).ifPresent(mapPath -> {
-            redisCache.deleteObject(redisKey);
-            String originPath = MediaUtil.getLocalFilePath((String) mapPath);
-            MediaUtil.deleteFile(originPath);
-        });
+        okrQRCodeService.deleteTeamNameCache(teamId);
     }
 
     @Override

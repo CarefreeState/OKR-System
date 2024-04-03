@@ -15,6 +15,8 @@ public interface OkrQRCodeService {
 
     String getInviteQRCodeLock(Long teamId, String teamName, String type);
 
+    void deleteTeamNameCache(Long teamId);
+
     String getBindingQRCode(Long userId, String randomCode);
 
     LoginQRCodeVO getLoginQRCode();
