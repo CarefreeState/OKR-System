@@ -21,13 +21,21 @@ public class QRCodeConfig {
 
     public final static String WX_LOGIN_QR_CODE_CACHE = "wxLoginQRCodeCache:";
 
+    public final static String WX_COMMON_QR_CODE_KEY = "wxCommonQRCodeKey";
+
+    public final static String OKR_COMMON_QR_CODE_LOCK = "okrCommonQRCodeLock";
+
     public final static Long WX_CHECK_QR_CODE_TTL = 5L;
 
     public final static Long WX_LOGIN_QR_CODE_TTL = 1L;
 
+    public final static Long WX_COMMON_QR_CODE_TTL = 64L;
+
     public final static TimeUnit WX_CHECK_QR_CODE_UNIT = TimeUnit.MINUTES;
 
     public final static TimeUnit WX_LOGIN_QR_CODE_UNIT = TimeUnit.MINUTES;
+
+    public final static TimeUnit WX_COMMON_QR_CODE_UNIT = TimeUnit.DAYS;
 
     public final static String TEAM_QR_CODE_MAP = "teamQRCodeMap:";
 

@@ -24,6 +24,8 @@ public class StaticMapperConfig implements WebMvcConfigurer {
 
     public static String PHOTO_PATH;
 
+    public static String COMMON_PATH;
+
     /**
      * 配置静态访问资源
      * @param registry
@@ -72,6 +74,11 @@ public class StaticMapperConfig implements WebMvcConfigurer {
     @Value("${media.photo}")
     private void setPHOTO_PATH(String photoPath) {
         PHOTO_PATH = photoPath;
+    }
+
+    @Value("${media.common}")
+    private void setCOMMON_PATH(String commonPath) {
+        COMMON_PATH = commonPath;
     }
 
 }

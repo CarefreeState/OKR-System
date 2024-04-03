@@ -5,16 +5,12 @@ import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.ShortCodeUtil;
 import com.macaku.common.util.media.ImageUtil;
 import com.macaku.common.util.media.MediaUtil;
-import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.qrcode.component.InviteQRCodeServiceSelector;
 import com.macaku.qrcode.config.BloomFilterConfig;
 import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.qrcode.domain.config.OkrQRCode;
 import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
-import com.macaku.qrcode.service.InviteQRCodeService;
-import com.macaku.qrcode.service.OkrQRCodeService;
-import com.macaku.qrcode.service.WxBindingQRCodeService;
-import com.macaku.qrcode.service.WxLoginQRCodeService;
+import com.macaku.qrcode.service.*;
 import com.macaku.redis.repository.RedisCache;
 import com.macaku.redis.repository.RedisLock;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +35,8 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
     private final static String LOGIN_CODE_MESSAGE = java.lang.String.format("请在 %d %s 内前往微信扫码进行验证！",
             QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
 
+    private final static String COMMON_CODE_MESSAGE = "OKR 目标与规划管理";
+
     private final OkrQRCode okrQRCode;
 
     private final RedisCache redisCache;
@@ -51,6 +49,8 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
 
     private final WxLoginQRCodeService wxLoginQRCodeService;
 
+    private final WxCommonQRCodeService wxCommonQRCodeService;
+
     public String getInviteQRCode(Long teamId, String teamName, String type) {
         InviteQRCodeService inviteQRCodeService = inviteQRCodeServiceSelector.select(type);
         String redisKey = QRCodeConfig.TEAM_QR_CODE_MAP
@@ -60,7 +60,7 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
             // 获取 QRCode
             String mapPath = inviteQRCodeService.getQRCode(teamId);
             // 获取到团队名字
-            String savePath = StaticMapperConfig.ROOT + mapPath;
+            String savePath = MediaUtil.getLocalFilePath(mapPath);
             ImageUtil.mergeSignatureWrite(savePath, teamName,
                     okrQRCode.getInvite(), okrQRCode.getTextColor(), inviteQRCodeService.getQRCodeColor());
             // todo： 缓存小程序码
@@ -131,6 +131,23 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
                 .path(mapPath)
                 .secret(secret)
                 .build();
+    }
+
+    @Override
+    public String getCommonQRCode() {
+        String redisKey = QRCodeConfig.WX_COMMON_QR_CODE_KEY;
+        return (String) redisLock.tryLockDoSomething(QRCodeConfig.OKR_COMMON_QR_CODE_LOCK, () ->
+            redisCache.getCacheObject(redisKey).orElseGet(() -> {
+                // 获取 QRCode
+                String mapPath = wxCommonQRCodeService.getQRCode();
+                String savePath = MediaUtil.getLocalFilePath(mapPath);
+                ImageUtil.mergeSignatureWrite(savePath, COMMON_CODE_MESSAGE,
+                        okrQRCode.getCommon(), okrQRCode.getTextColor(), wxCommonQRCodeService.getQRCodeColor());
+                redisCache.setCacheObject(redisKey, mapPath, QRCodeConfig.WX_COMMON_QR_CODE_TTL, QRCodeConfig.WX_COMMON_QR_CODE_UNIT);
+                return mapPath;
+            }), () -> {
+            throw new GlobalServiceException(GlobalServiceStatusCode.REDIS_LOCK_FAIL);
+        });
     }
 
 }

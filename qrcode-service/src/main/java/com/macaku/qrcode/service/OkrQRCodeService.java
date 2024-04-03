@@ -21,4 +21,6 @@ public interface OkrQRCodeService {
 
     LoginQRCodeVO getLoginQRCode();
 
+    String getCommonQRCode();
+
 }

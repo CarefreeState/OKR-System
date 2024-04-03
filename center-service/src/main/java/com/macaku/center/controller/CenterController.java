@@ -2,15 +2,16 @@ package com.macaku.center.controller;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.user.security.handler.AuthFailHandler;
 import com.macaku.common.response.SystemJsonResponse;
-import com.macaku.user.util.ExtractUtil;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.convert.JwtUtil;
-import com.macaku.common.util.media.config.StaticMapperConfig;
+import com.macaku.qrcode.service.OkrQRCodeService;
+import com.macaku.user.security.handler.AuthFailHandler;
+import com.macaku.user.util.ExtractUtil;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.RedirectView;
@@ -27,6 +28,7 @@ import java.util.Optional;
  * Time: 4:14
  */
 @RestController
+@RequiredArgsConstructor
 public class CenterController {
 
     private final static String ROOT_HTML = "root.html";
@@ -37,9 +39,11 @@ public class CenterController {
     @Value("${visit.swagger}")
     private Boolean swaggerCanBeVisited;
 
+    private final OkrQRCodeService okrQRCodeService;
+
     @GetMapping("/")
     public RedirectView rootHtml()  {
-        String htmlUrl = domain + "/" + StaticMapperConfig.MAP_ROOT + StaticMapperConfig.STATIC_PATH + ROOT_HTML;
+        String htmlUrl = domain + "/" + okrQRCodeService.getCommonQRCode();
         return new RedirectView(htmlUrl);
     }
 

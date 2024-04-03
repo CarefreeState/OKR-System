@@ -23,6 +23,8 @@ public class OkrQRCode {
 
     private Map<String, Integer> color;
 
+    private String common;
+
     private String invite;
 
     private String binding;
