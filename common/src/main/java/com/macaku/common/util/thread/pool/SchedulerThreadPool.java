@@ -1,4 +1,4 @@
-package com.macaku.common.util.thread;
+package com.macaku.common.util.thread.pool;
 
 import com.macaku.common.util.thread.ext.CustomScheduledExecutor;
 import com.macaku.common.util.thread.timer.TimerUtil;
