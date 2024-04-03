@@ -80,6 +80,7 @@ public class SchedulerThreadPool {
 
     // 添加下个周期运行的定时任务
     public static void scheduleCircle(Consumer<Map<String, Object>> task, Map<String, Object> session, long delay, TimeUnit unit) {
+        task.accept(session);
         schedule(() -> {
             task.accept(session);
             scheduleCircle(task, session, delay, unit);
@@ -95,6 +96,7 @@ public class SchedulerThreadPool {
 
     // 添加下个周期运行的定时任务
     public static <T> void scheduleCircle(Consumer<T> task, T object, long delay, TimeUnit unit) {
+        task.accept(object);
         schedule(() -> {
             task.accept(object);
             scheduleCircle(task, object, delay, unit);
@@ -110,11 +112,13 @@ public class SchedulerThreadPool {
 
     // 添加下个周期运行的定时任务
     public static void scheduleCircle(Supplier<Boolean> task, long delay, TimeUnit unit) {
-        schedule(() -> {
-            if(Boolean.TRUE.equals(task.get())) {
-                scheduleCircle(task, delay, unit);
-            }
-        }, delay, unit);
+        if(Boolean.TRUE.equals(task.get())) {
+            schedule(() -> {
+                if(Boolean.TRUE.equals(task.get())) {
+                    scheduleCircle(task, delay, unit);
+                }
+            }, delay, unit);
+        }
     }
 
     // 添加下个周期运行的定时任务

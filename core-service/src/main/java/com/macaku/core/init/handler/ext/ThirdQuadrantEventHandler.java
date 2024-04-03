@@ -61,6 +61,5 @@ public class ThirdQuadrantEventHandler extends EventHandler {
             QuadrantDeadlineUtil.scheduledUpdateThirdQuadrant(thirdQuadrantEvent);
         }
         super.doNextHandler(deadlineEvent, nowTimestamp);//执行下一个责任处理器
-
     }
 }
