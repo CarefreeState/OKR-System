@@ -91,7 +91,7 @@ public class ImageUtil {
         char[] charArray = text.toCharArray();
         for(char ch : charArray) {
             if (ch == ' ' || (String.valueOf(ch)).getBytes().length > 1) {
-                length += 0.675;
+                length += 0.725;
             } else if(ch == 'i' || ch == 'I' || ch == 'l') {
                 length += 0.225;
             } else if(ch == 'A' || ch == 'E' || ch == 'G') {
