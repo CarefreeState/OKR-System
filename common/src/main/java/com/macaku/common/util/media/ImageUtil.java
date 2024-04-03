@@ -21,6 +21,12 @@ import java.util.Map;
 @Component
 public class ImageUtil {
 
+    public final static String RED = "r";
+
+    public final static String GREEN = "g";
+
+    public final static String BLUE = "b";
+
     private final static String DEFAULT_FONT = "宋体";
 
     private final static String FONT_PATH = SpringUtil.getProperty("font.path");
@@ -44,7 +50,7 @@ public class ImageUtil {
     private final static double REFER_HEIGHT = REFER_HEIGHT_RATE * IMAGE_SIZE;
 
     public static Color getColorByMap(Map<String, Integer> lineColor) {
-        return new Color(lineColor.get("r"), lineColor.get("g"), lineColor.get("b"));
+        return new Color(lineColor.get(RED), lineColor.get(GREEN), lineColor.get(BLUE));
     }
 
     public static Font getFont(float fontSize){
