@@ -12,6 +12,9 @@ import java.util.Map;
 @Component
 public class TokenUtil {
 
+    // token 的 url
+    public static String URL = "https://api.weixin.qq.com/cgi-bin/token";
+
     public static String APP_ID;
 
     public static String APP_SECRET;
@@ -28,8 +31,6 @@ public class TokenUtil {
 
 
     public static Map<String, Object> getAccessTokenMap() {
-        // 获取token的url
-        final String URL = "https://api.weixin.qq.com/cgi-bin/token";
         // 构造参数表
         Map<String, Object> param = new HashMap<String, Object>(){{
             this.put("grant_type", "client_credential");
@@ -39,8 +40,7 @@ public class TokenUtil {
         // 发起get请求
         String response = HttpUtil.doGet(URL, param);
         // 解析json
-        Map<String, Object> result = JsonUtil.analyzeJson(response, Map.class);
-        return result;
+        return JsonUtil.analyzeJson(response, Map.class);
     }
 
     public static String getToken() {

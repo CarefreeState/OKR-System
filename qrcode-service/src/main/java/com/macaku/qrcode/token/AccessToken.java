@@ -1,13 +1,14 @@
 package com.macaku.qrcode.token;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
-
+import java.util.concurrent.TimeUnit;
 
 @Getter
+@Setter
 public class AccessToken {
-
 
     private String token;
 
@@ -15,12 +16,9 @@ public class AccessToken {
 
     volatile private static AccessToken accessToken = null;
 
-    private void setExpireIn(long expireIn) {
+    private void setExpireIn(int expireIn) {
         // 设置有效期限的时候的时间戳
-        this.expireIn = System.currentTimeMillis() + expireIn * 1000;
-    }
-    private void setToken(String token) {
-        this.token = token;
+        this.expireIn = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(expireIn);
     }
 
     public boolean isExpired() {
