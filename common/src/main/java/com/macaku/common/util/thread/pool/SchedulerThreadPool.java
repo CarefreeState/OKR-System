@@ -114,9 +114,7 @@ public class SchedulerThreadPool {
     public static void scheduleCircle(Supplier<Boolean> task, long delay, TimeUnit unit) {
         if(Boolean.TRUE.equals(task.get())) {
             schedule(() -> {
-                if(Boolean.TRUE.equals(task.get())) {
-                    scheduleCircle(task, delay, unit);
-                }
+                scheduleCircle(task, delay, unit);
             }, delay, unit);
         }
     }
