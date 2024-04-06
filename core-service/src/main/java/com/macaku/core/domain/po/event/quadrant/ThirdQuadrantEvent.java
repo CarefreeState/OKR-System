@@ -1,6 +1,9 @@
 package com.macaku.core.domain.po.event.quadrant;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
@@ -12,6 +15,9 @@ import java.util.Date;
  * Time: 0:16
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ThirdQuadrantEvent {
 
     private Long coreId; // OKR ID

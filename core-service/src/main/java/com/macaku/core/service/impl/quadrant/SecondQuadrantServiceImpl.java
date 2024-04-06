@@ -80,11 +80,8 @@ public class SecondQuadrantServiceImpl extends ServiceImpl<SecondQuadrantMapper,
         updateQuadrant.setDeadline(deadline);
         this.lambdaUpdate().eq(SecondQuadrant::getId, id).update(updateQuadrant);
         // 发起一个定时任务
-        SecondQuadrantEvent event = new SecondQuadrantEvent();
-        event.setCoreId(coreId);
-        event.setId(id);
-        event.setCycle(quadrantCycle);
-        event.setDeadline(deadline);
+        SecondQuadrantEvent event = SecondQuadrantEvent.builder()
+                .coreId(coreId).id(id).cycle(quadrantCycle).deadline(deadline).build();
         QuadrantDeadlineUtil.scheduledUpdateSecondQuadrant(event);
     }
 

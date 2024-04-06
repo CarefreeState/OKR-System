@@ -63,9 +63,8 @@ public class FirstQuadrantServiceImpl extends ServiceImpl<FirstQuadrantMapper, F
                 .eq(FirstQuadrant::getId, id)
                 .one().getCoreId();
         // 发起一个定时任务
-        FirstQuadrantEvent event = new FirstQuadrantEvent();
-        event.setCoreId(coreId);
-        event.setDeadline(deadline);
+        FirstQuadrantEvent event = FirstQuadrantEvent.builder()
+                .coreId(coreId).deadline(deadline).build();
         QuadrantDeadlineUtil.scheduledComplete(event);
     }
 

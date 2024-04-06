@@ -78,11 +78,8 @@ public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, T
         updateQuadrant.setDeadline(deadline);
         this.lambdaUpdate().eq(ThirdQuadrant::getId, id).update(updateQuadrant);
         // 发起一个定时任务
-        ThirdQuadrantEvent event = new ThirdQuadrantEvent();
-        event.setCoreId(coreId);
-        event.setId(id);
-        event.setCycle(quadrantCycle);
-        event.setDeadline(deadline);
+        ThirdQuadrantEvent event = ThirdQuadrantEvent.builder()
+                .coreId(coreId).id(id).cycle(quadrantCycle).deadline(deadline).build();
         QuadrantDeadlineUtil.scheduledUpdateThirdQuadrant(event);
     }
 
