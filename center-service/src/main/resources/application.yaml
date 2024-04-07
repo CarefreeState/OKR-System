@@ -37,3 +37,34 @@ mybatis-plus:
       # todo: 考虑用什么 id
       id-type: auto #id为雪花算法生成 设置为none->为遵循版本默认，可见这个版本默认为assign_id
       update-strategy: not_null #更新策略:只更新非空字段
+medal:
+  status-flag:
+    statusFlagProperties:
+      - color: "#000000"
+        credit: 80
+      - color: "#000001"
+        credit: 50
+      - color: "#000002"
+        credit: 20
+    threshold: 60
+  stay-true-beginning:
+    id: 1
+    coefficient: 0
+  harvest-achievement:
+    id: 2
+    coefficient: 100
+  stand-out-crowd:
+    id: 3
+    coefficient: 1
+  victory-within-grasp:
+    id: 4
+    coefficient: 1
+  short-term-achievement:
+    id: 5
+    coefficient: 5
+  long-term-achievement:
+    id: 6
+    coefficient: 2
+  great-state:
+    id: 7
+    coefficient: 1
