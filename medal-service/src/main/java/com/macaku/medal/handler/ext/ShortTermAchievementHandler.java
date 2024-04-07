@@ -39,7 +39,7 @@ public class ShortTermAchievementHandler extends ApplyMedalHandler {
 
     @Override
     public void handle(Object object) {
-        log.info("ShortTermAchievementHandler 尝试处理对象 {}", object);
+        log.info("{} 尝试处理对象 {}", this.getClass().getName(), object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(shortTermAchievement -> {
             // 任务是否完成，决定是否计数给用户
             Boolean isCompleted = shortTermAchievement.getIsCompleted();

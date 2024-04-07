@@ -52,7 +52,7 @@ public class VictoryWithinGraspHandler extends ApplyMedalHandler {
 
     @Override
     public void handle(Object object) {
-        log.info("VictoryWithinGraspHandler 尝试处理对象 {}", object);
+        log.info("{} 尝试处理对象 {}", this.getClass().getName(), object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(victoryWithinGrasp -> {
             // 看看信心指数是否拉满，决定是否计数给用户
             Long userId = victoryWithinGrasp.getUserId();

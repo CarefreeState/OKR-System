@@ -2,6 +2,7 @@ package com.macaku.medal.init;
 
 import cn.hutool.core.date.DateUtil;
 import com.macaku.common.util.thread.pool.SchedulerThreadPool;
+import com.macaku.common.util.thread.timer.TimerUtil;
 import com.macaku.medal.domain.entry.GreatState;
 import com.macaku.medal.handler.chain.MedalHandlerChain;
 import com.macaku.user.domain.po.User;
@@ -55,13 +56,15 @@ public class MedalEventInitializer implements ApplicationListener<ApplicationSta
             GreatState greatState = GreatState.builder().userId(userId).build();
             medalHandlerChain.handle(greatState);
         });
-        log.info("本周定时颁布勋章任务执行完毕！");
+        log.info("本周定时颁布勋章任务执行完毕！下次执行将与一周后");
     }
 
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
         log.warn("--> --> --> 应用启动成功 --> 开始恢复定时颁布勋章任务 --> --> -->");
-        long initialDelay = getNextWeekTimestamp() - System.currentTimeMillis();
+        long nextWeekTimestamp = getNextWeekTimestamp();
+        long initialDelay = nextWeekTimestamp - System.currentTimeMillis();
+        log.info("最近一次的颁布勋章任务执行时间：{}", TimerUtil.getDateFormat(new Date(nextWeekTimestamp)));
         long period = TimeUnit.DAYS.toMillis(7);
         SchedulerThreadPool.scheduleCircle(this::issueGreatStateMedal, initialDelay, period, TimeUnit.MILLISECONDS);
         log.warn("<-- <-- <-- <-- <-- 任务恢复成功 <-- <-- <-- <-- <--");

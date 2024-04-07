@@ -47,7 +47,7 @@ public class GreatStateMedalHandler extends ApplyMedalHandler {
 
     @Override
     public void handle(Object object) {
-        log.info("GreatStateMedalHandler 尝试处理对象 {}", object);
+        log.info("{} 尝试处理对象 {}", this.getClass().getName(), object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(greatState -> {
             Long userId = greatState.getUserId();
             // 查看用户当前未完成的个人 OKR 的所有状态指标，算加权平均值

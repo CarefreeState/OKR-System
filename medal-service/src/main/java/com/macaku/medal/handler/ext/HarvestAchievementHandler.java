@@ -39,7 +39,7 @@ public class HarvestAchievementHandler extends ApplyMedalHandler {
 
     @Override
     public void handle(Object object) {
-        log.info("HarvestAchievementHandler 尝试处理对象 {}", object);
+        log.info("{} 尝试处理对象 {}", this.getClass().getName(), object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(harvestAchievement -> {
             // 将完成度换算成积分给用户
             Integer degree = harvestAchievement.getDegree();
