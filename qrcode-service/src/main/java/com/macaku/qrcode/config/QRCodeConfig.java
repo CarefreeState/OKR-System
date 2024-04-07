@@ -37,7 +37,7 @@ public class QRCodeConfig {
 
     public final static TimeUnit WX_COMMON_QR_CODE_UNIT = TimeUnit.DAYS;
 
-    public final static String TEAM_QR_CODE_MAP = "teamQRCodeMap:";
+    public final static String TEAM_QR_CODE_MAP = "teamQRCodeMap:%s:%d";
 
     public final static Long TEAM_QR_MAP_TTL = 30L;
 

@@ -53,9 +53,7 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
 
     public String getInviteQRCode(Long teamId, String teamName, String type) {
         InviteQRCodeService inviteQRCodeService = inviteQRCodeServiceSelector.select(type);
-        String redisKey = QRCodeConfig.TEAM_QR_CODE_MAP
-                + inviteQRCodeServiceSelector.getType(type)
-                + ":" + teamId;
+        String redisKey = String.format(QRCodeConfig.TEAM_QR_CODE_MAP, inviteQRCodeServiceSelector.getType(type), teamId);
         return (String)redisCache.getCacheObject(redisKey).orElseGet(() -> {
             // 获取 QRCode
             String mapPath = inviteQRCodeService.getQRCode(teamId);
@@ -79,8 +77,8 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
 
     @Override
     public void deleteTeamNameCache(Long teamId) {
-        String redisKey1 = QRCodeConfig.TEAM_QR_CODE_MAP + InviteQRCodeServiceSelector.WEB_TYPE + ":" + teamId;
-        String redisKey2 = QRCodeConfig.TEAM_QR_CODE_MAP + InviteQRCodeServiceSelector.WX_TYPE + ":" + teamId;
+        String redisKey1 = String.format(QRCodeConfig.TEAM_QR_CODE_MAP, InviteQRCodeServiceSelector.WEB_TYPE, teamId);
+        String redisKey2 = String.format(QRCodeConfig.TEAM_QR_CODE_MAP, InviteQRCodeServiceSelector.WX_TYPE, teamId);
         redisCache.getCacheObject(redisKey1).ifPresent(mapPath -> {
             redisCache.deleteObject(redisKey1);
             String originPath = MediaUtil.getLocalFilePath((String) mapPath);
