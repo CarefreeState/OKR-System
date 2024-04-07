@@ -18,6 +18,6 @@ public class HarvestAchievement {
 
     private Long userId;
 
-    private Long degree;
+    private Integer degree;
 
 }

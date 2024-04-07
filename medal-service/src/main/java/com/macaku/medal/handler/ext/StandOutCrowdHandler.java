@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -38,8 +37,15 @@ public class StandOutCrowdHandler extends ApplyMedalHandler {
 
     private final Function<Long, Integer> getLevelStrategy = credit -> MedalEntryUtil.getLevel(credit, coefficient);
 
-    private boolean isStandOut(Date date, int degree) {
-        return date.getTime() > System.currentTimeMillis() || degree > 100;
+    private int getStandOutCredit(Boolean isAdvance, Integer degree) {
+        int count = 0;
+        if(Objects.nonNull(isAdvance) && Boolean.TRUE.equals(isAdvance)) {
+            count++;
+        }
+        if(Objects.nonNull(degree) && degree.compareTo(100) > 0) {
+            count++;
+        }
+        return count;
     }
 
     @Override
@@ -47,12 +53,13 @@ public class StandOutCrowdHandler extends ApplyMedalHandler {
         log.info("StandOutCrowdHandler 尝试处理对象 {}", object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(standOutCrowd -> {
             // 截止时间与现在对比，判断是否超额完成，决定是否计数给用户
-            Date date = standOutCrowd.getDeadline();
+            Boolean isAdvance = standOutCrowd.getIsAdvance();
             Integer degree = standOutCrowd.getDegree();
             Long userId = standOutCrowd.getUserId();
-            if(Boolean.TRUE.equals(isStandOut(date, degree))) {
+            int standOutCredit = getStandOutCredit(isAdvance, degree);
+            if(standOutCredit > 0) {
                 UserMedal dbUserMedal = userMedalService.getDbUserMedal(userId, medalId);
-                long credit = Objects.isNull(dbUserMedal) ? 1 : dbUserMedal.getCredit() + 1;
+                long credit = Objects.isNull(dbUserMedal) ? standOutCredit : dbUserMedal.getCredit() + standOutCredit;
                 super.saveMedalEntry(userId, medalId, credit, dbUserMedal, getLevelStrategy);
             }
         });

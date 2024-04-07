@@ -26,6 +26,8 @@ public class StaticMapperConfig implements WebMvcConfigurer {
 
     public static String COMMON_PATH;
 
+    public static String MEDAL_PATH;
+
     /**
      * 配置静态访问资源
      * @param registry
@@ -79,6 +81,11 @@ public class StaticMapperConfig implements WebMvcConfigurer {
     @Value("${media.common}")
     private void setCOMMON_PATH(String commonPath) {
         COMMON_PATH = commonPath;
+    }
+
+    @Value("${media.medal}")
+    private void setMEDAL_PATH(String medalPath) {
+        MEDAL_PATH = medalPath;
     }
 
 }

@@ -7,19 +7,27 @@ import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
+import com.macaku.common.util.thread.pool.IOThreadPool;
 import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.dto.FirstQuadrantDTO;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
+import com.macaku.medal.domain.entry.StayTrueBeginning;
+import com.macaku.medal.domain.po.UserMedal;
+import com.macaku.medal.handler.chain.MedalHandlerChain;
+import com.macaku.medal.service.UserMedalService;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Objects;
 
 /**
  * Created With Intellij IDEA
@@ -35,9 +43,16 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "第一象限")
 public class FirstQuadrantController {
 
+    @Value("${medal.stay-true-beginning.id}")
+    private Long medalId;
+
     private final FirstQuadrantService firstQuadrantService;
 
     private final OkrServiceSelector okrServiceSelector;
+
+    private final UserMedalService userMedalService;
+
+    private final MedalHandlerChain medalHandlerChain;
 
     @PostMapping("/init")
     @ApiOperation("初始化第一项象限")
@@ -56,6 +71,14 @@ public class FirstQuadrantController {
         if(user.getId().equals(userId)) {
             firstQuadrantService.initFirstQuadrant(firstQuadrant);
             log.info("第一象限初始化成功：{}", firstQuadrantDTO);
+            // 启动一个异步线程
+            IOThreadPool.submit(() -> {
+                UserMedal dbUserMedal = userMedalService.getDbUserMedal(userId, medalId);
+                if(Objects.isNull(dbUserMedal)) {
+                    StayTrueBeginning stayTrueBeginning = StayTrueBeginning.builder().userId(userId).coreId(coreId).build();
+                    medalHandlerChain.handle(stayTrueBeginning);
+                }
+            });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }

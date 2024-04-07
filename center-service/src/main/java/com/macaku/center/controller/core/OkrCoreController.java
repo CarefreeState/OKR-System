@@ -8,8 +8,12 @@ import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
+import com.macaku.common.util.thread.pool.IOThreadPool;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
+import com.macaku.medal.domain.entry.HarvestAchievement;
+import com.macaku.medal.domain.entry.StandOutCrowd;
+import com.macaku.medal.handler.chain.MedalHandlerChain;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
@@ -39,6 +43,8 @@ public class OkrCoreController {
     private final OkrCoreService okrCoreService;
 
     private final OkrServiceSelector okrServiceSelector;
+
+    private final MedalHandlerChain medalHandlerChain;
 
     @PostMapping("/create")
     @ApiOperation("创建一个 OKR")
@@ -86,7 +92,6 @@ public class OkrCoreController {
     @ApiOperation("总结 OKR")
     public SystemJsonResponse summaryOKR(@RequestBody OkrCoreSummaryDTO okrCoreSummaryDTO) {
         // 检测
-        // todo: 检查完成度会不会过大（定义一个最大值）
         okrCoreSummaryDTO.validate();
         User user = UserRecordUtil.getUserRecord();
         Long coreId = okrCoreSummaryDTO.getCoreId();
@@ -97,6 +102,13 @@ public class OkrCoreController {
             Integer degree = okrCoreSummaryDTO.getDegree();
             okrCoreService.summaryOKR(coreId, summary, degree);
             log.info("成功为 OKR {} 总结 {} 完成度 {}%", coreId, summary, degree);
+            // 开启一个异步线程
+            IOThreadPool.submit(() -> {
+                HarvestAchievement harvestAchievement = HarvestAchievement.builder().userId(userId).degree(degree).build();
+                medalHandlerChain.handle(harvestAchievement);
+                StandOutCrowd standOutCrowd = StandOutCrowd.builder().userId(userId).degree(degree).build();
+                medalHandlerChain.handle(standOutCrowd);
+            });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }
@@ -115,6 +127,12 @@ public class OkrCoreController {
         if(user.getId().equals(userId)) {
             okrCoreService.complete(coreId);
             log.info("成功结束 OKR {}", coreId);
+            // 开启一个异步线程
+            IOThreadPool.submit(() -> {
+                // 必然是提早完成的
+                StandOutCrowd standOutCrowd = StandOutCrowd.builder().userId(userId).isAdvance(Boolean.TRUE).build();
+                medalHandlerChain.handle(standOutCrowd);
+            });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }

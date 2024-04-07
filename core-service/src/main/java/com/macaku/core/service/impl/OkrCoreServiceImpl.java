@@ -138,6 +138,9 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         if(Boolean.FALSE.equals(okrCore.getIsOver())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_NOT_OVER);
         }
+        if(Objects.nonNull(okrCore.getSummary()) || Objects.nonNull(okrCore.getDegree())) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_SUMMARIZED);
+        }
         // 构造更新对象
         OkrCore updateOkrCore = new OkrCore();
         updateOkrCore.setId(id);

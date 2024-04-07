@@ -4,8 +4,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.Date;
-
 /**
  * Created With Intellij IDEA
  * Description:
@@ -22,6 +20,6 @@ public class StandOutCrowd {
 
     private Integer degree;
 
-    private Date deadline;
+    private Boolean isAdvance;
 
 }

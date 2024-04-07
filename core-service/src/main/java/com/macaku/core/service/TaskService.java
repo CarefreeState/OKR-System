@@ -10,7 +10,7 @@ package com.macaku.core.service;
 
 public interface TaskService {
 
-    boolean match(Integer type);
+    boolean match(Integer option);
 
     Long addTask(Long quadrantId, String content);
 

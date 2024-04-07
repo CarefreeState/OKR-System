@@ -8,10 +8,13 @@ import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
+import com.macaku.common.util.thread.pool.IOThreadPool;
 import com.macaku.core.component.TaskServiceSelector;
 import com.macaku.core.domain.po.inner.dto.TaskDTO;
 import com.macaku.core.domain.po.inner.dto.TaskUpdateDTO;
 import com.macaku.core.service.TaskService;
+import com.macaku.medal.component.TermAchievementServiceSelector;
+import com.macaku.medal.service.TermAchievementService;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
@@ -39,6 +42,8 @@ public class TaskController {
     private final OkrServiceSelector okrServiceSelector;
 
     private final TaskServiceSelector taskServiceSelector;
+
+    private final TermAchievementServiceSelector termAchievementServiceSelector;
 
     @PostMapping("/{option}/add")
     @ApiOperation("增加一条任务")
@@ -109,9 +114,13 @@ public class TaskController {
             String content = taskUpdateDTO.getContent();
             Boolean isCompleted = taskUpdateDTO.getIsCompleted();
             taskService.updateTask(taskId, content, isCompleted);
+            // 开启一个异步线程
+            IOThreadPool.submit(() -> {
+                TermAchievementService termAchievementService = termAchievementServiceSelector.select(option);
+                termAchievementService.issueTermAchievement(userId, isCompleted);
+            });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
-
         }
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }

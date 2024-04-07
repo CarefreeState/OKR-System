@@ -69,6 +69,7 @@ public enum GlobalServiceStatusCode {
 
     OKR_IS_OVER(4100, "OKR 已结束"),
     OKR_IS_NOT_OVER(4101, "OKR 未结束"),
+    OKR_IS_SUMMARIZED(4102, "OKR 已总结"),
 
     INVALID_CELEBRATE_DAY(4200, "庆祝日非法更新"),
     CELEBRATE_DAY_CANNOT_CHANGE(4201, "庆祝日不能修改"),

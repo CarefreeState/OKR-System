@@ -12,7 +12,7 @@ public interface KeyResultService extends IService<KeyResult> {
 
     Long addResultService(KeyResult keyResult);
 
-    void updateProbability(KeyResult keyResult);
+    KeyResult updateProbability(KeyResult keyResult);
 
     Long getFirstQuadrantId(Long id);
 

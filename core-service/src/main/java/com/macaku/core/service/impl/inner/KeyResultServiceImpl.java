@@ -48,13 +48,16 @@ public class KeyResultServiceImpl extends ServiceImpl<KeyResultMapper, KeyResult
     }
 
     @Override
-    public void updateProbability(KeyResult keyResult) {
+    public KeyResult updateProbability(KeyResult keyResult) {
+        Long id = keyResult.getId();
+        KeyResult oldKeyResult = lambdaQuery().eq(KeyResult::getId, id).one();
         // 1. 提取需要更新的数据
         KeyResult updateKeyResult = new KeyResult();
-        updateKeyResult.setId(keyResult.getId());
+        updateKeyResult.setId(id);
         updateKeyResult.setProbability(keyResult.getProbability());
         // 2. 更新
         this.updateById(updateKeyResult);
+        return oldKeyResult;
     }
 
     @Override

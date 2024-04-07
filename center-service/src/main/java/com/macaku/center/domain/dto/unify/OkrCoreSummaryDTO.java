@@ -20,6 +20,8 @@ import java.util.Objects;
 @Data
 public class OkrCoreSummaryDTO {
 
+    private final static Integer MAX_DEGREE = 300;
+
     @ApiModelProperty("场景")
     private String scene;
 
@@ -43,8 +45,8 @@ public class OkrCoreSummaryDTO {
         if(!StringUtils.hasText(summary)) {
             messageBuilder.append("\n-> 总结没有内容");
         }
-        if(Objects.isNull(degree)) {
-            messageBuilder.append("\n-> 没有完成度");
+        if(Objects.isNull(degree) || degree.compareTo(0) < 0 || degree.compareTo(MAX_DEGREE) > 0) {
+            messageBuilder.append("\n-> 完成度非法");
         }
         String message = messageBuilder.toString();
         if(StringUtils.hasLength(message)) {

@@ -42,7 +42,7 @@ public class HarvestAchievementHandler extends ApplyMedalHandler {
         log.info("HarvestAchievementHandler 尝试处理对象 {}", object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(harvestAchievement -> {
             // 将完成度换算成积分给用户
-            Long degree = harvestAchievement.getDegree();
+            Integer degree = harvestAchievement.getDegree();
             Long userId = harvestAchievement.getUserId();
             UserMedal dbUserMedal = userMedalService.getDbUserMedal(userId, medalId);
             long credit = Objects.isNull(dbUserMedal) ? degree : dbUserMedal.getCredit() + degree;

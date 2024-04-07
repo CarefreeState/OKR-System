@@ -76,7 +76,7 @@ public class StayTrueBeginningHandler extends ApplyMedalHandler {
                 Long coreId = stayTrueBeginning.getCoreId();
                 boolean flag = isStayTrueBeginning(coreId);
                 if(Boolean.TRUE.equals(flag)) {
-                    super.saveMedalEntry(userId, medalId, 1L, dbUserMedal, getLevelStrategy);
+                    super.saveMedalEntry(userId, medalId, 1L, null, getLevelStrategy);
                 }
             }
         });
