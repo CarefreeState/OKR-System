@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.macaku.core.mapper.inner.StatusFlagMapper">
+
+    <select id="getStatusFlagsByUserId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        select
+            s.id, s.color, s.label
+        from
+            user u, personal_okr p, okr_core o, fourth_quadrant f, status_flag s
+        where
+            o.is_deleted = 0 and p.is_deleted = 0 and o.is_deleted = 0 and f.is_deleted = 0 and s.is_deleted = 0 and
+            o.is_over = 0 and u.id = p.user_id and o.id = p.core_id and f.core_id = o.id and s.fourth_quadrant_id = f.id and
+            u.id = #{userId, jdbcType=BIGINT}
+    </select>
+
+</mapper>

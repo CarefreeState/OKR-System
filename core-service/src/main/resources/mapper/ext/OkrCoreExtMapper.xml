@@ -35,7 +35,8 @@
         from
             okr_core o, first_quadrant f, second_quadrant s, third_quadrant t
         where
-            o.is_over = 0 and o.id = f.core_id and o.id = s.core_id and o.id = t.core_id
+            o.is_over = 0 and o.id = f.core_id and o.id = s.core_id and o.id = t.core_id and
+            o.is_deleted = 0 and f.is_deleted = 0 and s.is_deleted = 0 and t.is_deleted = 0
     </select>
 
 </mapper>

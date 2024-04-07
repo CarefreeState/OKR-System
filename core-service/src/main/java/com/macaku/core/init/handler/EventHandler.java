@@ -21,7 +21,7 @@ public abstract class EventHandler {
         this.eventHandler = eventHandler;
     }
 
-    public void doNextHandler(DeadlineEvent deadlineEvent, long nowTimestamp) {
+    protected void doNextHandler(DeadlineEvent deadlineEvent, long nowTimestamp) {
         if(Objects.nonNull(eventHandler)) {
             eventHandler.handle(deadlineEvent, nowTimestamp);
         }

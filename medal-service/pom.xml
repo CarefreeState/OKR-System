@@ -7,18 +7,16 @@
         <groupId>com.macaku</groupId>
         <artifactId>okr-system</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>center-service</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>medal-service</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-    
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -40,13 +38,6 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis-plus-boot-starter.version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.github.lalyos</groupId>
-            <artifactId>jfiglet</artifactId>
-            <version>${com.github.lalyos.version}</version>
-        </dependency>
-
         <!--   其他服务     -->
         <dependency>
             <groupId>com.macaku</groupId>
@@ -68,46 +59,6 @@
             <artifactId>core-service</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.macaku</groupId>
-            <artifactId>qrcode-service</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.macaku</groupId>
-            <artifactId>email-service</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.macaku</groupId>
-            <artifactId>medal-service</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
     </dependencies>
-    <build>
-        <finalName>
-            okr-system
-        </finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <classifier>exec</classifier>
-                    <!-- 指定该Main Class为全局的唯一入口 -->
-                    <mainClass>com.macaku.center.CenterApplication</mainClass>
-                    <layout>ZIP</layout>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal><!--可以把依赖的包都打包到生成的Jar包中-->
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
 
 </project>

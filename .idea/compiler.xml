@@ -14,6 +14,7 @@
         <module name="user-service" />
         <module name="core-service" />
         <module name="redis" />
+        <module name="medal-service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -23,6 +24,7 @@
       <module name="common" options="-parameters" />
       <module name="core-service" options="-parameters" />
       <module name="email-service" options="-parameters" />
+      <module name="medal-service" options="-parameters" />
       <module name="okr-system" options="-parameters" />
       <module name="qrcode-service" options="-parameters" />
       <module name="redis" options="-parameters" />

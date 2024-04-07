@@ -1,7 +1,10 @@
 package com.macaku.core.mapper.inner;
 
-import com.macaku.core.domain.po.inner.StatusFlag;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.macaku.core.domain.po.inner.StatusFlag;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author 马拉圈
@@ -10,6 +13,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.macaku.core.domain.po.inner.StatusFlag
 */
 public interface StatusFlagMapper extends BaseMapper<StatusFlag> {
+
+    List<StatusFlag> getStatusFlagsByUserId(@Param("userId") Long userId);
 
 }
 
