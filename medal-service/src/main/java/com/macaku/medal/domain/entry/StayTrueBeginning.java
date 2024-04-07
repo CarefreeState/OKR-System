@@ -2,6 +2,7 @@ package com.macaku.medal.domain.entry;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 /**
  * Created With Intellij IDEA
@@ -11,9 +12,12 @@ import lombok.Getter;
  * Time: 11:55
  */
 @Getter
+@ToString
 @Builder
 public class StayTrueBeginning {
 
     private Long userId;
+
+    private Long coreId;
 
 }

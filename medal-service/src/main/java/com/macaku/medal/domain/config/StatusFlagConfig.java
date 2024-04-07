@@ -5,6 +5,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,12 +25,10 @@ public class StatusFlagConfig {
 
     private Double threshold;
 
-    private Map<String, Long> colorCreditMap;
-
+    private final Map<String, Long> colorCreditMap = new HashMap<>();
 
     @PostConstruct
     public void doPostConstruct() {
-        System.out.println(statusFlagProperties);
         statusFlagProperties.stream().parallel().forEach(statusFlagProperty -> {
             colorCreditMap.put(statusFlagProperty.getColor(), statusFlagProperty.getCredit());
         });

@@ -2,6 +2,7 @@ package com.macaku.medal.domain.entry;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Date;
 
@@ -13,6 +14,7 @@ import java.util.Date;
  * Time: 12:02
  */
 @Getter
+@ToString
 @Builder
 public class StandOutCrowd {
 

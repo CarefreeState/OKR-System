@@ -36,6 +36,12 @@ public class RedisCache {
         return redisTemplate.expire(key, timeout, timeUnit);
     }
 
+    public Boolean isExists(final String key) {
+        Boolean flag = redisTemplate.hasKey(key);
+        log.info("查询 Redis 的键值是否存在\t[{}]-[{}]", key, flag);
+        return flag;
+    }
+
     /**
      * Redis 事务
      * @param runnable 业务代码

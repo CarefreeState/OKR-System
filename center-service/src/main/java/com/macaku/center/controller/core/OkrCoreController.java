@@ -86,6 +86,7 @@ public class OkrCoreController {
     @ApiOperation("总结 OKR")
     public SystemJsonResponse summaryOKR(@RequestBody OkrCoreSummaryDTO okrCoreSummaryDTO) {
         // 检测
+        // todo: 检查完成度会不会过大（定义一个最大值）
         okrCoreSummaryDTO.validate();
         User user = UserRecordUtil.getUserRecord();
         Long coreId = okrCoreSummaryDTO.getCoreId();

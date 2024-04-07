@@ -37,13 +37,10 @@ public abstract class ApplyMedalHandler {
         }
     }
 
-    protected void saveMedalEntry(Long userId, Long medalId, Long credit, Function<Long, Integer> getLevelStrategy) {
+    protected void saveMedalEntry(Long userId, Long medalId, Long credit, UserMedal dbUserMedal, Function<Long, Integer> getLevelStrategy) {
         Integer level = getLevelStrategy.apply(credit);
         // 1. 获取用户的徽章
-        UserMedal userMedal = userMedalService.lambdaQuery()
-                .eq(UserMedal::getUserId, userId)
-                .eq(UserMedal::getMedalId, medalId).one();
-        if(Objects.isNull(userMedal)) {
+        if(Objects.isNull(dbUserMedal)) {
             // 插入新的
             UserMedal medal = new UserMedal();
             medal.setMedalId(medalId);
@@ -51,9 +48,10 @@ public abstract class ApplyMedalHandler {
             medal.setUserId(userId);
             medal.setLevel(level);
             medal.setIssueTime(new Date());
+            log.info("颁布勋章 {} 等级 {} -> 用户 {} ", medalId, level, userId);
             userMedalService.save(medal);
         } else {
-            Integer oldLevel = userMedal.getLevel();
+            Integer oldLevel = dbUserMedal.getLevel();
             // 更新积分，判断是否更新等级，如果更新等级则标记为未读（新的一次颁布）
             UserMedal medal = new UserMedal();
             medal.setCredit(credit);
@@ -61,12 +59,14 @@ public abstract class ApplyMedalHandler {
                 medal.setLevel(level);
                 medal.setIsRead(Boolean.FALSE);
                 medal.setIssueTime(new Date());
+                log.info("颁布勋章 {} 等级 {} -> 用户 {} ", medalId, level, userId);
             }
             userMedalService.lambdaUpdate()
                     .eq(UserMedal::getUserId, userId)
                     .eq(UserMedal::getMedalId, medalId)
                     .update(medal);
         }
+        userMedalService.deleteDbUserMedalCache(userId, medalId);
     }
 
 }

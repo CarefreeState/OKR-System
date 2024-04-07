@@ -4,6 +4,7 @@ import com.macaku.core.domain.po.inner.StatusFlag;
 import com.macaku.core.mapper.inner.StatusFlagMapper;
 import com.macaku.medal.domain.config.StatusFlagConfig;
 import com.macaku.medal.domain.entry.GreatState;
+import com.macaku.medal.domain.po.UserMedal;
 import com.macaku.medal.handler.ApplyMedalHandler;
 import com.macaku.medal.handler.util.MedalEntryUtil;
 import com.macaku.medal.service.UserMedalService;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -37,14 +39,15 @@ public class GreatStateMedalHandler extends ApplyMedalHandler {
 
     private final StatusFlagMapper statusFlagMapper;
 
-    private final StatusFlagConfig statusFlagConfig;
-
     private final UserMedalService userMedalService;
+
+    private final StatusFlagConfig statusFlagConfig;
 
     private final Function<Long, Integer> getLevelStrategy = credit -> MedalEntryUtil.getLevel(credit, coefficient);
 
     @Override
     public void handle(Object object) {
+        log.info("GreatStateMedalHandler 尝试处理对象 {}", object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(greatState -> {
             Long userId = greatState.getUserId();
             // 查看用户当前未完成的个人 OKR 的所有状态指标，算加权平均值
@@ -57,9 +60,12 @@ public class GreatStateMedalHandler extends ApplyMedalHandler {
                     .reduce(Long::sum)
                     .orElse(0L);
             // 判断是否计数
-            double average = (sum * 1.0) / size;
+            double average = size == 0 ? 0 : (sum * 1.0) / size;
+            log.info("用户 {} 状态指标评估： {}", userId, average);
             if (statusFlagConfig.isTouch(average)) {
-                super.saveMedalEntry(userId, medalId, (long) average, getLevelStrategy);
+                UserMedal dbUserMedal = userMedalService.getDbUserMedal(userId, medalId);
+                long credit = Objects.isNull(dbUserMedal) ? 1 : dbUserMedal.getCredit() + 1;
+                super.saveMedalEntry(userId, medalId, credit, dbUserMedal, getLevelStrategy);
             }
         });
         super.doNextHandler(object);
