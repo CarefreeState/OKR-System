@@ -66,8 +66,7 @@ public class MedalEventInitializer implements ApplicationListener<ApplicationSta
         long initialDelay = nextWeekTimestamp - System.currentTimeMillis();
         log.info("最近一次的颁布勋章任务执行时间：{}", TimerUtil.getDateFormat(new Date(nextWeekTimestamp)));
         long period = TimeUnit.DAYS.toMillis(7);
-//        SchedulerThreadPool.scheduleCircle(this::issueGreatStateMedal, initialDelay, period, TimeUnit.MILLISECONDS);
-        SchedulerThreadPool.scheduleCircle(this::issueGreatStateMedal, 0, 10000, TimeUnit.MILLISECONDS);
+        SchedulerThreadPool.scheduleCircle(this::issueGreatStateMedal, initialDelay, period, TimeUnit.MILLISECONDS);
         log.warn("<-- <-- <-- <-- <-- 任务恢复成功 <-- <-- <-- <-- <--");
     }
 

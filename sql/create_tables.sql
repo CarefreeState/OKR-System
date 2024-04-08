@@ -404,3 +404,57 @@ END //
 DELIMITER ;
 
 show tables;
+
+
+-- 创建勋章表
+drop table if exists `medal`;
+create table `medal` (
+     `id` bigint primary key auto_increment comment 'ID',
+     `name` varchar(16) not null comment '称号',
+     `description` varchar(64) not null comment '描述',
+     `url` varchar(128) not null comment '勋章',
+    -- common column
+     `version` int not null default 0 comment '乐观锁',
+     `is_deleted` bit not null default b'0' comment '伪删除标记',
+     `create_time` datetime not null default current_timestamp comment '创建时间',
+     `update_time` datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    -- 索引
+     unique index `uni_id`(`id` asc) using btree
+) comment '勋章表';
+
+delete from medal where 1 = '1';
+insert into medal (`id`, `name`, `description`, `url`) values
+   (1, '初心启程', '第一次成功制定OKR', 'media/medal/medal1.png'),
+   (2, '硕果累累', '目标持续坚持完成', 'media/medal/medal2.png'),
+   (3, '出类拔萃', '目标提早完成或超额完成', 'media/medal/medal3.png'),
+   (4, '胜券在握', '信心指数拉满', 'media/medal/medal4.png'),
+   (5, '短期达标', '短期计划推进卓有成效', 'media/medal/medal5.png'),
+   (6, '长久有成', '中长期计划推进卓有成效', 'media/medal/medal6.png'),
+   (7, '渐入佳境', '本周状态指标良好', 'media/medal/medal7.png')
+;
+
+
+-- 创建用户勋章关联表
+drop table if exists `user_medal`;
+create table `user_medal` (
+    `user_id` bigint not null comment '用户 ID',
+    `medal_id` bigint not null comment '勋章 ID',
+    `credit` bigint not null default 0 comment '积分',
+    `level` int not null default 0 comment '等级',
+    `is_read` bit not null default b'0' comment '是否查看',
+    `issue_time` datetime default null comment '颁布时间',
+    -- common column
+    `version` int not null default 0 comment '乐观锁',
+    `is_deleted` bit not null default b'0' comment '伪删除标记',
+    `create_time` datetime not null default current_timestamp comment '创建时间',
+    `update_time` datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    -- 主键
+    primary key (`user_id`, `medal_id`),
+    -- 外键约束
+    foreign key (`user_id`) references `user`(`id`),
+    foreign key (`medal_id`) references `medal`(`id`),
+    -- 索引
+    unique index `uni_id`(`user_id` asc, `medal_id` asc) using btree
+) comment '用户勋章关联表';
+
+

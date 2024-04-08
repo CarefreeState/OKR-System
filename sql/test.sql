@@ -24,5 +24,6 @@ values
 
 insert into `user` (openid, nickname, email, phone, photo)
 values
+    ('oU0Wz6zNaYneZBbRqTl8Y4aqNM9E', '吴新宇', '', '', 'https://c-ssl.dtstatic.com/uploads/blog/202011/06/20201106170151_ce59a.thumb.400_0.jpeg'),
     ('oU0Wz6z7_ZIpdY92gqpM75BJ58vg', '陈明', '', '', 'https://c-ssl.dtstatic.com/uploads/blog/202009/18/20200918210552_263be.thumb.400_0.jpg')
 ;
