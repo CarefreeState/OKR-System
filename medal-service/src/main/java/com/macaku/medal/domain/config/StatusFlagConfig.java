@@ -52,7 +52,7 @@ public class StatusFlagConfig {
     public double calculateStatusFlag(Long userId) {
         List<StatusFlag> statusFlags = statusFlagMapper.getStatusFlagsByUserId(userId);
         int size = statusFlags.size();
-        long sum =  statusFlags
+        long sum = statusFlags
                 .stream()
                 .parallel()
                 .map(statusFlag -> getCredit(statusFlag.getColor()))

@@ -14,16 +14,14 @@ import com.macaku.core.domain.po.inner.dto.StatusFlagDTO;
 import com.macaku.core.domain.po.inner.dto.StatusFlagUpdateDTO;
 import com.macaku.core.service.inner.StatusFlagService;
 import com.macaku.core.service.quadrant.FourthQuadrantService;
+import com.macaku.medal.domain.config.StatusFlagConfig;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created With Intellij IDEA
@@ -44,6 +42,8 @@ public class StatusFlagController {
     private final OkrServiceSelector okrServiceSelector;
 
     private final FourthQuadrantService fourthQuadrantService;
+
+    private final StatusFlagConfig statusFlagConfig;
 
     @PostMapping("/add")
     @ApiOperation("增加一条状态指标")
@@ -112,7 +112,15 @@ public class StatusFlagController {
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
 
-
-
+    @GetMapping("/check")
+    @ApiOperation("检查当前用户的状态指标")
+    public SystemJsonResponse<Boolean> updateKeyResult() {
+        // 校验
+        Long userId = UserRecordUtil.getUserRecord().getId();
+        double average = statusFlagConfig.calculateStatusFlag(userId);
+        boolean isTouch = statusFlagConfig.isTouch(average);
+        log.info("检查用户 {} 状态指标 {}", userId, isTouch);
+        return SystemJsonResponse.SYSTEM_SUCCESS(isTouch);
+    }
 
 }
