@@ -24,8 +24,9 @@ public class TermAchievementServiceSelector {
 
     public final static Integer ACTION_OPTION = TaskServiceSelector.ACTION_OPTION;
 
+    private final ServiceLoader<TermAchievementService> termAchievementServices = ServiceLoader.load(TermAchievementService.class);
+
     public TermAchievementService select(Integer option) {
-        ServiceLoader<TermAchievementService> termAchievementServices = ServiceLoader.load(TermAchievementService.class);
         // 选取服务
         for (TermAchievementService termAchievementService : termAchievementServices) {
             if (termAchievementService.match(option)) {

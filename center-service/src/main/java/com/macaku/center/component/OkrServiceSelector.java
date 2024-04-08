@@ -23,9 +23,10 @@ public class OkrServiceSelector {
 
     public final static String TEAM_PERSONAL_OKR_SCENE = "scene-tp";
 
+    public final ServiceLoader<OkrOperateService> operateServices = ServiceLoader.load(OkrOperateService.class);
+
     public OkrOperateService select(String scope) {
         // 选取服务
-        ServiceLoader<OkrOperateService> operateServices = ServiceLoader.load(OkrOperateService.class);
         for (OkrOperateService operateService : operateServices) {
             if (operateService.match(scope)) {
                 return operateService;

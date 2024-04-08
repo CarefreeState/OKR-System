@@ -22,13 +22,14 @@ public class InviteQRCodeServiceSelector {
 
     public final static String WX_TYPE = "wx";
 
+    private final ServiceLoader<InviteQRCodeService> inviteQRCodeServices = ServiceLoader.load(InviteQRCodeService.class);
+
     public String getType(String type) {
         return StringUtils.hasText(type) ? type : WX_TYPE;
     }
 
     public InviteQRCodeService select(String type) {
         type = getType(type);
-        ServiceLoader<InviteQRCodeService> inviteQRCodeServices = ServiceLoader.load(InviteQRCodeService.class);
         // 选取服务
         for (InviteQRCodeService inviteQRCodeService : inviteQRCodeServices) {
             if (inviteQRCodeService.match(type)) {

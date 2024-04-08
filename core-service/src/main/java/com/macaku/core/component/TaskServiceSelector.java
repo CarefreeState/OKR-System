@@ -5,7 +5,6 @@ import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.core.service.TaskService;
 import org.springframework.stereotype.Component;
 
-import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
@@ -24,9 +23,10 @@ public class TaskServiceSelector {
 
     public final static Integer ACTION_OPTION = 0;
 
+    private final ServiceLoader<TaskService> taskServices = ServiceLoader.load(TaskService.class);
+
     public TaskService select(Integer option) {
         // 选取服务
-        ServiceLoader<TaskService> taskServices = ServiceLoader.load(TaskService.class);
         for (TaskService taskService : taskServices) {
             if (taskService.match(option)) {
                 return taskService;

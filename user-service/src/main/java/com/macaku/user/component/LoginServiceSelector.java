@@ -5,7 +5,6 @@ import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.user.service.LoginService;
 import org.springframework.stereotype.Component;
 
-import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
@@ -22,9 +21,10 @@ public class LoginServiceSelector {
 
     public static final String EMAIL_LOGIN_TYPE = "EMAIL_JWT"; // Rl0p0r
 
+    private final ServiceLoader<LoginService> loginServices = ServiceLoader.load(LoginService.class);
+
     public LoginService select(String type) {
         // 选取服务
-        ServiceLoader<LoginService> loginServices = ServiceLoader.load(LoginService.class);
         for (LoginService loginService : loginServices) {
             if (loginService.match(type)) {
                 return loginService;

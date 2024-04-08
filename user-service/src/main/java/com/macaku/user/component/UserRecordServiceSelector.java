@@ -5,7 +5,6 @@ import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.user.service.UserRecordService;
 import org.springframework.stereotype.Component;
 
-import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
@@ -22,9 +21,10 @@ public class UserRecordServiceSelector {
 
     public static final String EMAIL_LOGIN_TYPE = LoginServiceSelector.EMAIL_LOGIN_TYPE; // 2CxcDX
 
+    private final ServiceLoader<UserRecordService> userRecordServices = ServiceLoader.load(UserRecordService.class);
+
     public UserRecordService select(String type) {
         // 选取服务
-        ServiceLoader<UserRecordService> userRecordServices = ServiceLoader.load(UserRecordService.class);
         for (UserRecordService userRecordService : userRecordServices) {
             if (userRecordService.match(type)) {
                 return userRecordService;

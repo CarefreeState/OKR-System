@@ -21,9 +21,10 @@ public class EmailServiceSelector {
 
     public final static String EMAIL_BINDING = "email-binding";
 
+    private final ServiceLoader<EmailService> emailServices = ServiceLoader.load(EmailService.class);
+
     public EmailService select(String type) {
         // 选取服务
-        ServiceLoader<EmailService> emailServices = ServiceLoader.load(EmailService.class);
         for (EmailService emailService : emailServices) {
             if (emailService.match(type)) {
                 return emailService;
