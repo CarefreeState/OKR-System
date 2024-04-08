@@ -16,7 +16,7 @@ public interface TaskService {
 
     void removeTask(Long id);
 
-    void updateTask(Long id, String content, Boolean isCompleted);
+    Boolean updateTask(Long id, String content, Boolean isCompleted);
 
     Long getTaskQuadrantId(Long id);
 

@@ -2,6 +2,7 @@ package com.macaku.medal.handler.chain;
 
 import com.macaku.medal.handler.ApplyMedalHandler;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -15,6 +16,7 @@ import java.util.List;
  * Time: 16:03
  */
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class MedalHandlerChain extends ApplyMedalHandler {
 
@@ -39,5 +41,6 @@ public class MedalHandlerChain extends ApplyMedalHandler {
     @Override
     public void handle(Object object) {
         super.doNextHandler(object);
+        log.warn("责任链处理完毕！");
     }
 }

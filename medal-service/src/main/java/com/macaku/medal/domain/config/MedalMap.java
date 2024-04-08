@@ -34,4 +34,8 @@ public class MedalMap {
     public Medal get(Long medalId) {
         return medalMap.get(medalId);
     }
+
+    public boolean containsKey(Long medalId) {
+        return medalMap.containsKey(medalId);
+    }
 }

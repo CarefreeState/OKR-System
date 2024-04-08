@@ -79,7 +79,7 @@ public class SecondQuadrantController {
             log.info("第二象限初始化成功：{}", initQuadrantDTO);
             // 启动一个异步线程
             IOThreadPool.submit(() -> {
-                UserMedal dbUserMedal = userMedalService.getDbUserMedal(userId, medalId);
+                UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
                 if(Objects.isNull(dbUserMedal)) {
                     StayTrueBeginning stayTrueBeginning = StayTrueBeginning.builder().userId(userId).coreId(coreId).build();
                     medalHandlerChain.handle(stayTrueBeginning);

@@ -50,7 +50,7 @@ public class StandOutCrowdHandler extends ApplyMedalHandler {
 
     @Override
     public void handle(Object object) {
-        log.info("{} 尝试处理对象 {}", this.getClass().getName(), object);
+        log.info("{} 尝试处理对象 {}", this.getClass(), object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(standOutCrowd -> {
             // 截止时间与现在对比，判断是否超额完成，决定是否计数给用户
             Boolean isAdvance = standOutCrowd.getIsAdvance();
@@ -58,7 +58,7 @@ public class StandOutCrowdHandler extends ApplyMedalHandler {
             Long userId = standOutCrowd.getUserId();
             int standOutCredit = getStandOutCredit(isAdvance, degree);
             if(standOutCredit > 0) {
-                UserMedal dbUserMedal = userMedalService.getDbUserMedal(userId, medalId);
+                UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
                 long credit = Objects.isNull(dbUserMedal) ? standOutCredit : dbUserMedal.getCredit() + standOutCredit;
                 super.saveMedalEntry(userId, medalId, credit, dbUserMedal, getLevelStrategy);
             }

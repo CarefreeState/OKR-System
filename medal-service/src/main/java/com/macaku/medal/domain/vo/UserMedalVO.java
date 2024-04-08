@@ -17,6 +17,9 @@ import java.util.Date;
 @Data
 public class UserMedalVO {
 
+    @ApiModelProperty("勋章 ID")
+    private Long medalId;
+
     @ApiModelProperty("勋章名称")
     private String name;
 

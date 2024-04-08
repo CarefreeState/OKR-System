@@ -20,4 +20,6 @@ public class ShortTermAchievement {
 
     private Boolean isCompleted;
 
+    private Boolean oldCompleted;
+
 }

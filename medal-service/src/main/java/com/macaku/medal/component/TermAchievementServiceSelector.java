@@ -4,9 +4,10 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.core.component.TaskServiceSelector;
 import com.macaku.medal.service.TermAchievementService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ServiceLoader;
+import java.util.List;
 
 /**
  * Created With Intellij IDEA
@@ -16,6 +17,7 @@ import java.util.ServiceLoader;
  * Time: 18:52
  */
 @Component
+@RequiredArgsConstructor
 public class TermAchievementServiceSelector {
 
     public final static Integer PRIORITY_ONE_OPTION = TaskServiceSelector.PRIORITY_ONE_OPTION;
@@ -24,9 +26,11 @@ public class TermAchievementServiceSelector {
 
     public final static Integer ACTION_OPTION = TaskServiceSelector.ACTION_OPTION;
 
+    public final List<TermAchievementService> termAchievementServices;
+
     public TermAchievementService select(Integer option) {
         // 选取服务
-        ServiceLoader<TermAchievementService> termAchievementServices = ServiceLoader.load(TermAchievementService.class);
+        System.out.println("hello?");
         for (TermAchievementService termAchievementService : termAchievementServices) {
             if (termAchievementService.match(option)) {
                 return termAchievementService;

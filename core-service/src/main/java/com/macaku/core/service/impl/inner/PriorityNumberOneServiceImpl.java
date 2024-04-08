@@ -5,16 +5,17 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.redis.repository.RedisCache;
 import com.macaku.core.component.TaskServiceSelector;
 import com.macaku.core.domain.po.inner.PriorityNumberOne;
 import com.macaku.core.mapper.inner.PriorityNumberOneMapper;
 import com.macaku.core.service.TaskService;
 import com.macaku.core.service.inner.PriorityNumberOneService;
 import com.macaku.core.service.quadrant.SecondQuadrantService;
+import com.macaku.redis.repository.RedisCache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -71,13 +72,16 @@ public class PriorityNumberOneServiceImpl extends ServiceImpl<PriorityNumberOneM
     }
 
     @Override
-    public void updateTask(Long id, String content, Boolean isCompleted) {
+    public Boolean updateTask(Long id, String content, Boolean isCompleted) {
+        Boolean oldCompleted = Optional.ofNullable(priorityNumberOneMapper.selectById(id)).orElseThrow(() ->
+                new GlobalServiceException(GlobalServiceStatusCode.TASK_NOT_EXISTS)).getIsCompleted();
         PriorityNumberOne updatePriorityNumberOne = new PriorityNumberOne();
         updatePriorityNumberOne.setId(id);
         updatePriorityNumberOne.setContent(content);
         updatePriorityNumberOne.setIsCompleted(isCompleted);
         priorityNumberOneMapper.updateById(updatePriorityNumberOne);
-        log.info("成功更新一条P1 {} {} {}", id, content, isCompleted);
+        log.info("成功更新一条 P1 {} {} {}", id, content, isCompleted);
+        return oldCompleted;
     }
 
     @Override

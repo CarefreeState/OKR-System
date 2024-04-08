@@ -30,8 +30,9 @@ public class LongTermAchievementServiceImpl implements TermAchievementService {
     }
 
     @Override
-    public void issueTermAchievement(Long userId, Boolean isCompleted) {
-        LongTermAchievement longTermAchievement = LongTermAchievement.builder().userId(userId).isCompleted(isCompleted).build();
+    public void issueTermAchievement(Long userId, Boolean isCompleted, Boolean oldCompleted) {
+        LongTermAchievement longTermAchievement = LongTermAchievement.builder()
+                .userId(userId).isCompleted(isCompleted).oldCompleted(oldCompleted).build();
         medalHandlerChain.handle(longTermAchievement);
     }
 }

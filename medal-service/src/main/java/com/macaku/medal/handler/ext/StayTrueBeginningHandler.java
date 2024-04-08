@@ -67,11 +67,11 @@ public class StayTrueBeginningHandler extends ApplyMedalHandler {
 
     @Override
     public void handle(Object object) {
-        log.info("{} 尝试处理对象 {}", this.getClass().getName(), object);
+        log.info("{} 尝试处理对象 {}", this.getClass(), object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(stayTrueBeginning -> {
             // 判断是否是第一次指定 OKR
             Long userId = stayTrueBeginning.getUserId();
-            UserMedal dbUserMedal = userMedalService.getDbUserMedal(userId, medalId);
+            UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
             if(Objects.isNull(dbUserMedal)) {
                 Long coreId = stayTrueBeginning.getCoreId();
                 boolean flag = isStayTrueBeginning(coreId);

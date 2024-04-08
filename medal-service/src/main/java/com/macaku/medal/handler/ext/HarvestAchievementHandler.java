@@ -39,12 +39,12 @@ public class HarvestAchievementHandler extends ApplyMedalHandler {
 
     @Override
     public void handle(Object object) {
-        log.info("{} 尝试处理对象 {}", this.getClass().getName(), object);
+        log.info("{} 尝试处理对象 {}", this.getClass(), object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(harvestAchievement -> {
             // 将完成度换算成积分给用户
             Integer degree = harvestAchievement.getDegree();
             Long userId = harvestAchievement.getUserId();
-            UserMedal dbUserMedal = userMedalService.getDbUserMedal(userId, medalId);
+            UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
             long credit = Objects.isNull(dbUserMedal) ? degree : dbUserMedal.getCredit() + degree;
             log.info("用户 {} OKR 完成度积分 {}", userId, credit);
             super.saveMedalEntry(userId, medalId, credit, dbUserMedal, getLevelStrategy);

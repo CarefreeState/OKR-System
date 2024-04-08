@@ -32,8 +32,9 @@ public class ShortTermAchievementServiceImpl implements TermAchievementService {
     }
 
     @Override
-    public void issueTermAchievement(Long userId, Boolean isCompleted) {
-        ShortTermAchievement shortTermAchievement = ShortTermAchievement.builder().userId(userId).isCompleted(isCompleted).build();
+    public void issueTermAchievement(Long userId, Boolean isCompleted, Boolean oldCompleted) {
+        ShortTermAchievement shortTermAchievement = ShortTermAchievement.builder()
+                .userId(userId).isCompleted(isCompleted).oldCompleted(oldCompleted).build();
         medalHandlerChain.handle(shortTermAchievement);
     }
 }

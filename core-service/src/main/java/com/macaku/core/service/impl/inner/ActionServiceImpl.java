@@ -15,6 +15,7 @@ import com.macaku.core.service.quadrant.ThirdQuadrantService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -71,13 +72,15 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
     }
 
     @Override
-    public void updateTask(Long id, String content, Boolean isCompleted) {
+    public Boolean updateTask(Long id, String content, Boolean isCompleted) {
+        Boolean oldCompleted = Optional.ofNullable(actionMapper.selectById(id)).orElse(new Action()).getIsCompleted();
         Action updateAction = new Action();
         updateAction.setId(id);
         updateAction.setContent(content);
         updateAction.setIsCompleted(isCompleted);
         actionMapper.updateById(updateAction);
         log.info("成功更新一条行动 {} {} {}", id, content, isCompleted);
+        return oldCompleted;
     }
 
     @Override

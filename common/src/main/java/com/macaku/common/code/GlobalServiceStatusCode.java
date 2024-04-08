@@ -107,11 +107,11 @@ public enum GlobalServiceStatusCode {
 
     WX_USER_BE_BOUND(7100, "微信用户已被绑定"),
     USER_BOUND_WX(7101, "用户已经绑定了微信"),
-    WX_CODE_NOT_CONSISTENT(7002, "微信验证码不一致"),
-    WX_NOT_EXIST_RECORD(7003, "微信不存在验证记录"),
+    WX_CODE_NOT_CONSISTENT(7102, "微信验证码不一致"),
+    WX_NOT_EXIST_RECORD(7103, "微信不存在验证记录"),
 
-
-
+    /*勋章相关*/
+    MEDAL_NOT_EXISTS(8000, "勋章不存在"),
 
 
 

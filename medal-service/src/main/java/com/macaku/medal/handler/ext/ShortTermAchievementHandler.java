@@ -37,17 +37,29 @@ public class ShortTermAchievementHandler extends ApplyMedalHandler {
 
     private final Function<Long, Integer> getLevelStrategy = credit -> MedalEntryUtil.getLevel(credit, coefficient);
 
+    public int getIncrement(ShortTermAchievement shortTermAchievement) {
+        Boolean isCompleted = shortTermAchievement.getIsCompleted();
+        Boolean oldCompleted = shortTermAchievement.getOldCompleted();
+        if(Boolean.TRUE.equals(oldCompleted)) {
+            return Boolean.TRUE.equals(isCompleted) ? 0 : -1;
+        }else {
+            return Boolean.TRUE.equals(isCompleted) ? 1 : 0;
+        }
+    }
+
     @Override
     public void handle(Object object) {
-        log.info("{} 尝试处理对象 {}", this.getClass().getName(), object);
+        log.info("{} 尝试处理对象 {}", this.getClass(), object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(shortTermAchievement -> {
             // 任务是否完成，决定是否计数给用户
-            Boolean isCompleted = shortTermAchievement.getIsCompleted();
             Long userId = shortTermAchievement.getUserId();
-            UserMedal dbUserMedal = userMedalService.getDbUserMedal(userId, medalId);
+            UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
             long credit = Objects.isNull(dbUserMedal) ? 0 : dbUserMedal.getCredit();
-            credit += Boolean.TRUE.equals(isCompleted) ? 1 : -1;
-            super.saveMedalEntry(userId, medalId, credit, dbUserMedal, getLevelStrategy);
+            int increment = getIncrement(shortTermAchievement);
+            if(increment != 0) {
+                credit += increment;
+                super.saveMedalEntry(userId, medalId, credit, dbUserMedal, getLevelStrategy);
+            }
         });
         super.doNextHandler(object);
     }

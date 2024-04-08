@@ -49,7 +49,7 @@ public class UserMedalController {
     }
 
     @PostMapping("/read/{medalId}")
-    @ApiOperation("获得用户的所有勋章")
+    @ApiOperation("用户知晓获得了新勋章")
     public SystemJsonResponse readUserMedal(@PathVariable("medalId") @NonNull @ApiParam("勋章 ID") Long medalId) {
         Long userId = UserRecordUtil.getUserRecord().getId();
         log.info("用户 {} 查看勋章 {}", userId, medalId);

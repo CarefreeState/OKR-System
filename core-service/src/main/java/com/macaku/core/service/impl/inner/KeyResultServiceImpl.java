@@ -50,7 +50,8 @@ public class KeyResultServiceImpl extends ServiceImpl<KeyResultMapper, KeyResult
     @Override
     public KeyResult updateProbability(KeyResult keyResult) {
         Long id = keyResult.getId();
-        KeyResult oldKeyResult = lambdaQuery().eq(KeyResult::getId, id).one();
+        KeyResult oldKeyResult = lambdaQuery().eq(KeyResult::getId, id).oneOpt().orElseThrow(() ->
+                new GlobalServiceException(GlobalServiceStatusCode.KEY_RESULT_NOT_EXISTS));
         // 1. 提取需要更新的数据
         KeyResult updateKeyResult = new KeyResult();
         updateKeyResult.setId(id);

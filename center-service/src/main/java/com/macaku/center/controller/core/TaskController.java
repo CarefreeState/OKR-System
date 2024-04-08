@@ -113,11 +113,11 @@ public class TaskController {
         if(user.getId().equals(userId)) {
             String content = taskUpdateDTO.getContent();
             Boolean isCompleted = taskUpdateDTO.getIsCompleted();
-            taskService.updateTask(taskId, content, isCompleted);
+            Boolean oldCompleted = taskService.updateTask(taskId, content, isCompleted);
             // 开启一个异步线程
             IOThreadPool.submit(() -> {
                 TermAchievementService termAchievementService = termAchievementServiceSelector.select(option);
-                termAchievementService.issueTermAchievement(userId, isCompleted);
+                termAchievementService.issueTermAchievement(userId, isCompleted, oldCompleted);
             });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);

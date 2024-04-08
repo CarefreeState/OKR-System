@@ -77,7 +77,7 @@ public class ThirdQuadrantController {
             log.info("第三象限初始化成功：{}", initQuadrantDTO);
             // 启动一个异步线程
             IOThreadPool.submit(() -> {
-                UserMedal dbUserMedal = userMedalService.getDbUserMedal(userId, medalId);
+                UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
                 if(Objects.isNull(dbUserMedal)) {
                     StayTrueBeginning stayTrueBeginning = StayTrueBeginning.builder().userId(userId).coreId(coreId).build();
                     medalHandlerChain.handle(stayTrueBeginning);

@@ -52,11 +52,11 @@ public class VictoryWithinGraspHandler extends ApplyMedalHandler {
 
     @Override
     public void handle(Object object) {
-        log.info("{} 尝试处理对象 {}", this.getClass().getName(), object);
+        log.info("{} 尝试处理对象 {}", this.getClass(), object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(victoryWithinGrasp -> {
             // 看看信心指数是否拉满，决定是否计数给用户
             Long userId = victoryWithinGrasp.getUserId();
-            UserMedal dbUserMedal = userMedalService.getDbUserMedal(userId, medalId);
+            UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
             long credit = Objects.isNull(dbUserMedal) ? 0 : dbUserMedal.getCredit();
             int increment = getIncrement(victoryWithinGrasp);
             if(increment != 0) {

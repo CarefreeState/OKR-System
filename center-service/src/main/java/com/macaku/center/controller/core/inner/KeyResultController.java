@@ -14,6 +14,7 @@ import com.macaku.core.domain.po.inner.dto.KeyResultDTO;
 import com.macaku.core.domain.po.inner.dto.KeyResultUpdateDTO;
 import com.macaku.core.service.inner.KeyResultService;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
+import com.macaku.medal.domain.config.StatusFlagConfig;
 import com.macaku.medal.domain.entry.VictoryWithinGrasp;
 import com.macaku.medal.handler.chain.MedalHandlerChain;
 import com.macaku.user.domain.po.User;
@@ -22,12 +23,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Objects;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Created With Intellij IDEA
@@ -51,6 +47,8 @@ public class KeyResultController {
 
     private final MedalHandlerChain medalHandlerChain;
 
+    private final StatusFlagConfig statusFlagConfig;
+
     @PostMapping("/add")
     @ApiOperation("添加关键结果")
     public SystemJsonResponse<Long> addKeyResult(@RequestBody OkrKeyResultDTO okrKeyResultDTO) {
@@ -72,6 +70,14 @@ public class KeyResultController {
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }
+        IOThreadPool.submit(() -> {
+            VictoryWithinGrasp victoryWithinGrasp = VictoryWithinGrasp.builder()
+                    .userId(userId)
+                    .probability(keyResult.getProbability())
+                    .oldProbability(0)
+                    .build();
+            medalHandlerChain.handle(victoryWithinGrasp);
+        });
         return SystemJsonResponse.SYSTEM_SUCCESS(id);
     }
 
@@ -95,18 +101,27 @@ public class KeyResultController {
             KeyResult oldKeyResult = keyResultService.updateProbability(keyResult);
             log.info("提交更新：{}", keyResultUpdateDTO);
             IOThreadPool.submit(() -> {
-                if(Objects.nonNull(oldKeyResult)) {
-                    VictoryWithinGrasp victoryWithinGrasp = VictoryWithinGrasp.builder()
-                            .userId(userId)
-                            .probability(keyResult.getProbability())
-                            .oldProbability(oldKeyResult.getProbability())
-                            .build();
-                    medalHandlerChain.handle(victoryWithinGrasp);
-                }
+                VictoryWithinGrasp victoryWithinGrasp = VictoryWithinGrasp.builder()
+                        .userId(userId)
+                        .probability(keyResult.getProbability())
+                        .oldProbability(oldKeyResult.getProbability())
+                        .build();
+                medalHandlerChain.handle(victoryWithinGrasp);
             });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }
         return SystemJsonResponse.SYSTEM_SUCCESS();
+    }
+
+    @GetMapping("/check")
+    @ApiOperation("检查当前用户的状态指标")
+    public SystemJsonResponse<Boolean> updateKeyResult() {
+        // 校验
+        Long userId = UserRecordUtil.getUserRecord().getId();
+        double average = statusFlagConfig.calculateStatusFlag(userId);
+        boolean isTouch = statusFlagConfig.isTouch(average);
+        log.info("检查用户 {} 状态指标 {}", userId, isTouch);
+        return SystemJsonResponse.SYSTEM_SUCCESS(isTouch);
     }
 }

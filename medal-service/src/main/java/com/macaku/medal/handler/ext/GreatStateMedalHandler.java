@@ -47,23 +47,15 @@ public class GreatStateMedalHandler extends ApplyMedalHandler {
 
     @Override
     public void handle(Object object) {
-        log.info("{} 尝试处理对象 {}", this.getClass().getName(), object);
+        log.info("{} 尝试处理对象 {}", this.getClass(), object);
         MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(greatState -> {
             Long userId = greatState.getUserId();
             // 查看用户当前未完成的个人 OKR 的所有状态指标，算加权平均值
-            List<StatusFlag> statusFlags = statusFlagMapper.getStatusFlagsByUserId(userId);
-            int size = statusFlags.size();
-            long sum = statusFlags
-                    .stream()
-                    .parallel()
-                    .map(statusFlag -> statusFlagConfig.getCredit(statusFlag.getColor()))
-                    .reduce(Long::sum)
-                    .orElse(0L);
+            double average = statusFlagConfig.calculateStatusFlag(userId);
             // 判断是否计数
-            double average = size == 0 ? 0 : (sum * 1.0) / size;
             log.info("用户 {} 状态指标评估： {}", userId, average);
             if (statusFlagConfig.isTouch(average)) {
-                UserMedal dbUserMedal = userMedalService.getDbUserMedal(userId, medalId);
+                UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
                 long credit = Objects.isNull(dbUserMedal) ? 1 : dbUserMedal.getCredit() + 1;
                 super.saveMedalEntry(userId, medalId, credit, dbUserMedal, getLevelStrategy);
             }

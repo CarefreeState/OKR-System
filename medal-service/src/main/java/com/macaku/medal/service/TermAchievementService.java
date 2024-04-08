@@ -11,6 +11,6 @@ public interface TermAchievementService {
 
     boolean match(Integer option);
 
-    void issueTermAchievement(Long userId, Boolean isCompleted);
+    void issueTermAchievement(Long userId, Boolean isCompleted, Boolean oldCompleted);
 
 }
