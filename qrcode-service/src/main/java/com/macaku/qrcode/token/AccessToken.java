@@ -14,7 +14,11 @@ public class AccessToken {
 
     private long expireIn;//有效期限
 
-    volatile private static AccessToken accessToken = null;
+    volatile private static AccessToken ACCESS_TOKEN = null;
+
+    private AccessToken() {
+
+    }
 
     private void setExpireIn(int expireIn) {
         // 设置有效期限的时候的时间戳
@@ -26,22 +30,22 @@ public class AccessToken {
     }
 
     private static void setAccessToken() {
-        if(accessToken == null) {
-            accessToken = new AccessToken();
+        if(ACCESS_TOKEN == null) {
+            ACCESS_TOKEN = new AccessToken();
         }
         Map<String, Object> map = TokenUtil.getAccessTokenMap();
-        accessToken.setToken((String) map.get("access_token"));
-        accessToken.setExpireIn((Integer) map.get("expires_in"));
+        ACCESS_TOKEN.setToken((String) map.get("access_token"));
+        ACCESS_TOKEN.setExpireIn((Integer) map.get("expires_in"));
     }
 
     public static AccessToken getAccessToken() {
-        if(accessToken == null || accessToken.isExpired()) {
+        if(ACCESS_TOKEN == null || ACCESS_TOKEN.isExpired()) {
             synchronized (AccessToken.class) {
-                if(accessToken == null || accessToken.isExpired()) {
+                if(ACCESS_TOKEN == null || ACCESS_TOKEN.isExpired()) {
                     setAccessToken();
                 }
             }
         }
-        return accessToken;
+        return ACCESS_TOKEN;
     }
 }
