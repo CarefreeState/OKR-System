@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="xxl-job-service" />
         <module name="common" />
         <module name="center-service" />
         <module name="qrcode-service" />
@@ -29,6 +30,7 @@
       <module name="qrcode-service" options="-parameters" />
       <module name="redis" options="-parameters" />
       <module name="user-service" options="-parameters" />
+      <module name="xxl-job-service" options="-parameters" />
     </option>
   </component>
 </project>

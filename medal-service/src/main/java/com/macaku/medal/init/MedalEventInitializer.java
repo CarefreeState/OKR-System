@@ -7,10 +7,11 @@ import com.macaku.medal.domain.entry.GreatState;
 import com.macaku.medal.handler.chain.MedalHandlerChain;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.service.UserService;
+import com.macaku.xxljob.executor.annotation.XxlRegister;
+import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -26,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class MedalEventInitializer implements ApplicationListener<ApplicationStartedEvent> {
+public class MedalEventInitializer {
 
     private final MedalHandlerChain medalHandlerChain;
 
@@ -46,6 +47,10 @@ public class MedalEventInitializer implements ApplicationListener<ApplicationSta
         return DateUtil.offsetDay(endOfToday, gapDays).getTime();
     }
 
+    @XxlJob(value = "issueGreatStateMedal")
+    @XxlRegister(cron = "59 23 23 ? * 1 *", executorRouteStrategy = "ROUND",
+            author = "macaku",  triggerStatus = 1,
+            jobDesc = "每周一次的勋章检查")
     public void issueGreatStateMedal() {
         userService.lambdaQuery()
                 .select(User::getId)
@@ -59,7 +64,7 @@ public class MedalEventInitializer implements ApplicationListener<ApplicationSta
         log.info("本周定时颁布勋章任务执行完毕！下次执行将与一周后");
     }
 
-    @Override
+//    @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
         log.warn("--> --> --> 应用启动成功 --> 开始恢复定时颁布勋章任务 --> --> -->");
         long nextWeekTimestamp = getNextWeekTimestamp();

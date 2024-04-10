@@ -17,6 +17,7 @@
         <module>qrcode-service</module>
         <module>email-service</module>
         <module>medal-service</module>
+        <module>xxl-job-service</module>
     </modules>
 
     <parent>
@@ -37,6 +38,7 @@
         <com.github.lalyos.version>0.0.9</com.github.lalyos.version>
         <com.freewayso.version>2.4.1</com.freewayso.version>
         <com.google.zxing.version>3.4.1</com.google.zxing.version>
+        <com.xuxueli.version>2.3.0</com.xuxueli.version>
         <spring-boot-starter-security.version>3.0.4</spring-boot-starter-security.version>
         <guava.version>31.1-jre</guava.version>
         <hutool-all.version>5.8.11</hutool-all.version>

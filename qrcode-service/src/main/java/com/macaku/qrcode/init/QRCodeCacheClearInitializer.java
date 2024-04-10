@@ -4,10 +4,11 @@ import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.common.util.thread.pool.SchedulerThreadPool;
 import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.redis.repository.RedisCache;
+import com.macaku.xxljob.executor.annotation.XxlRegister;
+import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -23,7 +24,7 @@ import java.util.Arrays;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class QRCodeCacheClearInitializer implements ApplicationListener<ApplicationStartedEvent> {
+public class QRCodeCacheClearInitializer  {
 
     private final RedisCache redisCache;
 
@@ -37,7 +38,7 @@ public class QRCodeCacheClearInitializer implements ApplicationListener<Applicat
                 return file.delete();
             });
         });
-        log.warn("本轮清除任务结束，启动下一次清除任务...");
+        log.warn("clearQRCodeCache 本轮清除任务结束，启动下一次清除任务...");
     }
 
     private void clearLoginQRCodeCache(File directory) {
@@ -50,7 +51,7 @@ public class QRCodeCacheClearInitializer implements ApplicationListener<Applicat
                 return file.delete();
             });
         });
-        log.warn("本轮清除任务结束，启动下一次清除任务...");
+        log.warn("clearLoginQRCodeCache 本轮清除任务结束，启动下一次清除任务...");
     }
 
     private void clearQRCodeCacheCycle(File directory) {
@@ -71,7 +72,35 @@ public class QRCodeCacheClearInitializer implements ApplicationListener<Applicat
         }, 0, QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
     }
 
-    @Override
+    @XxlJob(value = "clearLoginQRCodeCache")
+    @XxlRegister(cron = "0 0/1 * * * ? *", executorRouteStrategy = "ROUND",
+            author = "macaku", triggerStatus = 1,
+            jobDesc = "清除登录码的缓存")
+    private void clearLoginQRCodeCache() {
+        // 查看 media/login/ 下的文件
+        String path = StaticMapperConfig.ROOT + StaticMapperConfig.MAP_ROOT + StaticMapperConfig.LOGIN_PATH;
+        File directory = new File(path);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        // 循环检查是否清除缓存
+        clearLoginQRCodeCache(directory);
+    }
+
+    @XxlJob(value = "clearQRCodeCache")
+    @XxlRegister(cron = "0 0/5 * * * ? *", executorRouteStrategy = "ROUND",
+            author = "macaku", triggerStatus = 1,
+            jobDesc = "清除绑定码的缓存")
+    private void clearQRCodeCache() {
+        // 查看 media/binding/ 下的文件
+        String path = StaticMapperConfig.ROOT + StaticMapperConfig.MAP_ROOT + StaticMapperConfig.BINDING_PATH;
+        File directory = new File(path);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        clearQRCodeCache(directory);
+    }
+
     public void onApplicationEvent(ApplicationStartedEvent event) {
         log.warn("--> --> --> 应用启动成功 --> 开始清除微信小程序码的缓存 --> --> -->");
         // 查看 media/binding/ 下的文件
@@ -86,5 +115,6 @@ public class QRCodeCacheClearInitializer implements ApplicationListener<Applicat
         clearLoginQRCodeCacheCycle(directory);
         log.warn("<-- <-- <-- <-- <-- 清除微信小程序码的缓存的任务启动成功 <-- <-- <-- <-- <--");
     }
+
 }
 

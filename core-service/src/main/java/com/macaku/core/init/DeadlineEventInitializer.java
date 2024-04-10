@@ -5,7 +5,9 @@ import com.macaku.core.init.handler.EventHandler;
 import com.macaku.core.init.handler.ext.FirstQuadrantEventHandler;
 import com.macaku.core.init.handler.ext.SecondQuadrantEventHandler;
 import com.macaku.core.init.handler.ext.ThirdQuadrantEventHandler;
+import com.macaku.core.init.util.QuadrantDeadlineUtil;
 import com.macaku.core.mapper.OkrCoreMapper;
+import com.macaku.xxljob.executor.service.JobInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -27,8 +29,9 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
     private final SecondQuadrantEventHandler secondQuadrantEventHandler;
 
     private final ThirdQuadrantEventHandler thirdQuadrantEventHandler;
-
     private EventHandler handlerChain;
+
+    private final JobInfoService jobInfoService;
 
     private EventHandler initHandlerChain() {
         firstQuadrantEventHandler.setNextHandler(secondQuadrantEventHandler);
@@ -49,6 +52,10 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
     @Override
     public void onApplicationEvent(ApplicationStartedEvent event) {
         log.warn("--> --> --> 应用启动成功 --> 开始恢复定时任务 --> --> -->");
+        // 删除之前的任务（有些任务是真的没必要删除，有些任务需要修改，有些任务需要删除，但是判断起来太麻烦了）
+        jobInfoService.removeAll(QuadrantDeadlineUtil.SCHEDULE_COMPLETE);
+        jobInfoService.removeAll(QuadrantDeadlineUtil.SCHEDULE_SECOND_QUADRANT_UPDATE);
+        jobInfoService.removeAll(QuadrantDeadlineUtil.SCHEDULE_THIRD__QUADRANT_UPDATE);
         // 获取定时任务
         List<DeadlineEvent> deadlineEvents = okrCoreMapper.getDeadlineEvents();
         // 处理定时任务

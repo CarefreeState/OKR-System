@@ -154,5 +154,6 @@
             <artifactId>javase</artifactId>
             <version>${com.google.zxing.version}</version>
         </dependency>
+
     </dependencies>
 </project>

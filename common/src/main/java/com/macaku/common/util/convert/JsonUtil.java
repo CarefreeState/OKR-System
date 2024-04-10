@@ -20,4 +20,12 @@ public class JsonUtil {
     public static <T> T analyzeJson(String json, Class<T> clazz) {
         return JSONUtil.toBean(json, clazz);
     }
+
+    public static <T> T analyzeJsonField(String json, String path, Class<T> clazz) {
+        return JSONUtil.parse(json).getByPath(path, clazz);
+    }
+
+    public static Object analyzeJsonField(String json, String path) {
+        return JSONUtil.parse(json).getByPath(path);
+    }
 }
