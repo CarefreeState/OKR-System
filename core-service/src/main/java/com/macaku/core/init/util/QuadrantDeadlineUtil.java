@@ -4,7 +4,6 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.JsonUtil;
-import com.macaku.common.util.thread.pool.CPUThreadPool;
 import com.macaku.common.util.thread.timer.TimerUtil;
 import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.event.quadrant.FirstQuadrantEvent;
@@ -56,19 +55,26 @@ public class QuadrantDeadlineUtil {
         }};
     }
 
-    private static Map<String, Object> getParams(Long id, Long coreId, Integer cycle) {
+    private static Map<String, Object> getParams(Long id, Long coreId, Integer cycle, Date deadline) {
         return new HashMap<String, Object>(){{
             this.put("id", id);
             this.put("coreId", coreId);
             this.put("cycle", cycle);
+            this.put("deadline", deadline);
         }};
     }
 
-    private static void submitJob(String jobDesc, Date deadline, Map<String, Object> params, String handler){
+    private static void submitJob(String jobDesc, Date deadline, String params, String handler){
         XxlJobInfo xxlJobInfo = XxlJobInfo.of(JOB_GROUP_SERVICE.getJobGroupId(), jobDesc, "macaku",
                 CronUtil.getCorn(deadline), handler,
-                "ROUND", 1, JsonUtil.analyzeData(params));
+                "ROUND", 1, params);
         JOB_INFO_SERVICE.addJob(xxlJobInfo);
+    }
+
+    private static XxlJobInfo getJob(String jobDesc, Date deadline, Map<String, Object> params, String handler){
+        return XxlJobInfo.of(JOB_GROUP_SERVICE.getJobGroupId(), jobDesc, "macaku",
+                CronUtil.getCorn(deadline), handler,
+                "ROUND", 1, JsonUtil.analyzeData(params));
     }
 
     @XxlJob(SCHEDULE_COMPLETE)
@@ -88,7 +94,7 @@ public class QuadrantDeadlineUtil {
         Date deadline = firstQuadrantEvent.getDeadline();
         Map<String, Object> params = getParams(coreId, deadline);
         // 发起一个定时任务
-        submitJob("目标完成 " + coreId, deadline, params, SCHEDULE_COMPLETE);
+        submitJob("目标完成 " + coreId, deadline, JsonUtil.analyzeData(params), SCHEDULE_COMPLETE);
         JOB_INFO_SERVICE.removeStopJob(SCHEDULE_THIRD__QUADRANT_UPDATE);
     }
 
@@ -108,12 +114,11 @@ public class QuadrantDeadlineUtil {
     @XxlJob(SCHEDULE_SECOND_QUADRANT_UPDATE)
     public void scheduledUpdateSecondQuadrant() {
         String jobParam = XxlJobHelper.getJobParam();
-        Map<String, Object> params = JsonUtil.analyzeJson(jobParam, Map.class);
-        Long id = (Long) params.get("id");
-        Long coreId = (Long) params.get("coreId");
-        Integer cycle = (Integer) params.get("cycle");
-        final long nextDeadTimestamp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(cycle);
-        Date nextDeadline = new Date(nextDeadTimestamp);
+        Long id = JsonUtil.analyzeJsonField(jobParam, "id", Long.class);
+        Long coreId = JsonUtil.analyzeJsonField(jobParam, "coreId", Long.class);
+        Integer cycle = JsonUtil.analyzeJsonField(jobParam, "cycle", Integer.class);
+        Date deadline = JsonUtil.analyzeJsonField(jobParam, "deadline", Date.class);
+        Date nextDeadline = new Date(deadline.getTime() + TimeUnit.SECONDS.toMillis(cycle));
         try {
             // 如果 OKR 没有结束，更新截止时间，发起新的定时任务
             Boolean isOver = Db.lambdaQuery(OkrCore.class)
@@ -132,11 +137,9 @@ public class QuadrantDeadlineUtil {
                 Db.updateById(secondQuadrant);
                 log.warn("第二象限 {} 截止时间更新 -> {}", id, TimerUtil.getDateFormat(nextDeadline));
                 // 发起一个定时任务
-                CPUThreadPool.submit(() -> {
-                    submitJob("第二象限截止时间刷新  " + id, nextDeadline, params, SCHEDULE_SECOND_QUADRANT_UPDATE);
-                });
+                submitJob("第二象限截止时间刷新  " + id, nextDeadline, JsonUtil.analyzeData(getParams(id, coreId, cycle, nextDeadline)), SCHEDULE_SECOND_QUADRANT_UPDATE);
+                JOB_INFO_SERVICE.removeStopJob(SCHEDULE_SECOND_QUADRANT_UPDATE);
             }
-            JOB_INFO_SERVICE.removeStopJob(SCHEDULE_SECOND_QUADRANT_UPDATE);
         } catch (Exception e) {
             throw new GlobalServiceException(e.getMessage());
         }
@@ -148,9 +151,9 @@ public class QuadrantDeadlineUtil {
         Long id = secondQuadrantEvent.getId();
         Integer cycle = secondQuadrantEvent.getCycle();
         Date deadline = secondQuadrantEvent.getDeadline();
-        Map<String, Object> params = getParams(id, coreId, cycle);
+        Map<String, Object> params = getParams(id, coreId, cycle, deadline);
         // 发起一个定时任务
-        submitJob("第二象限截止时间刷新  " + id, deadline, params, SCHEDULE_SECOND_QUADRANT_UPDATE);
+        submitJob("第二象限截止时间刷新  " + id, deadline, JsonUtil.analyzeData(params), SCHEDULE_SECOND_QUADRANT_UPDATE);
         JOB_INFO_SERVICE.removeStopJob(SCHEDULE_THIRD__QUADRANT_UPDATE);
     }
 
@@ -192,13 +195,13 @@ public class QuadrantDeadlineUtil {
 
     @XxlJob(SCHEDULE_THIRD__QUADRANT_UPDATE)
     public void scheduledUpdateThirdQuadrant() {
+//        long jobId = XxlJobContext.getXxlJobContext().getJobId();
         String jobParam = XxlJobHelper.getJobParam();
-        Map<String, Object> params = JsonUtil.analyzeJson(jobParam, Map.class);
-        Long id = (Long) params.get("id");
-        Long coreId = (Long) params.get("coreId");
-        Integer cycle = (Integer) params.get("cycle");
-        final long nextDeadTimestamp = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(cycle);
-        Date nextDeadline = new Date(nextDeadTimestamp);
+        Long id = JsonUtil.analyzeJsonField(jobParam, "id", Long.class);
+        Long coreId = JsonUtil.analyzeJsonField(jobParam, "coreId", Long.class);
+        Integer cycle = JsonUtil.analyzeJsonField(jobParam, "cycle", Integer.class);
+        Date deadline = JsonUtil.analyzeJsonField(jobParam, "deadline", Date.class);
+        Date nextDeadline = new Date(deadline.getTime() + TimeUnit.SECONDS.toMillis(cycle));
         try {
             // 如果 OKR 没有结束，更新截止时间，发起新的定时任务
             Boolean isOver = Db.lambdaQuery(OkrCore.class)
@@ -217,9 +220,8 @@ public class QuadrantDeadlineUtil {
                 Db.updateById(thirdQuadrant);
                 log.warn("第三象限 {} 截止时间更新 -> {}", id, TimerUtil.getDateFormat(nextDeadline));
                 // 发起一个定时任务
-                CPUThreadPool.submit(() -> {
-                    submitJob("第二象限截止时间刷新  " + id, nextDeadline, params, SCHEDULE_SECOND_QUADRANT_UPDATE);
-                });
+                submitJob("第三象限截止时间刷新  " + id, nextDeadline, JsonUtil.analyzeData(getParams(id, coreId, cycle, nextDeadline)), SCHEDULE_THIRD__QUADRANT_UPDATE);
+                JOB_INFO_SERVICE.removeStopJob(SCHEDULE_THIRD__QUADRANT_UPDATE);
             }
         } catch (Exception e) {
             throw new GlobalServiceException(e.getMessage());
@@ -232,9 +234,9 @@ public class QuadrantDeadlineUtil {
         Long id = thirdQuadrantEvent.getId();
         Integer cycle = thirdQuadrantEvent.getCycle();
         Date deadline = thirdQuadrantEvent.getDeadline();
-        Map<String, Object> params = getParams(id, coreId, cycle);
+        Map<String, Object> params = getParams(id, coreId, cycle, deadline);
         // 发起一个定时任务
-        submitJob("第三象限截止时间刷新  " + id, deadline, params, SCHEDULE_THIRD__QUADRANT_UPDATE);
+        submitJob("第三象限截止时间刷新  " + id, deadline, JsonUtil.analyzeData(params), SCHEDULE_THIRD__QUADRANT_UPDATE);
         JOB_INFO_SERVICE.removeStopJob(SCHEDULE_THIRD__QUADRANT_UPDATE);
     }
 
