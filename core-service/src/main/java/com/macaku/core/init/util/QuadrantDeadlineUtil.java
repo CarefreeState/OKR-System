@@ -73,6 +73,7 @@ public class QuadrantDeadlineUtil {
         updateOkrCore.setIsOver(Boolean.TRUE);
         Db.lambdaUpdate(OkrCore.class).eq(OkrCore::getId, coreId).update(updateOkrCore);
         log.warn("OKR {} 结束！ {}", coreId, TimerUtil.getDateFormat(deadline));
+        JOB_INFO_SERVICE.removeStoppedJob(SCHEDULE_COMPLETE);
     }
 
     public static void scheduledComplete(FirstQuadrantEvent firstQuadrantEvent) {
