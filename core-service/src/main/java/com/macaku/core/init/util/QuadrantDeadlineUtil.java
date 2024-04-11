@@ -80,7 +80,7 @@ public class QuadrantDeadlineUtil {
         Long coreId = firstQuadrantEvent.getCoreId();
         Date deadline = firstQuadrantEvent.getDeadline();
         // 发起一个定时任务
-        submitJob("目标完成 " + coreId, deadline, firstQuadrantEvent, SCHEDULE_COMPLETE);
+        submitJob("【动态任务】目标完成 " + coreId, deadline, firstQuadrantEvent, SCHEDULE_COMPLETE);
     }
 
 //    public static void scheduledComplete(FirstQuadrantEvent firstQuadrantEvent) {
@@ -127,7 +127,7 @@ public class QuadrantDeadlineUtil {
                 Db.updateById(secondQuadrant);
                 log.warn("第二象限 {} 截止时间更新 -> {}", id, TimerUtil.getDateFormat(nextDeadline));
                 // 发起一个定时任务
-                submitJob("第二象限截止时间刷新  " + id, nextDeadline,
+                submitJob("【动态任务】第二象限截止时间刷新  " + id, nextDeadline,
                         secondQuadrantEvent, SCHEDULE_SECOND_QUADRANT_UPDATE);
             }
         } catch (Exception e) {
@@ -140,7 +140,7 @@ public class QuadrantDeadlineUtil {
         Long id = secondQuadrantEvent.getId();
         Date deadline = secondQuadrantEvent.getDeadline();
         // 发起一个定时任务
-        submitJob("第二象限截止时间刷新  " + id, deadline,
+        submitJob("【动态任务】第二象限截止时间刷新  " + id, deadline,
                 secondQuadrantEvent, SCHEDULE_SECOND_QUADRANT_UPDATE);
     }
 
@@ -210,7 +210,7 @@ public class QuadrantDeadlineUtil {
                 Db.updateById(thirdQuadrant);
                 log.warn("第三象限 {} 截止时间更新 -> {}", id, TimerUtil.getDateFormat(nextDeadline));
                 // 发起一个定时任务
-                submitJob("第三象限截止时间刷新  " + id, nextDeadline,
+                submitJob("【动态任务】第三象限截止时间刷新  " + id, nextDeadline,
                         thirdQuadrantEvent, SCHEDULE_THIRD__QUADRANT_UPDATE);
             }
         } catch (Exception e) {
@@ -223,7 +223,7 @@ public class QuadrantDeadlineUtil {
         Long id = thirdQuadrantEvent.getId();
         Date deadline = thirdQuadrantEvent.getDeadline();
         // 发起一个定时任务
-        submitJob("第三象限截止时间刷新  " + id, deadline,
+        submitJob("【动态任务】第三象限截止时间刷新  " + id, deadline,
                 thirdQuadrantEvent, SCHEDULE_THIRD__QUADRANT_UPDATE);
     }
 

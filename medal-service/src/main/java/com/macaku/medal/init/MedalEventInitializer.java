@@ -55,7 +55,7 @@ public class MedalEventInitializer {
 
     @XxlJob(value = "issueGreatStateMedal")
     @XxlRegister(cron = MEDAL_CHECK_CRON, executorRouteStrategy = ROUTE,
-            author = AUTHOR,  triggerStatus = 1, jobDesc = "每周一次的勋章检查")
+            author = AUTHOR,  triggerStatus = 1, jobDesc = "【固定任务】每周一次的勋章检查")
     public void issueGreatStateMedal() {
         userService.lambdaQuery()
                 .select(User::getId)
