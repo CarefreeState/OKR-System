@@ -59,7 +59,7 @@ public class XxlJobAutoRegister implements ApplicationListener<ApplicationReadyE
     }
 
     private void addJobInfo() {
-        XxlJobGroup xxlJobGroup = jobGroupService.getJobGroup().get(0);
+        XxlJobGroup xxlJobGroup = jobGroupService.getJobGroupOne(0);
         String[] beanDefinitionNames = applicationContext.getBeanNamesForType(Object.class, Boolean.FALSE, Boolean.TRUE);
         for (String beanDefinitionName : beanDefinitionNames) {
             Object bean = applicationContext.getBean(beanDefinitionName);

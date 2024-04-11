@@ -8,6 +8,8 @@ public interface JobGroupService {
 
     List<XxlJobGroup> getJobGroup();
 
+    XxlJobGroup getJobGroupOne(int index);
+
     void addJobGroup();
 
     void autoRegisterGroup();
