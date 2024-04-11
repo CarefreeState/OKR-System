@@ -59,7 +59,7 @@ public class QuadrantDeadlineUtil {
     private static <T> void submitJob(String jobDesc, Date deadline, T params, String handler){
         XxlJobInfo xxlJobInfo = getJob(jobDesc, deadline, params, handler);
         JOB_INFO_SERVICE.addJob(xxlJobInfo);
-        JOB_INFO_SERVICE.removeStopJob(handler);
+        JOB_INFO_SERVICE.removeStoppedJob(handler);
     }
 
     @XxlJob(SCHEDULE_COMPLETE)
@@ -116,6 +116,7 @@ public class QuadrantDeadlineUtil {
                     .getIsOver();
             if(Boolean.TRUE.equals(isOver)) {
                 log.warn("OKR {} 已结束，第二象限 {} 停止对截止时间的刷新", coreId, id);
+                JOB_INFO_SERVICE.removeStoppedJob(SCHEDULE_SECOND_QUADRANT_UPDATE);
             }else {
                 // 设置新的截止时间
                 SecondQuadrant secondQuadrant = new SecondQuadrant();
@@ -199,6 +200,7 @@ public class QuadrantDeadlineUtil {
                     .getIsOver();
             if(Boolean.TRUE.equals(isOver)) {
                 log.warn("OKR {} 已结束，第三象限 {} 停止对截止时间的刷新", coreId, id);
+                JOB_INFO_SERVICE.removeStoppedJob(SCHEDULE_THIRD__QUADRANT_UPDATE);
             }else {
                 ThirdQuadrant thirdQuadrant = new ThirdQuadrant();
                 thirdQuadrant.setId(id);

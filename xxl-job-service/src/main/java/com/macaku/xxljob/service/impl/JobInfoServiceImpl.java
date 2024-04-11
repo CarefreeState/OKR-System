@@ -1,19 +1,19 @@
 package com.macaku.xxljob.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.convert.Convert;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.xxljob.config.Admin;
 import com.macaku.xxljob.config.Executor;
 import com.macaku.xxljob.config.XxlUrl;
+import com.macaku.xxljob.cookie.CookieUtil;
 import com.macaku.xxljob.model.XxlJobInfo;
 import com.macaku.xxljob.service.JobInfoService;
-import com.macaku.xxljob.service.JobLoginService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,11 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author : Hydra
- * @date: 2022/9/20 10:36
- * @version: 1.0
- */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -38,8 +33,6 @@ public class JobInfoServiceImpl implements JobInfoService {
 
     private final Executor executor;
 
-    private final JobLoginService jobLoginService;
-
     @Override
     public List<XxlJobInfo> getJobInfo(Integer jobGroupId, String executorHandler) {
         String url = admin.getAddresses() + xxlUrl.getInfoPageList();
@@ -47,7 +40,7 @@ public class JobInfoServiceImpl implements JobInfoService {
                 .form("jobGroup", jobGroupId)
                 .form("executorHandler", executorHandler)
                 .form("triggerStatus", -1)
-                .cookie(jobLoginService.getCookie())
+                .cookie(CookieUtil.getCookie())
                 .execute();
 
         String body = response.body();
@@ -55,25 +48,23 @@ public class JobInfoServiceImpl implements JobInfoService {
         List<XxlJobInfo> list = array.stream()
                 .map(o -> JSONUtil.toBean((JSONObject) o, XxlJobInfo.class))
                 .collect(Collectors.toList());
-
         return list;
     }
 
     @Override
-    public void addJob(XxlJobInfo xxlJobInfo) {
+    public Integer addJob(XxlJobInfo xxlJobInfo) {
         String url = admin.getAddresses() + xxlUrl.getInfoAdd();
         Map<String, Object> paramMap = BeanUtil.beanToMap(xxlJobInfo);
         HttpResponse response = HttpRequest.post(url)
                 .form(paramMap)
-                .cookie(jobLoginService.getCookie())
+                .cookie(CookieUtil.getCookie())
                 .execute();
         String body = response.body();
         Integer code = JsonUtil.analyzeJsonField(body, "code", Integer.class);
         if (code.equals(200)) {
-            Integer jobId = Convert.toInt(JsonUtil.analyzeJsonField(body, "content"));
-
+            return JsonUtil.analyzeJsonField(body, "content", Integer.class);
         }else {
-            throw new RuntimeException("add jobInfo error!");
+            throw new GlobalServiceException("add jobInfo error!");
         }
     }
 
@@ -81,7 +72,7 @@ public class JobInfoServiceImpl implements JobInfoService {
     public void startJob(Integer jobId) {
             HttpRequest.post(admin.getAddresses() + xxlUrl.getInfoStart())
                     .form("id", jobId)
-                    .cookie(jobLoginService.getCookie())
+                    .cookie(CookieUtil.getCookie())
                     .execute();
     }
 
@@ -89,7 +80,7 @@ public class JobInfoServiceImpl implements JobInfoService {
         ids.stream().parallel().forEach(integer -> {
             HttpRequest.post(admin.getAddresses() + xxlUrl.getInfoRemove())
                     .form("id", integer)
-                    .cookie(jobLoginService.getCookie())
+                    .cookie(CookieUtil.getCookie())
                     .execute();
         });
     }
@@ -100,7 +91,7 @@ public class JobInfoServiceImpl implements JobInfoService {
                 .form("executorHandler", executorHandler)
                 .form("title", executor.getTitle())
                 .form("appName", executor.getAppname())
-                .cookie(jobLoginService.getCookie())
+                .cookie(CookieUtil.getCookie())
                 .execute().body();
         List<Object> ids = JsonUtil.analyzeJsonField(body, "content", List.class);
         log.info("删除任务 {}", ids);
@@ -108,12 +99,12 @@ public class JobInfoServiceImpl implements JobInfoService {
     }
 
     @Override
-    public void removeStopJob(String executorHandler) {
+    public void removeStoppedJob(String executorHandler) {
         String body = HttpRequest.post(admin.getAddresses() + xxlUrl.getInfoStopIds())
                 .form("executorHandler", executorHandler)
                 .form("title", executor.getTitle())
                 .form("appName", executor.getAppname())
-                .cookie(jobLoginService.getCookie())
+                .cookie(CookieUtil.getCookie())
                 .execute().body();
         List<Object> ids = JsonUtil.analyzeJsonField(body, "content", List.class);
         log.info("删除任务 {}", ids);

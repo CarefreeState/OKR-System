@@ -8,10 +8,11 @@ public interface JobGroupService {
 
     List<XxlJobGroup> getJobGroup();
 
-    Integer getJobGroupId();
+    void addJobGroup();
 
-    boolean autoRegisterGroup();
+    void autoRegisterGroup();
 
     boolean preciselyCheck();
 
+    Integer getJobGroupId();
 }

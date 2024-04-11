@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * @author : Hydra
- * @date: 2022/9/20 9:57
- * @version: 1.0
+ * 这个类搭配 XxlRegister 使用，是初始化型的 注解
+ * 也就是之后这个注解不会产生啥效果
+ * 但是在初始化的时候可以被扫描并执行相关的业务
  */
 @Component
 @Slf4j
@@ -55,32 +55,19 @@ public class XxlJobAutoRegister implements ApplicationListener<ApplicationReadyE
 
     //自动注册执行器
     private void addJobGroup() {
-        if (jobGroupService.preciselyCheck())
-            return;
-
-        if (jobGroupService.autoRegisterGroup())
-            log.info("auto register xxl-job group success!");
+        jobGroupService.addJobGroup();
     }
 
     private void addJobInfo() {
-        List<XxlJobGroup> jobGroups = jobGroupService.getJobGroup();
-        XxlJobGroup xxlJobGroup = jobGroups.get(0);
-
-        String[] beanDefinitionNames = applicationContext.getBeanNamesForType(Object.class, false, true);
+        XxlJobGroup xxlJobGroup = jobGroupService.getJobGroup().get(0);
+        String[] beanDefinitionNames = applicationContext.getBeanNamesForType(Object.class, Boolean.FALSE, Boolean.TRUE);
         for (String beanDefinitionName : beanDefinitionNames) {
             Object bean = applicationContext.getBean(beanDefinitionName);
-
             Map<Method, XxlJob> annotatedMethods = MethodIntrospector.selectMethods(bean.getClass(),
-                    new MethodIntrospector.MetadataLookup<XxlJob>() {
-                        @Override
-                        public XxlJob inspect(Method method) {
-                            return AnnotatedElementUtils.findMergedAnnotation(method, XxlJob.class);
-                        }
-                    });
+                    (MethodIntrospector.MetadataLookup<XxlJob>) method -> AnnotatedElementUtils.findMergedAnnotation(method, XxlJob.class));
             for (Map.Entry<Method, XxlJob> methodXxlJobEntry : annotatedMethods.entrySet()) {
                 Method executeMethod = methodXxlJobEntry.getKey();
                 XxlJob xxlJob = methodXxlJobEntry.getValue();
-
                 //自动注册
                 if (executeMethod.isAnnotationPresent(XxlRegister.class)) {
                     XxlRegister xxlRegister = executeMethod.getAnnotation(XxlRegister.class);
@@ -93,7 +80,6 @@ public class XxlJobAutoRegister implements ApplicationListener<ApplicationReadyE
                         if (first.isPresent())
                             continue;
                     }
-
                     XxlJobInfo xxlJobInfo = createXxlJobInfo(xxlJobGroup, xxlJob, xxlRegister);
                     jobInfoService.addJob(xxlJobInfo);
                 }
@@ -115,8 +101,8 @@ public class XxlJobAutoRegister implements ApplicationListener<ApplicationReadyE
                 .executorBlockStrategy("SERIAL_EXECUTION")
                 .executorTimeout(0)
                 .executorFailRetryCount(0)
-                .glueRemark("GLUE代码初始化").
-                triggerStatus(xxlRegister.triggerStatus())
+                .glueRemark("GLUE代码初始化")
+                .triggerStatus(xxlRegister.triggerStatus())
                 .build();
     }
 
