@@ -1,4 +1,4 @@
-package com.macaku.xxljob.executor.service;
+package com.macaku.xxljob.service;
 
 public interface JobLoginService {
 

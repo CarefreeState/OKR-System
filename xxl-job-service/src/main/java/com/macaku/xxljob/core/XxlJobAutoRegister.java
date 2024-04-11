@@ -1,10 +1,10 @@
-package com.macaku.xxljob.executor.core;
+package com.macaku.xxljob.core;
 
-import com.macaku.xxljob.executor.annotation.XxlRegister;
-import com.macaku.xxljob.executor.model.XxlJobGroup;
-import com.macaku.xxljob.executor.model.XxlJobInfo;
-import com.macaku.xxljob.executor.service.JobGroupService;
-import com.macaku.xxljob.executor.service.JobInfoService;
+import com.macaku.xxljob.annotation.XxlRegister;
+import com.macaku.xxljob.model.XxlJobGroup;
+import com.macaku.xxljob.model.XxlJobInfo;
+import com.macaku.xxljob.service.JobGroupService;
+import com.macaku.xxljob.service.JobInfoService;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;

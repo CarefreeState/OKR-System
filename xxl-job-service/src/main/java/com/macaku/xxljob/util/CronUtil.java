@@ -1,4 +1,4 @@
-package com.macaku.xxljob.executor.util;
+package com.macaku.xxljob.util;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;

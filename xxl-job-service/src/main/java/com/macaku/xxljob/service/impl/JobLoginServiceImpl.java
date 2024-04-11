@@ -1,10 +1,10 @@
-package com.macaku.xxljob.executor.service.impl;
+package com.macaku.xxljob.service.impl;
 
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import com.macaku.xxljob.config.Admin;
 import com.macaku.xxljob.config.XxlUrl;
-import com.macaku.xxljob.executor.service.JobLoginService;
+import com.macaku.xxljob.service.JobLoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

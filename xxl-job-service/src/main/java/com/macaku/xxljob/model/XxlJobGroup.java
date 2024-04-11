@@ -1,4 +1,4 @@
-package com.macaku.xxljob.executor.model;
+package com.macaku.xxljob.model;
 
 import lombok.*;
 

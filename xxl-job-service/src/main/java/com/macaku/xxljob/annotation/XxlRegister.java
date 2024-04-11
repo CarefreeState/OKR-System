@@ -1,4 +1,4 @@
-package com.macaku.xxljob.executor.annotation;
+package com.macaku.xxljob.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

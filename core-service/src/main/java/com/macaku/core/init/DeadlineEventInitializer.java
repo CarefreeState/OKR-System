@@ -7,7 +7,7 @@ import com.macaku.core.init.handler.ext.SecondQuadrantEventHandler;
 import com.macaku.core.init.handler.ext.ThirdQuadrantEventHandler;
 import com.macaku.core.init.util.QuadrantDeadlineUtil;
 import com.macaku.core.mapper.OkrCoreMapper;
-import com.macaku.xxljob.executor.service.JobInfoService;
+import com.macaku.xxljob.service.JobInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.event.ApplicationStartedEvent;

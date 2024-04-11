@@ -4,7 +4,7 @@ import com.macaku.common.util.media.config.StaticMapperConfig;
 import com.macaku.common.util.thread.pool.SchedulerThreadPool;
 import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.redis.repository.RedisCache;
-import com.macaku.xxljob.executor.annotation.XxlRegister;
+import com.macaku.xxljob.annotation.XxlRegister;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +25,14 @@ import java.util.Arrays;
 @Slf4j
 @RequiredArgsConstructor
 public class QRCodeCacheClearInitializer  {
+
+    private final static String AUTHOR = "macaku";
+
+    private final static String ROUTE = "ROUND";
+
+    private final static String LOGIN_CLEAR_CRON = "0 0/1 * * * ? *";
+
+    private final static String BINDING_CLEAR_CRON = "0 0/5 * * * ? *";
 
     private final RedisCache redisCache;
 
@@ -73,9 +81,8 @@ public class QRCodeCacheClearInitializer  {
     }
 
     @XxlJob(value = "clearLoginQRCodeCache")
-    @XxlRegister(cron = "0 0/1 * * * ? *", executorRouteStrategy = "ROUND",
-            author = "macaku", triggerStatus = 1,
-            jobDesc = "清除登录码的缓存")
+    @XxlRegister(cron = LOGIN_CLEAR_CRON, executorRouteStrategy = ROUTE,
+            author = AUTHOR, triggerStatus = 1, jobDesc = "清除登录码的缓存")
     private void clearLoginQRCodeCache() {
         // 查看 media/login/ 下的文件
         String path = StaticMapperConfig.ROOT + StaticMapperConfig.MAP_ROOT + StaticMapperConfig.LOGIN_PATH;
@@ -88,9 +95,8 @@ public class QRCodeCacheClearInitializer  {
     }
 
     @XxlJob(value = "clearQRCodeCache")
-    @XxlRegister(cron = "0 0/5 * * * ? *", executorRouteStrategy = "ROUND",
-            author = "macaku", triggerStatus = 1,
-            jobDesc = "清除绑定码的缓存")
+    @XxlRegister(cron = BINDING_CLEAR_CRON, executorRouteStrategy = ROUTE,
+            author = AUTHOR, triggerStatus = 1, jobDesc = "清除绑定码的缓存")
     private void clearQRCodeCache() {
         // 查看 media/binding/ 下的文件
         String path = StaticMapperConfig.ROOT + StaticMapperConfig.MAP_ROOT + StaticMapperConfig.BINDING_PATH;

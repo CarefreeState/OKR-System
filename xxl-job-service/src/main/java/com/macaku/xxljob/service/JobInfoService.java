@@ -1,6 +1,6 @@
-package com.macaku.xxljob.executor.service;
+package com.macaku.xxljob.service;
 
-import com.macaku.xxljob.executor.model.XxlJobInfo;
+import com.macaku.xxljob.model.XxlJobInfo;
 
 import java.util.List;
 

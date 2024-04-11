@@ -7,7 +7,7 @@ import com.macaku.medal.domain.entry.GreatState;
 import com.macaku.medal.handler.chain.MedalHandlerChain;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.service.UserService;
-import com.macaku.xxljob.executor.annotation.XxlRegister;
+import com.macaku.xxljob.annotation.XxlRegister;
 import com.xxl.job.core.handler.annotation.XxlJob;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +29,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class MedalEventInitializer {
 
+    private final static String AUTHOR = "macaku";
+
+    private final static String ROUTE = "ROUND";
+
+    private final static String MEDAL_CHECK_CRON = "59 23 23 ? * 1 *";
+
     private final MedalHandlerChain medalHandlerChain;
 
     private final UserService userService;
@@ -48,9 +54,8 @@ public class MedalEventInitializer {
     }
 
     @XxlJob(value = "issueGreatStateMedal")
-    @XxlRegister(cron = "59 23 23 ? * 1 *", executorRouteStrategy = "ROUND",
-            author = "macaku",  triggerStatus = 1,
-            jobDesc = "每周一次的勋章检查")
+    @XxlRegister(cron = MEDAL_CHECK_CRON, executorRouteStrategy = ROUTE,
+            author = AUTHOR,  triggerStatus = 1, jobDesc = "每周一次的勋章检查")
     public void issueGreatStateMedal() {
         userService.lambdaQuery()
                 .select(User::getId)

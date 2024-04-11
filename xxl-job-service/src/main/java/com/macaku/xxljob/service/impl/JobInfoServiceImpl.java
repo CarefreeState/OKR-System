@@ -1,4 +1,4 @@
-package com.macaku.xxljob.executor.service.impl;
+package com.macaku.xxljob.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.convert.Convert;
@@ -11,9 +11,9 @@ import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.xxljob.config.Admin;
 import com.macaku.xxljob.config.Executor;
 import com.macaku.xxljob.config.XxlUrl;
-import com.macaku.xxljob.executor.model.XxlJobInfo;
-import com.macaku.xxljob.executor.service.JobInfoService;
-import com.macaku.xxljob.executor.service.JobLoginService;
+import com.macaku.xxljob.model.XxlJobInfo;
+import com.macaku.xxljob.service.JobInfoService;
+import com.macaku.xxljob.service.JobLoginService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
