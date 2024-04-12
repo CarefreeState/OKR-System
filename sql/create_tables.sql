@@ -584,3 +584,39 @@ select
 from xxl_job_group g, xxl_job_info i
 where i.executor_handler = '' and  g.title = 'Exe-Titl' and g.app_name = 'xxl-job-executor-sample' and g.id = i.job_group
 # ;
+
+
+-- 关闭外键检查
+SET @@FOREIGN_KEY_CHECKS = 0;
+
+-- 创建勋章表
+drop table if exists `medal`;
+create table `medal` (
+    `id` bigint primary key auto_increment comment 'ID',
+    `name` varchar(16) not null comment '称号',
+    `description` varchar(64) not null comment '描述',
+    `url` varchar(128) not null comment '勋章',
+    `grey_url` varchar(128) not null comment '灰色勋章',
+    -- common column
+    `version` int not null default 0 comment '乐观锁',
+    `is_deleted` bit not null default b'0' comment '伪删除标记',
+    `create_time` datetime not null default current_timestamp comment '创建时间',
+    `update_time` datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    -- 索引
+    unique index `uni_id`(`id` asc) using btree
+) comment '勋章表';
+
+delete from medal where 1 = '1';
+insert into medal (`id`, `name`, `description`, `url`, `grey_url`) values
+       (1, '初心启程', '第一次成功制定OKR', 'media/medal/medal1.png', 'media/medal/grey_medal1.png'),
+       (2, '硕果累累', '目标持续坚持完成', 'media/medal/medal2.png', 'media/medal/grey_medal2.png'),
+       (3, '出类拔萃', '目标提早完成或超额完成', 'media/medal/medal3.png', 'media/medal/grey_medal3.png'),
+       (4, '胜券在握', '信心指数拉满', 'media/medal/medal4.png', 'media/medal/grey_medal4.png'),
+       (5, '短期达标', '短期计划推进卓有成效', 'media/medal/medal5.png', 'media/medal/grey_medal5.png'),
+       (6, '长久有成', '中长期计划推进卓有成效', 'media/medal/medal6.png', 'media/medal/grey_medal6.png'),
+       (7, '渐入佳境', '本周状态指标良好', 'media/medal/medal7.png', 'media/medal/grey_medal7.png')
+;
+
+-- 开启外键检查
+SET @@FOREIGN_KEY_CHECKS = 1;
+

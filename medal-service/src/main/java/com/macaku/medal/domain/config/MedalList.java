@@ -30,7 +30,9 @@ public class MedalList {
 
     @PostConstruct
     public void doPostConstruct() {
-        medalService.lambdaQuery().list().stream().forEach(medalList::add);
+        medalService.lambdaQuery().list().stream()
+                .sorted(Comparator.comparing(Medal::getId))
+                .forEach(medalList::add);
     }
 
     public Medal get(int index) {
