@@ -1,5 +1,6 @@
 package com.macaku.core.init;
 
+import com.macaku.common.util.thread.pool.CPUThreadPool;
 import com.macaku.core.domain.po.event.DeadlineEvent;
 import com.macaku.core.init.handler.EventHandler;
 import com.macaku.core.init.handler.ext.FirstQuadrantEventHandler;
@@ -53,9 +54,7 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
         // 获取定时任务
         List<DeadlineEvent> deadlineEvents = okrCoreMapper.getDeadlineEvents();
         // 处理定时任务
-        deadlineEvents.stream()
-                .parallel()
-                .forEach(this::handleEvent);
+        CPUThreadPool.operateBatch(deadlineEvents, this::handleEvent);
         log.warn("<-- <-- <-- <-- <-- 定时任务恢复成功 <-- <-- <-- <-- <--");
     }
 }

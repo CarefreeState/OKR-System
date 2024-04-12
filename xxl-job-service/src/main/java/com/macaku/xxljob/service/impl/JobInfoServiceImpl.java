@@ -8,6 +8,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.JsonUtil;
+import com.macaku.common.util.thread.pool.CPUThreadPool;
 import com.macaku.xxljob.config.Admin;
 import com.macaku.xxljob.config.Executor;
 import com.macaku.xxljob.config.XxlUrl;
@@ -77,10 +78,12 @@ public class JobInfoServiceImpl implements JobInfoService {
     }
 
     private void remove(List<Object> ids) {
-        ids.stream().parallel().forEach(integer -> {
-            HttpRequest.post(admin.getAddresses() + xxlUrl.getInfoRemove())
-                    .form("id", integer)
-                    .cookie(CookieUtil.getCookie())
+        String url = admin.getAddresses() + xxlUrl.getInfoRemove();
+        String cookie = CookieUtil.getCookie();
+        CPUThreadPool.operateBatch(ids, object -> {
+            HttpRequest.post(url)
+                    .form("id", object)
+                    .cookie(cookie)
                     .execute();
         });
     }

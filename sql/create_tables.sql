@@ -583,8 +583,7 @@ select
     i.id
 from xxl_job_group g, xxl_job_info i
 where i.executor_handler = '' and  g.title = 'Exe-Titl' and g.app_name = 'xxl-job-executor-sample' and g.id = i.job_group
-# ;
-
+;
 
 -- 关闭外键检查
 SET @@FOREIGN_KEY_CHECKS = 0;
@@ -608,7 +607,7 @@ create table `medal` (
 
 delete from medal where 1 = '1';
 insert into medal (`id`, `name`, `description`, `url`, `grey_url`) values
-       (1, '初心启程', '第一次成功制定OKR', 'media/medal/medal1.png', 'media/medal/grey_medal1.png'),
+       (1, '初心启航', '第一次成功制定OKR', 'media/medal/medal1.png', 'media/medal/grey_medal1.png'),
        (2, '硕果累累', '目标持续坚持完成', 'media/medal/medal2.png', 'media/medal/grey_medal2.png'),
        (3, '出类拔萃', '目标提早完成或超额完成', 'media/medal/medal3.png', 'media/medal/grey_medal3.png'),
        (4, '胜券在握', '信心指数拉满', 'media/medal/medal4.png', 'media/medal/grey_medal4.png'),

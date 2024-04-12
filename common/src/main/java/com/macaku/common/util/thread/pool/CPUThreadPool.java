@@ -1,7 +1,13 @@
 package com.macaku.common.util.thread.pool;
 
+import com.macaku.common.exception.GlobalServiceException;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 
 /**
  * Created With Intellij IDEA
@@ -10,6 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * Date: 2024-03-31
  * Time: 18:39
  */
+@Slf4j
 public class CPUThreadPool {
 
     private static final AtomicLong THEAD_ID = new AtomicLong(1);
@@ -36,6 +43,8 @@ public class CPUThreadPool {
 
     private static final TimeUnit AWAIT_TIMEUNIT = TimeUnit.SECONDS;
 
+    private static final int DEFAULT_TASK_NUMBER = 30;
+
     static {
         THREAD_POOL = new ThreadPoolExecutor(
                 CORE_POOL_SIZE,
@@ -57,6 +66,46 @@ public class CPUThreadPool {
 
     public static void submit(Runnable runnable) {
         THREAD_POOL.submit(runnable);
+    }
+
+    public static <T> void operateBatch(List<T> dataList, Consumer<T> consumer) {
+        if(Objects.isNull(dataList)) {
+            return;
+        }
+        int size = dataList.size();
+        if(size == 0) {
+            return;
+        }
+        // 计算多少个线程，每个线程多少个任务
+        int taskNumber = DEFAULT_TASK_NUMBER;
+        int threadNumber = size / taskNumber;
+        while (taskNumber * threadNumber < size) {
+            threadNumber++;
+        }
+        if(threadNumber > CORE_POOL_SIZE) {
+            threadNumber = CORE_POOL_SIZE;
+            taskNumber = size / threadNumber;
+        }
+        while (taskNumber * threadNumber < size) {
+            taskNumber++;
+        }
+        log.info("启动 {} 个线程池，每个线程池处理 {} 个任务", threadNumber, taskNumber);
+        CountDownLatch latch = new CountDownLatch(threadNumber);
+        for (int i = 0; i < size; i += taskNumber) {
+            final int from = i;
+            final int to = Math.min(i + taskNumber, size);
+            submit(() -> {
+                log.info("分段操作 [{}, {})", from, to);
+                dataList.subList(from, to).forEach(consumer);
+                latch.countDown();
+            });
+        }
+        try {
+            latch.await();
+            log.info("分段批量操作执行完毕");
+        } catch (InterruptedException e) {
+            throw new GlobalServiceException(e.getMessage());
+        }
     }
 
     public static void shutdown() {

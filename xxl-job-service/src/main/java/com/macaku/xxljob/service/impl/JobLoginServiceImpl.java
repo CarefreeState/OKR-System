@@ -18,7 +18,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JobLoginServiceImpl implements JobLoginService {
 
-
     private final Admin admin;
 
     private final XxlUrl xxlUrl;
