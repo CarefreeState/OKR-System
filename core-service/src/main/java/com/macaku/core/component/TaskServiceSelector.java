@@ -3,6 +3,7 @@ package com.macaku.core.component;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.core.service.TaskService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.ServiceLoader;
@@ -15,6 +16,7 @@ import java.util.ServiceLoader;
  * Time: 18:52
  */
 @Component
+@RequiredArgsConstructor
 public class TaskServiceSelector {
 
     public final static Integer PRIORITY_ONE_OPTION = 1;
@@ -34,6 +36,5 @@ public class TaskServiceSelector {
         }
         throw new GlobalServiceException(GlobalServiceStatusCode.PARAM_TYPE_ERROR);
     }
-
 
 }

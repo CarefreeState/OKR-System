@@ -35,7 +35,6 @@ public class UserMedalController {
     public SystemJsonResponse<List<UserMedalVO>> getAll() {
         Long userId = UserRecordUtil.getUserRecord().getId();
         List<UserMedalVO> result = userMedalService.getUserMedalListAll(userId);
-        log.info("查询用户 {} 的所有勋章 : {} 个", userId, result.size());
         return SystemJsonResponse.SYSTEM_SUCCESS(result);
     }
 

@@ -12,6 +12,7 @@ spring:
 #    multipart: # 上传文件不限大小
 #      max-file-size: -1
 #      max-request-size: -1
+#      file-size-threshold: 80
 
 # 日志配置
 logging:

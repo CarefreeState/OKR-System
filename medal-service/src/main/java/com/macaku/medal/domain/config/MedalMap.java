@@ -20,7 +20,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class MedalMap {
 
-    private Map<Long, Medal> medalMap = new HashMap<>();
+    private final Map<Long, Medal> medalMap = new HashMap<>();
 
     private final MedalService medalService;
 

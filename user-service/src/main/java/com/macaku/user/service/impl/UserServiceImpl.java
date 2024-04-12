@@ -6,6 +6,7 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.thread.pool.IOThreadPool;
 import com.macaku.redis.repository.RedisCache;
+import com.macaku.redis.repository.RedisLock;
 import com.macaku.user.util.ExtractUtil;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.convert.JwtUtil;
@@ -22,6 +23,7 @@ import com.macaku.user.mapper.UserMapper;
 import com.macaku.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -45,6 +47,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     private final static String USERID_OPENID_MAP = "useridOpenidMap:";
 
+    private final static String USER_PHOTO_LOCK = "userPhotoLock:";
+
     private final static Long EMAIL_USER_TTL = 2L;
 
     private final static Long WX_USER_TTL = 2L;
@@ -57,11 +61,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     private final static TimeUnit USERID_OPENID_UNIT = TimeUnit.HOURS;
 
+    @Value("${spring.redisson.timeout}")
+    private Long timeout; // 秒
+
     private final RedisCache redisCache;
 
     private final EmailServiceSelector emailServiceSelector;
 
     private final WxBindingQRCodeService wxBindingQRCodeService;
+
+    private final RedisLock redisLock;
 
     @Override
     public String getUserFlag(String code) {
@@ -189,12 +198,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         log.info("用户 {} 成功绑定 微信 {}", userId, openid);
     }
 
-    @Override
-    public String tryUploadPhoto(byte[] photoData, Long userId, String originPhoto) {
-        // 检查是否是图片
-        if (!MediaUtil.isImage(photoData)) {
-            throw new GlobalServiceException(String.format("用户 %d 上传非法文件", userId), GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
-        }
+    private String uploadPhoto(byte[] photoData, Long userId, String originPhoto) {
         // 删除原头像（哪怕是字符串是网络路径/非法，只要本地没有完全对应上，就不算存在本地）
         String originSavePath = MediaUtil.getLocalFilePath(originPhoto);
         IOThreadPool.submit(() -> {
@@ -208,6 +212,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .eq(User::getId, userId)
                 .update();
         return mapPath;
+    }
+
+    @Override
+    public String tryUploadPhoto(byte[] photoData, Long userId, String originPhoto) {
+        // 检查是否是图片
+        if (!MediaUtil.isImage(photoData)) {
+            throw new GlobalServiceException(String.format("用户 %d 上传非法文件", userId), GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
+        }
+        String lock = USER_PHOTO_LOCK + userId;
+        return redisLock.tryLockDoSomething(lock, 0L, timeout, TimeUnit.SECONDS, () -> uploadPhoto(photoData, userId, originPhoto), () -> {
+            throw new GlobalServiceException(GlobalServiceStatusCode.REDIS_LOCK_FAIL);
+        });
     }
 
     @Override
