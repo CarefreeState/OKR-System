@@ -131,13 +131,15 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
     }
 
     @Override
-    public void summaryOKR(Long id, String summary, Integer degree) {
+    public Date summaryOKR(Long id, String summary, Integer degree) {
         OkrCore okrCore = this.lambdaQuery()
                 .eq(OkrCore::getId, id)
                 .one();
         if(Boolean.FALSE.equals(okrCore.getIsOver())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_NOT_OVER);
         }
+        // 根据业务，这必然是结束时间
+        Date endTime = okrCore.getUpdateTime();
         if(Objects.nonNull(okrCore.getSummary()) || Objects.nonNull(okrCore.getDegree())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_SUMMARIZED);
         }
@@ -148,6 +150,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         updateOkrCore.setDegree(degree);
         // 更新
         this.lambdaUpdate().eq(OkrCore::getId, id).update(updateOkrCore);
+        return endTime;
     }
 
     @Override

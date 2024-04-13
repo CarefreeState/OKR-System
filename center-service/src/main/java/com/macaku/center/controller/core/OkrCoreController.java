@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -100,13 +101,17 @@ public class OkrCoreController {
         if(user.getId().equals(userId)) {
             String summary = okrCoreSummaryDTO.getSummary();
             Integer degree = okrCoreSummaryDTO.getDegree();
-            okrCoreService.summaryOKR(coreId, summary, degree);
+            Date endTime = okrCoreService.summaryOKR(coreId, summary, degree);
             log.info("成功为 OKR {} 总结 {} 完成度 {}%", coreId, summary, degree);
             // 开启一个异步线程
             IOThreadPool.submit(() -> {
                 HarvestAchievement harvestAchievement = HarvestAchievement.builder().userId(userId).degree(degree).build();
                 medalHandlerChain.handle(harvestAchievement);
-                StandOutCrowd standOutCrowd = StandOutCrowd.builder().userId(userId).degree(degree).build();
+                StandOutCrowd standOutCrowd = StandOutCrowd.builder()
+                        .userId(userId)
+                        .degree(degree)
+                        .isAdvance(endTime.compareTo(new Date()) < 0)
+                        .build();
                 medalHandlerChain.handle(standOutCrowd);
             });
         }else {
@@ -127,12 +132,6 @@ public class OkrCoreController {
         if(user.getId().equals(userId)) {
             okrCoreService.complete(coreId);
             log.info("成功结束 OKR {}", coreId);
-            // 开启一个异步线程
-            IOThreadPool.submit(() -> {
-                // 必然是提早完成的
-                StandOutCrowd standOutCrowd = StandOutCrowd.builder().userId(userId).isAdvance(Boolean.TRUE).build();
-                medalHandlerChain.handle(standOutCrowd);
-            });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }

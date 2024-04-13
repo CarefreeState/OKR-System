@@ -5,6 +5,8 @@ import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 /**
 * @author 马拉圈
 * @description 针对表【okr_core(OKR 内核表)】的数据库操作Service
@@ -19,7 +21,7 @@ public interface OkrCoreService extends IService<OkrCore> {
 
     void confirmCelebrateDate(Long id, Integer celebrateDay);
 
-    void summaryOKR(Long id, String summary, Integer degree);
+    Date summaryOKR(Long id, String summary, Integer degree);
 
     void complete(Long id);
 

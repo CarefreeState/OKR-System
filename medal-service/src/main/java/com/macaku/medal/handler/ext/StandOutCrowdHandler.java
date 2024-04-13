@@ -27,6 +27,10 @@ public class StandOutCrowdHandler extends ApplyMedalHandler {
 
     private final static Class<StandOutCrowd> MEDAL_ENTRY = StandOutCrowd.class;
 
+    private final static Integer COMMON_DEGREE_THRESHOLD = 79;
+
+    private final static Integer EXCELLENT_DEGREE_THRESHOLD = 100;
+
     @Value("${medal.stand-out-crowd.id}")
     private Long medalId;
 
@@ -39,10 +43,10 @@ public class StandOutCrowdHandler extends ApplyMedalHandler {
 
     private int getStandOutCredit(Boolean isAdvance, Integer degree) {
         int count = 0;
-        if(Objects.nonNull(isAdvance) && Boolean.TRUE.equals(isAdvance)) {
+        if(Objects.nonNull(isAdvance) && Boolean.TRUE.equals(isAdvance) && degree.compareTo(COMMON_DEGREE_THRESHOLD) > 0) {
             count++;
         }
-        if(Objects.nonNull(degree) && degree.compareTo(100) > 0) {
+        if(Objects.nonNull(degree) && degree.compareTo(EXCELLENT_DEGREE_THRESHOLD) > 0) {
             count++;
         }
         return count;
