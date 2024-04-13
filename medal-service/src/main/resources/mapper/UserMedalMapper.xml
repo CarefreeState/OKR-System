@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.macaku.medal.mapper.UserMedalMapper">
+
+    <resultMap id="BaseResultMap" type="com.macaku.medal.domain.po.UserMedal">
+            <result property="userId" column="user_id" jdbcType="BIGINT"/>
+            <result property="medalId" column="medal_id" jdbcType="BIGINT"/>
+            <result property="credit" column="credit" jdbcType="BIGINT"/>
+            <result property="level" column="level" jdbcType="INTEGER"/>
+            <result property="isRead" column="is_read" jdbcType="BIT"/>
+            <result property="issueTime" column="issue_time" jdbcType="TIMESTAMP"/>
+            <result property="version" column="version" jdbcType="INTEGER"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="BIT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        user_id,medal_id,credit,
+        level,is_read,issue_time,version,
+        is_deleted,create_time,update_time
+    </sql>
+</mapper>
