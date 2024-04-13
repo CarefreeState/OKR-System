@@ -6,27 +6,20 @@ import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
-import com.macaku.common.util.thread.pool.IOThreadPool;
+import com.macaku.common.util.thread.local.ThreadLocalUtil;
 import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.core.service.quadrant.ThirdQuadrantService;
-import com.macaku.medal.domain.entry.StayTrueBeginning;
-import com.macaku.medal.domain.po.UserMedal;
-import com.macaku.medal.handler.chain.MedalHandlerChain;
-import com.macaku.medal.service.UserMedalService;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Objects;
 
 /**
  * Created With Intellij IDEA
@@ -42,18 +35,11 @@ import java.util.Objects;
 @Api(tags = "第三象限")
 public class ThirdQuadrantController {
 
-    @Value("${medal.stay-true-beginning.id}")
-    private Long medalId;
-
     private final ThirdQuadrantService thirdQuadrantService;
 
     private final OkrServiceSelector okrServiceSelector;
 
     private final OkrCoreService okrCoreService;
-
-    private final UserMedalService userMedalService;
-
-    private final MedalHandlerChain medalHandlerChain;
 
     @PostMapping("/init")
     @ApiOperation("初始化第三象限")
@@ -75,14 +61,7 @@ public class ThirdQuadrantController {
             okrCoreService.checkThirdCycle(coreId, quadrantCycle);
             thirdQuadrantService.initThirdQuadrant(initQuadrantDTO);
             log.info("第三象限初始化成功：{}", initQuadrantDTO);
-            // 启动一个异步线程
-            IOThreadPool.submit(() -> {
-                UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
-                if(Objects.isNull(dbUserMedal)) {
-                    StayTrueBeginning stayTrueBeginning = StayTrueBeginning.builder().userId(userId).coreId(coreId).build();
-                    medalHandlerChain.handle(stayTrueBeginning);
-                }
-            });
+            ThreadLocalUtil.set(coreId.toString());
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }

@@ -6,13 +6,9 @@ import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
-import com.macaku.common.util.thread.pool.IOThreadPool;
+import com.macaku.common.util.thread.local.ThreadLocalUtil;
 import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
 import com.macaku.core.service.quadrant.SecondQuadrantService;
-import com.macaku.medal.domain.entry.StayTrueBeginning;
-import com.macaku.medal.domain.po.UserMedal;
-import com.macaku.medal.handler.chain.MedalHandlerChain;
-import com.macaku.medal.service.UserMedalService;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
@@ -24,8 +20,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Objects;
 
 /**
  * Created With Intellij IDEA
@@ -44,16 +38,9 @@ public class SecondQuadrantController {
     @Value("${limit.time.second}")
     private Integer secondQuadrantCycle;
 
-    @Value("${medal.stay-true-beginning.id}")
-    private Long medalId;
-
     private final SecondQuadrantService secondQuadrantService;
 
     private final OkrServiceSelector okrServiceSelector;
-
-    private final UserMedalService userMedalService;
-
-    private final MedalHandlerChain medalHandlerChain;
 
     @PostMapping("/init")
     @ApiOperation("初始化第二象限")
@@ -77,14 +64,7 @@ public class SecondQuadrantController {
         if(user.getId().equals(userId)) {
             secondQuadrantService.initSecondQuadrant(initQuadrantDTO);
             log.info("第二象限初始化成功：{}", initQuadrantDTO);
-            // 启动一个异步线程
-            IOThreadPool.submit(() -> {
-                UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
-                if(Objects.isNull(dbUserMedal)) {
-                    StayTrueBeginning stayTrueBeginning = StayTrueBeginning.builder().userId(userId).coreId(coreId).build();
-                    medalHandlerChain.handle(stayTrueBeginning);
-                }
-            });
+            ThreadLocalUtil.set(coreId.toString());
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }

@@ -89,7 +89,7 @@ public class CPUThreadPool {
         while (taskNumber * threadNumber < size) {
             taskNumber++;
         }
-        log.info("启动 {} 个线程池，每个线程池处理 {} 个任务", threadNumber, taskNumber);
+        log.info("启动 {} 个线程，每个线程处理 {} 个任务", threadNumber, taskNumber);
         CountDownLatch latch = new CountDownLatch(threadNumber);
         for (int i = 0; i < size; i += taskNumber) {
             final int from = i;
