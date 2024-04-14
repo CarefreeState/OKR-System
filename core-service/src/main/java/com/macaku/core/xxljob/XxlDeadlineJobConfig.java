@@ -39,6 +39,8 @@ public class XxlDeadlineJobConfig {
 
     private final static String ROUTE = "ROUND";
 
+    private final static int TRIGGER_STATUS = 1;
+
     public final static String SCHEDULE_COMPLETE = "scheduledComplete";
 
     public final static String SCHEDULE_SECOND_QUADRANT_UPDATE = "scheduledQuadrantUpdate2";
@@ -59,7 +61,7 @@ public class XxlDeadlineJobConfig {
     public <T> XxlJobInfo getJob(String jobDesc, Date deadline, T params, String handler){
         return XxlJobInfo.of(jobGroupService.getJobGroupId(), jobDesc, AUTHOR,
                 CronUtil.getCorn(deadline), handler,
-                ROUTE, 1, JsonUtil.analyzeData(params));
+                ROUTE, TRIGGER_STATUS, JsonUtil.analyzeData(params));
     }
 
     public <T> void submitJob(String jobDesc, Date deadline, T params, String handler){

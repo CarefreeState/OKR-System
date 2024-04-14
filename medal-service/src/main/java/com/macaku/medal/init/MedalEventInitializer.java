@@ -33,6 +33,8 @@ public class MedalEventInitializer {
 
     private final static String ROUTE = "ROUND";
 
+    private final static int TRIGGER_STATUS = 1;
+
     private final static String MEDAL_CHECK_CRON = "59 23 23 ? * 1 *";
 
     private final MedalHandlerChain medalHandlerChain;
@@ -55,7 +57,7 @@ public class MedalEventInitializer {
 
     @XxlJob(value = "issueGreatStateMedal")
     @XxlRegister(cron = MEDAL_CHECK_CRON, executorRouteStrategy = ROUTE,
-            author = AUTHOR,  triggerStatus = 1, jobDesc = "【固定任务】每周一次的勋章检查")
+            author = AUTHOR,  triggerStatus = TRIGGER_STATUS, jobDesc = "【固定任务】每周一次的勋章检查")
     public void issueGreatStateMedal() {
         userService.lambdaQuery()
                 .select(User::getId)

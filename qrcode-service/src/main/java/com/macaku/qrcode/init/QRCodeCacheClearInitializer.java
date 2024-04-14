@@ -32,7 +32,12 @@ public class QRCodeCacheClearInitializer  {
 
     private final static String LOGIN_CLEAR_CRON = "0 0/1 * * * ? *";
 
+    private final static int LOGIN_CLEAR_TRIGGER_STATUS = 0;
+
     private final static String BINDING_CLEAR_CRON = "0 0/5 * * * ? *";
+
+
+    private final static int BINDING_CLEAR_TRIGGER_STATUS = 0;
 
     private final RedisCache redisCache;
 
@@ -82,7 +87,7 @@ public class QRCodeCacheClearInitializer  {
 
     @XxlJob(value = "clearLoginQRCodeCache")
     @XxlRegister(cron = LOGIN_CLEAR_CRON, executorRouteStrategy = ROUTE,
-            author = AUTHOR, triggerStatus = 1, jobDesc = "【固定任务】清除登录码的缓存")
+            author = AUTHOR, triggerStatus = LOGIN_CLEAR_TRIGGER_STATUS, jobDesc = "【固定任务】清除登录码的缓存")
     private void clearLoginQRCodeCache() {
         // 查看 media/login/ 下的文件
         String path = StaticMapperConfig.ROOT + StaticMapperConfig.MAP_ROOT + StaticMapperConfig.LOGIN_PATH;
@@ -96,7 +101,7 @@ public class QRCodeCacheClearInitializer  {
 
     @XxlJob(value = "clearQRCodeCache")
     @XxlRegister(cron = BINDING_CLEAR_CRON, executorRouteStrategy = ROUTE,
-            author = AUTHOR, triggerStatus = 1, jobDesc = "【固定任务】清除绑定码的缓存")
+            author = AUTHOR, triggerStatus = BINDING_CLEAR_TRIGGER_STATUS, jobDesc = "【固定任务】清除绑定码的缓存")
     private void clearQRCodeCache() {
         // 查看 media/binding/ 下的文件
         String path = StaticMapperConfig.ROOT + StaticMapperConfig.MAP_ROOT + StaticMapperConfig.BINDING_PATH;
