@@ -71,10 +71,10 @@ public class JobInfoServiceImpl implements JobInfoService {
 
     @Override
     public void startJob(Integer jobId) {
-            HttpRequest.post(admin.getAddresses() + xxlUrl.getInfoStart())
-                    .form("id", jobId)
-                    .cookie(CookieUtil.getCookie())
-                    .execute();
+        HttpRequest.post(admin.getAddresses() + xxlUrl.getInfoStart())
+                .form("id", jobId)
+                .cookie(CookieUtil.getCookie())
+                .execute();
     }
 
     private void remove(List<Object> ids) {

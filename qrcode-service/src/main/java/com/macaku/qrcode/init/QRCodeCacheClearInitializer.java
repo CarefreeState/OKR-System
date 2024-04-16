@@ -36,7 +36,6 @@ public class QRCodeCacheClearInitializer  {
 
     private final static String BINDING_CLEAR_CRON = "0 0/5 * * * ? *";
 
-
     private final static int BINDING_CLEAR_TRIGGER_STATUS = 0;
 
     private final RedisCache redisCache;

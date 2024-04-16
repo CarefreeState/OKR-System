@@ -103,10 +103,10 @@ public class XxlDeadlineJobConfig {
                     .select(OkrCore::getIsOver)
                     .one()
                     .getIsOver();
-            if(Boolean.TRUE.equals(isOver)) {
+            if (Boolean.TRUE.equals(isOver)) {
                 log.warn("OKR {} 已结束，第二象限 {} 停止对截止时间的刷新", coreId, id);
                 jobInfoService.removeStoppedJob(SCHEDULE_SECOND_QUADRANT_UPDATE);
-            }else {
+            } else {
                 // 设置新的截止时间
                 SecondQuadrant secondQuadrant = new SecondQuadrant();
                 secondQuadrant.setId(id);
