@@ -37,7 +37,7 @@ public class LoginServiceEmailImpl implements LoginService {
 
     private final static String DEFAULT_NICKNAME = "邮箱用户";
 
-    private final static String DEFAULT_PHOTO = "https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0";
+    private final static String DEFAULT_PHOTO = "media/static/default.png";
 
     private final UserService userService = SpringUtil.getBean(UserService.class);
 
