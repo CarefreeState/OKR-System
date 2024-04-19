@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
  * Time: 23:15
  */
 @Slf4j
-@Service
 public class ShortTermAchievementServiceImpl implements TermAchievementService {
 
     private final static Integer OPTION1 = TermAchievementServiceSelector.PRIORITY_ONE_OPTION;

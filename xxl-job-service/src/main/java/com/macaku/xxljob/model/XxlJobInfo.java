@@ -45,13 +45,13 @@ public class XxlJobInfo {
 	private long triggerNextTime;	// 下次调度时间
 
 	public static XxlJobInfo of(Integer groupId, String jobDesc,
-								String author, String cron, String value,
+								String author, String value,
 								String executorRouteStrategy, Integer triggerStatus,
 								String executorParam) {
 		return builder()
-				.scheduleType("CRON")
 				.glueType("BEAN")
 				.misfireStrategy("DO_NOTHING")
+				.executorRouteStrategy("FIRST")
 				.executorBlockStrategy("SERIAL_EXECUTION")
 				.executorTimeout(0)
 				.executorFailRetryCount(0)
@@ -60,10 +60,29 @@ public class XxlJobInfo {
 				.jobGroup(groupId)
 				.jobDesc(jobDesc)
 				.author(author)
-				.scheduleConf(cron)
 				.executorHandler(value)
 				.executorRouteStrategy(executorRouteStrategy)
 				.triggerStatus(triggerStatus).build();
+	}
+
+	public static XxlJobInfo of(Integer groupId, String jobDesc,
+								String author, String cron, String value,
+								String executorRouteStrategy, Integer triggerStatus,
+								String executorParam) {
+		XxlJobInfo xxlJobInfo = of(groupId, jobDesc, author, value, executorRouteStrategy, triggerStatus, executorParam);
+		xxlJobInfo.setScheduleType("CRON");
+		xxlJobInfo.setScheduleConf(cron);
+		return xxlJobInfo;
+	}
+
+	public static XxlJobInfo of(Integer groupId, String jobDesc,
+								String author, Integer cycle, String value,
+								String executorRouteStrategy, Integer triggerStatus,
+								String executorParam) {
+		XxlJobInfo xxlJobInfo = of(groupId, jobDesc, author, value, executorRouteStrategy, triggerStatus, executorParam);
+		xxlJobInfo.setScheduleType("FIX-RATE");
+		xxlJobInfo.setScheduleConf(String.valueOf(cycle));
+		return xxlJobInfo;
 	}
 
 	public static XxlJobInfoBuilder builder() {

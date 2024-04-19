@@ -59,14 +59,20 @@ public class XxlDeadlineJobConfig {
     }
 
     public <T> XxlJobInfo getJob(String jobDesc, Date deadline, T params, String handler){
-        return XxlJobInfo.of(jobGroupService.getJobGroupId(), jobDesc, AUTHOR,
-                CronUtil.getCorn(deadline), handler,
-                ROUTE, TRIGGER_STATUS, JsonUtil.analyzeData(params));
+        return XxlJobInfo.of(jobGroupService.getJobGroupId(), jobDesc, AUTHOR, CronUtil.getCorn(deadline),
+                handler, ROUTE, TRIGGER_STATUS, JsonUtil.analyzeData(params));
     }
 
     public <T> void submitJob(String jobDesc, Date deadline, T params, String handler){
         XxlJobInfo xxlJobInfo = getJob(jobDesc, deadline, params, handler);
         jobInfoService.addJob(xxlJobInfo);
+        jobInfoService.removeStoppedJob(handler);
+    }
+
+    public <T> void updateJob(long jobId, String jobDesc, Date deadline, T params, String handler){
+        XxlJobInfo xxlJobInfo = getJob(jobDesc, deadline, params, handler);
+        xxlJobInfo.setId((int) jobId);
+        jobInfoService.updateJob(xxlJobInfo);
         jobInfoService.removeStoppedJob(handler);
     }
 
@@ -86,7 +92,7 @@ public class XxlDeadlineJobConfig {
 
     @XxlJob(SCHEDULE_SECOND_QUADRANT_UPDATE)
     public void scheduledUpdateSecondQuadrant() {
-//        long jobId = XxlJobContext.getXxlJobContext().getJobId();
+        long jobId = XxlJobHelper.getJobId();
         String jobParam = XxlJobHelper.getJobParam();
         SecondQuadrantEvent secondQuadrantEvent = JsonUtil.analyzeJson(jobParam, SecondQuadrantEvent.class);
         Long id = secondQuadrantEvent.getId();
@@ -125,7 +131,7 @@ public class XxlDeadlineJobConfig {
 
     @XxlJob(SCHEDULE_THIRD__QUADRANT_UPDATE)
     public void scheduledUpdateThirdQuadrant() {
-//        long jobId = XxlJobContext.getXxlJobContext().getJobId();
+        long jobId = XxlJobHelper.getJobId();
         String jobParam = XxlJobHelper.getJobParam();
         ThirdQuadrantEvent thirdQuadrantEvent = JsonUtil.analyzeJson(jobParam, ThirdQuadrantEvent.class);
         Long id = thirdQuadrantEvent.getId();

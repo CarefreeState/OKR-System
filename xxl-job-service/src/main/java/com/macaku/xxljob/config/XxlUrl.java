@@ -29,4 +29,9 @@ public class XxlUrl {
     private String infoStopIds;
 
     private String infoRemove;
+
+    private String infoStop;
+
+    private String infoUpdate;
+
 }

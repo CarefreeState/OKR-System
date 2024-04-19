@@ -11,8 +11,7 @@ import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.common.util.thread.pool.IOThreadPool;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
-import com.macaku.medal.domain.entry.HarvestAchievement;
-import com.macaku.medal.domain.entry.StandOutCrowd;
+import com.macaku.medal.domain.entry.OkrFinish;
 import com.macaku.medal.handler.chain.MedalHandlerChain;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
@@ -105,14 +104,12 @@ public class OkrCoreController {
             log.info("成功为 OKR {} 总结 {} 完成度 {}%", coreId, summary, degree);
             // 开启一个异步线程
             IOThreadPool.submit(() -> {
-                HarvestAchievement harvestAchievement = HarvestAchievement.builder().userId(userId).degree(degree).build();
-                medalHandlerChain.handle(harvestAchievement);
-                StandOutCrowd standOutCrowd = StandOutCrowd.builder()
+                OkrFinish okrFinish = OkrFinish.builder()
                         .userId(userId)
                         .degree(degree)
                         .isAdvance(endTime.compareTo(new Date()) < 0)
                         .build();
-                medalHandlerChain.handle(standOutCrowd);
+                medalHandlerChain.handle(okrFinish);
             });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);

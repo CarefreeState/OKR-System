@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
  * Time: 23:14
  */
 @Slf4j
-@Service
 public class LongTermAchievementServiceImpl implements TermAchievementService {
 
     private final static Integer OPTION = TermAchievementServiceSelector.ACTION_OPTION;

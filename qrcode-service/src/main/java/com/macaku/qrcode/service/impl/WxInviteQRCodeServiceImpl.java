@@ -12,7 +12,6 @@ import com.macaku.qrcode.domain.config.WxInviteQRCode;
 import com.macaku.qrcode.service.InviteQRCodeService;
 import com.macaku.qrcode.util.QRCodeUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.util.Map;
@@ -25,7 +24,6 @@ import java.util.Objects;
  * Date: 2024-01-29
  * Time: 0:42
  */
-@Service
 @Slf4j
 public class WxInviteQRCodeServiceImpl implements InviteQRCodeService {
 

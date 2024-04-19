@@ -2,17 +2,16 @@ package com.macaku.user.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
-import com.macaku.redis.repository.RedisCache;
-import com.macaku.user.util.ExtractUtil;
 import com.macaku.common.util.convert.JwtUtil;
 import com.macaku.common.util.convert.ShortCodeUtil;
+import com.macaku.redis.repository.RedisCache;
 import com.macaku.user.component.UserRecordServiceSelector;
 import com.macaku.user.domain.dto.detail.LoginUser;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.service.UserRecordService;
 import com.macaku.user.service.UserService;
+import com.macaku.user.util.ExtractUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
@@ -25,9 +24,9 @@ import java.util.Optional;
  * Date: 2024-01-24
  * Time: 19:04
  */
-@Service
 @Slf4j
 public class WxUserRecordServiceImpl implements UserRecordService {
+
     private final static String TYPE = UserRecordServiceSelector.WX_LOGIN_TYPE;
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);

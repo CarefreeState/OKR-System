@@ -74,7 +74,8 @@
             <id>prod</id>
             <properties>
                 <profiles.active>prod</profiles.active>
-                <logging.level>error</logging.level>
+                <logging.level>warn</logging.level>
+<!--                <logging.level>error</logging.level>-->
             </properties>
             <activation>
                 <activeByDefault>true</activeByDefault>

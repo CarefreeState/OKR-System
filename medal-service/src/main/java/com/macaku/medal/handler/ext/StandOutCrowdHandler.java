@@ -1,6 +1,6 @@
 package com.macaku.medal.handler.ext;
 
-import com.macaku.medal.domain.entry.StandOutCrowd;
+import com.macaku.medal.domain.entry.OkrFinish;
 import com.macaku.medal.domain.po.UserMedal;
 import com.macaku.medal.handler.ApplyMedalHandler;
 import com.macaku.medal.handler.util.MedalEntryUtil;
@@ -25,7 +25,7 @@ import java.util.function.Function;
 @Slf4j
 public class StandOutCrowdHandler extends ApplyMedalHandler {
 
-    private final static Class<StandOutCrowd> MEDAL_ENTRY = StandOutCrowd.class;
+    private final static Class<OkrFinish> MEDAL_ENTRY = OkrFinish.class;
 
     private final static Integer COMMON_DEGREE_THRESHOLD = 79;
 
@@ -55,11 +55,11 @@ public class StandOutCrowdHandler extends ApplyMedalHandler {
     @Override
     public void handle(Object object) {
         log.info("{} 尝试处理对象 {}", this.getClass(), object);
-        MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(standOutCrowd -> {
+        MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(okrFinish -> {
             // 截止时间与现在对比，判断是否超额完成，决定是否计数给用户
-            Boolean isAdvance = standOutCrowd.getIsAdvance();
-            Integer degree = standOutCrowd.getDegree();
-            Long userId = standOutCrowd.getUserId();
+            Long userId = okrFinish.getUserId();
+            Integer degree = okrFinish.getDegree();
+            Boolean isAdvance = okrFinish.getIsAdvance();
             int standOutCredit = getStandOutCredit(isAdvance, degree);
             if(standOutCredit > 0) {
                 UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);

@@ -1,6 +1,6 @@
 package com.macaku.medal.handler.ext;
 
-import com.macaku.medal.domain.entry.HarvestAchievement;
+import com.macaku.medal.domain.entry.OkrFinish;
 import com.macaku.medal.domain.po.UserMedal;
 import com.macaku.medal.handler.ApplyMedalHandler;
 import com.macaku.medal.handler.util.MedalEntryUtil;
@@ -25,7 +25,7 @@ import java.util.function.Function;
 @Slf4j
 public class HarvestAchievementHandler extends ApplyMedalHandler {
 
-    private final static Class<HarvestAchievement> MEDAL_ENTRY = HarvestAchievement.class;
+    private final static Class<OkrFinish> MEDAL_ENTRY = OkrFinish.class;
 
     @Value("${medal.harvest-achievement.id}")
     private Long medalId;
@@ -40,10 +40,10 @@ public class HarvestAchievementHandler extends ApplyMedalHandler {
     @Override
     public void handle(Object object) {
         log.info("{} 尝试处理对象 {}", this.getClass(), object);
-        MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(harvestAchievement -> {
+        MedalEntryUtil.getMedalEntry(object, MEDAL_ENTRY).ifPresent(okrFinish -> {
             // 将完成度换算成积分给用户
-            Integer degree = harvestAchievement.getDegree();
-            Long userId = harvestAchievement.getUserId();
+            Integer degree = okrFinish.getDegree();
+            Long userId = okrFinish.getUserId();
             UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
             long credit = Objects.isNull(dbUserMedal) ? degree : dbUserMedal.getCredit() + degree;
             log.info("用户 {} OKR 完成度积分 {}", userId, credit);

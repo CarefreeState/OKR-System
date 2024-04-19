@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Slf4j
-@Service
 public class EmailServiceLoginImpl implements EmailService {
 
     private static final String TYPE = EmailServiceSelector.EMAIL_LOGIN;

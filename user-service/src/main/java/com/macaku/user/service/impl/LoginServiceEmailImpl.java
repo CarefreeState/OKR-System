@@ -3,7 +3,6 @@ package com.macaku.user.service.impl;
 import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.user.util.ExtractUtil;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.convert.JwtUtil;
 import com.macaku.common.util.convert.ShortCodeUtil;
@@ -14,8 +13,8 @@ import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.service.LoginService;
 import com.macaku.user.service.UserService;
+import com.macaku.user.util.ExtractUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -29,7 +28,6 @@ import java.util.Objects;
  * Date: 2024-01-24
  * Time: 13:18
  */
-@Service
 @Slf4j
 public class LoginServiceEmailImpl implements LoginService {
 

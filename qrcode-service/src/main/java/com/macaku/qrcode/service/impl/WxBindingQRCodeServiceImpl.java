@@ -3,7 +3,6 @@ package com.macaku.qrcode.service.impl;
 import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.redis.repository.RedisCache;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.media.config.StaticMapperConfig;
@@ -11,6 +10,7 @@ import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.qrcode.domain.config.WxBindingQRCode;
 import com.macaku.qrcode.service.WxBindingQRCodeService;
 import com.macaku.qrcode.util.QRCodeUtil;
+import com.macaku.redis.repository.RedisCache;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

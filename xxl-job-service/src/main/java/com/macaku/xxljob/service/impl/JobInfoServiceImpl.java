@@ -54,6 +54,7 @@ public class JobInfoServiceImpl implements JobInfoService {
 
     @Override
     public Integer addJob(XxlJobInfo xxlJobInfo) {
+        log.warn("提交任务 {}", xxlJobInfo);
         String url = admin.getAddresses() + xxlUrl.getInfoAdd();
         Map<String, Object> paramMap = BeanUtil.beanToMap(xxlJobInfo);
         HttpResponse response = HttpRequest.post(url)
@@ -71,7 +72,26 @@ public class JobInfoServiceImpl implements JobInfoService {
 
     @Override
     public void startJob(Integer jobId) {
+        log.warn("开始任务 {}", jobId);
         HttpRequest.post(admin.getAddresses() + xxlUrl.getInfoStart())
+                .form("id", jobId)
+                .cookie(CookieUtil.getCookie())
+                .execute();
+    }
+
+    @Override
+    public void updateJob(XxlJobInfo xxlJobInfo) {
+        log.warn("更新任务 {}", xxlJobInfo);
+        HttpRequest.post(admin.getAddresses() + xxlUrl.getInfoUpdate())
+                .form(BeanUtil.beanToMap(xxlJobInfo))
+                .cookie(CookieUtil.getCookie())
+                .execute();
+    }
+
+    @Override
+    public void stopJob(Integer jobId) {
+        log.warn("停止任务 {}", jobId);
+        HttpRequest.post(admin.getAddresses() + xxlUrl.getInfoStop())
                 .form("id", jobId)
                 .cookie(CookieUtil.getCookie())
                 .execute();
