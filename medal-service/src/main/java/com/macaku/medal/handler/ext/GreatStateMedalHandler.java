@@ -1,8 +1,6 @@
 package com.macaku.medal.handler.ext;
 
-import com.macaku.core.domain.po.inner.StatusFlag;
-import com.macaku.core.mapper.inner.StatusFlagMapper;
-import com.macaku.medal.domain.config.StatusFlagConfig;
+import com.macaku.core.domain.config.StatusFlagConfig;
 import com.macaku.medal.domain.entry.GreatState;
 import com.macaku.medal.domain.po.UserMedal;
 import com.macaku.medal.handler.ApplyMedalHandler;
@@ -13,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -36,8 +33,6 @@ public class GreatStateMedalHandler extends ApplyMedalHandler {
 
     @Value("${medal.great-state.coefficient}")
     private Integer coefficient;
-
-    private final StatusFlagMapper statusFlagMapper;
 
     private final UserMedalService userMedalService;
 

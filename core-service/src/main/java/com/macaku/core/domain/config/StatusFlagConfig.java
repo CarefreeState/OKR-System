@@ -1,4 +1,4 @@
-package com.macaku.medal.domain.config;
+package com.macaku.core.domain.config;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.core.domain.po.inner.StatusFlag;
@@ -49,8 +49,10 @@ public class StatusFlagConfig {
         return average >= threshold;
     }
 
-    public double calculateStatusFlag(Long userId) {
-        List<StatusFlag> statusFlags = statusFlagMapper.getStatusFlagsByUserId(userId);
+    public double calculateStatusFlag(List<StatusFlag> statusFlags) {
+        if(Objects.isNull(statusFlags)) {
+            return 0d;
+        }
         int size = statusFlags.size();
         long sum = statusFlags
                 .stream()
@@ -59,6 +61,16 @@ public class StatusFlagConfig {
                 .reduce(Long::sum)
                 .orElse(0L);
         return size == 0 ? 0 : (sum * 1.0) / size;
+    }
+
+    public double calculateStatusFlag(Long userId) {
+        List<StatusFlag> statusFlags = statusFlagMapper.getStatusFlagsByUserId(userId);
+        return calculateStatusFlag(statusFlags);
+    }
+
+    public double calculateCoreStatusFlag(Long quadrantId) {
+        List<StatusFlag> statusFlags = statusFlagMapper.getStatusFlagsByQuadrantId(quadrantId);
+        return calculateStatusFlag(statusFlags);
     }
 
 }

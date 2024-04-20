@@ -14,7 +14,7 @@ import com.macaku.core.domain.po.inner.dto.StatusFlagDTO;
 import com.macaku.core.domain.po.inner.dto.StatusFlagUpdateDTO;
 import com.macaku.core.service.inner.StatusFlagService;
 import com.macaku.core.service.quadrant.FourthQuadrantService;
-import com.macaku.medal.domain.config.StatusFlagConfig;
+import com.macaku.core.domain.config.StatusFlagConfig;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;

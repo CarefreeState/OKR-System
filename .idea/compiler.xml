@@ -11,6 +11,7 @@
         <module name="common" />
         <module name="center-service" />
         <module name="qrcode-service" />
+        <module name="core-record-service" />
         <module name="email-service" />
         <module name="user-service" />
         <module name="core-service" />
@@ -23,6 +24,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="center-service" options="-parameters" />
       <module name="common" options="-parameters" />
+      <module name="core-record-service" options="-parameters" />
       <module name="core-service" options="-parameters" />
       <module name="email-service" options="-parameters" />
       <module name="medal-service" options="-parameters" />

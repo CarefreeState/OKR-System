@@ -1,4 +1,4 @@
-package com.macaku.medal.domain.config;
+package com.macaku.core.domain.config;
 
 import lombok.Data;
 

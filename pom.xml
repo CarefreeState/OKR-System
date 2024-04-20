@@ -18,6 +18,7 @@
         <module>email-service</module>
         <module>medal-service</module>
         <module>xxl-job-service</module>
+        <module>core-record-service</module>
     </modules>
 
     <parent>

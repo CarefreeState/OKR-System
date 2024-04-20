@@ -160,14 +160,15 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
                         teamOkrStatisticVO.setKeyResults(null);
                         return;
                     }
-                    long sum = teamOkrStatisticVO.getKeyResults().stream()
+                    List<KeyResult> keyResults = teamOkrStatisticVO.getKeyResults();
+                    long sum = keyResults.stream()
                             .parallel()
                             .filter(Objects::nonNull)
                             .mapToLong(KeyResult::getProbability)
                             .filter(Objects::nonNull)
                             .reduce(Long::sum)
                             .orElse(0);
-                    int size = teamOkrStatisticVO.getKeyResults().size();
+                    int size = keyResults.size();
                     Double average = size == 0 ? Double.valueOf(0) : Double.valueOf(sum * 1.0 / size);
                     teamOkrStatisticVO.setAverage(average);
                     teamOkrStatisticVO.setKeyResults(null);

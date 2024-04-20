@@ -22,6 +22,10 @@ public class TimerUtil {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
     }
 
+    public static String getOnlyDateFormat(Date date) {
+        return new SimpleDateFormat("yyyy-MM-dd").format(date);
+    }
+
     public static void log(long delay, TimeUnit timeUnit) {
         long deadline = timeUnit.toMillis(delay) + System.currentTimeMillis();
         log.warn("计时开始，将于 “ {} ” {} 后执行，即于 {} 执行！", delay, timeUnit.name(),

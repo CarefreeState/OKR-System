@@ -113,6 +113,10 @@ public enum GlobalServiceStatusCode {
     /*勋章相关*/
     MEDAL_NOT_EXISTS(8000, "勋章不存在"),
 
+    /*内核记录相关*/
+    CORE_RECORDER_NOT_EXISTS(9000, "内核记录器不存在"),
+    DAY_RECORD_NOT_EXISTS(9001, "日记录不存在"),
+
 
 
 
