@@ -1,14 +1,13 @@
 package com.macaku.xxljob.model;
 
 import lombok.*;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Getter
 @Setter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,8 +23,8 @@ public class XxlJobGroup {
     // registry list
     private List<String> registryList;  // 执行器地址列表(系统注册)
     public List<String> getRegistryList() {
-        if (addressList!=null && addressList.trim().length()>0) {
-            registryList = new ArrayList<String>(Arrays.asList(addressList.split(",")));
+        if (StringUtils.hasText(addressList)) {
+            registryList = Arrays.asList(addressList.split(","));
         }
         return registryList;
     }
