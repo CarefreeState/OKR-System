@@ -118,6 +118,7 @@ public class TaskController {
             IOThreadPool.submit(() -> {
                 TermAchievementService termAchievementService = termAchievementServiceSelector.select(option);
                 termAchievementService.issueTermAchievement(userId, isCompleted, oldCompleted);
+
             });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);

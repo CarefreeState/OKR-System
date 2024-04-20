@@ -89,14 +89,18 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
 
     @Override
     public OkrCoreVO selectAllOfCore(User user, Long coreId) {
-        // 根据 coreId 获取 coreId 使用者（团队个人 OKR 只能由使用者观看）
-        Long userId = getCoreUser(coreId);
-        if(user.getId().equals(userId)) {
+        if(Boolean.TRUE.equals(canVisit(user, coreId))) {
             // 调用服务查询详细信息
             return okrCoreService.searchOkrCore(coreId);
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }
+    }
+
+    @Override
+    public Boolean canVisit(User user, Long coreId) {
+        // 根据 coreId 获取 coreId 使用者（团队个人 OKR 只能由使用者观看）
+        return user.getId().equals(getCoreUser(coreId));
     }
 
     @Override

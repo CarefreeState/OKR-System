@@ -9,12 +9,14 @@ import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
+import com.macaku.common.util.thread.pool.IOThreadPool;
+import com.macaku.core.domain.config.StatusFlagConfig;
 import com.macaku.core.domain.po.inner.StatusFlag;
 import com.macaku.core.domain.po.inner.dto.StatusFlagDTO;
 import com.macaku.core.domain.po.inner.dto.StatusFlagUpdateDTO;
 import com.macaku.core.service.inner.StatusFlagService;
 import com.macaku.core.service.quadrant.FourthQuadrantService;
-import com.macaku.core.domain.config.StatusFlagConfig;
+import com.macaku.corerecord.service.DayRecordService;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
@@ -44,6 +46,8 @@ public class StatusFlagController {
     private final FourthQuadrantService fourthQuadrantService;
 
     private final StatusFlagConfig statusFlagConfig;
+
+    private final DayRecordService dayRecordService;
 
     @PostMapping("/add")
     @ApiOperation("增加一条状态指标")
@@ -106,6 +110,9 @@ public class StatusFlagController {
         Long userId = okrOperateService.getCoreUser(coreId);
         if(user.getId().equals(userId)) {
             statusFlagService.updateStatusFlag(statusFlag);
+            IOThreadPool.submit(() -> {
+                dayRecordService.recordFourthQuadrant(coreId);
+            });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }

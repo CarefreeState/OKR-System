@@ -1,12 +1,12 @@
 package com.macaku.medal.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
+import com.macaku.corerecord.service.DayRecordService;
 import com.macaku.medal.component.TermAchievementServiceSelector;
 import com.macaku.medal.domain.entry.LongTermAchievement;
 import com.macaku.medal.handler.chain.MedalHandlerChain;
 import com.macaku.medal.service.TermAchievementService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
 /**
  * Created With Intellij IDEA
@@ -22,6 +22,8 @@ public class LongTermAchievementServiceImpl implements TermAchievementService {
 
     private final MedalHandlerChain medalHandlerChain = SpringUtil.getBean(MedalHandlerChain.class);
 
+    private final DayRecordService dayRecordService = SpringUtil.getBean(DayRecordService.class);
+
     @Override
     public boolean match(Integer option) {
         return OPTION.equals(option);
@@ -32,5 +34,10 @@ public class LongTermAchievementServiceImpl implements TermAchievementService {
         LongTermAchievement longTermAchievement = LongTermAchievement.builder()
                 .userId(userId).isCompleted(isCompleted).oldCompleted(oldCompleted).build();
         medalHandlerChain.handle(longTermAchievement);
+    }
+
+    @Override
+    public void coreDayRecord(Long coreId, Boolean isCompleted, Boolean oldCompleted) {
+        dayRecordService.recordThirdQuadrant(coreId, isCompleted, oldCompleted);
     }
 }

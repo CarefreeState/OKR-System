@@ -231,6 +231,13 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
 
     @Override
     public OkrCoreVO selectAllOfCore(User user, Long coreId) {
+        canVisit(user, coreId);
+        // 到这里就没问题了
+        return okrCoreService.searchOkrCore(coreId);
+    }
+
+    @Override
+    public Boolean canVisit(User user, Long coreId) {
         // 检测用户是否是 coreId 所属团队的成员
         Long teamId = Db.lambdaQuery(TeamOkr.class)
                 .eq(TeamOkr::getCoreId, coreId)
@@ -238,8 +245,7 @@ public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
                         new GlobalServiceException(GlobalServiceStatusCode.CORE_NOT_EXISTS)
                 ).getId();
         memberService.checkExistsInTeam(teamId, user.getId());
-        // 到这里就没问题了
-        return okrCoreService.searchOkrCore(coreId);
+        return Boolean.TRUE;
     }
 
     @Override

@@ -20,9 +20,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
 * @author 马拉圈
@@ -90,6 +92,16 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
             coreRecorderService.removeCache(coreId);
         }, () -> {});
         return dayRecord;
+    }
+
+    @Override
+    public List<DayRecord> getDayRecords(Long coreId) {
+        getNowRecordByCoreId(coreId);
+        return this.lambdaQuery().eq(DayRecord::getCoreId, coreId)
+                .list()
+                .stream()
+                .sorted(Comparator.comparing(DayRecord::getId))
+                .collect(Collectors.toList());
     }
 
     @Override

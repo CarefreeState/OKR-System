@@ -23,6 +23,8 @@ public interface OkrOperateService {
 
     OkrCoreVO selectAllOfCore(User user, Long coreId);
 
+    Boolean canVisit(User user, Long coreId);
+
     Long getCoreUser(Long coreId);
 
 }

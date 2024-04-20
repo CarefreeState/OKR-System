@@ -14,6 +14,7 @@ import com.macaku.core.domain.po.inner.dto.KeyResultDTO;
 import com.macaku.core.domain.po.inner.dto.KeyResultUpdateDTO;
 import com.macaku.core.service.inner.KeyResultService;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
+import com.macaku.corerecord.service.DayRecordService;
 import com.macaku.medal.domain.entry.VictoryWithinGrasp;
 import com.macaku.medal.handler.chain.MedalHandlerChain;
 import com.macaku.user.domain.po.User;
@@ -49,6 +50,8 @@ public class KeyResultController {
 
     private final MedalHandlerChain medalHandlerChain;
 
+    private final DayRecordService dayRecordService;
+
     @PostMapping("/add")
     @ApiOperation("添加关键结果")
     public SystemJsonResponse<Long> addKeyResult(@RequestBody OkrKeyResultDTO okrKeyResultDTO) {
@@ -70,13 +73,15 @@ public class KeyResultController {
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }
+        Integer probability = keyResult.getProbability();
         IOThreadPool.submit(() -> {
             VictoryWithinGrasp victoryWithinGrasp = VictoryWithinGrasp.builder()
                     .userId(userId)
-                    .probability(keyResult.getProbability())
+                    .probability(probability)
                     .oldProbability(0)
                     .build();
             medalHandlerChain.handle(victoryWithinGrasp);
+            dayRecordService.recordFirstQuadrant(coreId);
         });
         return SystemJsonResponse.SYSTEM_SUCCESS(id);
     }
@@ -100,13 +105,16 @@ public class KeyResultController {
             // 更新
             KeyResult oldKeyResult = keyResultService.updateProbability(keyResult);
             log.info("提交更新：{}", keyResultUpdateDTO);
+            Integer probability = keyResult.getProbability();
+            Integer oldProbability = oldKeyResult.getProbability();
             IOThreadPool.submit(() -> {
                 VictoryWithinGrasp victoryWithinGrasp = VictoryWithinGrasp.builder()
                         .userId(userId)
-                        .probability(keyResult.getProbability())
-                        .oldProbability(oldKeyResult.getProbability())
+                        .probability(probability)
+                        .oldProbability(oldProbability)
                         .build();
                 medalHandlerChain.handle(victoryWithinGrasp);
+                dayRecordService.recordFirstQuadrant(coreId);
             });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
