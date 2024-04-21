@@ -1,0 +1,217 @@
+okr:
+  db:
+    host: 127.0.0.1
+    port: 3306
+    database: db_okr_system
+    username: root
+    password: 123456
+  wx:
+#    envVersion: develop  # 版本
+#    envVersion: trial  # 版本
+    envVersion: release  # 版本
+server:
+  port: 1701
+--- # 数据源配置
+spring:
+  domain: https://lbcmmszdntnt.cn
+  datasource:
+    url: jdbc:mysql://${okr.db.host}:${okr.db.port}/${okr.db.database}?serverTimezone=UTC&useSSL=false&characterEncoding=UTF8&allowPublicKeyRetrieval=true
+    username: ${okr.db.username}
+    password: ${okr.db.password}
+    driver-class-name: com.mysql.jdbc.Driver
+  redis:
+    # 地址
+    host: 127.0.0.1
+    # 端口
+    port: 6379
+    # 数据库索引
+    database: 0
+    # 密码(如没有密码请注释掉)
+    password: Lmz171309
+  redisson:
+    # 地址
+    url: redis://${spring.redis.host}:${spring.redis.port}
+    # 数据库索引
+    database: ${spring.redis.database}
+    # 密码(如没有密码请注释掉)
+    password: ${spring.redis.password}
+    wait: 10
+    timeout: 10
+  mail:
+    host: smtp.yeah.net
+    port: 465
+    username: mamingsheng103@yeah.net
+    password: ORMALZWEWNUTXTCV
+    default-encoding: utf-8
+    properties:
+      mail:
+#        debug: true
+        smtp:
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+
+email:
+  template: identifying-code-model.html
+
+media:
+  root: /root/
+  map: media/
+  static: static/
+  binding: binding/
+  login: login/
+  swagger: swagger/
+  photo: photo/
+  invite: invite/
+  common: common/
+  medal: medal/
+
+# todo: 修改成正式的配置
+wx:
+  appid: wx9efa37f247f01d10
+  secret: ef6c3f39e28f30d8916819541cb8bc00
+  common:
+    checkPath: false     # 是否检测是否发布以及是否存在
+    envVersion: ${okr.wx.envVersion}  # 版本
+    width: 500           # 图片大小
+    auto_color: false    # 颜色是否默认
+    lineColor: # 颜色
+      r: 20
+      g: 133
+      b: 238
+    isHyaline: false    # 透明底
+  invite:
+    sceneKey: teamId
+    secret: secret
+    page: pages/invite   # 页面
+    checkPath: false     # 是否检测是否发布以及是否存在
+    envVersion: ${okr.wx.envVersion}  # 版本
+    width: 500           # 图片大小
+    auto_color: false    # 颜色是否默认
+    lineColor:           # 颜色
+      r: 20
+      g: 133
+      b: 238
+    isHyaline: false    # 透明底
+  binding:
+    userKey: userId
+    secret: secret
+    page: pages/binding   # 页面
+    checkPath: false     # 是否检测是否发布以及是否存在
+    envVersion: ${okr.wx.envVersion}  # 版本
+    width: 500           # 图片大小
+    auto_color: false    # 颜色是否默认
+    lineColor: # 颜色
+      r: 0
+      g: 0
+      b: 0
+    isHyaline: false    # 透明底
+  login:
+    secret: secret
+    page: pages/confirm   # 页面
+    checkPath: false     # 是否检测是否发布以及是否存在
+    envVersion: ${okr.wx.envVersion}  # 版本
+    width: 500          # 图片大小
+    auto_color: false    # 颜色是否默认
+    lineColor: # 颜色
+      r: 0
+      g: 0
+      b: 0
+    isHyaline: false    # 透明底
+
+web:
+  invite:
+    sceneKey: teamId
+    secret: secret
+    page: ${spring.domain}/pages/invite   # 页面
+    width: 500           # 图片大小
+    lineColor: # 颜色
+      r: 20
+      g: 133
+      b: 238
+
+font:
+  path: /static/XiangJiaoDaJiangJunLingGanTi-2.ttf
+  board: /static/board.png
+  text:
+    color:
+      r: 43
+      g: 90
+      b: 103
+    common: "[come on]"
+    invite: "[invite]"
+    binding: "[BINDING]"
+    login: "[LOGIN]"
+
+limit:
+  time:
+    second: 86400
+    multiple: 2
+
+key:
+  jwt: macaku
+  shortlink: macaku
+
+visit:
+  swagger: false
+
+xxl:
+  job:
+    host: http://127.0.0.1
+    port: 1702
+    admin:
+      addresses: ${xxl.job.host}:${xxl.job.port}/xxl-job-admin
+      username: mamingsheng
+      password: mmsszsd666
+    accessToken: default_token
+    executor:
+      title: Lbcmmszdn
+      appname: xxl-job-executor-sample
+      address:
+      ip: 127.0.0.1
+      port: 9999
+      logpath: /data/applogs/xxl-job/jobhandler
+      logretentiondays: 30
+      addressType: 1
+      addressList: http://127.0.0.1:9999
+    url:
+      login: /login
+      groupPageList: /jobgroup/pageList
+      infoPageList: /jobinfo/pageList
+      groupSave: /jobgroup/save
+      infoAdd: /jobinfo/add
+      infoIds: /jobinfo/ids
+      infoStopIds: /jobinfo/stopids
+      infoRemove: /jobinfo/remove
+      infoStop: /jobinfo/stop
+      infoUpdate: /jobinfo/update
+medal:
+  status-flag:
+    statusFlagProperties:
+      - color: "#000000"
+        credit: 80
+      - color: "#000001"
+        credit: 50
+      - color: "#000002"
+        credit: 20
+    threshold: 60
+  stay-true-beginning:
+    id: 1
+    coefficient: 0
+  harvest-achievement:
+    id: 2
+    coefficient: 60
+  stand-out-crowd:
+    id: 3
+    coefficient: 1
+  victory-within-grasp:
+    id: 4
+    coefficient: 1
+  short-term-achievement:
+    id: 5
+    coefficient: 5
+  long-term-achievement:
+    id: 6
+    coefficient: 2
+  great-state:
+    id: 7
+    coefficient: 1
