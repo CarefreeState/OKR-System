@@ -1,6 +1,7 @@
 package com.macaku.corerecord.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.core.domain.config.StatusFlagConfig;
@@ -8,14 +9,11 @@ import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
 import com.macaku.core.service.quadrant.FourthQuadrantService;
-import com.macaku.corerecord.config.CoreRecorderConfig;
 import com.macaku.corerecord.domain.po.CoreRecorder;
 import com.macaku.corerecord.domain.po.DayRecord;
-import com.macaku.corerecord.domain.po.RecordMap;
 import com.macaku.corerecord.mapper.DayRecordMapper;
 import com.macaku.corerecord.service.CoreRecorderService;
 import com.macaku.corerecord.service.DayRecordService;
-import com.macaku.redis.repository.RedisLock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,7 +35,6 @@ import java.util.stream.Collectors;
 public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord>
     implements DayRecordService{
 
-
     private final CoreRecorderService coreRecorderService;
 
     private final FirstQuadrantService firstQuadrantService;
@@ -46,9 +43,8 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 
     private final StatusFlagConfig statusFlagConfig;
 
-    private final RedisLock redisLock;
-
     private boolean checkNeedSwitch(long gap) {
+        // 相差大于一天就代表是隔天了
         return gap >= TimeUnit.DAYS.toMillis(1);
     }
 
@@ -61,42 +57,25 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
     }
 
     @Override
-    public DayRecord switchRecord(CoreRecorder coreRecorder) {
-        Long coreId = coreRecorder.getCoreId();
-        FirstQuadrantVO firstQuadrantVO = firstQuadrantService.searchFirstQuadrant(coreId);
-        List<KeyResult> keyResults = firstQuadrantVO.getKeyResults();
-        Integer sum = keyResults.stream()
-                .parallel()
-                .map(KeyResult::getProbability)
-                .reduce(Integer::sum).orElse(0);
-        int size = keyResults.size();
-        Long quadrantId = fourthQuadrantService.searchFourthQuadrant(coreId).getId();
-        DayRecord dayRecord = new DayRecord();
-        dayRecord.setCoreId(coreId);
-        dayRecord.setRecordDate(new Date());
-        dayRecord.setCredit1(size == 0 ? Double.valueOf(0) : Double.valueOf(sum * 1.0 / size));
-        dayRecord.setCredit2(0);
-        dayRecord.setCredit3(0);
-        dayRecord.setCredit4((int) statusFlagConfig.calculateCoreStatusFlag(quadrantId));
-        this.save(dayRecord);
-        Long dayRecordId = dayRecord.getId();
-        // 更新一下
-        String lock = CoreRecorderConfig.CORE_RECORDER_LOCK + coreId;
-        redisLock.tryLockDoSomething(lock, () -> {
-            RecordMap recordMap = coreRecorder.getRecordMap();
-            recordMap.setDayRecordId(dayRecordId);
-            coreRecorderService.lambdaUpdate()
-                    .eq(CoreRecorder::getId, coreRecorder.getId())
-                    .set(CoreRecorder::getRecordMap, recordMap)
-                    .update();
-            coreRecorderService.removeCache(coreId);
-        }, () -> {});
+    public DayRecord getNowRecordByCoreId(Long coreId) {
+        CoreRecorder coreRecorder = coreRecorderService.getCoreRecorderByCoreId(coreId);
+        Long dayRecordId = coreRecorder.getRecordMap().getDayRecordId();
+        DayRecord dayRecord = Db.lambdaQuery(DayRecord.class)
+                .eq(DayRecord::getId, dayRecordId)
+                .oneOpt()
+                .orElseThrow(() -> new GlobalServiceException(GlobalServiceStatusCode.DAY_RECORD_NOT_EXISTS));
+        Date recordDate = dayRecord.getRecordDate();
+        Date today = new Date();
+        long gap = today.getTime() - recordDate.getTime();
+        if(Boolean.TRUE.equals(checkNeedSwitch(gap))) {
+            dayRecord = coreRecorderService.switchRecord(coreRecorder);
+        }
         return dayRecord;
     }
 
     @Override
     public List<DayRecord> getDayRecords(Long coreId) {
-        getNowRecordByCoreId(coreId);
+        getNowRecordByCoreId(coreId);// 保证记录器指向的是今天的记录
         return this.lambdaQuery().eq(DayRecord::getCoreId, coreId)
                 .list()
                 .stream()
@@ -104,21 +83,6 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public DayRecord getNowRecordByCoreId(Long coreId) {
-        CoreRecorder coreRecorder = coreRecorderService.getCoreRecorderByCoreId(coreId);
-        Long dayRecordId = coreRecorder.getRecordMap().getDayRecordId();
-        DayRecord dayRecord = this.lambdaQuery().eq(DayRecord::getId, dayRecordId).oneOpt().orElseThrow(() ->
-                new GlobalServiceException(GlobalServiceStatusCode.DAY_RECORD_NOT_EXISTS));
-        Date recordDate = dayRecord.getRecordDate();
-        // 相差大于一天就代表是隔天了
-        Date today = new Date();
-        long gap = today.getTime() - recordDate.getTime();
-        if(Boolean.TRUE.equals(checkNeedSwitch(gap))) {
-            dayRecord = switchRecord(coreRecorder);
-        }
-        return dayRecord;
-    }
 
     @Override
     public void recordFirstQuadrant(Long coreId) {
@@ -131,7 +95,6 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
                 .reduce(Integer::sum).orElse(0);
         int size = keyResults.size();
         double credit1 = size == 0 ? Double.valueOf(0) : Double.valueOf(sum * 1.0 / size);
-        DayRecord dayRecord = new DayRecord();
         this.lambdaUpdate()
                 .eq(DayRecord::getId, nowRecord.getId())
                 .set(DayRecord::getCredit1, credit1)
@@ -143,6 +106,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
         DayRecord nowRecord = getNowRecordByCoreId(coreId);
         Integer credit2 = nowRecord.getCredit2();
         int increment = getIncrement(isCompleted, oldCompleted);
+        log.info("OKR {} 第二象限积分 + {} ", coreId, increment);
         if(increment != 0) {
             this.lambdaUpdate()
                     .eq(DayRecord::getId, nowRecord.getId())
@@ -156,6 +120,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
         DayRecord nowRecord = getNowRecordByCoreId(coreId);
         Integer credit3 = nowRecord.getCredit2();
         int increment = getIncrement(isCompleted, oldCompleted);
+        log.info("OKR {} 第三象限积分 + {} ", coreId, increment);
         if(increment != 0) {
             this.lambdaUpdate()
                     .eq(DayRecord::getId, nowRecord.getId())

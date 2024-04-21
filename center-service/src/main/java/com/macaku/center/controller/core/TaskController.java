@@ -13,6 +13,8 @@ import com.macaku.core.component.TaskServiceSelector;
 import com.macaku.core.domain.po.inner.dto.TaskDTO;
 import com.macaku.core.domain.po.inner.dto.TaskUpdateDTO;
 import com.macaku.core.service.TaskService;
+import com.macaku.corerecord.component.DayRecordCompleteServiceSelector;
+import com.macaku.corerecord.service.DayRecordCompleteService;
 import com.macaku.medal.component.TermAchievementServiceSelector;
 import com.macaku.medal.service.TermAchievementService;
 import com.macaku.user.domain.po.User;
@@ -44,6 +46,8 @@ public class TaskController {
     private final TaskServiceSelector taskServiceSelector;
 
     private final TermAchievementServiceSelector termAchievementServiceSelector;
+
+    private final DayRecordCompleteServiceSelector dayRecordCompleteServiceSelector;
 
     @PostMapping("/{option}/add")
     @ApiOperation("增加一条任务")
@@ -114,13 +118,14 @@ public class TaskController {
             String content = taskUpdateDTO.getContent();
             Boolean isCompleted = taskUpdateDTO.getIsCompleted();
             Boolean oldCompleted = taskService.updateTask(taskId, content, isCompleted);
-            // 开启一个异步线程
+            // 开启两个异步线程
             IOThreadPool.submit(() -> {
                 TermAchievementService termAchievementService = termAchievementServiceSelector.select(option);
                 termAchievementService.issueTermAchievement(userId, isCompleted, oldCompleted);
-
+                DayRecordCompleteService dayRecordCompleteService = dayRecordCompleteServiceSelector.select(option);
+                dayRecordCompleteService.record(coreId, isCompleted, oldCompleted);
             });
-        }else {
+        } else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }
         return SystemJsonResponse.SYSTEM_SUCCESS();

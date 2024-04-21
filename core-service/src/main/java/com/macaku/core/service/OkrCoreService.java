@@ -17,6 +17,10 @@ public interface OkrCoreService extends IService<OkrCore> {
     @Transactional
     Long createOkrCore();
 
+    OkrCore getOkrCore(Long coreId);
+
+    void removeOkrCoreCache(Long coreId);
+
     OkrCoreVO searchOkrCore(Long id);
 
     void confirmCelebrateDate(Long id, Integer celebrateDay);

@@ -7,7 +7,7 @@
     <resultMap id="BaseResultMap" type="com.macaku.corerecord.domain.po.CoreRecorder">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="coreId" column="core_id" jdbcType="BIGINT"/>
-            <result property="recordMap" column="record_map" jdbcType="OTHER"/>
+            <result property="recordMap" column="record_map" jdbcType="OTHER" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
             <result property="version" column="version" jdbcType="INTEGER"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BIT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>

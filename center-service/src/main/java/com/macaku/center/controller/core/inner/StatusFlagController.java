@@ -67,6 +67,9 @@ public class StatusFlagController {
         if(user.getId().equals(userId)) {
             // 插入
             id = statusFlagService.addStatusFlag(statusFlag);
+            IOThreadPool.submit(() -> {
+                dayRecordService.recordFourthQuadrant(coreId);
+            });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }

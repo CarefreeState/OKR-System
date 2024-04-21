@@ -4,15 +4,16 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.core.domain.po.event.quadrant.SecondQuadrantEvent;
-import com.macaku.redis.repository.RedisCache;
+import com.macaku.core.config.OkrCoreConfig;
 import com.macaku.core.domain.po.OkrCore;
+import com.macaku.core.domain.po.event.quadrant.SecondQuadrantEvent;
 import com.macaku.core.domain.po.quadrant.SecondQuadrant;
 import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
 import com.macaku.core.domain.po.quadrant.vo.SecondQuadrantVO;
 import com.macaku.core.init.util.QuadrantDeadlineUtil;
 import com.macaku.core.mapper.quadrant.SecondQuadrantMapper;
 import com.macaku.core.service.quadrant.SecondQuadrantService;
+import com.macaku.redis.repository.RedisCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,6 @@ public class SecondQuadrantServiceImpl extends ServiceImpl<SecondQuadrantMapper,
     private final SecondQuadrantMapper secondQuadrantMapper;
 
     private final RedisCache redisCache;
-
 
     @Override
     public void initSecondQuadrant(InitQuadrantDTO initQuadrantDTO) {
@@ -83,6 +83,7 @@ public class SecondQuadrantServiceImpl extends ServiceImpl<SecondQuadrantMapper,
         SecondQuadrantEvent event = SecondQuadrantEvent.builder()
                 .coreId(coreId).id(id).cycle(quadrantCycle).deadline(deadline).build();
         QuadrantDeadlineUtil.scheduledUpdateSecondQuadrant(event);
+        redisCache.deleteObject(OkrCoreConfig.OKR_CORE_ID_MAP + coreId);
     }
 
     @Override

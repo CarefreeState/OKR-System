@@ -1,16 +1,30 @@
 package com.macaku.corerecord.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.core.domain.config.StatusFlagConfig;
+import com.macaku.core.domain.po.OkrCore;
+import com.macaku.core.domain.po.inner.KeyResult;
+import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
+import com.macaku.core.service.OkrCoreService;
+import com.macaku.core.service.quadrant.FirstQuadrantService;
+import com.macaku.core.service.quadrant.FourthQuadrantService;
+import com.macaku.corerecord.config.CoreRecorderConfig;
 import com.macaku.corerecord.domain.po.CoreRecorder;
-import com.macaku.corerecord.service.CoreRecorderService;
+import com.macaku.corerecord.domain.po.DayRecord;
+import com.macaku.corerecord.domain.po.RecordMap;
 import com.macaku.corerecord.mapper.CoreRecorderMapper;
+import com.macaku.corerecord.service.CoreRecorderService;
 import com.macaku.redis.repository.RedisCache;
+import com.macaku.redis.repository.RedisLock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,12 +46,83 @@ public class CoreRecorderServiceImpl extends ServiceImpl<CoreRecorderMapper, Cor
 
     private final RedisCache redisCache;
 
+    private final OkrCoreService okrCoreService;
+
+    private final FirstQuadrantService firstQuadrantService;
+
+    private final FourthQuadrantService fourthQuadrantService;
+
+    private final StatusFlagConfig statusFlagConfig;
+
+    private final RedisLock redisLock;
+
+    @Override
+    public DayRecord switchRecord(CoreRecorder coreRecorder) {
+        Long coreId = coreRecorder.getCoreId();
+        DayRecord dayRecord = createNewDayRecord(coreId);
+        Long dayRecordId = dayRecord.getId();
+        // 更新一下
+        String lock = CoreRecorderConfig.CORE_RECORDER_LOCK + coreId;
+        redisLock.tryLockDoSomething(lock, () -> {
+            RecordMap recordMap = coreRecorder.getRecordMap();
+            recordMap.setDayRecordId(dayRecordId);
+            this.lambdaUpdate()
+                    .eq(CoreRecorder::getId, coreRecorder.getId())
+                    .set(CoreRecorder::getRecordMap, recordMap)
+                    .update();
+            removeCache(coreId);
+        }, () -> {});
+        return dayRecord;
+    }
+
+    @Override
+    public DayRecord createNewDayRecord(Long coreId) {
+        FirstQuadrantVO firstQuadrantVO = firstQuadrantService.searchFirstQuadrant(coreId);
+        List<KeyResult> keyResults = firstQuadrantVO.getKeyResults();
+        Integer sum = keyResults.stream()
+                .parallel()
+                .map(KeyResult::getProbability)
+                .reduce(Integer::sum).orElse(0);
+        int size = keyResults.size();
+        Long quadrantId = fourthQuadrantService.searchFourthQuadrant(coreId).getId();
+        DayRecord dayRecord = new DayRecord();
+        dayRecord.setCoreId(coreId);
+        dayRecord.setRecordDate(new Date());
+        dayRecord.setCredit1(size == 0 ? Double.valueOf(0) : Double.valueOf(sum * 1.0 / size));
+        dayRecord.setCredit2(0);
+        dayRecord.setCredit3(0);
+        dayRecord.setCredit4((int) statusFlagConfig.calculateCoreStatusFlag(quadrantId));
+        Db.save(dayRecord);
+        return dayRecord;
+    }
+
+    @Override
+    public void initRecordMap(CoreRecorder coreRecorder, Long coreId) {
+        RecordMap recordMap = new RecordMap();
+        DayRecord dayRecord = createNewDayRecord(coreId);
+        recordMap.setDayRecordId(dayRecord.getId());
+        coreRecorder.setCoreId(coreId);
+        coreRecorder.setRecordMap(recordMap);
+    }
+
+    @Override
+    public CoreRecorder initCoreRecorder(Long coreId) {
+        CoreRecorder coreRecorder = new CoreRecorder();
+        initRecordMap(coreRecorder, coreId);
+        this.save(coreRecorder);
+        return coreRecorder;
+    }
+
     @Override
     public CoreRecorder getCoreRecorderByCoreId(Long coreId) {
         String redisKey = CORE_RECORDER_MAP + coreId;
+        OkrCore okrCore = okrCoreService.getOkrCore(coreId);
+        if (Boolean.TRUE.equals(okrCore.getIsOver())) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
+        }
         return (CoreRecorder) redisCache.getCacheObject(redisKey).orElseGet(() -> {
-            CoreRecorder coreRecorder = this.lambdaQuery().eq(CoreRecorder::getCoreId, coreId).oneOpt().orElseThrow(() ->
-                    new GlobalServiceException(GlobalServiceStatusCode.CORE_RECORDER_NOT_EXISTS));
+            CoreRecorder coreRecorder = this.lambdaQuery().eq(CoreRecorder::getCoreId, coreId)
+                    .oneOpt().orElseGet(() -> initCoreRecorder(coreId));
             redisCache.setCacheObject(redisKey, coreRecorder, CORE_RECORD_MAP_TTL, CORE_RECORDER_MAP_UNIT);
             return coreRecorder;
         });

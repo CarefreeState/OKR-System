@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.thread.pool.IOThreadPool;
+import com.macaku.core.config.OkrCoreConfig;
 import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.FourthQuadrant;
@@ -21,6 +22,7 @@ import com.macaku.core.service.quadrant.FirstQuadrantService;
 import com.macaku.core.service.quadrant.FourthQuadrantService;
 import com.macaku.core.service.quadrant.SecondQuadrantService;
 import com.macaku.core.service.quadrant.ThirdQuadrantService;
+import com.macaku.redis.repository.RedisCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,10 +55,12 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
 
     private final FourthQuadrantService fourthQuadrantService;
 
+    private final RedisCache redisCache;
+
     public Long createOkrCore() {
         // 1. 创建一个内核
         OkrCore okrCore = new OkrCore();
-        okrCore.setIsOver(false);
+        okrCore.setIsOver(Boolean.FALSE);
         this.save(okrCore);
         Long coreID = okrCore.getId();
         log.info("新增 OKR 内核：  okr core id : {}", coreID);
@@ -81,9 +85,25 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
     }
 
     @Override
+    public OkrCore getOkrCore(Long coreId) {
+        String redisKey = OkrCoreConfig.OKR_CORE_ID_MAP + coreId;
+        return (OkrCore) redisCache.getCacheObject(redisKey).orElseGet(() -> {
+            OkrCore okrCore = this.lambdaQuery().eq(OkrCore::getId, coreId).oneOpt().orElseThrow(() ->
+                    new GlobalServiceException(GlobalServiceStatusCode.CORE_NOT_EXISTS));
+            redisCache.setCacheObject(redisKey, okrCore, OkrCoreConfig.OKR_CORE_MAP_TTL, OkrCoreConfig.OKR_CORE_MAP_UNIT);
+            return okrCore;
+        });
+    }
+
+    @Override
+    public void removeOkrCoreCache(Long coreId) {
+        redisCache.deleteObject(OkrCoreConfig.OKR_CORE_ID_MAP + coreId);
+    }
+
+    @Override
     public OkrCoreVO searchOkrCore(Long id) {
         // 查询基本的 OKR 内核
-        OkrCore okrCore = this.lambdaQuery().eq(OkrCore::getId, id).one();
+        OkrCore okrCore = getOkrCore(id);
         OkrCoreVO okrCoreVO = BeanUtil.copyProperties(okrCore, OkrCoreVO.class);
         // 查询四象限
         FutureTask<FirstQuadrantVO> task1 = new FutureTask<>(() ->
@@ -113,9 +133,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
 
     @Override
     public void confirmCelebrateDate(Long id, Integer celebrateDay) {
-        OkrCore okrCore = this.lambdaQuery()
-                .eq(OkrCore::getId, id)
-                .one();
+        OkrCore okrCore = getOkrCore(id);
         if(Boolean.TRUE.equals(okrCore.getIsOver())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
         }
@@ -128,13 +146,12 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         updateOkrCore.setCelebrateDay(celebrateDay);
         // 更新
         this.lambdaUpdate().eq(OkrCore::getId, id).update(updateOkrCore);
+        removeOkrCoreCache(id);
     }
 
     @Override
     public Date summaryOKR(Long id, String summary, Integer degree) {
-        OkrCore okrCore = this.lambdaQuery()
-                .eq(OkrCore::getId, id)
-                .one();
+        OkrCore okrCore = getOkrCore(id);
         if(Boolean.FALSE.equals(okrCore.getIsOver())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_NOT_OVER);
         }
@@ -150,14 +167,13 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         updateOkrCore.setDegree(degree);
         // 更新
         this.lambdaUpdate().eq(OkrCore::getId, id).update(updateOkrCore);
+        removeOkrCoreCache(id);
         return endTime;
     }
 
     @Override
     public void complete(Long id) {
-        OkrCore okrCore = this.lambdaQuery()
-                .eq(OkrCore::getId, id)
-                .one();
+        OkrCore okrCore = getOkrCore(id);
         if(Boolean.TRUE.equals(okrCore.getIsOver())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
         }
@@ -168,6 +184,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
         // 更新
         this.lambdaUpdate().eq(OkrCore::getId, id).update(updateOkrCore);
         log.info("OKR 结束！ {}", new Date());
+        removeOkrCoreCache(id);
     }
 
     @Override

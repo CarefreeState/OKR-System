@@ -1,7 +1,6 @@
 package com.macaku.medal.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.corerecord.service.DayRecordService;
 import com.macaku.medal.component.TermAchievementServiceSelector;
 import com.macaku.medal.domain.entry.ShortTermAchievement;
 import com.macaku.medal.handler.chain.MedalHandlerChain;
@@ -24,8 +23,6 @@ public class ShortTermAchievementServiceImpl implements TermAchievementService {
 
     private final MedalHandlerChain medalHandlerChain = SpringUtil.getBean(MedalHandlerChain.class);
 
-    private final DayRecordService dayRecordService = SpringUtil.getBean(DayRecordService.class);
-
     @Override
     public boolean match(Integer option) {
         return OPTION1.equals(option) || OPTION2.equals(option);
@@ -38,8 +35,4 @@ public class ShortTermAchievementServiceImpl implements TermAchievementService {
         medalHandlerChain.handle(shortTermAchievement);
     }
 
-    @Override
-    public void coreDayRecord(Long coreId, Boolean isCompleted, Boolean oldCompleted) {
-        dayRecordService.recordSecondQuadrant(coreId, isCompleted, oldCompleted);
-    }
 }

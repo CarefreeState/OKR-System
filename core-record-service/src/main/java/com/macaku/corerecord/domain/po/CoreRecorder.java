@@ -18,7 +18,7 @@ public class CoreRecorder implements Serializable {
 
     private Long coreId;
 
-    @TableField(typeHandler = JacksonTypeHandler.class)
+    @TableField(typeHandler = JacksonTypeHandler.class) // 将字符串转化为对象保存到属性里，将对象转化为字符串存到表的字段里
     private RecordMap recordMap;
 
     private Integer version;

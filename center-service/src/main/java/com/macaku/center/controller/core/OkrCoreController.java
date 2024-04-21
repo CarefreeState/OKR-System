@@ -1,6 +1,5 @@
 package com.macaku.center.controller.core;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.domain.dto.unify.OkrCoreDTO;
 import com.macaku.center.domain.dto.unify.OkrCoreSummaryDTO;
@@ -12,9 +11,6 @@ import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.common.util.thread.pool.IOThreadPool;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
-import com.macaku.corerecord.domain.po.DayRecord;
-import com.macaku.corerecord.domain.vo.DayRecordVO;
-import com.macaku.corerecord.service.DayRecordService;
 import com.macaku.medal.domain.entry.OkrFinish;
 import com.macaku.medal.handler.chain.MedalHandlerChain;
 import com.macaku.user.domain.po.User;
@@ -28,7 +24,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,8 +46,6 @@ public class OkrCoreController {
 
     private final MedalHandlerChain medalHandlerChain;
 
-    private final DayRecordService dayRecordService;
-
     @PostMapping("/create")
     @ApiOperation("创建一个 OKR")
     public SystemJsonResponse<Map<String, Object>> createOkr(@RequestBody OkrOperateDTO okrOperateDTO) {
@@ -72,21 +65,6 @@ public class OkrCoreController {
         OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
         OkrCoreVO okrCoreVO = okrOperateService.selectAllOfCore(user, okrCoreDTO.getCoreId());
         return SystemJsonResponse.SYSTEM_SUCCESS(okrCoreVO);
-    }
-
-    @PostMapping("/search/dayrecord")
-    @ApiOperation("查看一个 OKR 的日记录")
-    public SystemJsonResponse<List<DayRecordVO>> searchOkrCoreDayRecord(@RequestBody OkrCoreDTO okrCoreDTO) {
-        okrCoreDTO.validate();
-        User user = UserRecordUtil.getUserRecord();
-        Long coreId = okrCoreDTO.getCoreId();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
-        if(Boolean.TRUE.equals(okrOperateService.canVisit(user, coreId))) {
-            List<DayRecord> dayRecords = dayRecordService.getDayRecords(coreId);
-            return SystemJsonResponse.SYSTEM_SUCCESS(BeanUtil.copyToList(dayRecords, DayRecordVO.class));
-        }else {
-            throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
-        }
     }
 
     @PostMapping("/celebrate/{day}")

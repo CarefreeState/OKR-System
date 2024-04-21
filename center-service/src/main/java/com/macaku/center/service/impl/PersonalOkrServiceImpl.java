@@ -4,18 +4,18 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.config.CoreUserMapConfig;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.domain.po.PersonalOkr;
 import com.macaku.center.domain.vo.PersonalOkrVO;
 import com.macaku.center.mapper.PersonalOkrMapper;
-import com.macaku.center.config.CoreUserMapConfig;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.center.service.PersonalOkrService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.redis.repository.RedisCache;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
+import com.macaku.redis.repository.RedisCache;
 import com.macaku.user.domain.po.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -42,7 +42,7 @@ public class PersonalOkrServiceImpl extends ServiceImpl<PersonalOkrMapper, Perso
 
     private final PersonalOkrMapper personalOkrMapper = SpringUtil.getBean(PersonalOkrMapper.class);
 
-    private final RedisCache redisCache =SpringUtil.getBean(RedisCache.class);
+    private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
     @Override
     public boolean match(String scene) {

@@ -13,6 +13,4 @@ public interface TermAchievementService {
 
     void issueTermAchievement(Long userId, Boolean isCompleted, Boolean oldCompleted);
 
-    void coreDayRecord(Long coreId, Boolean isCompleted, Boolean oldCompleted);
-
 }

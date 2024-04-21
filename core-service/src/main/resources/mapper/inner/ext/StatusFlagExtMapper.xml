@@ -19,10 +19,10 @@
         select
             s.id, s.color, s.label
         from
-            user u, personal_okr p, okr_core o, fourth_quadrant f, status_flag s
+            fourth_quadrant f, status_flag s
         where
-            o.is_deleted = 0 and p.is_deleted = 0 and o.is_deleted = 0 and f.is_deleted = 0 and s.is_deleted = 0 and
-            o.is_over = 0 and u.id = p.user_id and o.id = p.core_id and f.core_id = o.id and s.fourth_quadrant_id = f.id and
+            f.is_deleted = 0 and s.is_deleted = 0 and
+            s.fourth_quadrant_id = f.id and
             f.id = #{quadrantId, jdbcType=BIGINT}
     </select>
 
