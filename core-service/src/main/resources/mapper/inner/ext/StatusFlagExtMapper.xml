@@ -13,6 +13,24 @@
             o.is_deleted = 0 and p.is_deleted = 0 and o.is_deleted = 0 and f.is_deleted = 0 and s.is_deleted = 0 and
             o.is_over = 0 and u.id = p.user_id and o.id = p.core_id and f.core_id = o.id and s.fourth_quadrant_id = f.id and
             u.id = #{userId, jdbcType=BIGINT}
+        union all
+        select
+            s.id, s.color, s.label
+        from
+            user u, team_okr t, okr_core o, fourth_quadrant f, status_flag s
+        where
+            o.is_deleted = 0 and t.is_deleted = 0 and o.is_deleted = 0 and f.is_deleted = 0 and s.is_deleted = 0 and
+            o.is_over = 0 and u.id = t.manager_id and o.id = t.core_id and f.core_id = o.id and s.fourth_quadrant_id = f.id and
+            u.id = #{userId, jdbcType=BIGINT}
+        union all
+        select
+            s.id, s.color, s.label
+        from
+            user u, team_personal_okr tp, okr_core o, fourth_quadrant f, status_flag s
+        where
+            o.is_deleted = 0 and tp.is_deleted = 0 and o.is_deleted = 0 and f.is_deleted = 0 and s.is_deleted = 0 and
+            o.is_over = 0 and u.id = tp.user_id and o.id = tp.core_id and f.core_id = o.id and s.fourth_quadrant_id = f.id and
+            u.id = #{userId, jdbcType=BIGINT}
     </select>
 
     <select id="getStatusFlagsByQuadrantId" resultMap="BaseResultMap" parameterType="java.lang.Long">
