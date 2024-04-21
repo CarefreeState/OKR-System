@@ -619,3 +619,47 @@ insert into medal (`id`, `name`, `description`, `url`, `grey_url`) values
 -- 开启外键检查
 SET @@FOREIGN_KEY_CHECKS = 1;
 
+
+
+-- 创建 OKR 内核记录器表
+drop table if exists `core_recorder`;
+create table `core_recorder` (
+    `id` bigint primary key auto_increment comment 'ID',
+    `core_id` bigint unique not null comment 'OKR 内核 ID',
+    `record_map` json not null comment 'OKR 记录对应表',
+    -- common column
+    `version` int not null default 0 comment '乐观锁',
+    `is_deleted` bit not null default b'0' comment '伪删除标记',
+    `create_time` datetime not null default current_timestamp comment '创建时间',
+    `update_time` datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    -- 外键约束
+    foreign key (`core_id`) references `okr_core`(`id`),
+    -- 索引
+    unique index `uni_id`(`id` asc) using btree,
+    unique index `uni_core_id`(`core_id` asc) using btree
+) comment 'OKR 内核记录器表';
+
+
+-- 创建 OKR 内核日记录表
+drop table if exists `day_record`;
+create table `day_record` (
+    `id` bigint primary key auto_increment comment 'ID',
+    `core_id` bigint unique not null comment 'OKR 内核 ID',
+    `record_date` date not null comment '日期',
+    `credit1` decimal not null default 0.0 comment '信息指数平均值',
+    `credit2` int not null default 0 comment '第二象限任务完成数',
+    `credit3` int not null default 0 comment '第三象限任务完成数',
+    `credit4` int not null default 0 comment '状态指标评估值',
+    -- common column
+    `version` int not null default 0 comment '乐观锁',
+    `is_deleted` bit not null default b'0' comment '伪删除标记',
+    `create_time` datetime not null default current_timestamp comment '创建时间',
+    `update_time` datetime not null default current_timestamp on update current_timestamp comment '更新时间',
+    -- 外键约束
+    foreign key (`core_id`) references `okr_core`(`id`),
+    -- 索引
+    unique index `uni_id`(`id` asc) using btree,
+    unique index `uni_core_id`(`core_id` asc) using btree
+) comment 'OKR 内核日记录表';
+
+

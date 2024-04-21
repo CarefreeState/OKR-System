@@ -1,9 +1,11 @@
 package com.macaku.core.service.impl;
 
+import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.thread.pool.SchedulerThreadPool;
 import com.macaku.common.util.thread.timer.TimerUtil;
+import com.macaku.core.config.OkrCoreConfig;
 import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.event.quadrant.FirstQuadrantEvent;
 import com.macaku.core.domain.po.event.quadrant.SecondQuadrantEvent;
@@ -11,6 +13,7 @@ import com.macaku.core.domain.po.event.quadrant.ThirdQuadrantEvent;
 import com.macaku.core.domain.po.quadrant.SecondQuadrant;
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
 import com.macaku.core.service.QuadrantDeadlineService;
+import com.macaku.redis.repository.RedisCache;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
@@ -25,6 +28,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class QuadrantDeadlineServiceThreadImpl implements QuadrantDeadlineService {
+
+    private final static RedisCache REDIS_CACHE = SpringUtil.getBean(RedisCache.class);
 
     @Override
     public void clear() {
@@ -42,6 +47,7 @@ public class QuadrantDeadlineServiceThreadImpl implements QuadrantDeadlineServic
             updateOkrCore.setIsOver(Boolean.TRUE);
             Db.lambdaUpdate(OkrCore.class).eq(OkrCore::getId, coreId).update(updateOkrCore);
             log.warn("OKR {} 结束！ {}", coreId, TimerUtil.getDateFormat(deadline));
+            REDIS_CACHE.deleteObject(OkrCoreConfig.OKR_CORE_ID_MAP + coreId);
         }, TimeUnit.MILLISECONDS.toSeconds(deadline.getTime() - System.currentTimeMillis()), TimeUnit.SECONDS);
     }
 

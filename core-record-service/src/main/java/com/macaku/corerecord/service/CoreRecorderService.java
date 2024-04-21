@@ -12,9 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 */
 public interface CoreRecorderService extends IService<CoreRecorder> {
 
-    @Transactional
-    DayRecord switchRecord(CoreRecorder coreRecorder);
-
     DayRecord createNewDayRecord(Long coreId);
 
     void initRecordMap(CoreRecorder coreRecorder, Long coreId);

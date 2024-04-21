@@ -1,6 +1,7 @@
 package com.macaku.corerecord.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.macaku.corerecord.domain.po.CoreRecorder;
 import com.macaku.corerecord.domain.po.DayRecord;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +13,9 @@ import java.util.List;
 * @createDate 2024-04-21 02:02:14
 */
 public interface DayRecordService extends IService<DayRecord> {
+
+    @Transactional
+    DayRecord switchRecord(CoreRecorder coreRecorder);
 
     List<DayRecord> getDayRecords(Long coreId);
 

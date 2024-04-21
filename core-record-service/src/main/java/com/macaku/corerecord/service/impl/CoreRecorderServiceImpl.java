@@ -11,14 +11,12 @@ import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
 import com.macaku.core.service.quadrant.FourthQuadrantService;
-import com.macaku.corerecord.config.CoreRecorderConfig;
 import com.macaku.corerecord.domain.po.CoreRecorder;
 import com.macaku.corerecord.domain.po.DayRecord;
 import com.macaku.corerecord.domain.po.RecordMap;
 import com.macaku.corerecord.mapper.CoreRecorderMapper;
 import com.macaku.corerecord.service.CoreRecorderService;
 import com.macaku.redis.repository.RedisCache;
-import com.macaku.redis.repository.RedisLock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -53,27 +51,6 @@ public class CoreRecorderServiceImpl extends ServiceImpl<CoreRecorderMapper, Cor
     private final FourthQuadrantService fourthQuadrantService;
 
     private final StatusFlagConfig statusFlagConfig;
-
-    private final RedisLock redisLock;
-
-    @Override
-    public DayRecord switchRecord(CoreRecorder coreRecorder) {
-        Long coreId = coreRecorder.getCoreId();
-        DayRecord dayRecord = createNewDayRecord(coreId);
-        Long dayRecordId = dayRecord.getId();
-        // 更新一下
-        String lock = CoreRecorderConfig.CORE_RECORDER_LOCK + coreId;
-        redisLock.tryLockDoSomething(lock, () -> {
-            RecordMap recordMap = coreRecorder.getRecordMap();
-            recordMap.setDayRecordId(dayRecordId);
-            this.lambdaUpdate()
-                    .eq(CoreRecorder::getId, coreRecorder.getId())
-                    .set(CoreRecorder::getRecordMap, recordMap)
-                    .update();
-            removeCache(coreId);
-        }, () -> {});
-        return dayRecord;
-    }
 
     @Override
     public DayRecord createNewDayRecord(Long coreId) {
@@ -117,6 +94,7 @@ public class CoreRecorderServiceImpl extends ServiceImpl<CoreRecorderMapper, Cor
     public CoreRecorder getCoreRecorderByCoreId(Long coreId) {
         String redisKey = CORE_RECORDER_MAP + coreId;
         OkrCore okrCore = okrCoreService.getOkrCore(coreId);
+        // 意味着每个记录的行为， OKR 内核都必须未完成，才会进行记录（异步，所以不影响请求的线程）
         if (Boolean.TRUE.equals(okrCore.getIsOver())) {
             throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
         }

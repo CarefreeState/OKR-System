@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.thread.timer.TimerUtil;
+import com.macaku.core.config.OkrCoreConfig;
 import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.event.quadrant.FirstQuadrantEvent;
 import com.macaku.core.domain.po.event.quadrant.SecondQuadrantEvent;
 import com.macaku.core.domain.po.event.quadrant.ThirdQuadrantEvent;
 import com.macaku.core.domain.po.quadrant.SecondQuadrant;
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
+import com.macaku.redis.repository.RedisCache;
 import com.macaku.xxljob.model.XxlJobInfo;
 import com.macaku.xxljob.service.JobGroupService;
 import com.macaku.xxljob.service.JobInfoService;
@@ -51,6 +53,8 @@ public class XxlDeadlineJobConfig {
 
     private final JobGroupService jobGroupService;
 
+    private final RedisCache redisCache;
+
     public void clear() {
         // 删除之前的任务（有些任务是真的没必要删除，有些任务需要修改，有些任务需要删除，但是判断起来太麻烦了）
         jobInfoService.removeAll(SCHEDULE_COMPLETE);
@@ -88,6 +92,7 @@ public class XxlDeadlineJobConfig {
         Db.lambdaUpdate(OkrCore.class).eq(OkrCore::getId, coreId).update(updateOkrCore);
         log.warn("OKR {} 结束！ {}", coreId, TimerUtil.getDateFormat(deadline));
         jobInfoService.removeStoppedJob(SCHEDULE_COMPLETE);
+        redisCache.deleteObject(OkrCoreConfig.OKR_CORE_ID_MAP + coreId);
     }
 
     @XxlJob(SCHEDULE_SECOND_QUADRANT_UPDATE)

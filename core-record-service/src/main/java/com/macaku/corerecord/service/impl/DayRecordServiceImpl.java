@@ -9,11 +9,14 @@ import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
 import com.macaku.core.service.quadrant.FourthQuadrantService;
+import com.macaku.corerecord.config.CoreRecorderConfig;
 import com.macaku.corerecord.domain.po.CoreRecorder;
 import com.macaku.corerecord.domain.po.DayRecord;
+import com.macaku.corerecord.domain.po.RecordMap;
 import com.macaku.corerecord.mapper.DayRecordMapper;
 import com.macaku.corerecord.service.CoreRecorderService;
 import com.macaku.corerecord.service.DayRecordService;
+import com.macaku.redis.repository.RedisLock;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -43,6 +47,8 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 
     private final StatusFlagConfig statusFlagConfig;
 
+    private final RedisLock redisLock;
+
     private boolean checkNeedSwitch(long gap) {
         // 相差大于一天就代表是隔天了
         return gap >= TimeUnit.DAYS.toMillis(1);
@@ -55,11 +61,34 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
             return Boolean.TRUE.equals(isCompleted) ? 1 : 0;
         }
     }
+    @Override
+    public DayRecord switchRecord(CoreRecorder coreRecorder) {
+        Long coreId = coreRecorder.getCoreId();
+        DayRecord dayRecord = coreRecorderService.createNewDayRecord(coreId);
+        Long dayRecordId = dayRecord.getId();
+        // 更新一下
+        String lock = CoreRecorderConfig.CORE_RECORDER_LOCK + coreId;
+        redisLock.tryLockDoSomething(lock, () -> {
+            RecordMap recordMap = coreRecorder.getRecordMap();
+            recordMap = Objects.isNull(recordMap) ? new RecordMap() : recordMap;
+            recordMap.setDayRecordId(dayRecordId);
+            coreRecorderService.lambdaUpdate()
+                    .eq(CoreRecorder::getId, coreRecorder.getId())
+                    .set(CoreRecorder::getRecordMap, recordMap)
+                    .update();
+            coreRecorderService.removeCache(coreId);
+        }, () -> {});
+        return dayRecord;
+    }
 
     @Override
     public DayRecord getNowRecordByCoreId(Long coreId) {
         CoreRecorder coreRecorder = coreRecorderService.getCoreRecorderByCoreId(coreId);
-        Long dayRecordId = coreRecorder.getRecordMap().getDayRecordId();
+        RecordMap recordMap = coreRecorder.getRecordMap();
+        if(Objects.isNull(recordMap) || Objects.isNull(recordMap.getDayRecordId())) {
+            return switchRecord(coreRecorder);
+        }
+        Long dayRecordId = recordMap.getDayRecordId();
         DayRecord dayRecord = Db.lambdaQuery(DayRecord.class)
                 .eq(DayRecord::getId, dayRecordId)
                 .oneOpt()
@@ -68,7 +97,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
         Date today = new Date();
         long gap = today.getTime() - recordDate.getTime();
         if(Boolean.TRUE.equals(checkNeedSwitch(gap))) {
-            dayRecord = coreRecorderService.switchRecord(coreRecorder);
+            dayRecord = switchRecord(coreRecorder);
         }
         return dayRecord;
     }
@@ -82,7 +111,6 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
                 .sorted(Comparator.comparing(DayRecord::getId))
                 .collect(Collectors.toList());
     }
-
 
     @Override
     public void recordFirstQuadrant(Long coreId) {
