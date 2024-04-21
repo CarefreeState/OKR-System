@@ -646,7 +646,7 @@ create table `day_record` (
     `id` bigint primary key auto_increment comment 'ID',
     `core_id` bigint unique not null comment 'OKR 内核 ID',
     `record_date` date not null comment '日期',
-    `credit1` decimal not null default 0.0 comment '信息指数平均值',
+    `credit1` decimal(11, 2) not null default 0.0 comment '信息指数平均值',
     `credit2` int not null default 0 comment '第二象限任务完成数',
     `credit3` int not null default 0 comment '第三象限任务完成数',
     `credit4` int not null default 0 comment '状态指标评估值',
