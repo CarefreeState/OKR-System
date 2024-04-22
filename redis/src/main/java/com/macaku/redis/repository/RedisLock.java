@@ -90,7 +90,7 @@ public class RedisLock {
         }
     }
 
-    public <T> T tryLockDoSomething(final String key, Supplier<T> supplier1, Supplier<T> supplier2) {
+    public <T> T tryLockGetSomething(final String key, Supplier<T> supplier1, Supplier<T> supplier2) {
         // 获得锁实例
         RLock rLock = getLock(key);
         // 在 Redis 中尝试获取锁
@@ -108,7 +108,7 @@ public class RedisLock {
         }
     }
 
-    public <T> T tryLockDoSomething(final String key, final Long var1, final Long var2, final TimeUnit timeUnit,
+    public <T> T tryLockGetSomething(final String key, final Long var1, final Long var2, final TimeUnit timeUnit,
                                     Supplier<T> supplier1, Supplier<T> supplier2) {
         // 获得锁实例
         RLock rLock = getLock(key);

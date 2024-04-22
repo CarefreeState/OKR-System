@@ -644,7 +644,7 @@ create table `core_recorder` (
 drop table if exists `day_record`;
 create table `day_record` (
     `id` bigint primary key auto_increment comment 'ID',
-    `core_id` bigint unique not null comment 'OKR 内核 ID',
+    `core_id` bigint not null comment 'OKR 内核 ID',
     `record_date` date not null comment '日期',
     `credit1` decimal(11, 2) not null default 0.0 comment '信息指数平均值',
     `credit2` int not null default 0 comment '第二象限任务完成数',
@@ -659,7 +659,7 @@ create table `day_record` (
     foreign key (`core_id`) references `okr_core`(`id`),
     -- 索引
     unique index `uni_id`(`id` asc) using btree,
-    unique index `uni_core_id`(`core_id` asc) using btree
+    index `idx_core_id`(`core_id` asc) using btree
 ) comment 'OKR 内核日记录表';
 
 

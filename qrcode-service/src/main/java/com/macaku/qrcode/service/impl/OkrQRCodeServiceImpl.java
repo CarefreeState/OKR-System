@@ -70,7 +70,7 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
     @Override
     public String getInviteQRCodeLock(Long teamId, String teamName, String type) {
         String lockKey = QRCodeConfig.OKR_INVITE_QR_CODE_LOCK + teamId;
-        return redisLock.tryLockDoSomething(lockKey, () -> getInviteQRCode(teamId, teamName, type), () -> {
+        return redisLock.tryLockGetSomething(lockKey, () -> getInviteQRCode(teamId, teamName, type), () -> {
             throw new GlobalServiceException(GlobalServiceStatusCode.REDIS_LOCK_FAIL);
         });
     }
@@ -134,7 +134,7 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
     @Override
     public String getCommonQRCode() {
         String redisKey = QRCodeConfig.WX_COMMON_QR_CODE_KEY;
-        return (String) redisLock.tryLockDoSomething(QRCodeConfig.OKR_COMMON_QR_CODE_LOCK, () ->
+        return (String) redisLock.tryLockGetSomething(QRCodeConfig.OKR_COMMON_QR_CODE_LOCK, () ->
             redisCache.getCacheObject(redisKey).orElseGet(() -> {
                 // 获取 QRCode
                 String mapPath = wxCommonQRCodeService.getQRCode();

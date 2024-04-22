@@ -221,7 +221,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new GlobalServiceException(String.format("用户 %d 上传非法文件", userId), GlobalServiceStatusCode.PARAM_FAILED_VALIDATE);
         }
         String lock = USER_PHOTO_LOCK + userId;
-        return redisLock.tryLockDoSomething(lock, 0L, timeout, TimeUnit.SECONDS, () -> uploadPhoto(photoData, userId, originPhoto), () -> {
+        return redisLock.tryLockGetSomething(lock, 0L, timeout, TimeUnit.SECONDS, () -> uploadPhoto(photoData, userId, originPhoto), () -> {
             throw new GlobalServiceException(GlobalServiceStatusCode.REDIS_LOCK_FAIL);
         });
     }
