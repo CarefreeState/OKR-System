@@ -2,7 +2,7 @@ package com.macaku.core.init;
 
 import com.macaku.common.util.thread.pool.CPUThreadPool;
 import com.macaku.core.domain.po.event.DeadlineEvent;
-import com.macaku.core.handler.chain.DeadlineEventHandlerChain;
+import com.macaku.core.handler.chain.DeadlineDeadlineEventHandlerChain;
 import com.macaku.core.util.QuadrantDeadlineUtil;
 import com.macaku.core.mapper.OkrCoreMapper;
 import com.macaku.xxljob.annotation.XxlRegister;
@@ -30,7 +30,7 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
 
     private final OkrCoreMapper okrCoreMapper;
 
-    private final DeadlineEventHandlerChain deadlineEventHandlerChain;
+    private final DeadlineDeadlineEventHandlerChain deadlineEventHandlerChain;
 
     private void handleEvent(DeadlineEvent deadlineEvent) {
         final long nowTimestamp = System.currentTimeMillis();// 当前时间

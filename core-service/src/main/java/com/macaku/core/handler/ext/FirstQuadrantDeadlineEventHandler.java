@@ -2,7 +2,7 @@ package com.macaku.core.handler.ext;
 
 import com.macaku.core.domain.po.event.DeadlineEvent;
 import com.macaku.core.domain.po.event.quadrant.FirstQuadrantEvent;
-import com.macaku.core.handler.EventHandler;
+import com.macaku.core.handler.DeadlineEventHandler;
 import com.macaku.core.util.QuadrantDeadlineUtil;
 import com.macaku.core.service.OkrCoreService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.Objects;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class FirstQuadrantEventHandler extends EventHandler {
+public class FirstQuadrantDeadlineEventHandler extends DeadlineEventHandler {
 
     private final OkrCoreService okrCoreService;
 

@@ -3,7 +3,7 @@ package com.macaku.core.handler.ext;
 import com.macaku.core.domain.po.event.DeadlineEvent;
 import com.macaku.core.domain.po.event.quadrant.SecondQuadrantEvent;
 import com.macaku.core.domain.po.quadrant.SecondQuadrant;
-import com.macaku.core.handler.EventHandler;
+import com.macaku.core.handler.DeadlineEventHandler;
 import com.macaku.core.util.QuadrantDeadlineUtil;
 import com.macaku.core.service.quadrant.SecondQuadrantService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class SecondQuadrantEventHandler extends EventHandler {
+public class SecondQuadrantDeadlineEventHandler extends DeadlineEventHandler {
 
     private final SecondQuadrantService secondQuadrantService;
 

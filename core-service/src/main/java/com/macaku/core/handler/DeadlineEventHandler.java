@@ -11,19 +11,19 @@ import java.util.Objects;
  * Date: 2024-03-12
  * Time: 9:44
  */
-public abstract class EventHandler {
+public abstract class DeadlineEventHandler {
 
-    private EventHandler eventHandler;
+    private DeadlineEventHandler deadlineEventHandler;
 
     public abstract void handle(DeadlineEvent deadlineEvent, long nowTimestamp);
 
-    public void setNextHandler(EventHandler eventHandler) {
-        this.eventHandler = eventHandler;
+    public void setNextHandler(DeadlineEventHandler deadlineEventHandler) {
+        this.deadlineEventHandler = deadlineEventHandler;
     }
 
     protected void doNextHandler(DeadlineEvent deadlineEvent, long nowTimestamp) {
-        if(Objects.nonNull(eventHandler)) {
-            eventHandler.handle(deadlineEvent, nowTimestamp);
+        if(Objects.nonNull(deadlineEventHandler)) {
+            deadlineEventHandler.handle(deadlineEvent, nowTimestamp);
         }
     }
 }

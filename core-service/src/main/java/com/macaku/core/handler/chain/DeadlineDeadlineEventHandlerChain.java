@@ -1,10 +1,10 @@
 package com.macaku.core.handler.chain;
 
 import com.macaku.core.domain.po.event.DeadlineEvent;
-import com.macaku.core.handler.EventHandler;
-import com.macaku.core.handler.ext.FirstQuadrantEventHandler;
-import com.macaku.core.handler.ext.SecondQuadrantEventHandler;
-import com.macaku.core.handler.ext.ThirdQuadrantEventHandler;
+import com.macaku.core.handler.DeadlineEventHandler;
+import com.macaku.core.handler.ext.FirstQuadrantDeadlineEventHandler;
+import com.macaku.core.handler.ext.SecondQuadrantDeadlineEventHandler;
+import com.macaku.core.handler.ext.ThirdQuadrantDeadlineEventHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -21,15 +21,15 @@ import javax.annotation.PostConstruct;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class DeadlineEventHandlerChain extends EventHandler {
+public class DeadlineDeadlineEventHandlerChain extends DeadlineEventHandler {
 
-    private final FirstQuadrantEventHandler firstQuadrantEventHandler;
+    private final FirstQuadrantDeadlineEventHandler firstQuadrantEventHandler;
 
-    private final SecondQuadrantEventHandler secondQuadrantEventHandler;
+    private final SecondQuadrantDeadlineEventHandler secondQuadrantEventHandler;
 
-    private final ThirdQuadrantEventHandler thirdQuadrantEventHandler;
+    private final ThirdQuadrantDeadlineEventHandler thirdQuadrantEventHandler;
 
-    private EventHandler initHandlerChain() {
+    private DeadlineEventHandler initHandlerChain() {
         firstQuadrantEventHandler.setNextHandler(secondQuadrantEventHandler);
         secondQuadrantEventHandler.setNextHandler(thirdQuadrantEventHandler);
         return firstQuadrantEventHandler;
