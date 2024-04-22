@@ -14,7 +14,8 @@ import com.macaku.core.domain.po.inner.dto.KeyResultDTO;
 import com.macaku.core.domain.po.inner.dto.KeyResultUpdateDTO;
 import com.macaku.core.service.inner.KeyResultService;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
-import com.macaku.corerecord.service.DayRecordService;
+import com.macaku.corerecord.domain.entry.KeyResultUpdate;
+import com.macaku.corerecord.handler.chain.RecordEventHandlerChain;
 import com.macaku.medal.domain.entry.VictoryWithinGrasp;
 import com.macaku.medal.handler.chain.MedalHandlerChain;
 import com.macaku.user.domain.po.User;
@@ -50,7 +51,7 @@ public class KeyResultController {
 
     private final MedalHandlerChain medalHandlerChain;
 
-    private final DayRecordService dayRecordService;
+    private final RecordEventHandlerChain recordEventHandlerChain;
 
     @PostMapping("/add")
     @ApiOperation("添加关键结果")
@@ -81,7 +82,8 @@ public class KeyResultController {
                     .oldProbability(0)
                     .build();
             medalHandlerChain.handle(victoryWithinGrasp);
-            dayRecordService.recordFirstQuadrant(coreId);
+            KeyResultUpdate keyResultUpdate = KeyResultUpdate.builder().coreId(coreId).build();
+            recordEventHandlerChain.handle(keyResultUpdate);
         });
         return SystemJsonResponse.SYSTEM_SUCCESS(id);
     }
@@ -114,7 +116,8 @@ public class KeyResultController {
                         .oldProbability(oldProbability)
                         .build();
                 medalHandlerChain.handle(victoryWithinGrasp);
-                dayRecordService.recordFirstQuadrant(coreId);
+                KeyResultUpdate keyResultUpdate = KeyResultUpdate.builder().coreId(coreId).build();
+                recordEventHandlerChain.handle(keyResultUpdate);
             });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);

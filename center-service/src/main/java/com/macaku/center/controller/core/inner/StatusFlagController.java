@@ -16,6 +16,8 @@ import com.macaku.core.domain.po.inner.dto.StatusFlagDTO;
 import com.macaku.core.domain.po.inner.dto.StatusFlagUpdateDTO;
 import com.macaku.core.service.inner.StatusFlagService;
 import com.macaku.core.service.quadrant.FourthQuadrantService;
+import com.macaku.corerecord.domain.entry.StatusFlagUpdate;
+import com.macaku.corerecord.handler.chain.RecordEventHandlerChain;
 import com.macaku.corerecord.service.DayRecordService;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
@@ -47,7 +49,7 @@ public class StatusFlagController {
 
     private final StatusFlagConfig statusFlagConfig;
 
-    private final DayRecordService dayRecordService;
+    private final RecordEventHandlerChain recordEventHandlerChain;
 
     @PostMapping("/add")
     @ApiOperation("增加一条状态指标")
@@ -68,7 +70,8 @@ public class StatusFlagController {
             // 插入
             id = statusFlagService.addStatusFlag(statusFlag);
             IOThreadPool.submit(() -> {
-                dayRecordService.recordFourthQuadrant(coreId);
+                StatusFlagUpdate statusFlagUpdate = StatusFlagUpdate.builder().coreId(coreId).build();
+                recordEventHandlerChain.handle(statusFlagUpdate);
             });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
@@ -114,7 +117,8 @@ public class StatusFlagController {
         if(user.getId().equals(userId)) {
             statusFlagService.updateStatusFlag(statusFlag);
             IOThreadPool.submit(() -> {
-                dayRecordService.recordFourthQuadrant(coreId);
+                StatusFlagUpdate statusFlagUpdate = StatusFlagUpdate.builder().coreId(coreId).build();
+                recordEventHandlerChain.handle(statusFlagUpdate);
             });
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);

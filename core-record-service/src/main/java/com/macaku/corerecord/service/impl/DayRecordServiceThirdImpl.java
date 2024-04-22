@@ -1,9 +1,8 @@
 package com.macaku.corerecord.service.impl;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.corerecord.component.DayRecordCompleteServiceSelector;
+import com.macaku.corerecord.domain.entry.ActionUpdate;
 import com.macaku.corerecord.service.DayRecordCompleteService;
-import com.macaku.corerecord.service.DayRecordService;
 
 /**
  * Created With Intellij IDEA
@@ -15,16 +14,13 @@ import com.macaku.corerecord.service.DayRecordService;
 public class DayRecordServiceThirdImpl implements DayRecordCompleteService {
     private final static Integer OPTION = DayRecordCompleteServiceSelector.ACTION_OPTION;
 
-    private final DayRecordService dayRecordService = SpringUtil.getBean(DayRecordService.class);
-
     @Override
     public boolean match(Integer option) {
         return OPTION.equals(option);
     }
 
     @Override
-    public void record(Long coreId, Boolean isCompleted, Boolean oldCompleted) {
-        dayRecordService.recordThirdQuadrant(coreId, isCompleted, oldCompleted);
-
+    public Object getEvent(Long coreId, Boolean isCompleted, Boolean oldCompleted) {
+        return ActionUpdate.builder().coreId(coreId).isCompleted(isCompleted).oldCompleted(oldCompleted).build();
     }
 }

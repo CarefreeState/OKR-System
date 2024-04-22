@@ -41,7 +41,7 @@ public class CoreRecordController {
 
     private final DayRecordService dayRecordService;
 
-    @PostMapping("/search")
+    @PostMapping("/search/dayrecord")
     @ApiOperation("查看一个 OKR 的日记录")
     public SystemJsonResponse<List<DayRecordVO>> searchOkrCoreDayRecord(@RequestBody OkrCoreDTO okrCoreDTO) {
         okrCoreDTO.validate();

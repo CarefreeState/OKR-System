@@ -2,8 +2,6 @@ package com.macaku.corerecord.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.macaku.corerecord.domain.po.CoreRecorder;
-import com.macaku.corerecord.domain.po.DayRecord;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
 * @author 马拉圈
@@ -12,11 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 */
 public interface CoreRecorderService extends IService<CoreRecorder> {
 
-    DayRecord createNewDayRecord(Long coreId);
-
     void initRecordMap(CoreRecorder coreRecorder, Long coreId);
 
-    @Transactional
     CoreRecorder initCoreRecorder(Long coreId);
 
     CoreRecorder getCoreRecorderByCoreId(Long coreId);

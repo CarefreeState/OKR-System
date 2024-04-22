@@ -14,6 +14,7 @@ import com.macaku.core.domain.po.inner.dto.TaskDTO;
 import com.macaku.core.domain.po.inner.dto.TaskUpdateDTO;
 import com.macaku.core.service.TaskService;
 import com.macaku.corerecord.component.DayRecordCompleteServiceSelector;
+import com.macaku.corerecord.handler.chain.RecordEventHandlerChain;
 import com.macaku.corerecord.service.DayRecordCompleteService;
 import com.macaku.medal.component.TermAchievementServiceSelector;
 import com.macaku.medal.service.TermAchievementService;
@@ -48,6 +49,8 @@ public class TaskController {
     private final TermAchievementServiceSelector termAchievementServiceSelector;
 
     private final DayRecordCompleteServiceSelector dayRecordCompleteServiceSelector;
+
+    private final RecordEventHandlerChain recordEventHandlerChain;
 
     @PostMapping("/{option}/add")
     @ApiOperation("增加一条任务")
@@ -123,7 +126,7 @@ public class TaskController {
                 TermAchievementService termAchievementService = termAchievementServiceSelector.select(option);
                 termAchievementService.issueTermAchievement(userId, isCompleted, oldCompleted);
                 DayRecordCompleteService dayRecordCompleteService = dayRecordCompleteServiceSelector.select(option);
-                dayRecordCompleteService.record(coreId, isCompleted, oldCompleted);
+                recordEventHandlerChain.handle(dayRecordCompleteService.getEvent(coreId, isCompleted, oldCompleted));
             });
         } else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);

@@ -11,7 +11,7 @@ import java.util.Date;
 /**
  * @TableName core_recorder
  */
-@TableName(value ="core_recorder")
+@TableName(value ="core_recorder", autoResultMap = true) // autoResultMap 保证结果有会让 json 映射
 @Data
 public class CoreRecorder implements Serializable {
     private Long id;

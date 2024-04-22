@@ -14,12 +14,19 @@ import java.util.List;
 */
 public interface DayRecordService extends IService<DayRecord> {
 
-    @Transactional
+    DayRecord createNewDayRecord(Long coreId);
+
+    /**
+     * 此方法可以让 coreRecorder 的 recordMap 存在，且指向最新的 record
+     * @param coreRecorder
+     * @return
+     */
     DayRecord switchRecord(CoreRecorder coreRecorder);
 
-    List<DayRecord> getDayRecords(Long coreId);
-
     DayRecord getNowRecordByCoreId(Long coreId);
+
+    @Transactional
+    List<DayRecord> getDayRecords(Long coreId);
 
     @Transactional
     void recordFirstQuadrant(Long coreId);

@@ -11,6 +11,6 @@ public interface DayRecordCompleteService {
 
     boolean match(Integer option);
 
-    void record(Long coreId, Boolean isCompleted, Boolean oldCompleted);
+    Object getEvent(Long coreId, Boolean isCompleted, Boolean oldCompleted);
 
 }

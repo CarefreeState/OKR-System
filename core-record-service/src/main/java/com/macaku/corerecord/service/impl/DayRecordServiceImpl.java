@@ -5,8 +5,10 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.core.domain.config.StatusFlagConfig;
+import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
+import com.macaku.core.service.OkrCoreService;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
 import com.macaku.core.service.quadrant.FourthQuadrantService;
 import com.macaku.corerecord.config.CoreRecorderConfig;
@@ -45,6 +47,8 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 
     private final FourthQuadrantService fourthQuadrantService;
 
+    private final OkrCoreService okrCoreService;
+
     private final StatusFlagConfig statusFlagConfig;
 
     private final RedisLock redisLock;
@@ -61,10 +65,40 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
             return Boolean.TRUE.equals(isCompleted) ? 1 : 0;
         }
     }
+
+    private void checkOkrIsOver(Long coreId) {
+        OkrCore okrCore = okrCoreService.getOkrCore(coreId);
+        // 意味着每个记录的行为， OKR 内核都必须未完成，才会进行记录（异步，所以不影响请求的线程）
+        if (Boolean.TRUE.equals(okrCore.getIsOver())) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
+        }
+    }
+
+    @Override
+    public DayRecord createNewDayRecord(Long coreId) {
+        FirstQuadrantVO firstQuadrantVO = firstQuadrantService.searchFirstQuadrant(coreId);
+        List<KeyResult> keyResults = firstQuadrantVO.getKeyResults();
+        Integer sum = keyResults.stream()
+                .parallel()
+                .map(KeyResult::getProbability)
+                .reduce(Integer::sum).orElse(0);
+        int size = keyResults.size();
+        Long quadrantId = fourthQuadrantService.searchFourthQuadrant(coreId).getId();
+        DayRecord dayRecord = new DayRecord();
+        dayRecord.setCoreId(coreId);
+        dayRecord.setRecordDate(new Date());
+        dayRecord.setCredit1(size == 0 ? Double.valueOf(0) : Double.valueOf(sum * 1.0 / size));
+        dayRecord.setCredit2(0);
+        dayRecord.setCredit3(0);
+        dayRecord.setCredit4((int) statusFlagConfig.calculateCoreStatusFlag(quadrantId));
+        Db.save(dayRecord);
+        return dayRecord;
+    }
+
     @Override
     public DayRecord switchRecord(CoreRecorder coreRecorder) {
         Long coreId = coreRecorder.getCoreId();
-        DayRecord dayRecord = coreRecorderService.createNewDayRecord(coreId);
+        DayRecord dayRecord = createNewDayRecord(coreId);
         Long dayRecordId = dayRecord.getId();
         // 更新一下
         String lock = CoreRecorderConfig.CORE_RECORDER_LOCK + coreId;
@@ -72,10 +106,17 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
             RecordMap recordMap = coreRecorder.getRecordMap();
             recordMap = Objects.isNull(recordMap) ? new RecordMap() : recordMap;
             recordMap.setDayRecordId(dayRecordId);
+            coreRecorder.setRecordMap(recordMap);
             coreRecorderService.lambdaUpdate()
                     .eq(CoreRecorder::getId, coreRecorder.getId())
-                    .set(CoreRecorder::getRecordMap, recordMap)
-                    .update();
+//                    .set(CoreRecorder::getRecordMap, recordMap)
+                    .update(coreRecorder);
+/*
+*  这里不能通过 set 去指定 recordMap，因为这样会出错，只认识 coreRecorder 对象的属性，而不是 recordMap 这个 Java 对象
+*  那个 Json 处理器只会在，通过对象 coreRecorder 生成 sql 的时候，帮我们自动转化
+*  而在 lambdaUpdate 的 set 方法，是我们自己生成 sql，MP 只会在我们的这个基础上去生成 sql，所以这里的 recordMap
+*  我们指定的 Java 对象，MP 并没有帮我们去转化（MP 目前没有优化这一点，体谅一下）
+*/
             coreRecorderService.removeCache(coreId);
         }, () -> {});
         return dayRecord;
@@ -114,6 +155,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 
     @Override
     public void recordFirstQuadrant(Long coreId) {
+        checkOkrIsOver(coreId);
         DayRecord nowRecord = getNowRecordByCoreId(coreId);
         FirstQuadrantVO firstQuadrantVO = firstQuadrantService.searchFirstQuadrant(coreId);
         List<KeyResult> keyResults = firstQuadrantVO.getKeyResults();
@@ -131,6 +173,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 
     @Override
     public void recordSecondQuadrant(Long coreId, Boolean isCompleted, Boolean oldCompleted) {
+        checkOkrIsOver(coreId);
         DayRecord nowRecord = getNowRecordByCoreId(coreId);
         Integer credit2 = nowRecord.getCredit2();
         int increment = getIncrement(isCompleted, oldCompleted);
@@ -145,8 +188,9 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 
     @Override
     public void recordThirdQuadrant(Long coreId, Boolean isCompleted, Boolean oldCompleted) {
+        checkOkrIsOver(coreId);
         DayRecord nowRecord = getNowRecordByCoreId(coreId);
-        Integer credit3 = nowRecord.getCredit2();
+        Integer credit3 = nowRecord.getCredit3();
         int increment = getIncrement(isCompleted, oldCompleted);
         log.info("OKR {} 第三象限积分 + {} ", coreId, increment);
         if(increment != 0) {
@@ -159,6 +203,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 
     @Override
     public void recordFourthQuadrant(Long coreId) {
+        checkOkrIsOver(coreId);
         DayRecord nowRecord = getNowRecordByCoreId(coreId);
         Long quadrantId = fourthQuadrantService.searchFourthQuadrant(coreId).getId();
         this.lambdaUpdate()

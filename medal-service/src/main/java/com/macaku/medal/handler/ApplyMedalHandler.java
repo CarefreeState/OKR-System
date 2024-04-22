@@ -5,7 +5,6 @@ import com.macaku.medal.domain.config.MedalMap;
 import com.macaku.medal.domain.po.UserMedal;
 import com.macaku.medal.service.UserMedalService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Objects;
@@ -18,7 +17,6 @@ import java.util.function.Function;
  * Date: 2024-04-07
  * Time: 12:21
  */
-@Component
 @Slf4j
 public abstract class ApplyMedalHandler {
 
