@@ -1,4 +1,4 @@
-package com.macaku.core.init.handler;
+package com.macaku.core.handler;
 
 import com.macaku.core.domain.po.event.DeadlineEvent;
 

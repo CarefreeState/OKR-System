@@ -1,4 +1,4 @@
-package com.macaku.core.init.util;
+package com.macaku.core.util;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.core.component.QuadrantDeadlineServiceSelector;

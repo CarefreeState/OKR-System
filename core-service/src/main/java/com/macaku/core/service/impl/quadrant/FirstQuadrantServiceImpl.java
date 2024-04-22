@@ -7,7 +7,7 @@ import com.macaku.core.domain.po.event.quadrant.FirstQuadrantEvent;
 import com.macaku.redis.repository.RedisCache;
 import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
-import com.macaku.core.init.util.QuadrantDeadlineUtil;
+import com.macaku.core.util.QuadrantDeadlineUtil;
 import com.macaku.core.mapper.quadrant.FirstQuadrantMapper;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
 import lombok.RequiredArgsConstructor;

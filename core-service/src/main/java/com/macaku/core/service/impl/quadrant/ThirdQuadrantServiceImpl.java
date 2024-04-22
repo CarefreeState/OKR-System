@@ -11,7 +11,7 @@ import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
 import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
 import com.macaku.core.domain.po.quadrant.vo.ThirdQuadrantVO;
-import com.macaku.core.init.util.QuadrantDeadlineUtil;
+import com.macaku.core.util.QuadrantDeadlineUtil;
 import com.macaku.core.mapper.quadrant.ThirdQuadrantMapper;
 import com.macaku.core.service.quadrant.ThirdQuadrantService;
 import lombok.RequiredArgsConstructor;

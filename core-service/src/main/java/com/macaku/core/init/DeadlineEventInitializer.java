@@ -2,11 +2,8 @@ package com.macaku.core.init;
 
 import com.macaku.common.util.thread.pool.CPUThreadPool;
 import com.macaku.core.domain.po.event.DeadlineEvent;
-import com.macaku.core.init.handler.EventHandler;
-import com.macaku.core.init.handler.ext.FirstQuadrantEventHandler;
-import com.macaku.core.init.handler.ext.SecondQuadrantEventHandler;
-import com.macaku.core.init.handler.ext.ThirdQuadrantEventHandler;
-import com.macaku.core.init.util.QuadrantDeadlineUtil;
+import com.macaku.core.handler.chain.DeadlineEventHandlerChain;
+import com.macaku.core.util.QuadrantDeadlineUtil;
 import com.macaku.core.mapper.OkrCoreMapper;
 import com.macaku.xxljob.annotation.XxlRegister;
 import com.xxl.job.core.handler.annotation.XxlJob;
@@ -16,7 +13,6 @@ import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Component
@@ -34,27 +30,11 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
 
     private final OkrCoreMapper okrCoreMapper;
 
-    private final FirstQuadrantEventHandler firstQuadrantEventHandler;
-
-    private final SecondQuadrantEventHandler secondQuadrantEventHandler;
-
-    private final ThirdQuadrantEventHandler thirdQuadrantEventHandler;
-    private EventHandler handlerChain;
-
-    private EventHandler initHandlerChain() {
-        firstQuadrantEventHandler.setNextHandler(secondQuadrantEventHandler);
-        secondQuadrantEventHandler.setNextHandler(thirdQuadrantEventHandler);
-        return firstQuadrantEventHandler;
-    }
-
-    @PostConstruct
-    public void doPostConstruct() {
-        this.handlerChain = initHandlerChain();
-    }
+    private final DeadlineEventHandlerChain deadlineEventHandlerChain;
 
     private void handleEvent(DeadlineEvent deadlineEvent) {
         final long nowTimestamp = System.currentTimeMillis();// 当前时间
-        handlerChain.handle(deadlineEvent, nowTimestamp);
+        deadlineEventHandlerChain.handle(deadlineEvent, nowTimestamp);
     }
 
     private void action() {
