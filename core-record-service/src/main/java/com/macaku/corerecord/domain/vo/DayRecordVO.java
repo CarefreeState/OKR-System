@@ -23,7 +23,7 @@ public class DayRecordVO {
     @ApiModelProperty("日期")
     private Date recordDate;
 
-    @ApiModelProperty("信息指数平均值")
+    @ApiModelProperty("信心指数平均值")
     private Double credit1;
 
     @ApiModelProperty("第二象限任务完成数")
