@@ -7,7 +7,7 @@ import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
-import com.macaku.corerecord.domain.po.DayRecord;
+import com.macaku.corerecord.domain.po.ext.Record;
 import com.macaku.corerecord.domain.vo.DayRecordVO;
 import com.macaku.corerecord.service.DayRecordService;
 import com.macaku.user.domain.po.User;
@@ -49,7 +49,7 @@ public class CoreRecordController {
         Long coreId = okrCoreDTO.getCoreId();
         OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
         if(Boolean.TRUE.equals(okrOperateService.canVisit(user, coreId))) {
-            List<DayRecord> dayRecords = dayRecordService.getDayRecords(coreId);
+            List<Record> dayRecords = dayRecordService.getRecords(coreId);
             return SystemJsonResponse.SYSTEM_SUCCESS(BeanUtil.copyToList(dayRecords, DayRecordVO.class));
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);

@@ -18,6 +18,7 @@ public class GlobalServiceException extends RuntimeException{
     private final String message;
 
     public GlobalServiceException(String message, GlobalServiceStatusCode statusCode) {
+        // 调用 super 方法会打印堆栈日志
         this.message = message;
         this.statusCode = statusCode;
     }

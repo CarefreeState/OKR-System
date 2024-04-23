@@ -46,7 +46,7 @@ public class CoreRecorderServiceImpl extends ServiceImpl<CoreRecorderMapper, Cor
     }
 
     @Override
-    public CoreRecorder getCoreRecorderByCoreId(Long coreId) {
+    public CoreRecorder getCoreRecorder(Long coreId) {
         String redisKey = CORE_RECORDER_MAP + coreId;
         return (CoreRecorder) redisCache.getCacheObject(redisKey).orElseGet(() -> {
             CoreRecorder coreRecorder = this.lambdaQuery().eq(CoreRecorder::getCoreId, coreId)
@@ -57,7 +57,7 @@ public class CoreRecorderServiceImpl extends ServiceImpl<CoreRecorderMapper, Cor
     }
 
     @Override
-    public void removeCache(Long coreId) {
+    public void removeCoreRecorderCache(Long coreId) {
         redisCache.deleteObject(CORE_RECORDER_MAP + coreId);
     }
 }

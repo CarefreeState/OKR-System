@@ -2,6 +2,7 @@ package com.macaku.corerecord.domain.po;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.macaku.corerecord.domain.po.ext.Record;
 import lombok.Data;
 import org.apache.ibatis.type.JdbcType;
 
@@ -13,7 +14,7 @@ import java.util.Date;
  */
 @TableName(value ="day_record")
 @Data
-public class DayRecord implements Serializable {
+public class DayRecord extends Record implements Serializable {
     private Long id;
 
     private Long coreId;

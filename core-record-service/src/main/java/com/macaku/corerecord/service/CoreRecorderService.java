@@ -14,8 +14,8 @@ public interface CoreRecorderService extends IService<CoreRecorder> {
 
     CoreRecorder initCoreRecorder(Long coreId);
 
-    CoreRecorder getCoreRecorderByCoreId(Long coreId);
+    CoreRecorder getCoreRecorder(Long coreId);
 
-    void removeCache(Long coreId);
+    void removeCoreRecorderCache(Long coreId);
 
 }

@@ -15,6 +15,7 @@ import com.macaku.corerecord.config.CoreRecorderConfig;
 import com.macaku.corerecord.domain.po.CoreRecorder;
 import com.macaku.corerecord.domain.po.DayRecord;
 import com.macaku.corerecord.domain.po.RecordMap;
+import com.macaku.corerecord.domain.po.ext.Record;
 import com.macaku.corerecord.mapper.DayRecordMapper;
 import com.macaku.corerecord.service.CoreRecorderService;
 import com.macaku.corerecord.service.DayRecordService;
@@ -75,7 +76,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
     }
 
     @Override
-    public DayRecord createNewDayRecord(Long coreId) {
+    public DayRecord createNewRecord(Long coreId) {
         FirstQuadrantVO firstQuadrantVO = firstQuadrantService.searchFirstQuadrant(coreId);
         List<KeyResult> keyResults = firstQuadrantVO.getKeyResults();
         Integer sum = keyResults.stream()
@@ -98,7 +99,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
     @Override
     public DayRecord switchRecord(CoreRecorder coreRecorder) {
         Long coreId = coreRecorder.getCoreId();
-        DayRecord dayRecord = createNewDayRecord(coreId);
+        DayRecord dayRecord = createNewRecord(coreId);
         Long dayRecordId = dayRecord.getId();
         // 更新一下
         String lock = CoreRecorderConfig.CORE_RECORDER_LOCK + coreId;
@@ -112,19 +113,19 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 //                    .set(CoreRecorder::getRecordMap, recordMap)
                     .update(coreRecorder);
 /*
-*  这里不能通过 set 去指定 recordMap，因为这样会出错，只认识 coreRecorder 对象的属性，而不是 recordMap 这个 Java 对象
-*  那个 Json 处理器只会在，通过对象 coreRecorder 生成 sql 的时候，帮我们自动转化
-*  而在 lambdaUpdate 的 set 方法，是我们自己生成 sql，MP 只会在我们的这个基础上去生成 sql，所以这里的 recordMap
-*  我们指定的 Java 对象，MP 并没有帮我们去转化（MP 目前没有优化这一点，体谅一下）
+  这里不能通过 set 去指定 recordMap，因为这样会出错，只认识 coreRecorder 对象的属性，而不是 recordMap 这个 Java 对象
+  那个 Json 处理器只会在，通过对象 coreRecorder 生成 sql 的时候，帮我们自动转化
+  而在 lambdaUpdate 的 set 方法，是我们自己生成 sql，MP 只会在我们的这个基础上去生成 sql，所以这里的 recordMap
+  我们指定的 Java 对象，MP 并没有帮我们去转化（MP 目前没有优化这一点，体谅一下）
 */
-            coreRecorderService.removeCache(coreId);
+            coreRecorderService.removeCoreRecorderCache(coreId);
         }, () -> {});
         return dayRecord;
     }
 
     @Override
-    public DayRecord getNowRecordByCoreId(Long coreId) {
-        CoreRecorder coreRecorder = coreRecorderService.getCoreRecorderByCoreId(coreId);
+    public DayRecord getNowRecord(Long coreId) {
+        CoreRecorder coreRecorder = coreRecorderService.getCoreRecorder(coreId);
         RecordMap recordMap = coreRecorder.getRecordMap();
         if(Objects.isNull(recordMap) || Objects.isNull(recordMap.getDayRecordId())) {
             return switchRecord(coreRecorder);
@@ -134,18 +135,14 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
                 .eq(DayRecord::getId, dayRecordId)
                 .oneOpt()
                 .orElseThrow(() -> new GlobalServiceException(GlobalServiceStatusCode.DAY_RECORD_NOT_EXISTS));
-        Date recordDate = dayRecord.getRecordDate();
-        Date today = new Date();
-        long gap = today.getTime() - recordDate.getTime();
-        if(Boolean.TRUE.equals(checkNeedSwitch(gap))) {
-            dayRecord = switchRecord(coreRecorder);
-        }
-        return dayRecord;
+        long gap = System.currentTimeMillis() - dayRecord.getRecordDate().getTime();
+        // 返回一个正确的 DayRecord
+        return Boolean.TRUE.equals(checkNeedSwitch(gap)) ? switchRecord(coreRecorder) : dayRecord;
     }
 
     @Override
-    public List<DayRecord> getDayRecords(Long coreId) {
-        getNowRecordByCoreId(coreId);// 保证记录器指向的是今天的记录
+    public List<Record> getRecords(Long coreId) {
+        getNowRecord(coreId);// 保证记录器指向的是今天的记录
         return this.lambdaQuery().eq(DayRecord::getCoreId, coreId)
                 .list()
                 .stream()
@@ -156,7 +153,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
     @Override
     public void recordFirstQuadrant(Long coreId) {
         checkOkrIsOver(coreId);
-        DayRecord nowRecord = getNowRecordByCoreId(coreId);
+        DayRecord nowRecord = getNowRecord(coreId);
         FirstQuadrantVO firstQuadrantVO = firstQuadrantService.searchFirstQuadrant(coreId);
         List<KeyResult> keyResults = firstQuadrantVO.getKeyResults();
         Integer sum = keyResults.stream()
@@ -174,7 +171,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
     @Override
     public void recordSecondQuadrant(Long coreId, Boolean isCompleted, Boolean oldCompleted) {
         checkOkrIsOver(coreId);
-        DayRecord nowRecord = getNowRecordByCoreId(coreId);
+        DayRecord nowRecord = getNowRecord(coreId);
         Integer credit2 = nowRecord.getCredit2();
         int increment = getIncrement(isCompleted, oldCompleted);
         log.info("OKR {} 第二象限积分 + {} ", coreId, increment);
@@ -189,7 +186,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
     @Override
     public void recordThirdQuadrant(Long coreId, Boolean isCompleted, Boolean oldCompleted) {
         checkOkrIsOver(coreId);
-        DayRecord nowRecord = getNowRecordByCoreId(coreId);
+        DayRecord nowRecord = getNowRecord(coreId);
         Integer credit3 = nowRecord.getCredit3();
         int increment = getIncrement(isCompleted, oldCompleted);
         log.info("OKR {} 第三象限积分 + {} ", coreId, increment);
@@ -204,7 +201,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
     @Override
     public void recordFourthQuadrant(Long coreId) {
         checkOkrIsOver(coreId);
-        DayRecord nowRecord = getNowRecordByCoreId(coreId);
+        DayRecord nowRecord = getNowRecord(coreId);
         Long quadrantId = fourthQuadrantService.searchFourthQuadrant(coreId).getId();
         this.lambdaUpdate()
                 .eq(DayRecord::getId, nowRecord.getId())
