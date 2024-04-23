@@ -2,6 +2,7 @@ package com.macaku.common.util.thread.local;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -28,9 +29,8 @@ public class ThreadLocalUtil {
     }
 
     public static <T> T get(Function<String, T> function) {
-        String value = THREAD_LOCAL.get();
-        log.info("{} 获取本地线程资源 {}", Thread.currentThread().getName(), value);
-        return function.apply(value);
+        String value = get();
+        return Objects.isNull(value) ? null : function.apply(value);
     }
 
     public static void remove() {

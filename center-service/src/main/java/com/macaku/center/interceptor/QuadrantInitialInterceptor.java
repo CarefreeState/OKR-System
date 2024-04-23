@@ -42,12 +42,14 @@ public class QuadrantInitialInterceptor implements HandlerInterceptor {
         // 启动一个异步线程
         Long userId = UserRecordUtil.getUserRecord().getId();
         Long coreId = ThreadLocalUtil.get(Long::parseLong);
-        IOThreadPool.submit(() -> {
-            UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
-            if(Objects.isNull(dbUserMedal)) {
-                StayTrueBeginning stayTrueBeginning = StayTrueBeginning.builder().userId(userId).coreId(coreId).build();
-                medalHandlerChain.handle(stayTrueBeginning);
-            }
-        });
+        if(Objects.nonNull(coreId)) {
+            IOThreadPool.submit(() -> {
+                UserMedal dbUserMedal = userMedalService.getUserMedal(userId, medalId);
+                if(Objects.isNull(dbUserMedal)) {
+                    StayTrueBeginning stayTrueBeginning = StayTrueBeginning.builder().userId(userId).coreId(coreId).build();
+                    medalHandlerChain.handle(stayTrueBeginning);
+                }
+            });
+        }
     }
 }

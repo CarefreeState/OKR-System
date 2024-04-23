@@ -43,10 +43,7 @@ public class CronUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(getCorn(LocalDateTime.now(), 5, TimeUnit.MINUTES));
-        System.out.println(getCorn(LocalDateTime.now(), 1, TimeUnit.MINUTES));
-        System.out.println(getCronWeek(7));
-        System.out.println(getCorn(new Date()));
+        System.out.println(getCorn(LocalDateTime.now(), 1, TimeUnit.DAYS));
     }
 
 }

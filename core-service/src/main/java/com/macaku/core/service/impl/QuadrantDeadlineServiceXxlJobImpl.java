@@ -51,7 +51,7 @@ public class QuadrantDeadlineServiceXxlJobImpl implements QuadrantDeadlineServic
         Date deadline = thirdQuadrantEvent.getDeadline();
         // 发起一个定时任务
         XXL_DEADLINE_JOB_CONFIG.submitJob("【动态任务】第三象限截止时间刷新  " + id, deadline,
-                thirdQuadrantEvent, XxlDeadlineJobConfig.SCHEDULE_THIRD__QUADRANT_UPDATE);
+                thirdQuadrantEvent, XxlDeadlineJobConfig.SCHEDULE_THIRD_QUADRANT_UPDATE);
     }
 
 }

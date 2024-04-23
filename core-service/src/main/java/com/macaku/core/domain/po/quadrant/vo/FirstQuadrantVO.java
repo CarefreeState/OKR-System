@@ -19,7 +19,6 @@ import java.util.List;
 @Data
 public class FirstQuadrantVO extends FirstQuadrant {
 
-
     @ApiModelProperty("关键结果列表")
     private List<KeyResult> keyResults;
 
