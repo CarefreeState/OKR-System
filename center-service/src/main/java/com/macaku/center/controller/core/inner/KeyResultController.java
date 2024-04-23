@@ -12,6 +12,7 @@ import com.macaku.common.util.thread.pool.IOThreadPool;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.po.inner.dto.KeyResultDTO;
 import com.macaku.core.domain.po.inner.dto.KeyResultUpdateDTO;
+import com.macaku.core.service.OkrCoreService;
 import com.macaku.core.service.inner.KeyResultService;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
 import com.macaku.corerecord.domain.entry.KeyResultUpdate;
@@ -42,6 +43,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/keyresult")
 @Api(tags = "关键结果")
 public class KeyResultController {
+
+    private final OkrCoreService okrCoreService;
 
     private final KeyResultService keyResultService;
 
@@ -76,6 +79,7 @@ public class KeyResultController {
         }
         Integer probability = keyResult.getProbability();
         IOThreadPool.submit(() -> {
+            okrCoreService.checkOverThrows(coreId);
             VictoryWithinGrasp victoryWithinGrasp = VictoryWithinGrasp.builder()
                     .userId(userId)
                     .probability(probability)
@@ -110,6 +114,7 @@ public class KeyResultController {
             Integer probability = keyResult.getProbability();
             Integer oldProbability = oldKeyResult.getProbability();
             IOThreadPool.submit(() -> {
+                okrCoreService.checkOverThrows(coreId);
                 VictoryWithinGrasp victoryWithinGrasp = VictoryWithinGrasp.builder()
                         .userId(userId)
                         .probability(probability)

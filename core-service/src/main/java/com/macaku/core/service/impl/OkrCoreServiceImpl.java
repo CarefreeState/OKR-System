@@ -96,6 +96,20 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
     }
 
     @Override
+    public void checkOverThrows(Long coreId) {
+        if(Boolean.TRUE.equals(getOkrCore(coreId).getIsOver())) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
+        }
+    }
+
+    @Override
+    public void checkNonOverThrows(Long coreId) {
+        if(Boolean.FALSE.equals(getOkrCore(coreId).getIsOver())) {
+            throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_NOT_OVER);
+        }
+    }
+
+    @Override
     public void removeOkrCoreCache(Long coreId) {
         redisCache.deleteObject(OkrCoreConfig.OKR_CORE_ID_MAP + coreId);
     }
@@ -173,10 +187,7 @@ public class OkrCoreServiceImpl extends ServiceImpl<OkrCoreMapper, OkrCore>
 
     @Override
     public void complete(Long id) {
-        OkrCore okrCore = getOkrCore(id);
-        if(Boolean.TRUE.equals(okrCore.getIsOver())) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
-        }
+        checkOverThrows(id);
         // 构造更新对象
         OkrCore updateOkrCore = new OkrCore();
         updateOkrCore.setId(id);

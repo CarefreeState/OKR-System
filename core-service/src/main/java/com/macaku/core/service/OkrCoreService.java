@@ -19,6 +19,10 @@ public interface OkrCoreService extends IService<OkrCore> {
 
     OkrCore getOkrCore(Long coreId);
 
+    void checkOverThrows(Long coreId);
+
+    void checkNonOverThrows(Long coreId);
+
     void removeOkrCoreCache(Long coreId);
 
     OkrCoreVO searchOkrCore(Long id);

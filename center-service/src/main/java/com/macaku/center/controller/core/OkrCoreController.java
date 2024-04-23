@@ -104,6 +104,7 @@ public class OkrCoreController {
             log.info("成功为 OKR {} 总结 {} 完成度 {}%", coreId, summary, degree);
             // 开启一个异步线程
             IOThreadPool.submit(() -> {
+                okrCoreService.checkOverThrows(coreId);
                 OkrFinish okrFinish = OkrFinish.builder()
                         .userId(userId)
                         .degree(degree)

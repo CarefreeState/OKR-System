@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.core.domain.config.StatusFlagConfig;
-import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.inner.KeyResult;
 import com.macaku.core.domain.po.quadrant.vo.FirstQuadrantVO;
 import com.macaku.core.service.OkrCoreService;
@@ -68,11 +67,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
     }
 
     private void checkOkrIsOver(Long coreId) {
-        OkrCore okrCore = okrCoreService.getOkrCore(coreId);
-        // 意味着每个记录的行为， OKR 内核都必须未完成，才会进行记录（异步，所以不影响请求的线程）
-        if (Boolean.TRUE.equals(okrCore.getIsOver())) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.OKR_IS_OVER);
-        }
+        okrCoreService.checkOverThrows(coreId);
     }
 
     @Override

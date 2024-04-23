@@ -12,6 +12,7 @@ import com.macaku.common.util.thread.pool.IOThreadPool;
 import com.macaku.core.component.TaskServiceSelector;
 import com.macaku.core.domain.po.inner.dto.TaskDTO;
 import com.macaku.core.domain.po.inner.dto.TaskUpdateDTO;
+import com.macaku.core.service.OkrCoreService;
 import com.macaku.core.service.TaskService;
 import com.macaku.corerecord.component.DayRecordCompleteServiceSelector;
 import com.macaku.corerecord.handler.chain.RecordEventHandlerChain;
@@ -41,6 +42,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/task")
 @Api(tags = "任务管理")
 public class TaskController {
+
+    private final OkrCoreService okrCoreService;
 
     private final OkrServiceSelector okrServiceSelector;
 
@@ -123,6 +126,7 @@ public class TaskController {
             Boolean oldCompleted = taskService.updateTask(taskId, content, isCompleted);
             // 开启两个异步线程
             IOThreadPool.submit(() -> {
+                okrCoreService.checkOverThrows(coreId);
                 TermAchievementService termAchievementService = termAchievementServiceSelector.select(option);
                 termAchievementService.issueTermAchievement(userId, isCompleted, oldCompleted);
                 DayRecordCompleteService dayRecordCompleteService = dayRecordCompleteServiceSelector.select(option);
