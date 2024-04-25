@@ -5,13 +5,12 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.thread.pool.SchedulerThreadPool;
 import com.macaku.common.util.thread.timer.TimerUtil;
-import com.macaku.core.config.OkrCoreConfig;
-import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.event.quadrant.FirstQuadrantEvent;
 import com.macaku.core.domain.po.event.quadrant.SecondQuadrantEvent;
 import com.macaku.core.domain.po.event.quadrant.ThirdQuadrantEvent;
 import com.macaku.core.domain.po.quadrant.SecondQuadrant;
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
+import com.macaku.core.service.OkrCoreService;
 import com.macaku.core.service.QuadrantDeadlineService;
 import com.macaku.redis.repository.RedisCache;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class QuadrantDeadlineServiceThreadImpl implements QuadrantDeadlineService {
 
-    private final static RedisCache REDIS_CACHE = SpringUtil.getBean(RedisCache.class);
+    private final static OkrCoreService OKR_CORE_SERVICE = SpringUtil.getBean(OkrCoreService.class);
 
     @Override
     public void clear() {
@@ -42,12 +41,7 @@ public class QuadrantDeadlineServiceThreadImpl implements QuadrantDeadlineServic
         Date deadline = firstQuadrantEvent.getDeadline();
         // 发起一个定时任务
         SchedulerThreadPool.schedule(() -> {
-            OkrCore updateOkrCore = new OkrCore();
-            updateOkrCore.setId(coreId);
-            updateOkrCore.setIsOver(Boolean.TRUE);
-            Db.lambdaUpdate(OkrCore.class).eq(OkrCore::getId, coreId).update(updateOkrCore);
-            log.warn("OKR {} 结束！ {}", coreId, TimerUtil.getDateFormat(deadline));
-            REDIS_CACHE.deleteObject(OkrCoreConfig.OKR_CORE_ID_MAP + coreId);
+            OKR_CORE_SERVICE.complete(coreId);
         }, TimeUnit.MILLISECONDS.toSeconds(deadline.getTime() - System.currentTimeMillis()), TimeUnit.SECONDS);
     }
 
@@ -65,11 +59,7 @@ public class QuadrantDeadlineServiceThreadImpl implements QuadrantDeadlineServic
             Date nextDeadline = new Date(nextDeadTimestamp);
             try {
                 // 如果 OKR 没有结束，更新截止时间，发起新的定时任务
-                Boolean isOver = Db.lambdaQuery(OkrCore.class)
-                        .eq(OkrCore::getId, coreId)
-                        .select(OkrCore::getIsOver)
-                        .one()
-                        .getIsOver();
+                Boolean isOver = OKR_CORE_SERVICE.getOkrCore(coreId).getIsOver();
                 if(Boolean.TRUE.equals(isOver)) {
                     log.warn("OKR {} 已结束，第二象限 {} 停止对截止时间的刷新", coreId, id);
                 }else {
@@ -102,11 +92,7 @@ public class QuadrantDeadlineServiceThreadImpl implements QuadrantDeadlineServic
             Date nextDeadline = new Date(nextDeadTimestamp);
             try {
                 // 如果 OKR 没有结束，更新截止时间，发起新的定时任务
-                Boolean isOver = Db.lambdaQuery(OkrCore.class)
-                        .eq(OkrCore::getId, coreId)
-                        .select(OkrCore::getIsOver)
-                        .one()
-                        .getIsOver();
+                Boolean isOver = OKR_CORE_SERVICE.getOkrCore(coreId).getIsOver();
                 if(Boolean.TRUE.equals(isOver)) {
                     log.warn("OKR {} 已结束，第三象限 {} 停止对截止时间的刷新", coreId, id);
                 }else {

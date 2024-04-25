@@ -9,7 +9,7 @@ update okr_core set is_deleted = 1 where id = 642;
 
 update okr_core set is_deleted = 1 where id = 641;
 
-update okr_core set is_over = 0 where id = 183;
+update okr_core set is_over = 1 where id = 183;
 
 update okr_core set summary = "无" where id = 183;
 

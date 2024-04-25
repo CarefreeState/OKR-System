@@ -82,6 +82,7 @@ public class ThirdQuadrantServiceImpl extends ServiceImpl<ThirdQuadrantMapper, T
         ThirdQuadrantEvent event = ThirdQuadrantEvent.builder()
                 .coreId(coreId).id(id).cycle(quadrantCycle).deadline(deadline).build();
         QuadrantDeadlineUtil.scheduledUpdateThirdQuadrant(event);
+        // 清楚缓存
         redisCache.deleteObject(OkrCoreConfig.OKR_CORE_ID_MAP + coreId);
     }
 

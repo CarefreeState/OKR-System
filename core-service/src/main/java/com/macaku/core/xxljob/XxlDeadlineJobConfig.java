@@ -4,13 +4,12 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.thread.timer.TimerUtil;
-import com.macaku.core.config.OkrCoreConfig;
-import com.macaku.core.domain.po.OkrCore;
 import com.macaku.core.domain.po.event.quadrant.FirstQuadrantEvent;
 import com.macaku.core.domain.po.event.quadrant.SecondQuadrantEvent;
 import com.macaku.core.domain.po.event.quadrant.ThirdQuadrantEvent;
 import com.macaku.core.domain.po.quadrant.SecondQuadrant;
 import com.macaku.core.domain.po.quadrant.ThirdQuadrant;
+import com.macaku.core.service.OkrCoreService;
 import com.macaku.redis.repository.RedisCache;
 import com.macaku.redis.repository.RedisLock;
 import com.macaku.xxljob.annotation.XxlRegister;
@@ -59,7 +58,7 @@ public class XxlDeadlineJobConfig {
 
     private final JobGroupService jobGroupService;
 
-    private final RedisCache redisCache;
+    private final OkrCoreService okrCoreService;
 
     private final RedisLock redisLock;
 
@@ -107,13 +106,7 @@ public class XxlDeadlineJobConfig {
             String jobParam = XxlJobHelper.getJobParam();
             FirstQuadrantEvent firstQuadrantEvent = JsonUtil.analyzeJson(jobParam, FirstQuadrantEvent.class);
             Long coreId = firstQuadrantEvent.getCoreId();
-            Date deadline = firstQuadrantEvent.getDeadline();
-            OkrCore updateOkrCore = new OkrCore();
-            updateOkrCore.setId(coreId);
-            updateOkrCore.setIsOver(Boolean.TRUE);
-            Db.lambdaUpdate(OkrCore.class).eq(OkrCore::getId, coreId).update(updateOkrCore);
-            log.warn("OKR {} 结束！ {}", coreId, TimerUtil.getDateFormat(deadline));
-            redisCache.deleteObject(OkrCoreConfig.OKR_CORE_ID_MAP + coreId);
+            okrCoreService.complete(coreId);
         }, () -> {});
     }
 
@@ -132,11 +125,7 @@ public class XxlDeadlineJobConfig {
             secondQuadrantEvent.setDeadline(nextDeadline);
             try {
                 // 如果 OKR 没有结束，更新截止时间，发起新的定时任务
-                Boolean isOver = Db.lambdaQuery(OkrCore.class)
-                        .eq(OkrCore::getId, coreId)
-                        .select(OkrCore::getIsOver)
-                        .one()
-                        .getIsOver();
+                Boolean isOver = okrCoreService.getOkrCore(coreId).getIsOver();
                 if (Boolean.TRUE.equals(isOver)) {
                     log.warn("OKR {} 已结束，第二象限 {} 停止对截止时间的刷新", coreId, id);
                 } else {
@@ -172,11 +161,7 @@ public class XxlDeadlineJobConfig {
             thirdQuadrantEvent.setDeadline(nextDeadline);
             try {
                 // 如果 OKR 没有结束，更新截止时间，发起新的定时任务
-                Boolean isOver = Db.lambdaQuery(OkrCore.class)
-                        .eq(OkrCore::getId, coreId)
-                        .select(OkrCore::getIsOver)
-                        .one()
-                        .getIsOver();
+                Boolean isOver = okrCoreService.getOkrCore(coreId).getIsOver();
                 if(Boolean.TRUE.equals(isOver)) {
                     log.warn("OKR {} 已结束，第三象限 {} 停止对截止时间的刷新", coreId, id);
                 }else {

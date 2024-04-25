@@ -83,6 +83,7 @@ public class SecondQuadrantServiceImpl extends ServiceImpl<SecondQuadrantMapper,
         SecondQuadrantEvent event = SecondQuadrantEvent.builder()
                 .coreId(coreId).id(id).cycle(quadrantCycle).deadline(deadline).build();
         QuadrantDeadlineUtil.scheduledUpdateSecondQuadrant(event);
+        // 清楚缓存
         redisCache.deleteObject(OkrCoreConfig.OKR_CORE_ID_MAP + coreId);
     }
 
