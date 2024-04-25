@@ -15,7 +15,7 @@ update okr_core set summary = "无" where id = 183;
 
 update first_quadrant set objective = '练就降龙十八掌' where id = 211;
 
-update first_quadrant set objective = '练就控鹤擒龙' where id = 182;
+update first_quadrant set objective = '练就控鹤擒龙手' where id = 182;
 
 update first_quadrant set deadline = '2024-06-30 23:59:59' where id = 183;
 
