@@ -66,7 +66,11 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
         }
     }
 
-    private void checkOkrIsOver(Long coreId) {
+    private boolean checkOkrIsOver(Long coreId) {
+        return okrCoreService.getOkrCore(coreId).getIsOver();
+    }
+
+    private void checkOverThrows(Long coreId) {
         okrCoreService.checkOverThrows(coreId);
     }
 
@@ -137,7 +141,9 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 
     @Override
     public List<Record> getRecords(Long coreId) {
-        getNowRecord(coreId);// 保证记录器指向的是今天的记录
+        if(Boolean.FALSE.equals(checkOkrIsOver(coreId))) {
+            getNowRecord(coreId);// 保证记录器指向的是今天的记录（如果 OKR 未结束）
+        }
         return this.lambdaQuery().eq(DayRecord::getCoreId, coreId)
                 .list()
                 .stream()
@@ -147,7 +153,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 
     @Override
     public void recordFirstQuadrant(Long coreId) {
-        checkOkrIsOver(coreId);
+        checkOverThrows(coreId);
         DayRecord nowRecord = getNowRecord(coreId);
         FirstQuadrantVO firstQuadrantVO = firstQuadrantService.searchFirstQuadrant(coreId);
         List<KeyResult> keyResults = firstQuadrantVO.getKeyResults();
@@ -165,7 +171,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 
     @Override
     public void recordSecondQuadrant(Long coreId, Boolean isCompleted, Boolean oldCompleted) {
-        checkOkrIsOver(coreId);
+        checkOverThrows(coreId);
         DayRecord nowRecord = getNowRecord(coreId);
         Integer credit2 = nowRecord.getCredit2();
         int increment = getIncrement(isCompleted, oldCompleted);
@@ -180,7 +186,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 
     @Override
     public void recordThirdQuadrant(Long coreId, Boolean isCompleted, Boolean oldCompleted) {
-        checkOkrIsOver(coreId);
+        checkOverThrows(coreId);
         DayRecord nowRecord = getNowRecord(coreId);
         Integer credit3 = nowRecord.getCredit3();
         int increment = getIncrement(isCompleted, oldCompleted);
@@ -195,7 +201,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
 
     @Override
     public void recordFourthQuadrant(Long coreId) {
-        checkOkrIsOver(coreId);
+        checkOverThrows(coreId);
         DayRecord nowRecord = getNowRecord(coreId);
         Long quadrantId = fourthQuadrantService.searchFourthQuadrant(coreId).getId();
         this.lambdaUpdate()
