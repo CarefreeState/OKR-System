@@ -353,7 +353,7 @@ public class RedisCache {
      * *：匹配任意数量个字符（包括 0 个字符）
      *
      * @param prefix 字符串前缀
-     * @return 键的集合
+     * @return 键的集合（全名）
      */
     public Set<String> getCacheKeysByPrefix(final String prefix) {
         log.info("获取 Redis 以 [{}] 为前缀的键", prefix);
@@ -367,7 +367,7 @@ public class RedisCache {
      * []：匹配指定范围内的字符
      *
      * @param pattern 字符串格式
-     * @return 键的集合
+     * @return 键的集合（全名）
      */
     public Set<String> getCacheKeysByPattern(final String pattern) {
         log.info("获取 Redis 格式为 [{}] 的键", pattern);

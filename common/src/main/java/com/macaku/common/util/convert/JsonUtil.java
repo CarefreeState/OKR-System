@@ -37,11 +37,11 @@ public class JsonUtil {
         return jsonObject.toStringPretty();
     }
 
-    public static JsonBuilder builder() {
+    public static JsonBuilder jsonBuilder() {
         return new JsonBuilder();
     }
 
-    public static JsonBuilder builder(String json) {
+    public static JsonBuilder jsonBuilder(String json) {
         return new JsonBuilder(json);
     }
 
@@ -54,7 +54,7 @@ public class JsonUtil {
             return this;
         }
 
-        public String build() {
+        public String buildJson() {
             return this.json.toStringPretty();
         }
 

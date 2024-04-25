@@ -14,12 +14,10 @@ public interface WebSocketService {
 
     void onOpen(Session session, String key) throws DeploymentException;
 
-    void onMessage(String message, Session session);
+    void onMessage(String message, Session session, String key);
 
-    void onClose();
+    void onClose(Session session, String key);
 
-    void onError(Session session, Throwable error);
-
-    void sendMessage(String message);
+    void onError(Session session, String key, Throwable error);
 
 }
