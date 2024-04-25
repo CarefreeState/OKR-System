@@ -1,5 +1,6 @@
 package com.macaku.user.security.handler;
 
+import com.macaku.common.util.thread.local.ThreadLocalUtil;
 import com.macaku.common.web.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,7 +38,7 @@ public class AuthFailHandler implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException e) throws IOException, ServletException {
         String requestURI = httpServletRequest.getRequestURI();
-        String message = e.getMessage() + String.format("%s    (%s)", e.getMessage(), httpServletResponse.getHeader(EXCEPTION_MESSAGE));
+        String message = e.getMessage() + String.format("%s    (%s)", e.getMessage(), ThreadLocalUtil.get());
         String redirect = domain + REDIRECT_URL + HttpUtil.getQueryString(new HashMap<String, Object>(){{
             this.put(EXCEPTION_MESSAGE, message);
         }});

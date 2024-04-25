@@ -1,6 +1,5 @@
 package com.macaku.redis.repository;
 
-import com.macaku.common.exception.GlobalServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -53,6 +52,15 @@ public class RedisLock {
         rLock.unlock();
     }
 
+    public void interruptedEvent(InterruptedException e) {
+        log.warn("InterruptedException : {}", e.getMessage());
+    }
+
+    public <T> T interruptedGetEvent(InterruptedException e) {
+        log.warn("InterruptedException : {}", e.getMessage());
+        return null;
+    }
+
     public void tryLockDoSomething(final String key, Runnable behavior1, Runnable behavior2) {
         // 获得锁实例
         RLock rLock = getLock(key);
@@ -65,7 +73,7 @@ public class RedisLock {
                 behavior2.run();
             }
         } catch (InterruptedException e) {
-            throw new GlobalServiceException(e.getMessage());
+            interruptedEvent(e);
         } finally {
             unlock(rLock);
         }
@@ -84,7 +92,7 @@ public class RedisLock {
                 behavior2.run();
             }
         } catch (InterruptedException e) {
-            throw new GlobalServiceException(e.getMessage());
+            interruptedEvent(e);
         } finally {
             unlock(rLock);
         }
@@ -102,7 +110,7 @@ public class RedisLock {
                 return supplier2.get();
             }
         } catch (InterruptedException e) {
-            throw new GlobalServiceException(e.getMessage());
+            return interruptedGetEvent(e);
         } finally {
             unlock(rLock);
         }
@@ -121,7 +129,7 @@ public class RedisLock {
                 return supplier2.get();
             }
         } catch (InterruptedException e) {
-            throw new GlobalServiceException(e.getMessage());
+            return interruptedGetEvent(e);
         } finally {
             unlock(rLock);
         }

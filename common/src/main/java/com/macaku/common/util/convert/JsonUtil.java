@@ -1,5 +1,7 @@
 package com.macaku.common.util.convert;
 
+import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 
 /**
@@ -28,4 +30,41 @@ public class JsonUtil {
     public static Object analyzeJsonField(String json, String path) {
         return JSONUtil.parse(json).getByPath(path);
     }
+
+    public static <T> String addJsonField(String json, String key, T value) {
+        JSON jsonObject = JSONUtil.parse(json);
+        jsonObject.putByPath(key, value);
+        return jsonObject.toStringPretty();
+    }
+
+    public static JsonBuilder builder() {
+        return new JsonBuilder();
+    }
+
+    public static JsonBuilder builder(String json) {
+        return new JsonBuilder(json);
+    }
+
+    public static class JsonBuilder {
+
+        private final JSON json;
+
+        public <T> JsonBuilder put(String key, T value) {
+            this.json.putByPath(key, value);
+            return this;
+        }
+
+        public String build() {
+            return this.json.toStringPretty();
+        }
+
+        public JsonBuilder() {
+            this.json = new JSONObject();
+        }
+
+        public JsonBuilder(String json) {
+            this.json = new JSONObject(json);
+        }
+    }
+
 }
