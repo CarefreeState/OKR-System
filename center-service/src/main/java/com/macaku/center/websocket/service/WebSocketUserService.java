@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 
-@ServerEndpoint("/web/wxlogin")
+@ServerEndpoint("/wxlogin")
 @Slf4j
 @Component
 public class WebSocketUserService {
@@ -33,6 +33,9 @@ public class WebSocketUserService {
 
     @OnOpen
     public void onOpen(Session session) throws DeploymentException {
+        SchedulerThreadPool.schedule(() -> {
+            SessionUtil.close(session);
+        }, QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
         // 获得邀请码
         LoginQRCodeVO loginQRCode = OKR_QR_CODE_SERVICE.getLoginQRCode();
         // 获得在 Redis 的键
@@ -44,9 +47,6 @@ public class WebSocketUserService {
         SessionMapper.put(sessionKey, session);
         // 发送：path, secret
         MessageSender.sendMessage(session, JsonUtil.analyzeData(loginQRCode));
-        SchedulerThreadPool.schedule(() -> {
-            SessionUtil.close(session);
-        }, QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
 //        throw new DeploymentException("拒绝连接");
     }
 
