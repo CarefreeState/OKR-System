@@ -118,6 +118,10 @@ public enum GlobalServiceStatusCode {
     DAY_RECORD_NOT_EXISTS(9001, "日记录不存在"),
 
 
+    /*WebSocket想关*/
+    USER_NOT_ONLINE(10000, "用户不在线"),
+
+
 
 
 

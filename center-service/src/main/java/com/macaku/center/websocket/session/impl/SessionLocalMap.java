@@ -1,57 +1,61 @@
 package com.macaku.center.websocket.session.impl;
 
 import com.macaku.center.websocket.session.SessionMap;
-import com.macaku.redis.repository.RedisCache;
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
 import javax.websocket.Session;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Created With Intellij IDEA
  * Description:
  * User: 马拉圈
  * Date: 2024-04-26
- * Time: 0:23
+ * Time: 16:37
  */
-// 哭哭，Session 无法序列化！
-// 分布式的话，为每个微服务都请求一遍，保证全局性？
 @Repository
-@RequiredArgsConstructor
-public class SessionRedisMap implements SessionMap {
+@Slf4j
+public class SessionLocalMap implements SessionMap {
 
-    private final RedisCache redisCache;
+    private final static Map<String, Session> sessionMap = new ConcurrentHashMap<>();
 
     @Override
-    public void put(String key, Session webSocketService) {
-        redisCache.setCacheObject(key, webSocketService);
+    public void put(String key, Session session) {
+        sessionMap.put(key, session);
     }
 
     @Override
     public Session get(String key) {
-        return (Session) redisCache.getCacheObject(key).orElse(null);
+        return sessionMap.get(key);
     }
 
     @Override
     public boolean containsKey(String key) {
-        return redisCache.isExists(key);
+        return sessionMap.containsKey(key);
     }
 
     @Override
     public void remove(String key) {
-        redisCache.deleteObject(key);
+        sessionMap.remove(key);
     }
 
     @Override
     public int size(String prefix) {
-        return redisCache.getCacheKeysByPrefix(prefix).size();
+        return getKeys(prefix).size();
     }
 
     @Override
     public Set<String> getKeys(String prefix) {
-        return redisCache.getCacheKeysByPrefix(prefix);
+        return sessionMap.entrySet().stream()
+                .map(Map.Entry::getKey)
+                .parallel()
+                .filter(key -> key.matches(String.format("^%s.*", prefix)))
+                .collect(Collectors.toSet());
     }
 
     @Override

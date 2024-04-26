@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  * Date: 2024-04-03
  * Time: 10:52
  */
-@Component
+@Repository
 @RequiredArgsConstructor
 @Slf4j
 public class RedisLock {

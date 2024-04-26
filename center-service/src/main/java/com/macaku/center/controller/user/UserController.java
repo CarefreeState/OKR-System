@@ -1,6 +1,9 @@
 package com.macaku.center.controller.user;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.macaku.center.websocket.service.WebSocketUserService;
+import com.macaku.center.websocket.util.MessageSender;
+import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
 import com.macaku.qrcode.service.OkrQRCodeService;
 import com.macaku.email.component.EmailServiceSelector;
@@ -107,6 +110,16 @@ public class UserController {
         return SystemJsonResponse.SYSTEM_SUCCESS(result);
     }
 
+//    @PostMapping("/wx/confirm/{secret}")
+//    @ApiOperation("微信登录确认")
+//    public SystemJsonResponse wxLoginConfirm(@PathVariable("secret") @NonNull @ApiParam("secret") String secret) {
+//        User user = UserRecordUtil.getUserRecord();
+//        String openid = user.getOpenid();
+//        String unionid = user.getUnionid();
+//        userService.onLoginState(secret, openid, unionid);//如果不是微信用户，token 的数据没意义，对不上
+//        return SystemJsonResponse.SYSTEM_SUCCESS();
+//    }
+
     @PostMapping("/wx/confirm/{secret}")
     @ApiOperation("微信登录确认")
     public SystemJsonResponse wxLoginConfirm(@PathVariable("secret") @NonNull @ApiParam("secret") String secret) {
@@ -114,7 +127,11 @@ public class UserController {
         String openid = user.getOpenid();
         String unionid = user.getUnionid();
         userService.onLoginState(secret, openid, unionid);//如果不是微信用户，token 的数据没意义，对不上
-        return SystemJsonResponse.SYSTEM_SUCCESS();
+        // 发送已确认的通知
+        SystemJsonResponse systemJsonResponse = SystemJsonResponse.SYSTEM_SUCCESS();
+        MessageSender.sendMessageToOne(WebSocketUserService.WEB_SOCKET_USER_SERVICE + secret,
+                JsonUtil.analyzeData(systemJsonResponse));
+        return systemJsonResponse;
     }
 
     @PostMapping("/wx/login/{secret}")

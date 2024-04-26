@@ -29,14 +29,18 @@ import java.util.Optional;
 @Slf4j
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
+    public void authentication(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+        LoginUser userRecord = Optional.ofNullable(UserRecordUtil.getUserRecord(httpServletRequest))
+                .orElseThrow(() -> new GlobalServiceException(GlobalServiceStatusCode.USER_TOKEN_NOT_VALID));
+        PreAuthenticatedAuthenticationToken authenticationToken =
+                new PreAuthenticatedAuthenticationToken(userRecord, null, userRecord.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         try {
-            LoginUser userRecord = Optional.ofNullable(UserRecordUtil.getUserRecord(httpServletRequest))
-                    .orElseThrow(() -> new GlobalServiceException(GlobalServiceStatusCode.USER_TOKEN_NOT_VALID));
-            PreAuthenticatedAuthenticationToken authenticationToken =
-                    new PreAuthenticatedAuthenticationToken(userRecord, null, userRecord.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            authentication(httpServletRequest, httpServletResponse);
         } catch (Exception e) {
             ThreadLocalUtil.set(e.getMessage());
         }

@@ -19,11 +19,11 @@ public interface SessionMap {
 
     boolean containsKey(String key);
 
-    boolean remove(String key);
+    void remove(String key);
 
     int size(String prefix);
 
-    Set<String> keysPrefix(String prefix);
+    Set<String> getKeys(String prefix);
 
     void consumePrefix(String prefix, Consumer<Session> consumer);
 
