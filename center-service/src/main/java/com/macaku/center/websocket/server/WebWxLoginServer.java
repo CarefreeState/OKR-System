@@ -1,16 +1,15 @@
 package com.macaku.center.websocket.server;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.center.websocket.util.MessageSender;
-import com.macaku.center.websocket.util.SessionMapper;
-import com.macaku.center.websocket.util.SessionUtil;
+import com.macaku.user.websocket.util.MessageSender;
+import com.macaku.user.websocket.util.SessionMapper;
+import com.macaku.user.websocket.util.SessionUtil;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.thread.pool.SchedulerThreadPool;
 import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
 import com.macaku.qrcode.service.OkrQRCodeService;
-import com.macaku.user.util.UserRecordUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +47,7 @@ public class WebWxLoginServer {
         SessionMapper.put(sessionKey, session);
         // 发送：path, secret
         MessageSender.sendMessage(session, JsonUtil.analyzeData(loginQRCode));
-//        throw new DeploymentException("拒绝连接");
+//        SessionUtil.refuse("拒绝连接");
     }
 
     @OnMessage

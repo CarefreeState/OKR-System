@@ -1,6 +1,6 @@
-package com.macaku.center.websocket.session.impl;
+package com.macaku.user.websocket.util.session.impl;
 
-import com.macaku.center.websocket.session.SessionMap;
+import com.macaku.user.websocket.util.session.SessionMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 

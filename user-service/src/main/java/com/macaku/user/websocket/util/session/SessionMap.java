@@ -1,4 +1,4 @@
-package com.macaku.center.websocket.session;
+package com.macaku.user.websocket.util.session;
 
 import javax.websocket.Session;
 import java.util.Set;

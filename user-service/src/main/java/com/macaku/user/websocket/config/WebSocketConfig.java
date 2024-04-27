@@ -1,4 +1,4 @@
-package com.macaku.center.websocket.config;
+package com.macaku.user.websocket.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

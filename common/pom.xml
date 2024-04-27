@@ -39,13 +39,6 @@
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
 
-        <!--spring security-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-            <version>${spring-boot-starter-security.version}</version>
-        </dependency>
-
         <!-- API⽂档⽣成，基于swagger2，注意：这个依赖引入后，需要对应的配置文件才能启动项目-->
         <dependency>
             <groupId>io.springfox</groupId>

@@ -1,7 +1,8 @@
-package com.macaku.center.websocket.util;
+package com.macaku.user.websocket.util;
 
 import com.macaku.common.exception.GlobalServiceException;
 
+import javax.websocket.DeploymentException;
 import javax.websocket.Session;
 import java.io.IOException;
 import java.net.URI;
@@ -31,6 +32,10 @@ public class SessionUtil {
         } catch (IOException e) {
             throw new GlobalServiceException(e.getMessage());
         }
+    }
+
+    public static void refuse(String exceptionMessage) throws DeploymentException {
+        throw new DeploymentException(exceptionMessage);
     }
 
     public static Map<String, String> getPathParameter(Session session) {

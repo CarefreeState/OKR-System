@@ -1,8 +1,8 @@
-package com.macaku.center.websocket.util;
+package com.macaku.user.websocket.util;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.center.component.WebSocketSessionMapSelector;
-import com.macaku.center.websocket.session.SessionMap;
+import com.macaku.user.websocket.component.WebSocketSessionMapSelector;
+import com.macaku.user.websocket.util.session.SessionMap;
 
 import javax.websocket.Session;
 import java.util.Set;

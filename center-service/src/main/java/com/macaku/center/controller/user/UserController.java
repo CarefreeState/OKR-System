@@ -2,7 +2,7 @@ package com.macaku.center.controller.user;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.macaku.center.websocket.server.WebWxLoginServer;
-import com.macaku.center.websocket.util.MessageSender;
+import com.macaku.user.websocket.util.MessageSender;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
 import com.macaku.qrcode.service.OkrQRCodeService;

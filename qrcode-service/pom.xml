@@ -38,6 +38,7 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${mybatis-plus-boot-starter.version}</version>
         </dependency>
+
         <!--   其他服务     -->
         <dependency>
             <groupId>com.macaku</groupId>

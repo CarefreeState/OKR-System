@@ -1,4 +1,4 @@
-package com.macaku.center.websocket.util;
+package com.macaku.user.websocket.util;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
