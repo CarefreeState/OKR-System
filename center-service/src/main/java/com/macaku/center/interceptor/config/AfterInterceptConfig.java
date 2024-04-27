@@ -19,6 +19,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class AfterInterceptConfig implements WebMvcConfigurer {
 
+    public final static String CORE_ID = "coreId";
+
     private final QuadrantInitialInterceptor quadrantInitialInterceptor;
 
     @Override

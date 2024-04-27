@@ -7,7 +7,6 @@ import com.macaku.redis.repository.RedisCache;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -34,13 +33,12 @@ public class ExtractUtil {
     private static final String TOKEN_BLACKLIST = "tokenBlacklist:";
 
 
-    public static <T> T getJWTRawDataOnRequest(HttpServletRequest request, Class<T> clazz) {
+    public static String getJWTRawDataOnRequest(HttpServletRequest request) {
         final String token = request.getHeader(JwtUtil.JWT_HEADER);
         if(Objects.isNull(token)) {
             return null;
         }
-        String rawData = JwtUtil.parseJWTRawData(token);
-        return JsonUtil.analyzeJson(rawData, clazz);
+        return JwtUtil.parseJWTRawData(token);
     }
 
     public static void joinTheTokenBlacklist(HttpServletRequest request) {
@@ -56,29 +54,26 @@ public class ExtractUtil {
         return (Boolean) REDIS_CACHE.getCacheObject(redisKey).orElse(Boolean.FALSE);
     }
 
-    public static Map<String, Object> getMapFromJWT(HttpServletRequest request) {
-        return getJWTRawDataOnRequest(request, Map.class);
+    public static <T> T getValueFromJWT(HttpServletRequest request, String key, Class<T> clazz) {
+        String rawData = getJWTRawDataOnRequest(request);
+        return JsonUtil.analyzeJsonField(rawData, key, clazz);
     }
 
     public static String getOpenIDFromJWT(HttpServletRequest request) {
-        return (String) getMapFromJWT(request).get(OPENID);
+        return getValueFromJWT(request, OPENID, String.class);
     }
 
     public static String getUnionIDFromJWT(HttpServletRequest request) {
-        return (String) getMapFromJWT(request).get(UNIONID);
+        return getValueFromJWT(request, UNIONID, String.class);
     }
 
     public static String getSessionKeyFromJWT(HttpServletRequest request) {
-        return (String) getMapFromJWT(request).get(SESSION_KEY);
+        return getValueFromJWT(request, SESSION_KEY, String.class);
     }
 
     // 获取 json 中的数字类型的元素，要进行判断~
     public static Long getUserIdFromJWT(HttpServletRequest request) {
-        Object ret = getMapFromJWT(request).get(ID);
-        if(ret instanceof Integer) {
-            return ((Integer) ret).longValue();
-        }
-        return (Long) ret;
+        return getValueFromJWT(request, ID, Long.class);
     }
 
 }

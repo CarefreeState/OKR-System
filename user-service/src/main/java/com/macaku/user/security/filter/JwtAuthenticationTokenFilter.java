@@ -2,8 +2,10 @@ package com.macaku.user.security.filter;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.thread.local.ThreadLocalUtil;
+import com.macaku.common.util.thread.local.ThreadLocalMapUtil;
 import com.macaku.user.domain.dto.detail.LoginUser;
+import com.macaku.user.security.config.SecurityConfig;
+import com.macaku.user.security.handler.AuthFailHandler;
 import com.macaku.user.util.UserRecordUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,6 +37,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         PreAuthenticatedAuthenticationToken authenticationToken =
                 new PreAuthenticatedAuthenticationToken(userRecord, null, userRecord.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        ThreadLocalMapUtil.set(SecurityConfig.USER_SECURITY_RECORD, authenticationToken);
     }
 
     @Override
@@ -42,7 +45,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         try {
             authentication(httpServletRequest, httpServletResponse);
         } catch (Exception e) {
-            ThreadLocalUtil.set(e.getMessage());
+            ThreadLocalMapUtil.set(AuthFailHandler.EXCEPTION_MESSAGE, e.getMessage());
         }
         filterChain.doFilter(httpServletRequest, httpServletResponse);//放行
     }

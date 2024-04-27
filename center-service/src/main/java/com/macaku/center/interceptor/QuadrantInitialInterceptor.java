@@ -1,6 +1,7 @@
 package com.macaku.center.interceptor;
 
-import com.macaku.common.util.thread.local.ThreadLocalUtil;
+import com.macaku.center.interceptor.config.AfterInterceptConfig;
+import com.macaku.common.util.thread.local.ThreadLocalMapUtil;
 import com.macaku.common.util.thread.pool.IOThreadPool;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.medal.domain.entry.StayTrueBeginning;
@@ -43,8 +44,8 @@ public class QuadrantInitialInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         // 初心启航
+        Long coreId = ThreadLocalMapUtil.get(AfterInterceptConfig.CORE_ID, Long.class);
         Long userId = UserRecordUtil.getUserRecord().getId();
-        Long coreId = ThreadLocalUtil.get(Long::parseLong);
         okrCoreService.checkOverThrows(coreId);
         // 启动一个异步线程
         IOThreadPool.submit(() -> {

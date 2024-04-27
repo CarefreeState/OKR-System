@@ -23,6 +23,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)//开启权限控制，不开启这个，注解的权限控制不能生效
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    public final static String USER_SECURITY_RECORD = "userSecurityRecord";
+
     private final JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
 
     private final AuthFailHandler authFailHandler;
@@ -40,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .antMatchers("/user/login").permitAll()
             .antMatchers("/user/check/email").permitAll()
             .antMatchers("/user/binding/wx").permitAll()
-            .antMatchers("/wxlogin/**").permitAll()
+            .antMatchers("/web/wxlogin/**").permitAll()
             .antMatchers("/user/wx/login/**").permitAll()
             .antMatchers("/team/describe/**").permitAll()
             .antMatchers("/jwt/**").permitAll()

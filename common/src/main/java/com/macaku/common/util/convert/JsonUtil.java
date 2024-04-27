@@ -3,6 +3,7 @@ package com.macaku.common.util.convert;
 import cn.hutool.json.JSON;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import org.springframework.util.StringUtils;
 
 /**
  * Created With Intellij IDEA
@@ -42,6 +43,9 @@ public class JsonUtil {
     }
 
     public static JsonBuilder jsonBuilder(String json) {
+        if(!StringUtils.hasText(json)) {
+            return new JsonBuilder();
+        }
         return new JsonBuilder(json);
     }
 

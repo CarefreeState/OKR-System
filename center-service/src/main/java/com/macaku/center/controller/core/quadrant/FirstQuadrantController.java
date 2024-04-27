@@ -3,11 +3,12 @@ package com.macaku.center.controller.core.quadrant;
 import cn.hutool.core.bean.BeanUtil;
 import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.domain.dto.unify.quadrant.OkrFirstQuadrantDTO;
+import com.macaku.center.interceptor.config.AfterInterceptConfig;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
-import com.macaku.common.util.thread.local.ThreadLocalUtil;
+import com.macaku.common.util.thread.local.ThreadLocalMapUtil;
 import com.macaku.core.domain.po.quadrant.FirstQuadrant;
 import com.macaku.core.domain.po.quadrant.dto.FirstQuadrantDTO;
 import com.macaku.core.service.quadrant.FirstQuadrantService;
@@ -57,7 +58,7 @@ public class FirstQuadrantController {
         if(user.getId().equals(userId)) {
             firstQuadrantService.initFirstQuadrant(firstQuadrant);
             log.info("第一象限初始化成功：{}", firstQuadrantDTO);
-            ThreadLocalUtil.set(coreId.toString());
+            ThreadLocalMapUtil.set(AfterInterceptConfig.CORE_ID, coreId);
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }

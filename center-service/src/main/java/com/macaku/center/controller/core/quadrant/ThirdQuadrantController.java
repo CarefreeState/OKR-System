@@ -2,11 +2,12 @@ package com.macaku.center.controller.core.quadrant;
 
 import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.domain.dto.unify.quadrant.OkrInitQuadrantDTO;
+import com.macaku.center.interceptor.config.AfterInterceptConfig;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
-import com.macaku.common.util.thread.local.ThreadLocalUtil;
+import com.macaku.common.util.thread.local.ThreadLocalMapUtil;
 import com.macaku.core.domain.po.quadrant.dto.InitQuadrantDTO;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.core.service.quadrant.ThirdQuadrantService;
@@ -61,7 +62,7 @@ public class ThirdQuadrantController {
             okrCoreService.checkThirdCycle(coreId, quadrantCycle);
             thirdQuadrantService.initThirdQuadrant(initQuadrantDTO);
             log.info("第三象限初始化成功：{}", initQuadrantDTO);
-            ThreadLocalUtil.set(coreId.toString());
+            ThreadLocalMapUtil.set(AfterInterceptConfig.CORE_ID, coreId);
         }else {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_CORE_MANAGER);
         }

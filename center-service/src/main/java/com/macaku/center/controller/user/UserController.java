@@ -1,7 +1,7 @@
 package com.macaku.center.controller.user;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.macaku.center.websocket.service.WebSocketUserService;
+import com.macaku.center.websocket.server.WebWxLoginServer;
 import com.macaku.center.websocket.util.MessageSender;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
@@ -129,7 +129,7 @@ public class UserController {
         userService.onLoginState(secret, openid, unionid);//如果不是微信用户，token 的数据没意义，对不上
         // 发送已确认的通知
         SystemJsonResponse systemJsonResponse = SystemJsonResponse.SYSTEM_SUCCESS();
-        MessageSender.sendMessageToOne(WebSocketUserService.WEB_SOCKET_USER_SERVICE + secret,
+        MessageSender.sendMessageToOne(WebWxLoginServer.WEB_SOCKET_USER_SERVICE + secret,
                 JsonUtil.analyzeData(systemJsonResponse));
         return systemJsonResponse;
     }
