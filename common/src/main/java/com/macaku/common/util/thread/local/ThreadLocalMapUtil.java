@@ -52,10 +52,7 @@ public class ThreadLocalMapUtil {
     }
 
     public static <T> T get(String key, Class<T> clazz) {
-        Map<String, Object> map = getMap();
-        T value = (T) map.get(key);
-        log.info("{} 获取本地线程资源 [{}.{}]", Thread.currentThread().getName(), key, value);
-        return value;
+        return (T) get(key);
     }
 
     public static <T> T get(String key, Function<Object, T> function) {
