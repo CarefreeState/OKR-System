@@ -28,9 +28,14 @@ public class ThreadLocalMapUtil {
         return map;
     }
 
-    public static void remove() {
+    public static void removeAll() {
         log.info("{} 移除本地线程资源", Thread.currentThread().getName());
         THREAD_LOCAL.remove();
+    }
+
+    public static void remove(String key) {
+        log.info("{} 移除本地线程资源 {}", Thread.currentThread().getName(), key);
+        getMap().remove(key);
     }
 
     public static <T> void set(String key, T value) {
