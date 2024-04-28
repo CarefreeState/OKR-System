@@ -14,11 +14,6 @@ import org.springframework.util.StringUtils;
  */
 public class JsonUtil {
 
-    public static <T> String analyzeData(T data) {
-        return JSONUtil.parse(data).toStringPretty();
-    }
-
-
     // 这个转化不知道之前是什么类型的，因为 1 和 1L 在json中就是 1，默认被认定为 integer 的 1！
     public static <T> T analyzeJson(String json, Class<T> clazz) {
         return JSONUtil.toBean(json, clazz);
@@ -28,11 +23,25 @@ public class JsonUtil {
         return JSONUtil.parse(json).getByPath(path, clazz);
     }
 
+    public static <T> String analyzeData(T data) {
+        return JSONUtil.parse(data).toString();
+    }
+
+    public static <T> String analyzeDataPretty(T data) {
+        return JSONUtil.parse(data).toStringPretty();
+    }
+
     public static Object analyzeJsonField(String json, String path) {
         return JSONUtil.parse(json).getByPath(path);
     }
 
     public static <T> String addJsonField(String json, String key, T value) {
+        JSON jsonObject = JSONUtil.parse(json);
+        jsonObject.putByPath(key, value);
+        return jsonObject.toString();
+    }
+
+    public static <T> String addJsonFieldPretty(String json, String key, T value) {
         JSON jsonObject = JSONUtil.parse(json);
         jsonObject.putByPath(key, value);
         return jsonObject.toStringPretty();
@@ -59,6 +68,10 @@ public class JsonUtil {
         }
 
         public String buildJson() {
+            return this.json.toString();
+        }
+
+        public String buildJsonPretty() {
             return this.json.toStringPretty();
         }
 

@@ -1,10 +1,10 @@
-package com.macaku.user.websocket.util;
+package com.macaku.user.sse.util;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.user.websocket.component.WebSocketSessionMapSelector;
-import com.macaku.user.websocket.util.session.SessionMap;
+import com.macaku.user.sse.component.SeeSessionMapSelector;
+import com.macaku.user.sse.util.session.SseSessionMap;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import javax.websocket.Session;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -15,15 +15,15 @@ import java.util.function.Consumer;
  * Date: 2024-04-26
  * Time: 15:34
  */
-public class SessionMapper {
+public class SseSessionMapper {
 
-    private final static SessionMap SESSION_MAP = SpringUtil.getBean(WebSocketSessionMapSelector.class).select();
+    private final static SseSessionMap SESSION_MAP = SpringUtil.getBean(SeeSessionMapSelector.class).select();
 
-    public static void put(String sessionKey, Session webSocketService) {
-        SESSION_MAP.put(sessionKey, webSocketService);
+    public static void put(String sessionKey, SseEmitter sseEmitter) {
+        SESSION_MAP.put(sessionKey, sseEmitter);
     }
 
-    public static Session get(String sessionKey) {
+    public static SseEmitter get(String sessionKey) {
         return SESSION_MAP.get(sessionKey);
     }
 
@@ -43,18 +43,18 @@ public class SessionMapper {
         return SESSION_MAP.getKeys(prefix);
     }
 
-    public static void consumeKey(String sessionKey, Consumer<Session> consumer) {
+    public static void consumeKey(String sessionKey, Consumer<SseEmitter> consumer) {
         consumer.accept(get(sessionKey));
     }
 
-    public static void consumePrefix(String prefix, Consumer<Session> consumer) {
+    public static void consumePrefix(String prefix, Consumer<SseEmitter> consumer) {
         getKeys(prefix).stream().parallel().forEach(sessionKey -> {
             consumeKey(sessionKey, consumer);
         });
     }
 
     public static void removeAll(String prefix) {
-        getKeys(prefix).stream().parallel().forEach(SessionMapper::remove);
+        getKeys(prefix).stream().parallel().forEach(SseSessionMapper::remove);
     }
 
 }

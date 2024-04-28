@@ -23,13 +23,10 @@ public class WebWxLoginServer {
 
     private String secret;
 
-    public final static String WEB_SOCKET_USER_SERVICE = "WebSocketUserService:";
+    public final static String WEB_SOCKET_USER_SERVER = "WebWxLoginServer:";
 
     private final static OkrQRCodeService OKR_QR_CODE_SERVICE = SpringUtil.getBean(OkrQRCodeService.class);
 
-    private long getOnlineCount() {
-        return SessionMapper.size(WEB_SOCKET_USER_SERVICE);
-    }
 
     @OnOpen
     public void onOpen(Session session) throws DeploymentException {
@@ -40,7 +37,7 @@ public class WebWxLoginServer {
         LoginQRCodeVO loginQRCode = OKR_QR_CODE_SERVICE.getLoginQRCode();
         // 获得在 Redis 的键
         secret = loginQRCode.getSecret();
-        String sessionKey = WEB_SOCKET_USER_SERVICE + secret;
+        String sessionKey = WEB_SOCKET_USER_SERVER + secret;
         if (SessionMapper.containsKey(sessionKey)) {
             SessionMapper.remove(sessionKey);
         }
@@ -57,7 +54,7 @@ public class WebWxLoginServer {
 
     @OnClose
     public void onClose(Session session) {
-        String sessionKey = WEB_SOCKET_USER_SERVICE + secret;
+        String sessionKey = WEB_SOCKET_USER_SERVER + secret;
         log.warn("{} 断开连接", sessionKey);
         SessionMapper.remove(sessionKey);
     }

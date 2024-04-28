@@ -121,7 +121,8 @@ public enum GlobalServiceStatusCode {
     /*WebSocket想关*/
     USER_NOT_ONLINE(10000, "用户不在线"),
 
-
+    /*SSE想关*/
+    SSE_CONNECTION_NOT_EXIST(11000, "连接不存在或者超时"),
 
 
 

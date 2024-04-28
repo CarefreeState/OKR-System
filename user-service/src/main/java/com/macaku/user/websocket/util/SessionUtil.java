@@ -6,6 +6,7 @@ import javax.websocket.DeploymentException;
 import javax.websocket.Session;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -18,6 +19,14 @@ import java.util.Objects;
  * Time: 13:59
  */
 public class SessionUtil {
+
+    public static int getConnectTotal(String prefix) {
+        return SessionMapper.size(prefix);
+    }
+
+    public static List<String> getSessionKeys(String prefix) {
+        return new ArrayList<>(SessionMapper.getKeys(prefix));
+    }
 
     public static void close(Session session) {
         if(Objects.isNull(session)) {

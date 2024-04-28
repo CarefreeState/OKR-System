@@ -1,14 +1,14 @@
 package com.macaku.center.controller.user;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.macaku.center.sse.server.SseUserServer;
 import com.macaku.center.websocket.server.WebWxLoginServer;
-import com.macaku.user.websocket.util.MessageSender;
+import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.common.util.convert.JsonUtil;
+import com.macaku.email.component.EmailServiceSelector;
+import com.macaku.email.util.IdentifyingCodeValidator;
 import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
 import com.macaku.qrcode.service.OkrQRCodeService;
-import com.macaku.email.component.EmailServiceSelector;
-import com.macaku.common.response.SystemJsonResponse;
-import com.macaku.email.util.IdentifyingCodeValidator;
 import com.macaku.user.component.LoginServiceSelector;
 import com.macaku.user.domain.dto.EmailBindingDTO;
 import com.macaku.user.domain.dto.EmailCheckDTO;
@@ -20,7 +20,9 @@ import com.macaku.user.domain.vo.UserVO;
 import com.macaku.user.interceptor.config.VisitConfig;
 import com.macaku.user.service.LoginService;
 import com.macaku.user.service.UserService;
+import com.macaku.user.sse.util.SseMessageSender;
 import com.macaku.user.util.UserRecordUtil;
+import com.macaku.user.websocket.util.MessageSender;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -129,8 +131,9 @@ public class UserController {
         userService.onLoginState(secret, openid, unionid);//如果不是微信用户，token 的数据没意义，对不上
         // 发送已确认的通知
         SystemJsonResponse systemJsonResponse = SystemJsonResponse.SYSTEM_SUCCESS();
-        MessageSender.sendMessageToOne(WebWxLoginServer.WEB_SOCKET_USER_SERVICE + secret,
-                JsonUtil.analyzeData(systemJsonResponse));
+        String message = JsonUtil.analyzeData(systemJsonResponse);
+        MessageSender.sendMessageToOne(WebWxLoginServer.WEB_SOCKET_USER_SERVER + secret, message);
+        SseMessageSender.sendMessage(SseUserServer.SSE_USER_SERVER + secret, message);
         return systemJsonResponse;
     }
 

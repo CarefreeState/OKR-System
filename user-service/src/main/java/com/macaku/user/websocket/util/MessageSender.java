@@ -20,7 +20,8 @@ public class MessageSender {
 
     public static void sendMessage(Session session, String message) {
         if(Objects.isNull(session)) {
-            throw new GlobalServiceException(GlobalServiceStatusCode.USER_NOT_ONLINE);
+            log.warn(GlobalServiceStatusCode.USER_NOT_ONLINE.toString());
+            return;
         }
         try {
             synchronized (session) {
