@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
-@Api(tags = "Sse 接口")
+@Api(tags = "SSE 接口")
 @RequestMapping("/sse")
 @RequiredArgsConstructor
 public class SseUserServer {
