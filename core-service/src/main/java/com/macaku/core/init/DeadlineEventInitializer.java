@@ -26,7 +26,7 @@ public class DeadlineEventInitializer implements ApplicationListener<Application
 
     private final static int TRIGGER_STATUS = 0;
 
-    private final static String CRON = "59 23 23 ? * 1 *";
+    private final static String CRON = "59 59 23 ? * 1 *";
 
     private final OkrCoreMapper okrCoreMapper;
 
