@@ -2,7 +2,6 @@ package com.macaku.center.sse.server;
 
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.qrcode.config.QRCodeConfig;
-import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
 import com.macaku.qrcode.service.OkrQRCodeService;
 import com.macaku.user.sse.util.SseSessionUtil;
 import io.swagger.annotations.Api;
@@ -15,7 +14,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 @RestController
 @Api(tags = "SSE 接口")
-@RequestMapping("/sse")
+@RequestMapping("/events")
 @RequiredArgsConstructor
 public class SseUserServer {
 
@@ -26,13 +25,13 @@ public class SseUserServer {
     private final OkrQRCodeService okrQRCodeService;
 
     @ApiOperation("网页端微信登录")
-    @GetMapping("/wxlogin")
+    @GetMapping("/web/wxlogin")
     public SseEmitter connect() {
-        // 获得邀请码
-        LoginQRCodeVO loginQRCode = okrQRCodeService.getLoginQRCode();
+        // 获得邀请码的密钥
+        String secret = okrQRCodeService.getSecretCode();
         // 连接并发送一条信息
-        return SseSessionUtil.createConnect(timeout, SSE_USER_SERVER + loginQRCode.getSecret(),
-                () -> JsonUtil.analyzeData(loginQRCode));
+        return SseSessionUtil.createConnect(timeout, SSE_USER_SERVER + secret,
+                () -> JsonUtil.analyzeData(okrQRCodeService.getLoginQRCode(secret)));
     }
 
 }

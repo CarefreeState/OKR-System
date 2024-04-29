@@ -6,14 +6,13 @@ import com.macaku.common.web.HttpUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
 public class TokenUtil {
 
     // token 的 url
-    public static String URL = "https://api.weixin.qq.com/cgi-bin/token";
+    public static String URL = "https://api.weixin.qq.com/cgi-bin/stable_token";
 
     public static String APP_ID;
 
@@ -32,13 +31,13 @@ public class TokenUtil {
 
     public static Map<String, Object> getAccessTokenMap() {
         // 构造参数表
-        Map<String, Object> param = new HashMap<String, Object>(){{
-            this.put("grant_type", "client_credential");
-            this.put("appid", APP_ID);
-            this.put("secret", APP_SECRET);
-        }};
+        String json = JsonUtil.jsonBuilder()
+                .put("grant_type", "client_credential")
+                .put("appid", APP_ID)
+                .put("secret", APP_SECRET)
+                .buildJson();
         // 发起get请求
-        String response = HttpUtil.doGet(URL, param);
+        String response = HttpUtil.doPostJsonString(URL, json);
         // 解析json
         return JsonUtil.analyzeJson(response, Map.class);
     }

@@ -19,7 +19,11 @@ public interface OkrQRCodeService {
 
     String getBindingQRCode(Long userId, String randomCode);
 
+    String getSecretCode();
+
     LoginQRCodeVO getLoginQRCode();
+
+    LoginQRCodeVO getLoginQRCode(String secret);
 
     String getCommonQRCode();
 

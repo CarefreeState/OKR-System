@@ -1,5 +1,6 @@
 package com.macaku.user.sse.util;
 
+import com.macaku.common.util.thread.pool.CPUThreadPool;
 import com.macaku.common.util.thread.timer.TimerUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -32,10 +33,12 @@ public class SseSessionUtil {
     }
 
     public static void replyMessage(String sessionKey, Supplier<String> messageSupplier) {
-        if(Objects.isNull(messageSupplier)) {
-            SseMessageSender.sendMessage(sessionKey, DEFAULT_MESSAGE);
-        }else {
-            SseMessageSender.sendMessage(sessionKey, messageSupplier.get());
+        SseMessageSender.sendMessage(sessionKey, DEFAULT_MESSAGE);
+        if(Objects.nonNull(messageSupplier)) {
+            CPUThreadPool.submit(() -> {
+                String message = messageSupplier.get();
+                SseMessageSender.sendMessage(sessionKey, message);
+            });
         }
     }
 

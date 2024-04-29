@@ -33,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -55,6 +56,30 @@ public class UserController {
     private final EmailServiceSelector emailServiceSelector;
 
     private final OkrQRCodeService okrQRCodeService;
+
+    @PostMapping("research")
+    @ApiOperation("大学物理实验")
+    public SystemJsonResponse<Map<String, Object>> research(
+        @ApiParam("Is") @RequestParam("Is") Double Is,
+        @ApiParam("Im") @RequestParam("Im") Double Im,
+        @ApiParam("V1") @RequestParam("V1") Double V1,
+        @ApiParam("V2") @RequestParam("V2") Double V2,
+        @ApiParam("V3") @RequestParam("V3") Double V3,
+        @ApiParam("V4") @RequestParam("V4") Double V4
+    ) {
+        Double VH = (V1 - V2 + V3 -V4) / 4;
+        double d = 0.50;
+        Double RH = (VH * 1e-3 * d * 1e-1) / (Is * 1e-3 * Im * 4.02 * 1e3);
+        return SystemJsonResponse.SYSTEM_SUCCESS(new HashMap<String, Object>(){{
+            this.put("VH", VH);
+            this.put("RH", RH * 1e8);
+        }});
+    }
+
+    public static void main(String[] args) {
+        System.out.println(Math.pow(10, -3));
+        System.out.println(1e-3);
+    }
 
     @PostMapping("/login")
     @ApiOperation("用户登录")
@@ -128,7 +153,7 @@ public class UserController {
         User user = UserRecordUtil.getUserRecord();
         String openid = user.getOpenid();
         String unionid = user.getUnionid();
-        userService.onLoginState(secret, openid, unionid);//如果不是微信用户，token 的数据没意义，对不上
+        userService.onLoginState(secret, openid, unionid);//如果不是微信用户，但是有 openid，说明这个用户等同于微信登录
         // 发送已确认的通知
         SystemJsonResponse systemJsonResponse = SystemJsonResponse.SYSTEM_SUCCESS();
         String message = JsonUtil.analyzeData(systemJsonResponse);
@@ -200,7 +225,17 @@ public class UserController {
         UserRecordUtil.deleteUserRecord(request);
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }
-
+    public int search(int[] nums, int target) {
+        int left = 0;
+        int right = nums.length - 1;
+        while(left <= right) {
+            int mid = left + (right - left) / 2;
+            if(nums[mid] < target) left = mid + 1;
+            else if(nums[mid] > target) right = mid - 1;
+            else return mid;
+        }
+        return -1;
+    }
     @GetMapping("/userinfo")
     @ApiOperation("获取用户信息")
     public SystemJsonResponse<UserVO> getUserInfo() {

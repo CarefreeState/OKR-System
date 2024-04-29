@@ -107,16 +107,25 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
     }
 
     @Override
-    public LoginQRCodeVO getLoginQRCode() {
+    public String getSecretCode() {
         String secret;
         String bloomFilterName = BloomFilterConfig.BLOOM_FILTER_NAME;
         do {
             secret = ShortCodeUtil.getShortCode(ShortCodeUtil.getSalt());
         } while (redisCache.containsInBloomFilter(bloomFilterName, secret));
         redisCache.addToBloomFilter(bloomFilterName, secret);
-        String redisKey = QRCodeConfig.WX_LOGIN_QR_CODE_MAP + secret;
+        return secret;
+    }
+
+    @Override
+    public LoginQRCodeVO getLoginQRCode() {
+        return getLoginQRCode(getSecretCode());
+    }
+
+    @Override
+    public LoginQRCodeVO getLoginQRCode(String secret) {
         // 设置 为 false
-        redisCache.setCacheObject(redisKey, Boolean.FALSE,
+        redisCache.setCacheObject(QRCodeConfig.WX_LOGIN_QR_CODE_MAP + secret, Boolean.FALSE,
                 QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
         // 获取一个小程序码
         String mapPath = wxLoginQRCodeService.getQRCode(secret);

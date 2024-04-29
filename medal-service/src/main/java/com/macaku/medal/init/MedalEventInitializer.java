@@ -35,7 +35,7 @@ public class MedalEventInitializer {
 
     private final static int TRIGGER_STATUS = 1;
 
-    private final static String MEDAL_CHECK_CRON = "59 23 23 ? * 1 *";
+    private final static String MEDAL_CHECK_CRON = "59 59 23 ? * 1 *";
 
     private final MedalHandlerChain medalHandlerChain;
 

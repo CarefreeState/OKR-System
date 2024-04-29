@@ -58,6 +58,10 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
         return gap >= TimeUnit.DAYS.toMillis(1);
     }
 
+    private boolean isInitialized(RecordMap recordMap) {
+        return Objects.nonNull(recordMap) && Objects.nonNull(recordMap.getDayRecordId());
+    }
+
     private int getIncrement(Boolean isCompleted, Boolean oldCompleted) {
         if(Boolean.TRUE.equals(oldCompleted)) {
             return Boolean.TRUE.equals(isCompleted) ? 0 : -1;
@@ -126,7 +130,7 @@ public class DayRecordServiceImpl extends ServiceImpl<DayRecordMapper, DayRecord
     public DayRecord getNowRecord(Long coreId) {
         CoreRecorder coreRecorder = coreRecorderService.getCoreRecorder(coreId);
         RecordMap recordMap = coreRecorder.getRecordMap();
-        if(Objects.isNull(recordMap) || Objects.isNull(recordMap.getDayRecordId())) {
+        if(Boolean.FALSE.equals(isInitialized(recordMap))) {
             return switchRecord(coreRecorder);
         }
         Long dayRecordId = recordMap.getDayRecordId();
