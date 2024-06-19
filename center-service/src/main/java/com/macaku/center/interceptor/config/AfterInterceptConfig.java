@@ -1,6 +1,7 @@
 package com.macaku.center.interceptor.config;
 
 import com.macaku.center.interceptor.QuadrantInitialInterceptor;
+import com.macaku.center.interceptor.ThreadLocalClearInterceptor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
@@ -23,11 +24,15 @@ public class AfterInterceptConfig implements WebMvcConfigurer {
 
     private final QuadrantInitialInterceptor quadrantInitialInterceptor;
 
+    private final ThreadLocalClearInterceptor threadLocalClearInterceptor;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(quadrantInitialInterceptor)
                 .addPathPatterns("/firstquadrant/init")
                 .addPathPatterns("/secondquadrant/init")
                 .addPathPatterns("/thirdquadrant/init");
+        registry.addInterceptor(threadLocalClearInterceptor)
+                .addPathPatterns("/**");
     }
 }

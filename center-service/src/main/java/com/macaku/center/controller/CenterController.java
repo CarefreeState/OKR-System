@@ -59,7 +59,7 @@ public class CenterController {
     public SystemJsonResponse<String> getJWTByOpenid(@PathVariable("openid") @ApiParam("openid") @NonNull String openid) {
         if(Boolean.FALSE.equals(swaggerCanBeVisited)) {
             // 无法访问 swagger，代表这个接口无法访问
-            return SystemJsonResponse.SYSTEM_FAIL();
+            throw new GlobalServiceException(GlobalServiceStatusCode.SYSTEM_API_VISIT_FAIL);
         }
         Map<String, Object> tokenData = new HashMap<String, Object>(){{
             this.put(ExtractUtil.OPENID, openid);

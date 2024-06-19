@@ -29,7 +29,7 @@ public class ThreadLocalMapUtil {
     }
 
     public static void removeAll() {
-        log.info("{} 移除本地线程资源", Thread.currentThread().getName());
+        log.warn("{} 移除本地线程资源", Thread.currentThread().getName());
         THREAD_LOCAL.remove();
     }
 

@@ -49,4 +49,22 @@ public class XxlJobConfig {
     public XxlUrl xxlUrl() {
         return url;
     }
+
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread t1 = new Thread(() -> {
+            while(true) {
+//                System.out.println("好耶^v^");
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+            }
+        });
+        t1.start();
+        Thread.sleep(3000);
+        t1.interrupt();
+        System.out.println("不好耶T.T");
+    }
 }

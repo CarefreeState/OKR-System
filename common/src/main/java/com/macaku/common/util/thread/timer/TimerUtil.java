@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class TimerUtil {
 
+    private final static Timer TIMER = new Timer();
+
     public static String getDateFormat(Date date) {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
     }
@@ -33,11 +35,29 @@ public class TimerUtil {
     }
 
     public static void schedule(TimerTask timerTask, long delay, TimeUnit timeUnit) {
-        Timer timer = new Timer();
         long deadline = timeUnit.toMillis(delay) + System.currentTimeMillis();
         log.warn("计时开始，将于 “ {} ” {} 后执行，即于 {} 执行！", delay, timeUnit.name(),
                 getDateFormat(new Date(deadline)));
-        timer.schedule(timerTask, timeUnit.toMillis(delay));
+        TIMER.schedule(timerTask, timeUnit.toMillis(delay));
+    }
+
+    public static void schedule(Runnable task, long delay, TimeUnit timeUnit) {
+        schedule(new TimerTask() {
+            @Override
+            public void run() {
+                task.run();
+            }
+        }, delay, timeUnit);
+    }
+
+    public static void main(String[] args) {
+        schedule(() -> {
+            System.out.println("666");
+        }, 1000, TimeUnit.MILLISECONDS);
+
+        schedule(() -> {
+            System.out.println("666");
+        }, 2500, TimeUnit.MILLISECONDS);
     }
 
 }

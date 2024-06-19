@@ -38,13 +38,13 @@ public class RedisLock {
                            final Long var2, final TimeUnit timeUnit) throws InterruptedException {
         String key = rLock.getName();
         log.info("尝试获取锁 {}, wait {} {}, timeout {} {}", key, var1, timeUnit, var2, timeUnit);
-        boolean lock = rLock.tryLock(var1, var2, timeUnit);
-        if(Boolean.TRUE.equals(lock)) {
+        boolean flag = rLock.tryLock(var1, var2, timeUnit);
+        if(Boolean.TRUE.equals(flag)) {
             log.info("尝试获取锁 {} 成功", key);
         } else {
             log.info("尝试获取锁 {} 失败", key);
         }
-        return lock;
+        return flag;
     }
 
     public void unlock(RLock rLock) {
@@ -66,8 +66,8 @@ public class RedisLock {
         RLock rLock = getLock(key);
         // 在 Redis 中尝试获取锁
         try {
-            boolean lock = tryLock(rLock, wait, timeout, TimeUnit.SECONDS);
-            if(Boolean.TRUE.equals(lock)) {
+            boolean flag = tryLock(rLock, wait, timeout, TimeUnit.SECONDS);
+            if(Boolean.TRUE.equals(flag)) {
                 behavior1.run();
             } else {
                 behavior2.run();
@@ -85,8 +85,8 @@ public class RedisLock {
         RLock rLock = getLock(key);
         // 在 Redis 中尝试获取锁
         try {
-            boolean lock = tryLock(rLock, var1, var2, timeUnit);
-            if(Boolean.TRUE.equals(lock)) {
+            boolean flag = tryLock(rLock, var1, var2, timeUnit);
+            if(Boolean.TRUE.equals(flag)) {
                 behavior1.run();
             } else {
                 behavior2.run();
@@ -103,8 +103,8 @@ public class RedisLock {
         RLock rLock = getLock(key);
         // 在 Redis 中尝试获取锁
         try {
-            boolean lock = tryLock(rLock, wait, timeout, TimeUnit.SECONDS);
-            if(Boolean.TRUE.equals(lock)) {
+            boolean flag = tryLock(rLock, wait, timeout, TimeUnit.SECONDS);
+            if(Boolean.TRUE.equals(flag)) {
                 return supplier1.get();
             } else {
                 return supplier2.get();
@@ -117,13 +117,13 @@ public class RedisLock {
     }
 
     public <T> T tryLockGetSomething(final String key, final Long var1, final Long var2, final TimeUnit timeUnit,
-                                    Supplier<T> supplier1, Supplier<T> supplier2) {
+                                     Supplier<T> supplier1, Supplier<T> supplier2) {
         // 获得锁实例
         RLock rLock = getLock(key);
         // 在 Redis 中尝试获取锁
         try {
-            boolean lock = tryLock(rLock, var1, var2, timeUnit);
-            if(Boolean.TRUE.equals(lock)) {
+            boolean flag = tryLock(rLock, var1, var2, timeUnit);
+            if(Boolean.TRUE.equals(flag)) {
                 return supplier1.get();
             } else {
                 return supplier2.get();

@@ -27,6 +27,8 @@ update team_okr set is_deleted = 1 where id in (82);
 
 update team_okr set is_deleted = 1 where id in (20);
 
+update team_okr set is_deleted = 1 where id in (19);
+
 update team_okr set parent_team_id = 16 where id in (42, 44);
 
 update team_okr set is_deleted = 1 where id in (18, 80);
