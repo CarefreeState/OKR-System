@@ -80,7 +80,7 @@ public class EmailServiceBindingImpl implements EmailService {
             emailRepository.setIdentifyingCode(redisKey, code, IDENTIFYING_CODE_TIMEOUT, IDENTIFYING_CODE_INTERVAL_LIMIT);
             VerificationCodeTemplate verificationCodeTemplate = VerificationCodeTemplate.builder()
                     .code(code)
-                    .minutes((int) TimeUnit.MILLISECONDS.toMinutes(IDENTIFYING_CODE_TIMEOUT))
+                    .timeout((int) TimeUnit.MILLISECONDS.toMinutes(IDENTIFYING_CODE_TIMEOUT))
                     .build();
             // 发送模板消息
             String html = htmlEngine.builder()
