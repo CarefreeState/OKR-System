@@ -1,6 +1,5 @@
 package com.macaku.user.service.impl;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.JsonUtil;
@@ -11,7 +10,9 @@ import com.macaku.user.domain.po.User;
 import com.macaku.user.service.LoginService;
 import com.macaku.user.service.UserService;
 import com.macaku.user.util.ExtractUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -26,13 +27,15 @@ import java.util.Objects;
  * Time: 12:49
  */
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class WxLoginServiceImpl implements LoginService {
 
     private final static String DEFAULT_NICKNAME = "微信用户";
 
     private final static String DEFAULT_PHOTO = "media/static/default.png";
 
-    private final UserService userService = SpringUtil.getBean(UserService.class);
+    private final UserService userService;
 
     @Override
     public Map<String, Object> login(LoginDTO loginDTO) {

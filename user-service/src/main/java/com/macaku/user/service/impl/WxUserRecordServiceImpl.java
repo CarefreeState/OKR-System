@@ -1,6 +1,5 @@
 package com.macaku.user.service.impl;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.util.convert.JwtUtil;
 import com.macaku.redis.repository.RedisCache;
@@ -9,7 +8,9 @@ import com.macaku.user.domain.po.User;
 import com.macaku.user.service.UserRecordService;
 import com.macaku.user.service.UserService;
 import com.macaku.user.util.ExtractUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Objects;
@@ -23,11 +24,13 @@ import java.util.Optional;
  * Time: 19:04
  */
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class WxUserRecordServiceImpl implements UserRecordService {
 
-    private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
+    private final RedisCache redisCache;
 
-    private final UserService userService = SpringUtil.getBean(UserService.class);
+    private final UserService userService;
 
     @Override
     public Optional<LoginUser> getRecord(HttpServletRequest request) {

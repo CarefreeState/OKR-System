@@ -12,7 +12,9 @@ import com.macaku.user.domain.po.User;
 import com.macaku.user.service.LoginService;
 import com.macaku.user.service.UserService;
 import com.macaku.user.util.ExtractUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -27,15 +29,17 @@ import java.util.Objects;
  * Time: 13:18
  */
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class EmailLoginServiceImpl implements LoginService {
 
     private final static String DEFAULT_NICKNAME = "邮箱用户";
 
     private final static String DEFAULT_PHOTO = "media/static/default.png";
 
-    private final UserService userService = SpringUtil.getBean(UserService.class);
+    private final UserService userService;
 
-    private final EmailServiceSelector emailServiceSelector = SpringUtil.getBean(EmailServiceSelector.class);
+    private final EmailServiceSelector emailServiceSelector;
 
     @Override
     public Map<String, Object> login(LoginDTO loginDTO) {
