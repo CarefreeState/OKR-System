@@ -55,3 +55,7 @@ okr:
     inviteQRCodeServiceMap:
       wx: wxInviteQRCodeServiceImpl
       web: webInviteQRCodeServiceImpl
+    teamAchievementServiceMap:
+      0: longTermAchievementServiceImpl
+      1: shortTermAchievementServiceImpl
+      2: shortTermAchievementServiceImpl

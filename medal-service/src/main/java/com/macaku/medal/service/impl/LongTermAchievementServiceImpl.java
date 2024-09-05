@@ -1,11 +1,11 @@
 package com.macaku.medal.service.impl;
 
-import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.medal.component.TermAchievementServiceSelector;
 import com.macaku.medal.domain.entry.LongTermAchievement;
 import com.macaku.medal.handler.chain.MedalHandlerChain;
 import com.macaku.medal.service.TermAchievementService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 /**
  * Created With Intellij IDEA
@@ -15,16 +15,11 @@ import lombok.extern.slf4j.Slf4j;
  * Time: 23:14
  */
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class LongTermAchievementServiceImpl implements TermAchievementService {
 
-    private final static Integer OPTION = TermAchievementServiceSelector.ACTION_OPTION;
-
-    private final MedalHandlerChain medalHandlerChain = SpringUtil.getBean(MedalHandlerChain.class);
-
-    @Override
-    public boolean match(Integer option) {
-        return OPTION.equals(option);
-    }
+    private final MedalHandlerChain medalHandlerChain;
 
     @Override
     public void issueTermAchievement(Long userId, Boolean isCompleted, Boolean oldCompleted) {

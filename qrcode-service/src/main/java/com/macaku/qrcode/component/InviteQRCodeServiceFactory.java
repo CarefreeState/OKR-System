@@ -10,7 +10,7 @@ import com.macaku.qrcode.service.InviteQRCodeService;
  * Date: 2024-09-05
  * Time: 15:22
  */
-public interface InviteQRCodeServiceFactory extends ServiceFactory<InviteQRCodeService> {
+public interface InviteQRCodeServiceFactory extends ServiceFactory<String, InviteQRCodeService> {
 
     String WX_TYPE = "wx";
 

@@ -30,7 +30,9 @@ public class BeanNameProperties implements InitializingBean {
 
     private Properties userRecordServiceMap;
 
-    private Properties InviteQRCodeServiceMap;
+    private Properties inviteQRCodeServiceMap;
+
+    private Properties teamAchievementServiceMap;
 
     private Properties convert(Properties oldProperties) {
         return new Properties() {{

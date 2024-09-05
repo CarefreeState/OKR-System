@@ -1,11 +1,11 @@
 package com.macaku.medal.service.impl;
 
-import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.medal.component.TermAchievementServiceSelector;
 import com.macaku.medal.domain.entry.ShortTermAchievement;
 import com.macaku.medal.handler.chain.MedalHandlerChain;
 import com.macaku.medal.service.TermAchievementService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 /**
  * Created With Intellij IDEA
@@ -15,18 +15,11 @@ import lombok.extern.slf4j.Slf4j;
  * Time: 23:15
  */
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class ShortTermAchievementServiceImpl implements TermAchievementService {
 
-    private final static Integer OPTION1 = TermAchievementServiceSelector.PRIORITY_ONE_OPTION;
-
-    private final static Integer OPTION2 = TermAchievementServiceSelector.PRIORITY_TWO_OPTION;
-
-    private final MedalHandlerChain medalHandlerChain = SpringUtil.getBean(MedalHandlerChain.class);
-
-    @Override
-    public boolean match(Integer option) {
-        return OPTION1.equals(option) || OPTION2.equals(option);
-    }
+    private final MedalHandlerChain medalHandlerChain;
 
     @Override
     public void issueTermAchievement(Long userId, Boolean isCompleted, Boolean oldCompleted) {

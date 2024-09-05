@@ -7,7 +7,7 @@ package com.macaku.common.locator;
  * Date: 2024-09-05
  * Time: 12:29
  */
-public interface ServiceFactory <T> {
+public interface ServiceFactory <E, T> {
 
-    T getService(String name);
+    T getService(E name);
 }

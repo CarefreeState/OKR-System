@@ -10,6 +10,6 @@ import com.macaku.user.service.UserRecordService;
  * Date: 2024-09-05
  * Time: 13:38
  */
-public interface UserRecordServiceFactory extends ServiceFactory<UserRecordService> {
+public interface UserRecordServiceFactory extends ServiceFactory<String, UserRecordService> {
 
 }

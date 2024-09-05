@@ -17,7 +17,7 @@ import com.macaku.core.service.TaskService;
 import com.macaku.corerecord.component.DayRecordCompleteServiceSelector;
 import com.macaku.corerecord.handler.chain.RecordEventHandlerChain;
 import com.macaku.corerecord.service.DayRecordCompleteService;
-import com.macaku.medal.component.TermAchievementServiceSelector;
+import com.macaku.medal.component.TeamAchievementServiceFactory;
 import com.macaku.medal.service.TermAchievementService;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
@@ -49,7 +49,7 @@ public class TaskController {
 
     private final TaskServiceSelector taskServiceSelector;
 
-    private final TermAchievementServiceSelector termAchievementServiceSelector;
+    private final TeamAchievementServiceFactory teamAchievementServiceFactory;
 
     private final DayRecordCompleteServiceSelector dayRecordCompleteServiceSelector;
 
@@ -127,7 +127,7 @@ public class TaskController {
             // 开启两个异步线程
             IOThreadPool.submit(() -> {
                 okrCoreService.checkOverThrows(coreId);
-                TermAchievementService termAchievementService = termAchievementServiceSelector.select(option);
+                TermAchievementService termAchievementService = teamAchievementServiceFactory.getService(option);
                 termAchievementService.issueTermAchievement(userId, isCompleted, oldCompleted);
                 DayRecordCompleteService dayRecordCompleteService = dayRecordCompleteServiceSelector.select(option);
                 recordEventHandlerChain.handle(dayRecordCompleteService.getEvent(coreId, isCompleted, oldCompleted));

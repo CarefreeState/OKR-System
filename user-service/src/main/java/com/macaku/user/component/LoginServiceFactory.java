@@ -10,6 +10,6 @@ import com.macaku.user.service.LoginService;
  * Date: 2024-09-05
  * Time: 10:41
  */
-public interface LoginServiceFactory extends ServiceFactory<LoginService> {
+public interface LoginServiceFactory extends ServiceFactory<String, LoginService> {
 
 }
