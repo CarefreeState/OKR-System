@@ -14,8 +14,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class CookieUtil {
 
-    public final static String XXL_JOB_LOGIN_IDENTITY = "XXL_JOB_LOGIN_IDENTITY";
-
     private final static JobLoginService JOB_LOGIN_SERVICE = SpringUtil.getBean(JobLoginService.class);
 
     public static String login() {
@@ -23,8 +21,7 @@ public class CookieUtil {
     }
 
     public static String getCookie() {
-        String cookie = XxlJobCookie.getXxlJobCookie().getCookie();
-        return String.format("%s=%s", XXL_JOB_LOGIN_IDENTITY, cookie);
+        return XxlJobCookie.getXxlJobCookie().getCookie();
     }
 
 }
