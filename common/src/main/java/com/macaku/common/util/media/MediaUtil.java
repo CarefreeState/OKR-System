@@ -7,7 +7,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.config.StaticMapperConfig;
-import com.macaku.common.web.HttpUtil;
+import com.macaku.common.util.web.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 

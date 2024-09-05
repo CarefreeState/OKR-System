@@ -3,7 +3,7 @@ package com.macaku.qrcode.util;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.media.MediaUtil;
-import com.macaku.common.web.HttpUtil;
+import com.macaku.common.util.web.HttpUtil;
 import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.qrcode.token.TokenUtil;
 import lombok.extern.slf4j.Slf4j;

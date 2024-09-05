@@ -9,7 +9,7 @@ import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.convert.JwtUtil;
 import com.macaku.common.util.media.MediaUtil;
 import com.macaku.common.util.thread.pool.IOThreadPool;
-import com.macaku.common.web.HttpUtil;
+import com.macaku.common.util.web.HttpUtil;
 import com.macaku.email.component.EmailServiceFactory;
 import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.qrcode.service.WxBindingQRCodeService;

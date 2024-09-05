@@ -1,7 +1,7 @@
 package com.macaku.user.security.handler;
 
 import com.macaku.common.util.thread.local.ThreadLocalMapUtil;
-import com.macaku.common.web.HttpUtil;
+import com.macaku.common.util.web.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
