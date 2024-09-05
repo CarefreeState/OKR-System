@@ -1,8 +1,6 @@
-package com.macaku.user.websocket.util;
+package com.macaku.user.websocket.session;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.user.websocket.component.WebSocketSessionMapSelector;
-import com.macaku.user.websocket.util.session.SessionMap;
 
 import javax.websocket.Session;
 import java.util.Set;
@@ -15,9 +13,9 @@ import java.util.function.Consumer;
  * Date: 2024-04-26
  * Time: 15:34
  */
-public class SessionMapper {
+public class WsSessionMapper {
 
-    private final static SessionMap SESSION_MAP = SpringUtil.getBean(WebSocketSessionMapSelector.class).select();
+    private final static WsSessionMap SESSION_MAP = SpringUtil.getBean(WsSessionMap.class);
 
     public static void put(String sessionKey, Session webSocketService) {
         SESSION_MAP.put(sessionKey, webSocketService);
@@ -44,17 +42,15 @@ public class SessionMapper {
     }
 
     public static void consumeKey(String sessionKey, Consumer<Session> consumer) {
-        consumer.accept(get(sessionKey));
+        SESSION_MAP.consumeKey(sessionKey, consumer);
     }
 
     public static void consumePrefix(String prefix, Consumer<Session> consumer) {
-        getKeys(prefix).stream().parallel().forEach(sessionKey -> {
-            consumeKey(sessionKey, consumer);
-        });
+        SESSION_MAP.consumePrefix(prefix, consumer);
     }
 
     public static void removeAll(String prefix) {
-        getKeys(prefix).stream().parallel().forEach(SessionMapper::remove);
+        SESSION_MAP.removeAll(prefix);
     }
 
 }

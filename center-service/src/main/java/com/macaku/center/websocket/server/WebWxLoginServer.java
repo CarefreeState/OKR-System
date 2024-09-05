@@ -7,8 +7,8 @@ import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
 import com.macaku.qrcode.service.OkrQRCodeService;
 import com.macaku.user.websocket.util.MessageSender;
-import com.macaku.user.websocket.util.SessionMapper;
-import com.macaku.user.websocket.util.SessionUtil;
+import com.macaku.user.websocket.session.WsSessionMapper;
+import com.macaku.user.websocket.util.WsSessionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -30,17 +30,17 @@ public class WebWxLoginServer {
     @OnOpen
     public void onOpen(Session session) throws DeploymentException {
         SchedulerThreadPool.schedule(() -> {
-            SessionUtil.close(session);
+            WsSessionUtil.close(session);
         }, QRCodeConfig.WX_LOGIN_QR_CODE_TTL, QRCodeConfig.WX_LOGIN_QR_CODE_UNIT);
         // 获得邀请码
         LoginQRCodeVO loginQRCode = OKR_QR_CODE_SERVICE.getLoginQRCode();
         // 获得在 Redis 的键
         secret = loginQRCode.getSecret();
         String sessionKey = WEB_SOCKET_USER_SERVER + secret;
-        if (SessionMapper.containsKey(sessionKey)) {
-            SessionMapper.remove(sessionKey);
+        if (WsSessionMapper.containsKey(sessionKey)) {
+            WsSessionMapper.remove(sessionKey);
         }
-        SessionMapper.put(sessionKey, session);
+        WsSessionMapper.put(sessionKey, session);
         // 发送：path, secret
         MessageSender.sendMessage(session, JsonUtil.analyzeData(loginQRCode));
 //        SessionUtil.refuse("拒绝连接");
@@ -56,7 +56,7 @@ public class WebWxLoginServer {
     public void onClose(Session session) {
         String sessionKey = WEB_SOCKET_USER_SERVER + secret;
         log.warn("{} 断开连接", sessionKey);
-        SessionMapper.remove(sessionKey);
+        WsSessionMapper.remove(sessionKey);
     }
 
     @OnError

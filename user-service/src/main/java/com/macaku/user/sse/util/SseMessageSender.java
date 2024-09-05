@@ -2,7 +2,7 @@ package com.macaku.user.sse.util;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.user.sse.session.SseSessionMapper;
-import com.macaku.user.websocket.util.SessionMapper;
+import com.macaku.user.websocket.session.WsSessionMapper;
 import io.jsonwebtoken.lang.Collections;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -29,7 +29,7 @@ public class SseMessageSender {
     private static Consumer<IOException> handleException(String sessionKey) {
         return e -> {
             log.error("{} 发送消息异常 {}", sessionKey, e.getMessage());
-            SessionMapper.remove(sessionKey);
+            WsSessionMapper.remove(sessionKey);
         };
     }
 

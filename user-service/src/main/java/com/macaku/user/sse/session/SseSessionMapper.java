@@ -42,17 +42,15 @@ public class SseSessionMapper {
     }
 
     public static void consumeKey(String sessionKey, Consumer<SseEmitter> consumer) {
-        consumer.accept(get(sessionKey));
+        SESSION_MAP.consumeKey(sessionKey, consumer);
     }
 
     public static void consumePrefix(String prefix, Consumer<SseEmitter> consumer) {
-        getKeys(prefix).stream().parallel().forEach(sessionKey -> {
-            consumeKey(sessionKey, consumer);
-        });
+        SESSION_MAP.consumePrefix(prefix, consumer);
     }
 
     public static void removeAll(String prefix) {
-        getKeys(prefix).stream().parallel().forEach(SseSessionMapper::remove);
+        SESSION_MAP.removeAll(prefix);
     }
 
 }

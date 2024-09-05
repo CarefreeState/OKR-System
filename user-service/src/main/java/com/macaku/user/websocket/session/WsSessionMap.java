@@ -1,9 +1,10 @@
-package com.macaku.user.sse.session;
+package com.macaku.user.websocket.session;
 
 import com.macaku.common.util.session.SessionMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import javax.websocket.Session;
 
 /**
  * Created With Intellij IDEA
@@ -14,5 +15,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
  */
 @Repository
 @Slf4j
-public class SseSessionMap extends SessionMap<SseEmitter> {
+public class WsSessionMap extends SessionMap<Session> {
+
 }

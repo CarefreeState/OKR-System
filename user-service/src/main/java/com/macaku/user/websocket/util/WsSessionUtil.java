@@ -1,6 +1,7 @@
 package com.macaku.user.websocket.util;
 
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.user.websocket.session.WsSessionMapper;
 
 import javax.websocket.DeploymentException;
 import javax.websocket.Session;
@@ -18,14 +19,14 @@ import java.util.Objects;
  * Date: 2024-04-26
  * Time: 13:59
  */
-public class SessionUtil {
+public class WsSessionUtil {
 
     public static int getConnectTotal(String prefix) {
-        return SessionMapper.size(prefix);
+        return WsSessionMapper.size(prefix);
     }
 
     public static List<String> getSessionKeys(String prefix) {
-        return new ArrayList<>(SessionMapper.getKeys(prefix));
+        return new ArrayList<>(WsSessionMapper.getKeys(prefix));
     }
 
     public static void close(Session session) {

@@ -2,6 +2,7 @@ package com.macaku.user.websocket.util;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.user.websocket.session.WsSessionMapper;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.websocket.Session;
@@ -39,7 +40,7 @@ public class MessageSender {
      */
     public static void sendMessageToOne(String sessionKey, String message) {
         log.info("服务器 -> [{}] text: {}", sessionKey, message);
-        SessionMapper.consumeKey(sessionKey, session -> {
+        WsSessionMapper.consumeKey(sessionKey, session -> {
             sendMessage(session, message);
         });
     }
@@ -49,7 +50,7 @@ public class MessageSender {
      */
     public static void sendMessageToAll(String prefix, String message) {
         log.info("服务器 -> [{}*] text: {}", prefix, message);
-        SessionMapper.consumePrefix(prefix, session -> {
+        WsSessionMapper.consumePrefix(prefix, session -> {
             sendMessage(session, message);
         });
     }
