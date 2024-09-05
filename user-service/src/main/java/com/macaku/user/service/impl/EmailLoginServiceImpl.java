@@ -1,11 +1,10 @@
 package com.macaku.user.service.impl;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.convert.JwtUtil;
-import com.macaku.email.component.EmailServiceSelector;
+import com.macaku.email.component.EmailServiceFactory;
 import com.macaku.user.domain.dto.EmailLoginDTO;
 import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
@@ -39,7 +38,7 @@ public class EmailLoginServiceImpl implements LoginService {
 
     private final UserService userService;
 
-    private final EmailServiceSelector emailServiceSelector;
+    private final EmailServiceFactory emailServiceFactory;
 
     @Override
     public Map<String, Object> login(LoginDTO loginDTO) {
@@ -51,9 +50,9 @@ public class EmailLoginServiceImpl implements LoginService {
         String email = emailLoginDTO.getEmail();
         String code = emailLoginDTO.getCode();
         // 验证码验证
-        emailServiceSelector.
-                select(EmailServiceSelector.EMAIL_LOGIN).
-                checkIdentifyingCode(email, code);
+        emailServiceFactory
+                .getService(EmailServiceFactory.EMAIL_LOGIN)
+                .checkIdentifyingCode(email, code);
         User user = emailLoginDTO.transToUser();
         // 如果用户未不存在（邮箱未注册），则注册
         User dbUser = userService.lambdaQuery().eq(User::getEmail, email).one();

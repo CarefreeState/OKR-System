@@ -2,8 +2,6 @@ package com.macaku.email.service;
 
 public interface EmailService {
 
-    boolean match(String type);
-
     /**
      * 向用户邮箱发送验证码
      *

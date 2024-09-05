@@ -1,4 +1,4 @@
-package com.macaku.email.component.po;
+package com.macaku.email.component.model.po;
 
 import lombok.Data;
 import lombok.NonNull;

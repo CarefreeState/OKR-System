@@ -1,17 +1,15 @@
 package com.macaku.email.component;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
-import com.macaku.email.component.po.EmailMessage;
 import com.macaku.common.exception.GlobalServiceException;
+import com.macaku.email.component.model.po.EmailMessage;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -20,52 +18,42 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Function;
 
-@Component
 @Slf4j
+@Component
 @RequiredArgsConstructor
 public class EmailSender {
 
     private final JavaMailSender javaMailSender;
 
-    private final TemplateEngine templateEngine;
-
-    public SimpleMailMessage emailToSimpleMailMessage(EmailMessage emailMessage) {
+    private SimpleMailMessage emailToSimpleMailMessage(@NonNull EmailMessage emailMessage) {
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
         simpleMailMessage.setFrom(emailMessage.getSender());
         simpleMailMessage.setTo(emailMessage.getRecipient());
         simpleMailMessage.setCc(emailMessage.getCarbonCopy());
+        simpleMailMessage.setSentDate(emailMessage.getCreateTime());
         simpleMailMessage.setSubject(emailMessage.getTitle());
         simpleMailMessage.setText(emailMessage.getContent());
         return simpleMailMessage;
     }
 
-    public MimeMessageHelper emailIntoMimeMessageByHelper(MimeMessage mimeMessage, EmailMessage emailMessage) {
-        try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, Boolean.TRUE);
-            mimeMessageHelper.setFrom(emailMessage.getSender());
-            mimeMessageHelper.setCc(emailMessage.getCarbonCopy());
-            mimeMessageHelper.setSubject(emailMessage.getTitle());
-            mimeMessageHelper.setTo(emailMessage.getRecipient());
-            return mimeMessageHelper;
-        } catch (MessagingException e) {
-            throw new GlobalServiceException(e.getMessage(), GlobalServiceStatusCode.EMAIL_SEND_FAIL);
-        }
+    private MimeMessageHelper emailIntoMimeMessageByHelper(MimeMessage mimeMessage, @NonNull EmailMessage emailMessage) throws MessagingException {
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, Boolean.TRUE);
+        mimeMessageHelper.setFrom(emailMessage.getSender());
+        mimeMessageHelper.setCc(emailMessage.getCarbonCopy());
+        mimeMessageHelper.setSubject(emailMessage.getTitle());
+        mimeMessageHelper.setSentDate(emailMessage.getCreateTime());
+        mimeMessageHelper.setTo(emailMessage.getRecipient());
+        return mimeMessageHelper;
     }
 
-    public void sendSimpleMailMessage(EmailMessage emailMessage) {
-        if (Objects.isNull(emailMessage)) {
-            throw new GlobalServiceException("email不能为空", GlobalServiceStatusCode.PARAM_IS_BLANK);
-        }
+    public void sendSimpleMailMessage(@NonNull EmailMessage emailMessage) {
         // 封装simpleMailMessage对象
         SimpleMailMessage simpleMailMessage = emailToSimpleMailMessage(emailMessage);
         // 发送
         javaMailSender.send(simpleMailMessage);
     }
 
-    public void sendMailWithFile(EmailMessage emailMessage, File... files) {
-        if (Objects.isNull(emailMessage)) {
-            throw new GlobalServiceException("email不能为空", GlobalServiceStatusCode.PARAM_IS_BLANK);
-        }
+    public void sendMailWithFile(@NonNull EmailMessage emailMessage, File... files) {
         // 封装对象
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -83,40 +71,24 @@ public class EmailSender {
         }
     }
 
-    public void sendModelMail(EmailMessage emailMessage, String template, Object modelMessage) {
-        if (Objects.isNull(emailMessage)) {
-            throw new GlobalServiceException("email不能为空", GlobalServiceStatusCode.PARAM_IS_BLANK);
-        }
-        // 封装对象
+    public void sendModelMail(@NonNull EmailMessage emailMessage, String html) {
         try {
+            // 封装对象
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = emailIntoMimeMessageByHelper(mimeMessage, emailMessage);
-            // 构造模板消息
-            Context context = new Context();
-            context.setVariables(BeanUtil.beanToMap(modelMessage));
-            //合并模板与数据
-            String content = templateEngine.process(template, context);
-            mimeMessageHelper.setText(content, Boolean.TRUE);
+            mimeMessageHelper.setText(html, Boolean.TRUE);
             javaMailSender.send(mimeMessage);
         } catch (MessagingException e) {
             throw new GlobalServiceException(e.getMessage(), GlobalServiceStatusCode.EMAIL_SEND_FAIL);
         }
     }
 
-    public void sendModelMailWithFile(EmailMessage emailMessage, String template, Object modelMessage, File... files) {
-        if (Objects.isNull(emailMessage)) {
-            throw new GlobalServiceException("email不能为空", GlobalServiceStatusCode.PARAM_IS_BLANK);
-        }
+    public void sendModelMailWithFile(@NonNull EmailMessage emailMessage, String html, File... files) {
         // 封装对象
         try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
             MimeMessageHelper mimeMessageHelper = emailIntoMimeMessageByHelper(mimeMessage, emailMessage);
-            // 构造模板消息
-            Context context = new Context();
-            context.setVariables(BeanUtil.beanToMap(modelMessage));
-            //合并模板与数据
-            String content = templateEngine.process(template, context);
-            mimeMessageHelper.setText(content, Boolean.TRUE);
+            mimeMessageHelper.setText(html, Boolean.TRUE);
             // 添加附件
             for (File file : files) {
                 if (Objects.nonNull(file)) {
@@ -129,22 +101,24 @@ public class EmailSender {
         }
     }
 
-    public <T, R> void customizedSendEmail(EmailMessage emailMessage, String template, Function<T, R> function, File... files) {
-        if (Objects.isNull(emailMessage)) {
-            throw new GlobalServiceException("email不能为空", GlobalServiceStatusCode.PARAM_IS_BLANK);
-        }
+    /**
+     * 不建议使用，因为通过 email 可能不足以获得我们需要的 html
+     * 建议循环调用 sendModelMailWithFile，因为这个方法本身就是循环发送，不是一次性发送
+     */
+    @Deprecated
+    public void customizedSendEmail(@NonNull EmailMessage emailMessage, Function<String, String> getHtml, File... files) {
         String sender = emailMessage.getSender();
         String[] carbonCopy = emailMessage.getCarbonCopy();
         String title = emailMessage.getTitle();
         Arrays.stream(emailMessage.getRecipient())
                 .parallel()
                 .distinct()
-                .forEach(s -> {
+                .forEach(to -> {
                     try {
                         // 封装对象
                         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
                         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, Boolean.TRUE);
-                        mimeMessageHelper.setTo(s);
+                        mimeMessageHelper.setTo(to);
                         mimeMessageHelper.setFrom(sender);
                         mimeMessageHelper.setCc(carbonCopy);
                         mimeMessageHelper.setSubject(title);
@@ -154,14 +128,8 @@ public class EmailSender {
                                 mimeMessageHelper.addAttachment(file.getName(), file);
                             }
                         }
-                        // 构造模板消息
-                        Context context = new Context();
-                        Object modelMessage = function.apply((T) s);
-                        context.setVariables(BeanUtil.beanToMap(modelMessage));
-                        //合并模板与数据
-                        String content = templateEngine.process(template, context);
                         // 通过mimeMessageHelper设置到mimeMessage里
-                        mimeMessageHelper.setText(content, Boolean.TRUE);
+                        mimeMessageHelper.setText(getHtml.apply(to), Boolean.TRUE);
                         //发送
                         javaMailSender.send(mimeMessage);
                     } catch (MessagingException e) {
@@ -169,4 +137,5 @@ public class EmailSender {
                     }
                 });
     }
+
 }

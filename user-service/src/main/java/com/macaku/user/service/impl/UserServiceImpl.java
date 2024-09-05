@@ -3,24 +3,24 @@ package com.macaku.user.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.common.config.StaticMapperConfig;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.common.util.thread.pool.IOThreadPool;
-import com.macaku.redis.repository.RedisCache;
-import com.macaku.redis.repository.RedisLock;
-import com.macaku.user.util.ExtractUtil;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.convert.JwtUtil;
 import com.macaku.common.util.media.MediaUtil;
-import com.macaku.common.config.StaticMapperConfig;
+import com.macaku.common.util.thread.pool.IOThreadPool;
 import com.macaku.common.web.HttpUtil;
-import com.macaku.email.component.EmailServiceSelector;
+import com.macaku.email.component.EmailServiceFactory;
 import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.qrcode.service.WxBindingQRCodeService;
 import com.macaku.qrcode.token.TokenUtil;
+import com.macaku.redis.repository.RedisCache;
+import com.macaku.redis.repository.RedisLock;
 import com.macaku.user.domain.dto.UserinfoDTO;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.mapper.UserMapper;
 import com.macaku.user.service.UserService;
+import com.macaku.user.util.ExtractUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -66,7 +66,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     private final RedisCache redisCache;
 
-    private final EmailServiceSelector emailServiceSelector;
+    private final EmailServiceFactory emailServiceFactory;
 
     private final WxBindingQRCodeService wxBindingQRCodeService;
 
@@ -148,8 +148,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public void bindingEmail(Long userId, String email, String code, String recordEmail) {
         // 检查验证码
-        emailServiceSelector
-                .select(EmailServiceSelector.EMAIL_BINDING)
+        emailServiceFactory
+                .getService(EmailServiceFactory.EMAIL_BINDING)
                 .checkIdentifyingCode(email, code);
         // 判断邮箱用户是否存在
         User userByEmail = getUserByEmail(email);

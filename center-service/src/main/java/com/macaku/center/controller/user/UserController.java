@@ -5,7 +5,7 @@ import com.macaku.center.sse.server.SseUserServer;
 import com.macaku.center.websocket.server.WebWxLoginServer;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.common.util.convert.JsonUtil;
-import com.macaku.email.component.EmailServiceSelector;
+import com.macaku.email.component.EmailServiceFactory;
 import com.macaku.email.util.IdentifyingCodeValidator;
 import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
 import com.macaku.qrcode.service.OkrQRCodeService;
@@ -50,9 +50,9 @@ public class UserController {
 
     private final LoginServiceFactory loginServiceFactory;
 
-    private final UserService userService;
+    private final EmailServiceFactory emailServiceFactory;
 
-    private final EmailServiceSelector emailServiceSelector;
+    private final UserService userService;
 
     private final OkrQRCodeService okrQRCodeService;
 
@@ -92,9 +92,9 @@ public class UserController {
         String code = IdentifyingCodeValidator.getIdentifyingCode();
         String type = emailCheckDTO.getType();
         String email = emailCheckDTO.getEmail();
-        emailServiceSelector.
-                select(type).
-                sendIdentifyingCode(email, code);
+        emailServiceFactory
+                .getService(type)
+                .sendIdentifyingCode(email, code);
         // 能到这一步就成功了
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }

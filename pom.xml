@@ -55,6 +55,7 @@
         <jjwt.version>0.9.0</jjwt.version>
         <bcprov-jdk15on.version>1.64</bcprov-jdk15on.version>
         <lombok.version>1.18.30</lombok.version>
+        <com.vladsch.flexmark.version>0.62.2</com.vladsch.flexmark.version>
     </properties>
     <profiles>
         <profile>

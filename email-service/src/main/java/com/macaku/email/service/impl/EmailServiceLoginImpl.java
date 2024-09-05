@@ -2,15 +2,16 @@ package com.macaku.email.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.thread.pool.CPUThreadPool;
 import com.macaku.email.component.EmailSender;
-import com.macaku.email.component.EmailServiceSelector;
-import com.macaku.email.component.po.EmailMessage;
+import com.macaku.email.component.model.po.EmailMessage;
+import com.macaku.email.html.service.HtmlEngine;
 import com.macaku.email.model.vo.VerificationCodeTemplate;
 import com.macaku.email.repository.EmailRepository;
 import com.macaku.email.service.EmailService;
 import com.macaku.email.util.IdentifyingCodeValidator;
-import com.macaku.common.exception.GlobalServiceException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -27,9 +28,9 @@ import java.util.concurrent.TimeUnit;
  */
 
 @Slf4j
+@Service
+@RequiredArgsConstructor
 public class EmailServiceLoginImpl implements EmailService {
-
-    private static final String TYPE = EmailServiceSelector.EMAIL_LOGIN;
 
     private static final int IDENTIFYING_CODE_MINUTES = 5;//过期分钟数
 
@@ -49,14 +50,11 @@ public class EmailServiceLoginImpl implements EmailService {
 
     private static final String systemEmail = SpringUtil.getProperty("spring.mail.username");
 
-    private final EmailSender emailSender = SpringUtil.getBean(EmailSender.class);
+    private final EmailSender emailSender;
 
-    private final EmailRepository emailRepository = SpringUtil.getBean(EmailRepository.class);
+    private final EmailRepository emailRepository;
 
-    @Override
-    public boolean match(String type) {
-        return TYPE.equals(type);
-    }
+    private final HtmlEngine htmlEngine;
 
     private boolean canSendEmail(long ttl) {
         return ttl > IDENTIFYING_CODE_TIMEOUT - IDENTIFYING_CODE_INTERVAL_Limit;
@@ -92,7 +90,10 @@ public class EmailServiceLoginImpl implements EmailService {
                     .minutes((int) TimeUnit.MILLISECONDS.toMinutes(IDENTIFYING_CODE_TIMEOUT))
                     .build();
             // 发送模板消息
-            emailSender.sendModelMail(emailMessage, EMAIL_MODEL_HTML, verificationCodeTemplate);
+            String html = htmlEngine.builder()
+                    .append(EMAIL_MODEL_HTML, verificationCodeTemplate)
+                    .build();
+            emailSender.sendModelMail(emailMessage, html);
             log.info("发送验证码:{} -> email:{}", code, email);
         });
     }
