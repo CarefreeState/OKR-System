@@ -17,7 +17,7 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
-import com.macaku.qrcode.component.InviteQRCodeServiceSelector;
+import com.macaku.qrcode.component.InviteQRCodeServiceFactory;
 import com.macaku.qrcode.service.InviteQRCodeService;
 import com.macaku.redis.repository.RedisCache;
 import com.macaku.user.domain.po.User;
@@ -48,7 +48,7 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
 
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
-    private final InviteQRCodeServiceSelector inviteQRCodeServiceSelector = SpringUtil.getBean(InviteQRCodeServiceSelector.class);
+    private final InviteQRCodeServiceFactory inviteQRCodeServiceFactory = SpringUtil.getBean(InviteQRCodeServiceFactory.class);
 
     @Override
     public boolean match(String scene) {
@@ -61,7 +61,7 @@ public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMappe
         Long teamId = okrOperateDTO.getTeamOkrId();
         String secret = okrOperateDTO.getSecret();
         String type = okrOperateDTO.getType();
-        InviteQRCodeService inviteQRCodeService = inviteQRCodeServiceSelector.select(type);
+        InviteQRCodeService inviteQRCodeService = inviteQRCodeServiceFactory.getService(type);
         inviteQRCodeService.checkParams(teamId, secret);
         // 获取用户 ID（受邀者）
         Long userId = user.getId();

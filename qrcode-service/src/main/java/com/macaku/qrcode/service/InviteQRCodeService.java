@@ -11,8 +11,6 @@ import java.awt.*;
  */
 public interface InviteQRCodeService {
 
-    boolean match(String type);
-
     Color getQRCodeColor();
 
     String getQRCode(Long teamId);

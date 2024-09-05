@@ -3,6 +3,7 @@ package com.macaku.common.locator;
 import com.macaku.common.util.convert.ShortCodeUtil;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import java.util.Properties;
 @Configuration
 @Setter
 @Getter
+@Slf4j
 @ConfigurationProperties(prefix = "okr.service")
 public class BeanNameProperties implements InitializingBean {
 
@@ -27,6 +29,8 @@ public class BeanNameProperties implements InitializingBean {
     private Properties loginServiceMap;
 
     private Properties userRecordServiceMap;
+
+    private Properties InviteQRCodeServiceMap;
 
     private Properties convert(Properties oldProperties) {
         return new Properties() {{

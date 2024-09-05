@@ -52,3 +52,6 @@ okr:
     userRecordServiceMap:
       WX_JWT: wxUserRecordServiceImpl
       EMAIL_JW: emailUserRecordServiceImpl
+    inviteQRCodeServiceMap:
+      wx: wxInviteQRCodeServiceImpl
+      web: webInviteQRCodeServiceImpl

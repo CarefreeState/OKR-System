@@ -5,7 +5,7 @@ import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.ShortCodeUtil;
 import com.macaku.common.util.media.ImageUtil;
 import com.macaku.common.util.media.MediaUtil;
-import com.macaku.qrcode.component.InviteQRCodeServiceSelector;
+import com.macaku.qrcode.component.InviteQRCodeServiceFactory;
 import com.macaku.qrcode.config.BloomFilterConfig;
 import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.qrcode.domain.config.OkrQRCode;
@@ -43,7 +43,7 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
 
     private final RedisLock redisLock;
 
-    private final InviteQRCodeServiceSelector inviteQRCodeServiceSelector;
+    private final InviteQRCodeServiceFactory inviteQRCodeServiceFactory;
 
     private final WxBindingQRCodeService wxBindingQRCodeService;
 
@@ -52,8 +52,8 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
     private final WxCommonQRCodeService wxCommonQRCodeService;
 
     public String getInviteQRCode(Long teamId, String teamName, String type) {
-        InviteQRCodeService inviteQRCodeService = inviteQRCodeServiceSelector.select(type);
-        String redisKey = String.format(QRCodeConfig.TEAM_QR_CODE_MAP, inviteQRCodeServiceSelector.getType(type), teamId);
+        InviteQRCodeService inviteQRCodeService = inviteQRCodeServiceFactory.getService(type);
+        String redisKey = String.format(QRCodeConfig.TEAM_QR_CODE_MAP, type, teamId);
         return (String)redisCache.getCacheObject(redisKey).orElseGet(() -> {
             // 获取 QRCode
             String mapPath = inviteQRCodeService.getQRCode(teamId);
@@ -77,8 +77,8 @@ public class OkrQRCodeServiceImpl implements OkrQRCodeService {
 
     @Override
     public void deleteTeamNameCache(Long teamId) {
-        String redisKey1 = String.format(QRCodeConfig.TEAM_QR_CODE_MAP, InviteQRCodeServiceSelector.WEB_TYPE, teamId);
-        String redisKey2 = String.format(QRCodeConfig.TEAM_QR_CODE_MAP, InviteQRCodeServiceSelector.WX_TYPE, teamId);
+        String redisKey1 = String.format(QRCodeConfig.TEAM_QR_CODE_MAP, InviteQRCodeServiceFactory.WEB_TYPE, teamId);
+        String redisKey2 = String.format(QRCodeConfig.TEAM_QR_CODE_MAP, InviteQRCodeServiceFactory.WX_TYPE, teamId);
         redisCache.getCacheObject(redisKey1).ifPresent(mapPath -> {
             redisCache.deleteObject(redisKey1);
             String originPath = MediaUtil.getLocalFilePath((String) mapPath);

@@ -2,11 +2,10 @@ package com.macaku.qrcode.service.impl;
 
 import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.common.config.StaticMapperConfig;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.ShortCodeUtil;
 import com.macaku.common.util.media.MediaUtil;
-import com.macaku.common.config.StaticMapperConfig;
-import com.macaku.qrcode.component.InviteQRCodeServiceSelector;
 import com.macaku.qrcode.domain.config.WebInviteQRCode;
 import com.macaku.qrcode.service.InviteQRCodeService;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +23,7 @@ import java.util.Objects;
 @Slf4j
 public class WebInviteQRCodeServiceImpl implements InviteQRCodeService {
 
-    private final static String TYPE = InviteQRCodeServiceSelector.WEB_TYPE;
-
     private final WebInviteQRCode webInviteQRCode = SpringUtil.getBean(WebInviteQRCode.class);
-
-    @Override
-    public boolean match(String type) {
-        return TYPE.equals(type);
-    }
 
     @Override
     public Color getQRCodeColor() {

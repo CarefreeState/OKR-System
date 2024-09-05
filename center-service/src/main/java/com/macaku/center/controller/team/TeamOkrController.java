@@ -7,11 +7,12 @@ import com.macaku.center.domain.vo.TeamOkrStatisticVO;
 import com.macaku.center.domain.vo.TeamOkrVO;
 import com.macaku.center.service.MemberService;
 import com.macaku.center.service.TeamOkrService;
-import com.macaku.qrcode.service.OkrQRCodeService;
 import com.macaku.center.util.TeamOkrUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
+import com.macaku.qrcode.component.InviteQRCodeServiceFactory;
+import com.macaku.qrcode.service.OkrQRCodeService;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.util.UserRecordUtil;
 import io.swagger.annotations.Api;
@@ -135,7 +136,7 @@ public class TeamOkrController {
     @PostMapping("/qrcode/{teamId}")
     @ApiOperation("获取邀请码")
     public SystemJsonResponse<String> getQRCode(@PathVariable("teamId") @NonNull @ApiParam("团队 OKR ID") Long teamId,
-                                                @RequestParam(value = "type", required = false) @ApiParam("邀请码类型") String type) {
+                                                @RequestParam(value = "type", required = false, defaultValue = InviteQRCodeServiceFactory.WX_TYPE) @ApiParam("邀请码类型") String type) {
         // 检测
         User user = UserRecordUtil.getUserRecord();
         Long managerId = user.getId();
