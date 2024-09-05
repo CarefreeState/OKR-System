@@ -1,6 +1,7 @@
 package com.macaku.center.controller.core;
 
-import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.component.OkrOperateServiceFactory;
+import com.macaku.center.component.OkrServiceLocatorFactoryBean;
 import com.macaku.center.domain.dto.unify.OkrCoreDTO;
 import com.macaku.center.domain.dto.unify.OkrCoreSummaryDTO;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
@@ -42,9 +43,9 @@ public class OkrCoreController {
 
     private final OkrCoreService okrCoreService;
 
-    private final OkrServiceSelector okrServiceSelector;
-
     private final MedalHandlerChain medalHandlerChain;
+
+    private final OkrOperateServiceFactory okrOperateServiceFactory;
 
     @PostMapping("/create")
     @ApiOperation("创建一个 OKR")
@@ -52,7 +53,8 @@ public class OkrCoreController {
         // 检测
         okrOperateDTO.validate();
         User user = UserRecordUtil.getUserRecord();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrOperateDTO.getScene());
+//        OkrOperateService okrOperateService = okrServiceSelector.select(okrOperateDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrOperateDTO.getScene());
         Map<String, Object> ret = okrOperateService.createOkrCore(user, okrOperateDTO);
         return SystemJsonResponse.SYSTEM_SUCCESS(ret);
     }
@@ -62,7 +64,8 @@ public class OkrCoreController {
     public SystemJsonResponse<OkrCoreVO> searchOkrCore(@RequestBody OkrCoreDTO okrCoreDTO) {
         okrCoreDTO.validate();
         User user = UserRecordUtil.getUserRecord();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
+//        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrCoreDTO.getScene());
         OkrCoreVO okrCoreVO = okrOperateService.selectAllOfCore(user, okrCoreDTO.getCoreId());
         return SystemJsonResponse.SYSTEM_SUCCESS(okrCoreVO);
     }
@@ -77,7 +80,8 @@ public class OkrCoreController {
         okrCoreDTO.validate();
         User user = UserRecordUtil.getUserRecord();
         Long coreId = okrCoreDTO.getCoreId();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
+//        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrCoreDTO.getScene());
         Long userId = okrOperateService.getCoreUser(coreId);
         if(user.getId().equals(userId)){
             okrCoreService.confirmCelebrateDate(coreId, celebrateDay);
@@ -95,7 +99,8 @@ public class OkrCoreController {
         okrCoreSummaryDTO.validate();
         User user = UserRecordUtil.getUserRecord();
         Long coreId = okrCoreSummaryDTO.getCoreId();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreSummaryDTO.getScene());
+//        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreSummaryDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrCoreSummaryDTO.getScene());
         Long userId = okrOperateService.getCoreUser(coreId);
         if(user.getId().equals(userId)) {
             String summary = okrCoreSummaryDTO.getSummary();
@@ -125,7 +130,8 @@ public class OkrCoreController {
         okrCoreDTO.validate();
         Long coreId = okrCoreDTO.getCoreId();
         User user = UserRecordUtil.getUserRecord();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
+//        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrCoreDTO.getScene());
         Long userId = okrOperateService.getCoreUser(coreId);
         if(user.getId().equals(userId)) {
             okrCoreService.complete(coreId);

@@ -11,7 +11,7 @@ import com.macaku.user.util.ExtractUtil;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.convert.JwtUtil;
 import com.macaku.common.util.media.MediaUtil;
-import com.macaku.common.util.media.config.StaticMapperConfig;
+import com.macaku.common.config.StaticMapperConfig;
 import com.macaku.common.web.HttpUtil;
 import com.macaku.email.component.EmailServiceSelector;
 import com.macaku.qrcode.config.QRCodeConfig;

@@ -1,4 +1,4 @@
-package com.macaku.common.util.media.config;
+package com.macaku.common.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

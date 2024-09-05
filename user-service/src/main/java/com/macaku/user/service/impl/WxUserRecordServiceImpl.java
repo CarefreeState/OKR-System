@@ -3,9 +3,7 @@ package com.macaku.user.service.impl;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.util.convert.JwtUtil;
-import com.macaku.common.util.convert.ShortCodeUtil;
 import com.macaku.redis.repository.RedisCache;
-import com.macaku.user.component.UserRecordServiceSelector;
 import com.macaku.user.domain.dto.detail.LoginUser;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.service.UserRecordService;
@@ -27,16 +25,9 @@ import java.util.Optional;
 @Slf4j
 public class WxUserRecordServiceImpl implements UserRecordService {
 
-    private final static String TYPE = UserRecordServiceSelector.WX_LOGIN_TYPE;
-
     private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
 
     private final UserService userService = SpringUtil.getBean(UserService.class);
-
-    @Override
-    public boolean match(String type) {
-        return ShortCodeUtil.getShortCode(TYPE).equals(type);
-    }
 
     @Override
     public Optional<LoginUser> getRecord(HttpServletRequest request) {

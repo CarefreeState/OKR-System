@@ -66,7 +66,7 @@ public class XxlJobInfo {
 				.triggerStatus(triggerStatus).build();
 	}
 
-	public static XxlJobInfo of(Integer groupId, String jobDesc,
+	public static XxlJobInfo                    of(Integer groupId, String jobDesc,
 								String author, String cron, String value,
 								String executorRouteStrategy, Integer triggerStatus,
 								String executorParam) {

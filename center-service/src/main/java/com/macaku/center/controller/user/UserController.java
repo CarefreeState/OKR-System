@@ -9,7 +9,7 @@ import com.macaku.email.component.EmailServiceSelector;
 import com.macaku.email.util.IdentifyingCodeValidator;
 import com.macaku.qrcode.domain.vo.LoginQRCodeVO;
 import com.macaku.qrcode.service.OkrQRCodeService;
-import com.macaku.user.component.LoginServiceSelector;
+import com.macaku.user.component.LoginServiceFactory;
 import com.macaku.user.domain.dto.EmailBindingDTO;
 import com.macaku.user.domain.dto.EmailCheckDTO;
 import com.macaku.user.domain.dto.UserinfoDTO;
@@ -48,7 +48,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final LoginServiceSelector loginServiceSelector;
+    private final LoginServiceFactory loginServiceFactory;
 
     private final UserService userService;
 
@@ -69,7 +69,7 @@ public class UserController {
         // 检查
         loginDTO.validate();
         // 选取服务
-        LoginService loginService = loginServiceSelector.select(type);
+        LoginService loginService = loginServiceFactory.getService(type);
         Map<String, Object> result = loginService.login(loginDTO);
         return SystemJsonResponse.SYSTEM_SUCCESS(result);
     }
@@ -79,7 +79,7 @@ public class UserController {
     public SystemJsonResponse logout(HttpServletRequest request) {
         String type = request.getHeader(VisitConfig.HEADER);
         // 选取服务
-        LoginService loginService = loginServiceSelector.select(type);
+        LoginService loginService = loginServiceFactory.getService(type);
         loginService.logout(request);
         return SystemJsonResponse.SYSTEM_SUCCESS();
     }

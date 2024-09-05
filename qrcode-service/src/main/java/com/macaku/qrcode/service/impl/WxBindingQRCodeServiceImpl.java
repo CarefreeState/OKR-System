@@ -5,7 +5,7 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.media.MediaUtil;
-import com.macaku.common.util.media.config.StaticMapperConfig;
+import com.macaku.common.config.StaticMapperConfig;
 import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.qrcode.domain.config.WxBindingQRCode;
 import com.macaku.qrcode.service.WxBindingQRCodeService;

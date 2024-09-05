@@ -2,6 +2,7 @@ package com.macaku.user.sse.util;
 
 import com.macaku.common.util.thread.pool.CPUThreadPool;
 import com.macaku.common.util.thread.timer.TimerUtil;
+import com.macaku.user.sse.session.SseSessionMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 

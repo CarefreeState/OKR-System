@@ -1,6 +1,6 @@
 package com.macaku.qrcode.init;
 
-import com.macaku.common.util.media.config.StaticMapperConfig;
+import com.macaku.common.config.StaticMapperConfig;
 import com.macaku.common.util.thread.pool.SchedulerThreadPool;
 import com.macaku.qrcode.config.QRCodeConfig;
 import com.macaku.redis.repository.RedisCache;

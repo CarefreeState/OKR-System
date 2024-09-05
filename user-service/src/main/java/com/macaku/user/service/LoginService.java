@@ -15,8 +15,6 @@ import java.util.Map;
  */
 public interface LoginService {
 
-    boolean match(String type);
-
     @Transactional
     Map<String, Object> login(LoginDTO loginDTO);
 

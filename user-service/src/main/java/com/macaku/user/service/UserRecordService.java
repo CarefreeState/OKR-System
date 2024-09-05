@@ -14,8 +14,6 @@ import java.util.Optional;
  */
 public interface UserRecordService {
 
-    boolean match(String type);
-
     Optional<LoginUser> getRecord(HttpServletRequest request);
 
     void deleteRecord(HttpServletRequest request);

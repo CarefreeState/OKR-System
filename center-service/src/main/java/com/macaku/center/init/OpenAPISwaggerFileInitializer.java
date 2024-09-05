@@ -1,7 +1,7 @@
 package com.macaku.center.init;
 
 import com.macaku.common.util.media.MediaUtil;
-import com.macaku.common.util.media.config.StaticMapperConfig;
+import com.macaku.common.config.StaticMapperConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationStartedEvent;

@@ -1,8 +1,6 @@
-package com.macaku.user.sse.util;
+package com.macaku.user.sse.session;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.user.sse.component.SeeSessionMapSelector;
-import com.macaku.user.sse.util.session.SseSessionMap;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Set;
@@ -17,7 +15,7 @@ import java.util.function.Consumer;
  */
 public class SseSessionMapper {
 
-    private final static SseSessionMap SESSION_MAP = SpringUtil.getBean(SeeSessionMapSelector.class).select();
+    private final static SseSessionMap SESSION_MAP = SpringUtil.getBean(SseSessionMap.class);
 
     public static void put(String sessionKey, SseEmitter sseEmitter) {
         SESSION_MAP.put(sessionKey, sseEmitter);

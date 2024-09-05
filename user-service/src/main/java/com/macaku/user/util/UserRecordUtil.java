@@ -4,7 +4,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.thread.local.ThreadLocalMapUtil;
-import com.macaku.user.component.UserRecordServiceSelector;
+import com.macaku.user.component.UserRecordServiceFactory;
 import com.macaku.user.domain.dto.detail.LoginUser;
 import com.macaku.user.domain.po.User;
 import com.macaku.user.interceptor.config.VisitConfig;
@@ -28,14 +28,14 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 public class UserRecordUtil {
 
-    private final static UserRecordServiceSelector USER_RECORD_SERVICE_SELECTOR = SpringUtil.getBean(UserRecordServiceSelector.class);
+    private final static UserRecordServiceFactory USER_RECORD_SERVICE_FACTORY = SpringUtil.getBean(UserRecordServiceFactory.class);
 
     public static UserRecordService selectService(HttpServletRequest request) {
         String type = request.getHeader(VisitConfig.HEADER);
         if(!StringUtils.hasText(type)) {
             throw new GlobalServiceException(GlobalServiceStatusCode.USER_TOKEN_NOT_VALID);
         }
-        return USER_RECORD_SERVICE_SELECTOR.select(type);
+        return USER_RECORD_SERVICE_FACTORY.getService(type);
     }
 
     public static LoginUser getUserRecord(HttpServletRequest request) {

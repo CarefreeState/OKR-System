@@ -5,8 +5,6 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.util.convert.JsonUtil;
 import com.macaku.common.util.convert.JwtUtil;
-import com.macaku.common.util.convert.ShortCodeUtil;
-import com.macaku.user.component.LoginServiceSelector;
 import com.macaku.user.domain.dto.WxLoginDTO;
 import com.macaku.user.domain.dto.unify.LoginDTO;
 import com.macaku.user.domain.po.User;
@@ -28,20 +26,13 @@ import java.util.Objects;
  * Time: 12:49
  */
 @Slf4j
-public class LoginServiceWxImpl implements LoginService {
-
-    private final static String TYPE = LoginServiceSelector.WX_LOGIN_TYPE;
+public class WxLoginServiceImpl implements LoginService {
 
     private final static String DEFAULT_NICKNAME = "微信用户";
 
     private final static String DEFAULT_PHOTO = "media/static/default.png";
 
     private final UserService userService = SpringUtil.getBean(UserService.class);
-
-    @Override
-    public boolean match(String type) {
-        return ShortCodeUtil.getShortCode(TYPE).equals(type);
-    }
 
     @Override
     public Map<String, Object> login(LoginDTO loginDTO) {

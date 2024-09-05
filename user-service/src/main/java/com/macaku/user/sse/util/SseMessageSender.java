@@ -1,6 +1,7 @@
 package com.macaku.user.sse.util;
 
 import com.macaku.common.code.GlobalServiceStatusCode;
+import com.macaku.user.sse.session.SseSessionMapper;
 import com.macaku.user.websocket.util.SessionMapper;
 import io.jsonwebtoken.lang.Collections;
 import lombok.extern.slf4j.Slf4j;

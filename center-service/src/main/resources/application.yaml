@@ -38,3 +38,17 @@ mybatis-plus:
       # todo: 考虑用什么 id
       id-type: auto #id为雪花算法生成 设置为none->为遵循版本默认，可见这个版本默认为assign_id
       update-strategy: not_null #更新策略:只更新非空字段
+
+
+okr:
+  service:
+    okrOperateServiceMap:
+      scene-p: personalOkrServiceImpl
+      scene-t: teamOkrServiceImpl
+      scene-tp: teamPersonalOkrServiceImpl
+    loginServiceMap:
+      WX_JWT: wxLoginServiceImpl
+      EMAIL_JW: emailLoginServiceImpl
+    userRecordServiceMap:
+      WX_JWT: wxUserRecordServiceImpl
+      EMAIL_JW: emailUserRecordServiceImpl
