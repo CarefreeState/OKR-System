@@ -1,7 +1,7 @@
 package com.macaku.center.controller.core.quadrant;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.component.OkrOperateServiceFactory;
 import com.macaku.center.domain.dto.unify.quadrant.OkrFirstQuadrantDTO;
 import com.macaku.center.interceptor.config.AfterInterceptConfig;
 import com.macaku.center.service.OkrOperateService;
@@ -39,7 +39,7 @@ public class FirstQuadrantController {
 
     private final FirstQuadrantService firstQuadrantService;
 
-    private final OkrServiceSelector okrServiceSelector;
+    private final OkrOperateServiceFactory okrOperateServiceFactory;
 
     @PostMapping("/init")
     @ApiOperation("初始化第一项象限")
@@ -49,7 +49,7 @@ public class FirstQuadrantController {
         User user = UserRecordUtil.getUserRecord();
         FirstQuadrantDTO firstQuadrantDTO = okrFirstQuadrantDTO.getFirstQuadrantDTO();
         firstQuadrantDTO.validate();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrFirstQuadrantDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrFirstQuadrantDTO.getScene());
         FirstQuadrant firstQuadrant = BeanUtil.copyProperties(firstQuadrantDTO, FirstQuadrant.class);
         Long firstQuadrantId = firstQuadrant.getId();
         // 检测身份

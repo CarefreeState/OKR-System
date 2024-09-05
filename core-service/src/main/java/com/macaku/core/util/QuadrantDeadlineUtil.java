@@ -1,7 +1,7 @@
 package com.macaku.core.util;
 
 import cn.hutool.extra.spring.SpringUtil;
-import com.macaku.core.component.QuadrantDeadlineServiceSelector;
+import com.macaku.core.component.QuadrantDeadlineServiceLoader;
 import com.macaku.core.domain.po.event.quadrant.FirstQuadrantEvent;
 import com.macaku.core.domain.po.event.quadrant.SecondQuadrantEvent;
 import com.macaku.core.domain.po.event.quadrant.ThirdQuadrantEvent;
@@ -18,8 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class QuadrantDeadlineUtil {
 
-    private final static QuadrantDeadlineService QUADRANT_DEADLINE_SERVICE =
-            SpringUtil.getBean(QuadrantDeadlineServiceSelector.class).select();
+    private final static QuadrantDeadlineService QUADRANT_DEADLINE_SERVICE = SpringUtil.getBean(QuadrantDeadlineServiceLoader.class).load();
 
     public static void clear() {
         QUADRANT_DEADLINE_SERVICE.clear();

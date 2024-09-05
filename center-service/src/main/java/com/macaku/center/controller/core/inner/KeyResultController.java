@@ -1,7 +1,7 @@
 package com.macaku.center.controller.core.inner;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.component.OkrOperateServiceFactory;
 import com.macaku.center.domain.dto.unify.inner.OkrKeyResultDTO;
 import com.macaku.center.domain.dto.unify.inner.OkrKeyResultUpdateDTO;
 import com.macaku.center.service.OkrOperateService;
@@ -25,7 +25,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.config.ServiceLocatorFactoryBean;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +48,7 @@ public class KeyResultController {
 
     private final KeyResultService keyResultService;
 
-    private final OkrServiceSelector okrServiceSelector;
+    private final OkrOperateServiceFactory okrOperateServiceFactory;
 
     private final FirstQuadrantService firstQuadrantService;
 
@@ -65,7 +64,7 @@ public class KeyResultController {
         User user = UserRecordUtil.getUserRecord();
         KeyResultDTO keyResultDTO = okrKeyResultDTO.getKeyResultDTO();
         keyResultDTO.validate();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrKeyResultDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrKeyResultDTO.getScene());
         KeyResult keyResult = BeanUtil.copyProperties(keyResultDTO, KeyResult.class);
         // 检测身份
         Long firstQuadrantId = keyResultDTO.getFirstQuadrantId();
@@ -101,7 +100,7 @@ public class KeyResultController {
         User user = UserRecordUtil.getUserRecord();
         KeyResultUpdateDTO keyResultUpdateDTO = okrKeyResultUpdateDTO.getKeyResultUpdateDTO();
         keyResultUpdateDTO.validate();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrKeyResultUpdateDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrKeyResultUpdateDTO.getScene());
         KeyResult keyResult = BeanUtil.copyProperties(keyResultUpdateDTO, KeyResult.class);
         Long keyResultId = keyResult.getId();
         // 校验身份

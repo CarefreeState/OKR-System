@@ -1,17 +1,16 @@
 package com.macaku.core.service.impl.inner;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
-import com.macaku.core.component.TaskServiceSelector;
 import com.macaku.core.domain.po.inner.PriorityNumberOne;
 import com.macaku.core.mapper.inner.PriorityNumberOneMapper;
 import com.macaku.core.service.TaskService;
 import com.macaku.core.service.inner.PriorityNumberOneService;
 import com.macaku.core.service.quadrant.SecondQuadrantService;
 import com.macaku.redis.repository.RedisCache;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +23,10 @@ import java.util.concurrent.TimeUnit;
 * @createDate 2024-01-20 02:24:49
 */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class PriorityNumberOneServiceImpl extends ServiceImpl<PriorityNumberOneMapper, PriorityNumberOne>
     implements PriorityNumberOneService, TaskService {
-
-    private final static Integer OPTION = TaskServiceSelector.PRIORITY_ONE_OPTION;
 
     private final static String P1_QUADRANT_MAP = "p1QuadrantMap:";
 
@@ -36,16 +34,11 @@ public class PriorityNumberOneServiceImpl extends ServiceImpl<PriorityNumberOneM
 
     private final static TimeUnit P1_QUADRANT_UNIT = TimeUnit.HOURS;
 
-    private final PriorityNumberOneMapper priorityNumberOneMapper = SpringUtil.getBean(PriorityNumberOneMapper.class);
+    private final PriorityNumberOneMapper priorityNumberOneMapper;
 
-    private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
+    private final RedisCache redisCache;
 
-    private final SecondQuadrantService secondQuadrantService = SpringUtil.getBean(SecondQuadrantService.class);
-
-    @Override
-    public boolean match(Integer option) {
-        return OPTION.equals(option);
-    }
+    private final SecondQuadrantService secondQuadrantService;
 
     @Override
     public Long addTask(Long quadrantId, String content) {

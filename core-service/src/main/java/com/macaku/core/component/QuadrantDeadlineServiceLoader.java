@@ -16,11 +16,11 @@ import java.util.ServiceLoader;
  * Time: 19:16
  */
 @Component
-public class QuadrantDeadlineServiceSelector {
+public class QuadrantDeadlineServiceLoader {
 
     private final ServiceLoader<QuadrantDeadlineService> quadrantDeadlineServices = ServiceLoader.load(QuadrantDeadlineService.class);
 
-    public QuadrantDeadlineService select() {
+    public QuadrantDeadlineService load() {
         // 选取服务
         Iterator<QuadrantDeadlineService> iterator = quadrantDeadlineServices.iterator();
         return iterator.hasNext() ? iterator.next() : SpringUtil.getBean(QuadrantDeadlineServiceXxlJobImpl.class);

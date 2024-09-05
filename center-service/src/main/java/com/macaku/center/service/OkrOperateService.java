@@ -16,8 +16,6 @@ import java.util.Map;
  */
 public interface OkrOperateService {
 
-    boolean match(String scope);
-
     @Transactional
     Map<String, Object> createOkrCore(User user, OkrOperateDTO okrOperateDTO);
 

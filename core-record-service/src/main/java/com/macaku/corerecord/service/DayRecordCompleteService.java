@@ -9,8 +9,6 @@ package com.macaku.corerecord.service;
  */
 public interface DayRecordCompleteService {
 
-    boolean match(Integer option);
-
     Object getEvent(Long coreId, Boolean isCompleted, Boolean oldCompleted);
 
 }

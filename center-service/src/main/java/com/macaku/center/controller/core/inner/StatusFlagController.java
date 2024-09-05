@@ -1,7 +1,7 @@
 package com.macaku.center.controller.core.inner;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.component.OkrOperateServiceFactory;
 import com.macaku.center.domain.dto.unify.inner.OkrStatusFlagDTO;
 import com.macaku.center.domain.dto.unify.inner.OkrStatusFlagRemoveDTO;
 import com.macaku.center.domain.dto.unify.inner.OkrStatusFlagUpdateDTO;
@@ -42,7 +42,7 @@ public class StatusFlagController {
 
     private final StatusFlagService statusFlagService;
 
-    private final OkrServiceSelector okrServiceSelector;
+    private final OkrOperateServiceFactory okrOperateServiceFactory;
 
     private final FourthQuadrantService fourthQuadrantService;
 
@@ -58,7 +58,7 @@ public class StatusFlagController {
         User user = UserRecordUtil.getUserRecord();
         StatusFlagDTO statusFlagDTO = okrStatusFlagDTO.getStatusFlagDTO();
         statusFlagDTO.validate();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrStatusFlagDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrStatusFlagDTO.getScene());
         StatusFlag statusFlag = BeanUtil.copyProperties(statusFlagDTO, StatusFlag.class);
         // 检测身份
         Long fourthQuadrantId = statusFlagDTO.getFourthQuadrantId();
@@ -85,7 +85,7 @@ public class StatusFlagController {
         okrStatusFlagRemoveDTO.validate();
         User user = UserRecordUtil.getUserRecord();
         Long statusFlagId = okrStatusFlagRemoveDTO.getId();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrStatusFlagRemoveDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrStatusFlagRemoveDTO.getScene());
         // 检测身份
         Long fourthQuadrantId = statusFlagService.getFlagFourthQuadrantId(statusFlagId);
         Long coreId = fourthQuadrantService.getFourthQuadrantCoreId(fourthQuadrantId);
@@ -106,7 +106,7 @@ public class StatusFlagController {
         User user = UserRecordUtil.getUserRecord();
         StatusFlagUpdateDTO statusFlagUpdateDTO = okrStatusFlagUpdateDTO.getStatusFlagUpdateDTO();
         statusFlagUpdateDTO.validate();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrStatusFlagUpdateDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrStatusFlagUpdateDTO.getScene());
         StatusFlag statusFlag = BeanUtil.copyProperties(statusFlagUpdateDTO, StatusFlag.class);
         Long statusFlagId = statusFlagUpdateDTO.getId();
         // 检测身份

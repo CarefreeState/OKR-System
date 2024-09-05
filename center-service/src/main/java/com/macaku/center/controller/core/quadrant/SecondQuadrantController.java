@@ -1,6 +1,6 @@
 package com.macaku.center.controller.core.quadrant;
 
-import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.component.OkrOperateServiceFactory;
 import com.macaku.center.domain.dto.unify.quadrant.OkrInitQuadrantDTO;
 import com.macaku.center.interceptor.config.AfterInterceptConfig;
 import com.macaku.center.service.OkrOperateService;
@@ -41,7 +41,7 @@ public class SecondQuadrantController {
 
     private final SecondQuadrantService secondQuadrantService;
 
-    private final OkrServiceSelector okrServiceSelector;
+    private final OkrOperateServiceFactory okrOperateServiceFactory;
 
     @PostMapping("/init")
     @ApiOperation("初始化第二象限")
@@ -58,7 +58,7 @@ public class SecondQuadrantController {
         }
         User user = UserRecordUtil.getUserRecord();
         Long quadrantId = initQuadrantDTO.getId();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrInitQuadrantDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrInitQuadrantDTO.getScene());
         // 检测身份
         Long coreId = secondQuadrantService.getSecondQuadrantCoreId(quadrantId);
         Long userId = okrOperateService.getCoreUser(coreId);

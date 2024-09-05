@@ -1,6 +1,6 @@
 package com.macaku.center.controller.core;
 
-import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.component.OkrOperateServiceFactory;
 import com.macaku.center.domain.dto.unify.inner.OkrTaskDTO;
 import com.macaku.center.domain.dto.unify.inner.OkrTaskRemoveDTO;
 import com.macaku.center.domain.dto.unify.inner.OkrTaskUpdateDTO;
@@ -9,12 +9,12 @@ import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.common.response.SystemJsonResponse;
 import com.macaku.common.util.thread.pool.IOThreadPool;
-import com.macaku.core.component.TaskServiceSelector;
+import com.macaku.core.component.TaskServiceFactory;
 import com.macaku.core.domain.po.inner.dto.TaskDTO;
 import com.macaku.core.domain.po.inner.dto.TaskUpdateDTO;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.core.service.TaskService;
-import com.macaku.corerecord.component.DayRecordCompleteServiceSelector;
+import com.macaku.corerecord.component.DayaRecordCompleteServiceFactory;
 import com.macaku.corerecord.handler.chain.RecordEventHandlerChain;
 import com.macaku.corerecord.service.DayRecordCompleteService;
 import com.macaku.medal.component.TeamAchievementServiceFactory;
@@ -45,13 +45,13 @@ public class TaskController {
 
     private final OkrCoreService okrCoreService;
 
-    private final OkrServiceSelector okrServiceSelector;
+    private final OkrOperateServiceFactory okrOperateServiceFactory;
 
-    private final TaskServiceSelector taskServiceSelector;
+    private final TaskServiceFactory taskServiceFactory;
 
     private final TeamAchievementServiceFactory teamAchievementServiceFactory;
 
-    private final DayRecordCompleteServiceSelector dayRecordCompleteServiceSelector;
+    private final DayaRecordCompleteServiceFactory dayaRecordCompleteServiceFactory;
 
     private final RecordEventHandlerChain recordEventHandlerChain;
 
@@ -64,8 +64,8 @@ public class TaskController {
         User user = UserRecordUtil.getUserRecord();
         TaskDTO taskDTO = okrTaskDTO.getTaskDTO();
         taskDTO.validate();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrTaskDTO.getScene());
-        TaskService taskService = taskServiceSelector.select(option);
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrTaskDTO.getScene());
+        TaskService taskService = taskServiceFactory.getService(option);
         // 检测身份
         Long quadrantId = taskDTO.getQuadrantId();
         Long coreId = taskService.getTaskCoreId(quadrantId);
@@ -89,8 +89,8 @@ public class TaskController {
         User user = UserRecordUtil.getUserRecord();
         Long taskId = okrTaskRemoveDTO.getId();
         // 选择服务
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrTaskRemoveDTO.getScene());
-        TaskService taskService = taskServiceSelector.select(option);
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrTaskRemoveDTO.getScene());
+        TaskService taskService = taskServiceFactory.getService(option);
         // 检测身份
         Long quadrantId = taskService.getTaskQuadrantId(taskId);
         Long coreId = taskService.getTaskCoreId(quadrantId);
@@ -113,8 +113,8 @@ public class TaskController {
         taskUpdateDTO.validate();
         User user = UserRecordUtil.getUserRecord();
         // 选择服务
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrTaskUpdateDTO.getScene());
-        TaskService taskService = taskServiceSelector.select(option);
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrTaskUpdateDTO.getScene());
+        TaskService taskService = taskServiceFactory.getService(option);
         Long taskId = taskUpdateDTO.getId();
         // 检测身份
         Long quadrantId = taskService.getTaskQuadrantId(taskId);
@@ -129,7 +129,7 @@ public class TaskController {
                 okrCoreService.checkOverThrows(coreId);
                 TermAchievementService termAchievementService = teamAchievementServiceFactory.getService(option);
                 termAchievementService.issueTermAchievement(userId, isCompleted, oldCompleted);
-                DayRecordCompleteService dayRecordCompleteService = dayRecordCompleteServiceSelector.select(option);
+                DayRecordCompleteService dayRecordCompleteService = dayaRecordCompleteServiceFactory.getService(option);
                 recordEventHandlerChain.handle(dayRecordCompleteService.getEvent(coreId, isCompleted, oldCompleted));
             });
         } else {

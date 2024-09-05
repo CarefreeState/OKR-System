@@ -62,3 +62,13 @@ okr:
     emailServiceMap:
       email-login: EmailServiceLoginImpl
       email-binding: EmailServiceBindingImpl
+    taskServiceMap:
+      0: actionServiceImpl
+      1: priorityNumberOneServiceImpl
+      2: priorityNumberTwoServiceImpl
+    dayRecordCompleteServiceMap:
+      0: dayRecordServiceThirdImpl
+      1: dayRecordServiceSecondImpl
+      2: dayRecordServiceSecondImpl
+
+

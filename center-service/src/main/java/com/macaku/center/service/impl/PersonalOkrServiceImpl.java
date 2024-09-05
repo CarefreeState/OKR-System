@@ -1,9 +1,7 @@
 package com.macaku.center.service.impl;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
-import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.config.CoreUserMapConfig;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.domain.po.PersonalOkr;
@@ -17,6 +15,7 @@ import com.macaku.core.domain.vo.OkrCoreVO;
 import com.macaku.core.service.OkrCoreService;
 import com.macaku.redis.repository.RedisCache;
 import com.macaku.user.domain.po.User;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -30,24 +29,18 @@ import java.util.Map;
 * @createDate 2024-01-20 02:25:52
 */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class PersonalOkrServiceImpl extends ServiceImpl<PersonalOkrMapper, PersonalOkr>
     implements PersonalOkrService, OkrOperateService {
 
-    private final static String SCENE = OkrServiceSelector.PERSONAL_OKR_SCENE;
-
     private final static Long ALLOW_COUNT = 1L; // 允许同时存在多少个未完成的 OKR
 
-    private final OkrCoreService okrCoreService = SpringUtil.getBean(OkrCoreService.class);
+    private final OkrCoreService okrCoreService;
 
-    private final PersonalOkrMapper personalOkrMapper = SpringUtil.getBean(PersonalOkrMapper.class);
+    private final PersonalOkrMapper personalOkrMapper;
 
-    private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
-
-    @Override
-    public boolean match(String scene) {
-        return SCENE.equals(scene);
-    }
+    private final RedisCache redisCache;
 
     @Override
     public Map<String, Object> createOkrCore(User user, OkrOperateDTO okrOperateDTO) {

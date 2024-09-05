@@ -1,17 +1,16 @@
 package com.macaku.core.service.impl.inner;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.macaku.common.code.GlobalServiceStatusCode;
 import com.macaku.common.exception.GlobalServiceException;
 import com.macaku.redis.repository.RedisCache;
-import com.macaku.core.component.TaskServiceSelector;
 import com.macaku.core.domain.po.inner.Action;
 import com.macaku.core.mapper.inner.ActionMapper;
 import com.macaku.core.service.TaskService;
 import com.macaku.core.service.inner.ActionService;
 import com.macaku.core.service.quadrant.ThirdQuadrantService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +23,10 @@ import java.util.concurrent.TimeUnit;
 * @createDate 2024-01-20 02:24:49
 */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
     implements ActionService, TaskService {
-
-    private final static Integer OPTION = TaskServiceSelector.ACTION_OPTION;
 
     private final static String ACTION_QUADRANT_MAP = "actionQuadrantMap:";
 
@@ -36,16 +34,11 @@ public class ActionServiceImpl extends ServiceImpl<ActionMapper, Action>
 
     private final static TimeUnit ACTION_QUADRANT_UNIT = TimeUnit.HOURS;
 
-    private final ActionMapper actionMapper = SpringUtil.getBean(ActionMapper.class);
+    private final ActionMapper actionMapper;
 
-    private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
+    private final RedisCache redisCache;
 
-    private final ThirdQuadrantService thirdQuadrantService = SpringUtil.getBean(ThirdQuadrantService.class);
-
-    @Override
-    public boolean match(Integer option) {
-        return OPTION.equals(option);
-    }
+    private final ThirdQuadrantService thirdQuadrantService;
 
     @Override
     public Long addTask(Long quadrantId, String content) {

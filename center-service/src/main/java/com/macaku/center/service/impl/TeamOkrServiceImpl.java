@@ -1,9 +1,7 @@
 package com.macaku.center.service.impl;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
-import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.config.CoreUserMapConfig;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.domain.po.TeamOkr;
@@ -26,6 +24,7 @@ import com.macaku.core.service.OkrCoreService;
 import com.macaku.qrcode.service.OkrQRCodeService;
 import com.macaku.redis.repository.RedisCache;
 import com.macaku.user.domain.po.User;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -42,32 +41,26 @@ import java.util.concurrent.TimeUnit;
 * @createDate 2024-01-20 02:25:52
 */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class TeamOkrServiceImpl extends ServiceImpl<TeamOkrMapper, TeamOkr>
     implements TeamOkrService, OkrOperateService {
-
-    private final static String SCENE = OkrServiceSelector.TEAM_OKR_SCENE;
 
     private final static Long DELAY = 5L;
 
     private final static TimeUnit DELAY_UNIT = TimeUnit.SECONDS;
 
-    private final TeamOkrMapper teamOkrMapper = SpringUtil.getBean(TeamOkrMapper.class);
+    private final TeamOkrMapper teamOkrMapper;
 
-    private final TeamPersonalOkrMapper teamPersonalOkrMapper = SpringUtil.getBean(TeamPersonalOkrMapper.class);
+    private final TeamPersonalOkrMapper teamPersonalOkrMapper;
 
-    private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
+    private final RedisCache redisCache;
 
-    private final OkrCoreService okrCoreService = SpringUtil.getBean(OkrCoreService.class);
+    private final OkrCoreService okrCoreService;
 
-    private final MemberService memberService = SpringUtil.getBean(MemberService.class);
+    private final MemberService memberService;
 
-    private final OkrQRCodeService okrQRCodeService = SpringUtil.getBean(OkrQRCodeService.class);
-
-    @Override
-    public boolean match(String scene) {
-        return SCENE.equals(scene);
-    }
+    private final OkrQRCodeService okrQRCodeService;
 
     @Override
     public List<TeamOkr> selectChildTeams(Long id) {

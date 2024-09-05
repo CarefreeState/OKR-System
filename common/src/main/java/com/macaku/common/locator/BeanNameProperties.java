@@ -36,6 +36,10 @@ public class BeanNameProperties implements InitializingBean {
 
     private Properties emailServiceMap;
 
+    private Properties taskServiceMap;
+
+    private Properties dayRecordCompleteServiceMap;
+
     private Properties convert(Properties oldProperties) {
         return new Properties() {{
             oldProperties.forEach((name, beanName) -> {

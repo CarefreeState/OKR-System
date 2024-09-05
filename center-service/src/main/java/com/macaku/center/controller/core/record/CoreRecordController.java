@@ -1,7 +1,7 @@
 package com.macaku.center.controller.core.record;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.macaku.center.component.OkrServiceSelector;
+import com.macaku.center.component.OkrOperateServiceFactory;
 import com.macaku.center.domain.dto.unify.OkrCoreDTO;
 import com.macaku.center.service.OkrOperateService;
 import com.macaku.common.code.GlobalServiceStatusCode;
@@ -37,7 +37,7 @@ import java.util.List;
 @Api(tags = "OKR 记录")
 public class CoreRecordController {
 
-    private final OkrServiceSelector okrServiceSelector;
+    private final OkrOperateServiceFactory okrOperateServiceFactory;
 
     private final DayRecordService dayRecordService;
 
@@ -47,7 +47,7 @@ public class CoreRecordController {
         okrCoreDTO.validate();
         User user = UserRecordUtil.getUserRecord();
         Long coreId = okrCoreDTO.getCoreId();
-        OkrOperateService okrOperateService = okrServiceSelector.select(okrCoreDTO.getScene());
+        OkrOperateService okrOperateService = okrOperateServiceFactory.getService(okrCoreDTO.getScene());
         if(Boolean.TRUE.equals(okrOperateService.canVisit(user, coreId))) {
             List<Record> dayRecords = dayRecordService.getRecords(coreId);
             return SystemJsonResponse.SYSTEM_SUCCESS(BeanUtil.copyToList(dayRecords, DayRecordVO.class));

@@ -1,9 +1,7 @@
 package com.macaku.center.service.impl;
 
-import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
-import com.macaku.center.component.OkrServiceSelector;
 import com.macaku.center.config.CoreUserMapConfig;
 import com.macaku.center.domain.dto.unify.OkrOperateDTO;
 import com.macaku.center.domain.po.TeamPersonalOkr;
@@ -21,6 +19,7 @@ import com.macaku.qrcode.component.InviteQRCodeServiceFactory;
 import com.macaku.qrcode.service.InviteQRCodeService;
 import com.macaku.redis.repository.RedisCache;
 import com.macaku.user.domain.po.User;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -34,26 +33,20 @@ import java.util.Map;
 * @createDate 2024-01-20 02:25:52
 */
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class TeamPersonalOkrServiceImpl extends ServiceImpl<TeamPersonalOkrMapper, TeamPersonalOkr>
     implements TeamPersonalOkrService, OkrOperateService {
 
-    private final static String SCENE = OkrServiceSelector.TEAM_PERSONAL_OKR_SCENE;
+    private final TeamPersonalOkrMapper teamPersonalOkrMapper;
 
-    private final TeamPersonalOkrMapper teamPersonalOkrMapper = SpringUtil.getBean(TeamPersonalOkrMapper.class);
+    private final OkrCoreService okrCoreService;
 
-    private final OkrCoreService okrCoreService = SpringUtil.getBean(OkrCoreService.class);
+    private final MemberService memberService;
 
-    private final MemberService memberService = SpringUtil.getBean(MemberService.class);
+    private final RedisCache redisCache;
 
-    private final RedisCache redisCache = SpringUtil.getBean(RedisCache.class);
-
-    private final InviteQRCodeServiceFactory inviteQRCodeServiceFactory = SpringUtil.getBean(InviteQRCodeServiceFactory.class);
-
-    @Override
-    public boolean match(String scene) {
-        return SCENE.equals(scene);
-    }
+    private final InviteQRCodeServiceFactory inviteQRCodeServiceFactory;
 
     @Override
     public Map<String, Object> createOkrCore(User user, OkrOperateDTO okrOperateDTO) {
